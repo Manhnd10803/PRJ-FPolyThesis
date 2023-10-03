@@ -1,3 +1,3 @@
 export default function Home() {
-  return <div className='block relative'>Home</div>;
+  return <h1 className='block relative'>Home</h1>;
 }

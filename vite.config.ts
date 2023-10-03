@@ -8,7 +8,7 @@ const __dirname = path.dirname(new URL(import.meta.url).pathname);
 export default defineConfig({
   plugins: [
     laravel({
-      input: ['resources/styles/app.css', 'resources/app/index.tsx'],
+      input: ['resources/app/styles/index.css', 'resources/app/index.tsx'],
       refresh: true,
     }),
     react(),
