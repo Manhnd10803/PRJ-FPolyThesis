@@ -1,14 +1,16 @@
 import './bootstrap';
 
-import { RouterProvider } from 'react-router-dom';
-import router from './router';
-import { ThemeProvider } from '@/components/providers/theme-provider';
+import { ThemeProvider } from '@/components/provider/theme-provider';
+import Router from '@/routes/Routes';
+import { BrowserRouter } from 'react-router-dom';
 
 function App() {
   return (
     <>
       <ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
-        <RouterProvider router={router} />
+        <BrowserRouter>
+          <Router />
+        </BrowserRouter>
       </ThemeProvider>
     </>
   );
