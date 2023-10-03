@@ -42,3 +42,21 @@ Start the local development server
 
 You can now access the server at http://localhost:8000
 
+Setup && run Run redis 
+    redis-server(run redis)
+    redis-cli(kiểm tra )
+    redis-cli ping (trả lại kết quả Pong -> OK)
+
+Setup && Run laravel-echo
+    laravel-echo-server init
+    npm install --save laravel-echo
+    npm install -g laravel-echo-server (Thêm sudo vào đầu câu lệnh nếu dùng macOs hoặc Linux)
+    nếu gặp lỗi chạy npm i (npm install) rồi chạy lại câu trên
+
+    Add vào cuối .env như sau
+    LARAVEL_ECHO_SERVER_REDIS_HOST=127.0.0.1
+    LARAVEL_ECHO_SERVER_REDIS_PORT=6379 (Default Port)
+
+    laravel-echo-server start(Run larave-echo)
+    
+    php artisan queue:work 
