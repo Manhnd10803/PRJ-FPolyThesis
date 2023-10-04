@@ -11,15 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('messages', function (Blueprint $table) {
+        Schema::create('private_messages', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('sender');
-            $table->unsignedBigInteger('recipient');
+            $table->unsignedBigInteger('sender_id');
+            $table->unsignedBigInteger('receiver_id');
             $table->text('content');
-            $table->string('send_time');
-            $table->string('messages_type');
-            // messages_type ('image','text','voice')
-            $table->string('status');
+            $table->string('status')->default('Đã gửi');
+            $table->foreign('sender_id')->references('id')->on('users');
+            $table->foreign('receiver_id')->references('id')->on('users');
             $table->timestamps();
         });
     }
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('messages');
+        Schema::dropIfExists('private_messages');
     }
 };
