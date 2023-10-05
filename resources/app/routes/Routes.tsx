@@ -6,13 +6,13 @@ import AdminLayout from '@/layouts/admin';
 import AuthLayout from '@/layouts/auth';
 import { RoutesType } from '@/models/IRoutes';
 import Home from '@/pages/Home';
-import { PATH_NAME } from '@/routes/PathName';
+import { PATH_NAME } from '@/routes/pathName';
 import RoleRoute from './RoleRoute';
 
 //==================== Lazy load pages ====================//
 
 const Error404View = lazy(() => import('@/pages/404'));
-const Login = lazy(() => import('@/pages/Login'));
+const Login = lazy(() => import('@/pages/login'));
 const Register = lazy(() => import('@/pages/Register'));
 
 // Data routes config for react router dom

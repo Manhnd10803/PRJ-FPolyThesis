@@ -14,7 +14,7 @@
         @viteReactRefresh
         @vite(['resources/app/index.tsx'])
     </head>
-    <body class="antialiased">
+    <body class="antialiased" style="margin-bottom: 0px !important">
         <div id="app"></div>
     </body>
 </html>
