@@ -8,7 +8,7 @@ type IProps = {
   children?: React.ReactNode;
 };
 
-const RoleRoute: FC<IProps> = ({ children, requireRoles = [] }) => {
+export const RoleRoute: FC<IProps> = ({ children, requireRoles = [] }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,5 +20,3 @@ const RoleRoute: FC<IProps> = ({ children, requireRoles = [] }) => {
 
   return <>{children}</>;
 };
-
-export default RoleRoute;

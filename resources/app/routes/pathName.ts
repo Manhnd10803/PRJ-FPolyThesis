@@ -5,7 +5,6 @@ export const PATH_NAME = {
   ERROR_403: '/403',
   LOGIN: '/login',
   REGISTER: '/register',
-  HOME: '/home',
   MESSAGES: '/messages',
 
   // Admin
@@ -14,6 +13,6 @@ export const PATH_NAME = {
   ADMIN_USERS_CREATE: '/admin/users/create',
   ADMIN_USERS_EDIT: '/admin/users/:id/edit',
   ADMIN_USERS_DETAIL: '/admin/users/:id/detail',
-};
+} as const;
 
 export type PATH_NAME_TYPE = (typeof PATH_NAME)[keyof typeof PATH_NAME];

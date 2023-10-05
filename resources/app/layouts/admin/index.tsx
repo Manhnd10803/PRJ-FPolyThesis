@@ -1,8 +1,8 @@
 import { ReactNode } from 'react';
 import { Outlet } from 'react-router-dom';
-import Header from './components/Header';
+import { Header } from './components';
 
-export default function AdminLayout(props: { children?: ReactNode }) {
+export const AdminLayout = (props: { children?: ReactNode }) => {
   return (
     <main className='p-4'>
       <Header />
@@ -10,4 +10,4 @@ export default function AdminLayout(props: { children?: ReactNode }) {
       <Outlet />
     </main>
   );
-}
+};

@@ -14,7 +14,7 @@
         @viteReactRefresh
         @vite(['resources/app/index.tsx'])
     </head>
-    <body class="antialiased">
+    <body class="min-h-screen bg-background font-sans antialiased">
         <div id="app"></div>
     </body>
 </html>

@@ -2,26 +2,25 @@ import { Fragment, Suspense, lazy } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { AdminGuard, AuthGuard } from '@/components/guard';
-import AdminLayout from '@/layouts/admin';
-import AuthLayout from '@/layouts/auth';
+import { AuthLayout, AdminLayout } from '@/layouts';
 import { RoutesType } from '@/models/IRoutes';
-import Home from '@/pages/Home';
-import { PATH_NAME } from '@/routes/PathName';
-import RoleRoute from './RoleRoute';
+import { PATH_NAME } from '@/routes/pathName';
+import { RoleRoute } from './RoleRoute';
 
 //==================== Lazy load pages ====================//
 
 const Error404View = lazy(() => import('@/pages/404'));
 const Login = lazy(() => import('@/pages/Login'));
 const Register = lazy(() => import('@/pages/Register'));
+const HomePage = lazy(() => import('@/pages/Home'));
 
 // Data routes config for react router dom
 const routesConfig: RoutesType[] = [
   //========================== Default routes ==========================//
-  {
-    path: PATH_NAME.ROOT,
-    component: () => <Navigate to={PATH_NAME.HOME} replace />,
-  },
+  // {
+  //   path: PATH_NAME.ROOT,
+  //   component: () => <Navigate to={PATH_NAME.ROOT} replace />,
+  // },
   {
     path: PATH_NAME.ERROR_404,
     component: Error404View,
@@ -39,10 +38,11 @@ const routesConfig: RoutesType[] = [
     path: '/',
     guard: AuthGuard,
     layout: AuthLayout,
+    // Nested routes
     routes: [
       {
-        path: PATH_NAME.HOME,
-        component: Home,
+        path: PATH_NAME.ROOT,
+        component: HomePage,
         requireRoles: [],
       },
       {
@@ -55,10 +55,11 @@ const routesConfig: RoutesType[] = [
     path: '/admin',
     guard: AdminGuard,
     layout: AdminLayout,
+    // Nested routes
     routes: [
       {
         path: PATH_NAME.ADMIN,
-        component: Home,
+        component: HomePage,
         requireRoles: [],
       },
       {
@@ -92,7 +93,7 @@ const renderNestedRoutes = (routes: RoutesType[], guard: any) => {
             </Guard>
           </Suspense>
         }
-      ></Route>
+      />
     );
   });
 };
@@ -119,7 +120,7 @@ const renderRoutes = (routesConfig: RoutesType[]) => {
           );
         }
 
-        // Else render route
+        // Else render single route
         return (
           <Route
             key={`routes-${index}`}
@@ -133,7 +134,7 @@ const renderRoutes = (routesConfig: RoutesType[]) => {
                 </Guard>
               </Suspense>
             }
-          ></Route>
+          />
         );
       })}
     </Routes>

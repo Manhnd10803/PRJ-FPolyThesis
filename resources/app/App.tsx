@@ -1,8 +1,8 @@
 import './bootstrap';
 
-import { ThemeProvider } from '@/components/provider/theme-provider';
 import Router from '@/routes/Routes';
 import { BrowserRouter } from 'react-router-dom';
+import { ThemeProvider } from './components/provider';
 
 function App() {
   return (
