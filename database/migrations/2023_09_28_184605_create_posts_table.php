@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('category');
             $table->integer('views')->default(0);
             $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users');
+            
             
             
         });

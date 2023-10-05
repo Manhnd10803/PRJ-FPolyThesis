@@ -18,8 +18,7 @@ return new class extends Migration
             $table->string('request_status');
             $table->string('friendship_type');
             $table->timestamps();
-            $table->foreign('user_id_1')->references('id')->on('users');
-            $table->foreign('user_id_2')->references('id')->on('users');
+           
         });
     }
 

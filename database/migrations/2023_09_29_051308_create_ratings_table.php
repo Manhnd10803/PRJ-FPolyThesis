@@ -18,8 +18,7 @@ return new class extends Migration
             $table->string('rating_scores');
             $table->string('review_comments');
             $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('document_id')->references('id')->on('documents');
+  
         });
     }
 
