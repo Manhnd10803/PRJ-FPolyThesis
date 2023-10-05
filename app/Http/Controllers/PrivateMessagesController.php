@@ -22,14 +22,10 @@ class PrivateMessagesController extends Controller
     public function store(Request $request)
     {   
         $user  =Auth::user();
-        $senderId = $user->id;
-        $receiverId = $request->input('receiver_id');
-        $content = $request->input('content');
-    
         $message = new PrivateMessage([
-            'sender_id' => $senderId,
-            'receiver_id' => $receiverId,
-            'content' => $content,
+            'sender_id' => $user->id,
+            'receiver_id' => $request->input('receiver_id'),
+            'content' => $request->input('content'),
         ]);
         $message->save();
         broadcast(new PrivateMessageSent($message))->toOthers();

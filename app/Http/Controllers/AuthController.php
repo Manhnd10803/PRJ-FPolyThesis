@@ -37,24 +37,27 @@ class AuthController extends Controller
         if ($user->wasChanged()) {
             return response()->json(['message' => 'User updated successfully', 'user' => $user]);
         } else {
-            return response()->json(['message' => 'User not updated'], 400);
+            return response()->json(['message' => 'User not updated','user'=>$user], 400);
         }
     }
+
     public function destroy(User $user)
     {
         $user->delete();
         return response()->json(['message','Delete Successful']);
     }
     public function login(LoginRequest $request){
-        $credentials = $request->only('email','password');
+        $credentials = $request->only('username','password');
         if(Auth::attempt($credentials)){
             $user = Auth::user();
-            return response()->json(['message'=> 'Đăng nhập thành công','user' => $user]);
+            $token = $user->createToken('MyApp')->accessToken;
+
+            return response()->json(['token' => $token]);
         }
-        return response()->json(['message' => 'Đăng nhập thất bại'], 401);
+        return response()->json(['message' => 'Unauthorized'], 401);
     }
     public function logout(){
-         Auth::guard('api')->logout();
+         Auth::logout();
     return response()->json(['message' => 'Đăng xuất thành công']);
     }
 }
