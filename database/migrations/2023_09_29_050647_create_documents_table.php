@@ -13,16 +13,9 @@ return new class extends Migration
     {
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
-            $table->string('document_name');
-            $table->string('description');
             $table->string('file');
             $table->unsignedBigInteger('poster_id');
-            $table->unsignedBigInteger('major_id');
-            $table->string('rating_document');
-            $table->string('comment_document');
             $table->timestamps();
-            $table->foreign('poster_id')->references('id')->on('users');
-            $table->foreign('major_id')->references('id')->on('majors');
         });
     }
 

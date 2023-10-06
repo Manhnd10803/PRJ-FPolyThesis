@@ -16,14 +16,11 @@ return new class extends Migration
             $table->string('title');
             $table->string('content');
             $table->unsignedBigInteger('user_id');
-            $table->string('publication_date');
             $table->string('tags')->nullable();
-            $table->string('category');
+            $table->integer('status');
+            $table->unsignedBigInteger('major_id');
             $table->integer('views')->default(0);
             $table->timestamps();
-            $table->foreign('user_id')->references('id')->on('users');
-            
-            
         });
     }
 
