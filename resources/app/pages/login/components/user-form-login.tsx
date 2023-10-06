@@ -19,6 +19,7 @@ import { toast } from "@/components/ui/use-toast"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Link } from "react-router-dom"
 import { Checkbox } from "@/components/ui/checkbox"
+import images from "@/assets/images"
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -38,7 +39,7 @@ const userAuthFormSchema = z.object({
 
 type UserAuthFormValues = z.infer<typeof userAuthFormSchema>
 
-export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
+export function UserAuthFormLogin({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
   const form = useForm<UserAuthFormValues>({
         resolver: zodResolver(userAuthFormSchema)
@@ -119,7 +120,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         </div>
       </div>
       <Button variant="outline" className="text-[#2B3674]" type="button">
-       <img src="assets/images/icon-gg3.png" alt="icon" width={25} height={25} /> Sign in with Google
+       <img src={images.iconGoogle} alt="icon" width={25} height={25} /> Sign in with Google
       </Button>
     </div>
   )

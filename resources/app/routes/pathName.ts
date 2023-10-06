@@ -4,7 +4,7 @@ export const PATH_NAME = {
   ERROR_404: '/404',
   ERROR_403: '/403',
   LOGIN: '/login',
-  REGISTER: '/register',
+  SIGNUP: '/signup',
   HOME: '/home',
   MESSAGES: '/messages',
 
