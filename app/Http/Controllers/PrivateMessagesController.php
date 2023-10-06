@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MessageDeleted;
 use App\Events\PrivateMessageSent;
 use App\Models\PrivateMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Broadcast;
 
 class PrivateMessagesController extends Controller
 {
@@ -14,30 +16,36 @@ class PrivateMessagesController extends Controller
      */
     public function index()
     {
-        //lấy tất cả dữ liệu về cuộc trò chuyện của user đang đăng nhập với người dùng khác
-        $user = Auth::user();
-        $messages = PrivateMessage::where('sender_id',$user->id)->with('receiver')->get();
+        $messages = PrivateMessage::where('sender_id',Auth::id())->with('receiver')->get();
         return response()->json($messages);
     }
     public function store(Request $request)
     {   
-        $user  =Auth::user();
+        $senderID  = Auth::id();
+        $receiverId =$request->input('receiver_id');
+        $content = $request->input('content');
         $message = new PrivateMessage([
-            'sender_id' => $user->id,
-            'receiver_id' => $request->input('receiver_id'),
-            'content' => $request->input('content'),
+            'sender_id' => $senderID,
+            'receiver_id' =>$receiverId ,
+            'content' => $content,
         ]);
         $message->save();
-        broadcast(new PrivateMessageSent($message))->toOthers();
+        broadcast(new PrivateMessageSent($message))->to("private-chat.{$receiverId}");
+
         return response()->json(['message' => 'Tin nhắn đã được gửi'], 200); 
     }
-    public function update(Request $request, string $id)
+    public function update(Request $request, PrivateMessage $privateMessage)
     {
-        
+        $privateMessage->update([
+            'content' => $request->input('content')
+        ]);
+        return response()->json(['message' => 'Tin nhắn đã được cập nhật',$privateMessage], 200);
     }
-
-    public function destroy(string $id)
+    public function delete(Request $request, PrivateMessage $privateMessage)
     {
-        
+        $privateMessage->delete();
+        broadcast(new MessageDeleted($privateMessage->id))->toOthers();
+        return response()->json(['message' => 'Tin nhắn đã được xóa'], 200);
     }
+    
 }

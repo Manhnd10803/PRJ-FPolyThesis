@@ -21,12 +21,13 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::middleware('auth:api')->group(function () {
     Route::post('/logout', [AuthController::class,'logout']);
-    
+   
     });
+//user
 Route::resource('/user',AuthController::class);
 Route::post('/login',[AuthController::class,'login']);
 Route::post('/register',[AuthController::class,'store']);
-
+//chat
 Route::resource('/chat', PrivateMessagesController::class);
-
-
+Route::delete('/private-messages/{privateMessage}', [PrivateMessagesController::class,'delete']);
+Route::put('/private-messages/{privateMessage}', [PrivateMessagesController::class,'update']);
