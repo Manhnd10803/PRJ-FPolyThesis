@@ -15,10 +15,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('emotion_id');
-            $table->bigInteger('quantity')->default(0);
+            $table->unsignedBigInteger('post_id');
             $table->timestamps();
-            
-            
         });
     }
 

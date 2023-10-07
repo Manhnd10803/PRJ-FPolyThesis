@@ -2,7 +2,7 @@ import { useTheme } from '@/components/provider/theme-provider';
 import { Button } from '@/components/ui/button';
 import { MoonIcon, SunIcon } from '@radix-ui/react-icons';
 
-export function ModeToggle() {
+export const ModeToggle = () => {
   const { theme, setTheme } = useTheme();
   const handleToggleMode = () => {
     setTheme(theme === 'light' ? 'dark' : 'light');
@@ -15,4 +15,4 @@ export function ModeToggle() {
       <span className='sr-only'>Toggle theme</span>
     </Button>
   );
-}
+};

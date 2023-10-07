@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const useDebounce = (
+export const useDebounce = (
   text: string,
   delay: number = import.meta.env.VITE_DEBOUNCE_TIME || 300
 ) => {
@@ -18,5 +18,3 @@ const useDebounce = (
 
   return debounced;
 };
-
-export default useDebounce;

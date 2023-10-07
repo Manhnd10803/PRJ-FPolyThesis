@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('group_chats', function (Blueprint $table) {
             $table->id();
-            $table->string('chat_name')->unique();
-            $table->unsignedBigInteger('quantity');
+            $table->string('name')->unique();
+            $table->text('description');
+            $table->unsignedBigInteger('major_id');
             $table->timestamps();
         });
     }

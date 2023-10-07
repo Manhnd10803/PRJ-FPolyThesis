@@ -1,6 +1,6 @@
 // import store from '@redux/stores';
 
-// const checkRole = (requireRoles: string | string[] = '') => {
+// export const checkRole = (requireRoles: string | string[] = '') => {
 //   const roles = store.getState().auth.roles || [];
 //   if (Array.isArray(requireRoles)) {
 //     if (!requireRoles.length) return true;
@@ -14,5 +14,3 @@
 //     return roles.includes(requireRoles);
 //   }
 // };
-
-// export default checkRole;

@@ -1,13 +1,18 @@
 import { ReactNode } from 'react';
 import { Outlet } from 'react-router-dom';
-import Header from '@/layouts/guest/components/Header';
+import { Sidebar } from './components';
 
-export default function AuthLayout(props: { children?: ReactNode }) {
+export const AuthLayout = (props: { children?: ReactNode }) => {
+  console.log({ props });
   return (
-    <main className='p-4'>
-      <Header />
-      {props.children}
-      <Outlet />
-    </main>
+    <div className='relative flex min-h-screen flex-col'>
+      <div className='flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0'>
+        <Sidebar />
+        <div className='flex-1'>
+          {props.children}
+          <Outlet />
+        </div>
+      </div>
+    </div>
   );
-}
+};
