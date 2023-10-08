@@ -78,4 +78,11 @@ class AuthController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
     }
+    public function logout(Request $request){
+        $user = Auth::user();
+        $user->tokens->each(function ($token) {
+            $token->delete();
+        });
+        return response()->json(['message' => 'Đăng xuất thành công'], 200);
+    }
 }

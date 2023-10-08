@@ -168,8 +168,8 @@ return [
         App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        Laravel\Passport\PassportServiceProvider::class,
     ])->toArray(),
-
     /*
     |--------------------------------------------------------------------------
     | Class Aliases
@@ -184,6 +184,7 @@ return [
     'aliases' => Facade::defaultAliases()->merge([
         // 'Example' => App\Facades\Example::class,
         'Redis' => Illuminate\Support\Facades\Redis::class,
+        'Passport' => Laravel\Passport\Passport::class,
     ])->toArray(),
 
 ];
