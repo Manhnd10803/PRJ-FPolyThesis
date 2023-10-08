@@ -22,6 +22,7 @@ Route::post('/login', [AuthController::class, 'login'])->name('user.login');
 Route::post('/verify', [AuthController::class, 'verify'])->name('user.verify');
 Route::middleware('auth:api')->group(function(){
     //route has been authenticated
+    Route::post('/logout', [AuthController::class, 'logout'])->name('user.logout');
     Route::get('/hello', function(){
         return 'ok';
     });
