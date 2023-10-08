@@ -15,12 +15,12 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('sender');
             $table->unsignedBigInteger('recipient');
-            $table->string('content');
+            $table->string('content')->nullable();
             $table->string('notification_type');
             // notification_type ('individual',''system,'event','friend','new comment')
             $table->string('status')->default('Unread');
             //status ('Unread'.'Reađ')
-            $table->string('link_to_content');
+            $table->string('link_to_content')->nullable();
             $table->timestamps();
         });
     }
