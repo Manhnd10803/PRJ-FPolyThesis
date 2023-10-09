@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+
 use App\Http\Controllers\PrivateMessagesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -16,18 +17,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-Route::middleware('auth:api')->group(function () {
-    Route::post('/logout', [AuthController::class,'logout']);
-   
+Route::post('/register', [AuthController::class, 'register'])->name('user.register');
+Route::post('/login', [AuthController::class, 'login'])->name('user.login');
+Route::post('/verify', [AuthController::class, 'verify'])->name('user.verify');
+Route::middleware('auth:api')->group(function(){
+    //route has been authenticated
+    Route::post('/logout', [AuthController::class, 'logout'])->name('user.logout');
+    Route::get('/hello', function(){
+        return 'ok';
     });
-//user
-Route::resource('/user',AuthController::class);
-Route::post('/login',[AuthController::class,'login']);
-Route::post('/register',[AuthController::class,'store']);
+});
 //chat
 Route::resource('/chat', PrivateMessagesController::class);
 Route::delete('/private-messages/{privateMessage}', [PrivateMessagesController::class,'delete']);
 Route::put('/private-messages/{privateMessage}', [PrivateMessagesController::class,'update']);
+
