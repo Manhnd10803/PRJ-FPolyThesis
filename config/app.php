@@ -169,6 +169,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Laravel\Passport\PassportServiceProvider::class,
+        Laravel\Socialite\SocialiteServiceProvider::class,
     ])->toArray(),
     /*
     |--------------------------------------------------------------------------
@@ -185,6 +186,7 @@ return [
         // 'Example' => App\Facades\Example::class,
         'Redis' => Illuminate\Support\Facades\Redis::class,
         'Passport' => Laravel\Passport\Passport::class,
+        'Socialite' => Laravel\Socialite\Facades\Socialite::class,
     ])->toArray(),
 
 ];
