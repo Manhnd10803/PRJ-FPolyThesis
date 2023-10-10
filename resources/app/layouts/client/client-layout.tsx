@@ -9,7 +9,7 @@ export const ClientLayout = () => {
     <>
       <Sidebar />
       <Header />
-      <div className='main-content'>
+      <div className="main-content">
         <Outlet />
       </div>
       <RightSidebar />
