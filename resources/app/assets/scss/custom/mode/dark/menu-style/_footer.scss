@@ -1,0 +1,13 @@
+.iq-footer {
+    background-color: $card-bg !important;
+    ul {
+        li {
+            a {
+                color: $body-color;
+                &:hover {
+                    color: var(--#{$variable-prefix}primary);
+                }
+            }
+        }
+    }
+}

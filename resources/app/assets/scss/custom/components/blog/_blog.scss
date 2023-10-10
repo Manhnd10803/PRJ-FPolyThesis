@@ -1,0 +1,73 @@
+/*---------------------------------------------------------------------
+Blog List Page
+-----------------------------------------------------------------------*/
+.group-smile {
+	.iq-media-group {
+		.iq-media {
+			img {
+				background:$white;
+			}
+		}
+	}
+}
+/*---------------------------------------------------------------------
+Blog Grid Page
+-----------------------------------------------------------------------*/
+.blog-grid {
+	.blog-description {
+		background:$white;
+		@if $enable-rounded == true {
+			@include radius-mixin($border-radius);
+		}
+		@if $enable-shadows == true {
+			@include shadow-mixin(0px 0px 20px 0px rgba(44, 101, 144, 0.1));
+		}
+	}
+}
+.blog-grid.blog-single {    
+	.blog-description {
+		bottom: 0.938rem;
+		left: 0;
+		right: 0;
+		margin: 0 0.938rem;
+		z-index: 9;
+		position: absolute;
+	}
+}
+.blog-list.list-even {
+    .blog-description {
+        left: auto;
+        right: -4.375rem;
+        text-align: right;
+    }
+}
+@include media-breakpoint-down(lg){
+    .blog-list {
+        .blog-description {
+            position: relative;
+            left: 0rem;
+            padding: 1.875rem !important;
+            background: $white;
+            @if $enable-rounded == true {
+                @include radius-mixin($border-radius);
+            }
+            z-index: 9;
+        }
+    }
+}
+.blog-list.list-even {
+    .blog-description {
+        left: auto;
+        right: 0.127rem;
+        text-align: right;
+    }
+}
+@include media-breakpoint-down(md){
+	.blog-list {
+		&.list-even {
+			.blog-description {
+				right: 0;
+			}
+		}
+	}
+}

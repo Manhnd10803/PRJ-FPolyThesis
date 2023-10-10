@@ -1,0 +1,30 @@
+.card {
+    background: $card-bg;
+    .card-header, .card-footer {
+        background-color: transparent;
+        border-bottom-color: $border-color;
+    }
+}
+.card-post-toolbar {
+    .dropdown-menu {
+		a {
+            border-color: $border-color;
+            &:hover {
+                background-color: $body-bg;
+                color: var(--#{$variable-prefix}primary);
+            }
+		}
+        .dropdown-item {
+            color: $body-color;
+        }
+	}
+    .dropdown-toggle {
+        i {
+            color: $body-color;
+        }
+    }
+}
+
+.card-footer{
+    border-top: 1px solid $border-color;
+}

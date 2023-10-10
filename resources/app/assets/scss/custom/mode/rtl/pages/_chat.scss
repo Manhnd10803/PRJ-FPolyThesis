@@ -1,0 +1,153 @@
+#chat-search {
+	padding-right: 2.5rem;
+    padding-left: unset;
+}
+form-group.chat-search-data {
+	>i {
+        right: 0.938rem;
+        left:unset;
+    }
+}
+span.avatar-status {
+    left:-0.25rem;
+	right:auto;
+}
+.chat-header-icons {
+    >a {
+		margin: 0 0 0 0.313rem;
+	}
+	>span {
+		margin: 0 0 0 0.313rem;
+	}
+}
+.chat-content {
+	.chat-left {
+		.chat-message {
+			text-align: right;
+			margin: 0 1.3rem 1.8rem .3rem;
+		}
+	}
+}
+.chat-detail {
+    display: flex;
+    justify-content: flex-end;
+	.chat-message {
+		.chat-time {
+			position: absolute;
+			bottom: -20px;
+			right: 0;
+			color:$body-color;
+			font-size: .8rem;
+			white-space: nowrap;
+		}
+	}
+}
+.chat-detail {
+	.chat-message {
+		.chat-time {
+			right: unset;
+            left: 0;
+		}
+	}
+}
+.chat-message {
+	text-align:left;
+	margin: 0 .33rem 1.33rem 1.3rem;
+}
+.chat-left {
+	.chat-message {
+		&::after {
+			right: -0.438rem;
+			left: auto;
+		}
+	}
+}
+.other-user {
+    flex-direction: row-reverse;
+    text-align: left; 
+}
+#user-detail-popup {
+    right:0;
+    left:auto;
+    .user-profile {
+		button.close-popup {
+			text-align: left;
+		}
+	}
+}
+@include media-breakpoint-down(lg){
+    .chat-data-left {
+        left: unset;
+        right: 0;
+    }
+    .chat-sidebar-channel {
+        padding-right: 0 !important;
+        padding-left: unset;
+    }
+    .chat-search {
+        padding-right: 0 !important;
+        padding-left: unset;
+    }
+
+    button.close-btn-res {
+        left:0;
+        right: auto;
+    }
+    .chat-head {
+        header {
+            padding-left:unset;
+            padding-right: 0.938rem;
+        }
+    }
+}
+
+//vicky
+
+#chat-search {
+    padding-left: 2.5rem;
+    padding-right: .75rem;
+}
+
+#user-detail-popup {
+	transform: translateX(90%);
+	-webkit-transform: translateX(90%);
+}
+#user-detail-popup.show {
+	opacity: 1;
+	visibility: visible;
+	transform: translateX(0);
+	-webkit-transform: translateX(0);
+	@if $enable-transitions == true {
+		@include transition-mixin(all 0.45s ease-in-out);
+	}
+}
+
+.chat-user-detail-popup {
+	transform: translateX(-90%);
+	-webkit-transform: translateX(-90%);
+}
+
+.chat-user-detail-popup.show {
+	opacity: 1;
+	visibility: visible;
+	transform: translateX(0);
+	-webkit-transform: translateX(0);
+	@if $enable-transitions == true {
+		@include transition-mixin(all 0.45s ease-in-out);
+	}
+}
+.chat-user-detail-popup {
+	.user{
+		.user-name{
+			h4{
+				text-align: center;
+			}
+		}
+		.user-desc{
+			p{
+				text-align: center;
+			}
+		}
+	}
+}
+

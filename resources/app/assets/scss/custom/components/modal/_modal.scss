@@ -1,0 +1,103 @@
+
+.modal-open {
+	overflow-x: hidden;
+}
+.suggestion-card{
+   overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  gap: 2em;
+}
+
+.suggestion-card::-webkit-scrollbar {
+	width: 0.5rem;
+	height: 0.5rem;
+	border-radius: 0;
+}
+.suggestion-card::-webkit-scrollbar-track {
+	background: transparent;
+	@if $enable-rounded == true {
+		@include radius-mixin(20px);
+	}
+}
+
+.suggestion-card::-webkit-scrollbar {
+	width: 0px;
+	background: transparent;
+}
+  .suggestion-card::-webkit-scrollbar-thumb {
+	background: transparent;
+	@if $enable-rounded == true {
+		@include radius-mixin(20px);
+	}
+	&:hover {
+		background: $border-color;
+		@if $enable-rounded == true {
+			@include radius-mixin(20px);
+		}
+
+    }
+}
+@include media-breakpoint-up(lg) {
+	.iq-top-navbar{
+		z-index: 1111;
+		.modal.search-modal{
+			position: absolute;
+			height: auto;
+			top: 1rem;
+			--bs-modal-border-radius: .393em;
+			   --bs-modal-border-color: rgba(0, 0, 0, .1);
+		}
+		.search-hover{
+			@if $enable-transitions == true {
+				@include transition-mixin(all 0.3s ease-in-out);
+			}
+			&:hover{
+				background-color: rgba(var(--#{$variable-prefix}primary-rgb), .2);
+			}
+		}
+	}
+	
+}
+@include media-breakpoint-down(lg) {
+	.search-hover{
+		@if $enable-transitions == true {
+			@include transition-mixin(all 0.3s ease-in-out);
+		}
+		&:hover{
+			background-color: rgba(var(--#{$variable-prefix}primary-rgb), .2);
+		}
+	}
+	.suggestion-card{
+		display: block;
+		.story{
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			border-bottom: 1px solid $border-color;
+    		padding: .5em;
+			.story-profile{
+				display: flex;
+				align-items: center;
+			}
+			&:hover{
+				background-color: rgba(var(--#{$variable-prefix}primary-rgb), .2);
+			}
+			&:last-child{
+				border-bottom: 0;
+			}
+		}
+	}
+
+}
+@include media-breakpoint-up(sm) {
+	#post-modal-data {
+		.modal {
+			position: absolute;
+			height: auto;
+			.modal-dialog {
+				max-width: 100%;
+				margin: 0;	}
+		}
+	}
+}

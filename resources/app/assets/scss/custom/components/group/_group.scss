@@ -1,0 +1,43 @@
+/*group*/
+.group-icon {
+    margin-top: -4.375rem;
+}
+.projects-media {
+	img {
+		height: 3.75rem;
+	}
+}
+.iq-media-group {
+	.iq-media {
+		margin-left: -1.25rem;
+		position: relative;
+		z-index: 0;
+		@if $enable-transitions == true {
+			@include transition-mixin(all 0.3s ease-in-out);
+		}
+		&:hover {
+			z-index: 9;
+		}
+		img {
+			border-right: 2px solid ;
+		}
+		&:first-child {
+			margin-left: 0;
+		}
+	}
+	.iq-media.border {
+		border-right: 2px solid ;
+	}
+}
+.iq-media {
+	display: inline-flex;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-size: cover;
+	&:hover {
+		text-decoration: none;
+	}
+}
+.media-pl {
+	text-align: center;
+}

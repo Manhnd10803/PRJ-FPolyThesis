@@ -1,0 +1,33 @@
+section {
+	&.sign-in-page {
+		height: 100vh;
+		background: var(--#{$variable-prefix}primary);
+		background: rgba($primary,80);
+		background: -moz-linear-gradient(-45deg, rgba($primary,80) 0%, #182039 100%);
+		background: -webkit-linear-gradient(-45deg, rgba($primary,80) 0%, #182039 100%);
+		background: linear-gradient(135deg, rgba($primary,80) 0%, #182039 100%);
+		
+		.bg-white {
+			background-color: $card-bg !important;
+			color: $body-color;
+		}
+		.sign-info {
+			border-color: $border-color;
+		}
+	}
+}
+#circle-small {
+	background: $body-bg;
+}
+#circle-medium {
+	background: $body-bg;
+}
+#circle-large {
+	background: $body-bg;
+}
+#circle-xlarge {
+	background: $body-bg;
+}
+#circle-xxlarge {
+	background: $body-bg;
+}

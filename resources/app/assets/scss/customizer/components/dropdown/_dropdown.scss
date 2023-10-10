@@ -1,0 +1,8 @@
+.dropdown-item{
+    &:hover, &:focus{
+        color: var(--#{$variable-prefix}primary-shade-20);
+    }
+    &.active, &:active{
+        color: var(--#{$variable-prefix}primary);
+    }
+}

@@ -1,0 +1,9 @@
+$value: 5;
+@while $value <= 130{
+    .avatar-#{$value}{
+        height: $value + px; 
+        width: $value + px; 
+        line-height: $value + px;
+    }
+    $value : $value + 5;   
+}

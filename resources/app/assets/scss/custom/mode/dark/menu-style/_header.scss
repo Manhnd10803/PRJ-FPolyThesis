@@ -1,0 +1,50 @@
+.iq-top-navbar {
+    background: $card-bg;
+    .iq-navbar{
+        background: $card-bg; 
+    }
+    &.menu-sticky{
+        background: $card-bg;
+    }
+}
+.iq-navbar-logo {
+    a {
+        span {
+            color: $body-color;
+        }
+    }
+}
+.wrapper-menu {
+    color: $body-color;
+}
+.iq-search-bar {
+	.search-input {
+        color: $body-color;
+	}
+}
+.navbar-collapse {
+    background-color: $card-bg;
+}
+.iq-navbar{
+    .dropdown{
+        .dropdown-menu.sub-drop{
+            .iq-sub-card:hover {
+                background: var(--#{$variable-prefix}primary-shade-80);
+            }
+        }
+    }
+} 
+
+.top-header-responsive {
+   background: $card-bg;
+   ul.menu-list{
+    li{
+        a{
+            color: $white;
+            &.active{
+                color: $primary;
+            }
+        }
+    }
+}
+}

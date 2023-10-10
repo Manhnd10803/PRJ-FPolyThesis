@@ -1,0 +1,33 @@
+
+    .nav{
+        background: $card-bg;
+        
+        &.nav-tabs {
+            .nav-item {
+                a{
+                    color: $body-color;
+                }
+            }
+        }
+    }
+.iq-burger-menu{
+    color: $white;
+}
+.navbar-list {
+    li {
+        
+        >a {
+            border-bottom-color: $border-color;
+        }
+    }
+}
+.iq-navbar {
+    .dropdown{
+        .dropdown-menu.sub-drop{
+            .iq-sub-card {
+                color: $body-color;
+            }
+        } 
+    } 
+    
+}

@@ -1,0 +1,48 @@
+.custom-switch-inner {
+    display: block;
+    text-align: center;
+}
+.custom-switch {
+    .form-check-label{
+        width: 2.875rem;
+    }
+}
+.form-check {
+    position: relative;
+    display: inline-block;
+    min-height: 1.5rem;
+}
+.form-check-label {
+    position: relative;
+    margin-bottom: 0;
+    vertical-align: top;
+    line-height: 1.375rem;
+
+    .switch-icon-left,.switch-icon-right {
+        position: absolute;
+        cursor: pointer;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        top: 0.313rem;
+        font-size: 0.75rem;
+    }
+
+    .switch-icon-left {
+        left: -3.688rem;
+        right: auto;
+        color: $white; 
+    }
+    .switch-icon-right {
+        right: 0.313rem;
+        left: auto; 
+    }
+}
+.custum-redio-btn{
+    &.form-check-input{
+        height: 1.2em;
+        width: 1.2em;
+        margin-right: .8em;
+    }
+}
