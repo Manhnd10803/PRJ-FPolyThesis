@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EmotionController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PrivateMessagesController;
@@ -47,3 +48,5 @@ Route::post('/like/{post}',[LikeController::class,'LikePost'])->name('like');
 //Comment
 Route::get('/comment/{post}',[CommentController::class,'FetchCommentInPost'])->name('comment.show');
 Route::post('/comment/{post}',[CommentController::class,'AddComment'])->name('comment.add');
+//emotion
+Route::post('/emotion/create',[EmotionController::class,'CreateEmotion'])->name('emotion.create');
