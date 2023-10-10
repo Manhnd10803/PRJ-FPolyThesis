@@ -1,0 +1,63 @@
+//chat message
+.iq-other-user, .iq-current-user {
+    &.iq-message-body{
+        display: flex;
+        gap: 1rem;
+        visibility: visible;
+        .iq-chat-text{
+            flex: 1;
+        }
+    }
+}
+.iq-current-user + .iq-current-user,
+.iq-other-user + .iq-other-user{
+    .iq-chating{
+        display: none;
+    }
+}
+.iq-current-user + .iq-current-user,
+.iq-other-user + .iq-other-user{
+    .chat-profile {
+        visibility: hidden;
+    }
+}
+
+.iq-chating-content {
+    max-width: 80%;
+    padding: 0.625rem 1rem;
+    background-color: $white;
+    // border: 1px solid $border-color;
+    &.iq-image{
+        padding: 1rem;
+        .iq-group-image{
+            grid-template-columns: repeat(2,minmax(100px,1fr));
+        }
+    }
+    .iq-single-image{
+        max-width: 100%;
+        width: 30rem;
+    }
+}
+
+.iq-other-user{
+    .iq-chating-content{
+        border-radius: $border-radius-lg ;
+    }
+}
+
+.iq-current-user{
+    flex-direction: row-reverse;
+    text-align: right;
+    .iq-chating{
+        display: flex;
+        justify-content: flex-end;
+    }
+    .iq-chating-content{
+        border-radius: $border-radius-lg;
+        background-color: $primary;
+        color: $white;
+    }
+    // .chat-profile{
+    //     display: none;
+    // }
+}

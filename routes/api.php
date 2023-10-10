@@ -8,6 +8,7 @@ use App\Http\Controllers\PrivateMessagesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,8 +19,10 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
+//auth
 Route::post('/register', [AuthController::class, 'register'])->name('user.register');
+Route::get('/google-auth', [AuthController::class, 'googleAuth'])->name('user.googleAuth');
+Route::get('/google-callback', [AuthController::class, 'googleCallback'])->name('user.googleCallback');
 Route::post('/login', [AuthController::class, 'login'])->name('user.login');
 Route::post('/verify', [AuthController::class, 'verify'])->name('user.verify');
 Route::middleware('auth:api')->group(function(){

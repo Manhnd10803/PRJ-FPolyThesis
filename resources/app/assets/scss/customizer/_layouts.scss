@@ -1,0 +1,14 @@
+.live-customizer {
+    box-shadow: $dropdown-box-shadow;
+    border: 0;
+}
+@media (min-width: 768px) {
+    .live-customizer {
+        width: 450px;
+    }
+    .theme-fs-lg{
+        .live-customizer {
+            width: 500px;
+        }
+    }
+}

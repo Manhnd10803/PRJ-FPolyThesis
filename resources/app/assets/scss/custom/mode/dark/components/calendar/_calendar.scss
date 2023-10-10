@@ -1,0 +1,10 @@
+.fc-unthemed .fc-divider, .fc-unthemed .fc-popover .fc-header, .fc-unthemed .fc-list-heading td {
+    background: rgba(var(--bs-primary-rgb), 0.2);
+}
+.fc-unthemed .fc-list-item:hover td {
+    background-color: rgba(var(--bs-primary-rgb), 0.2);
+}
+
+.datepicker-cell.focused:not(.selected) {
+    background-color: rgba(var(--bs-primary-rgb), 0.2);
+}

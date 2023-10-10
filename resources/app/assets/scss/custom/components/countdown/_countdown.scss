@@ -1,0 +1,25 @@
+.countdown {
+	margin: 3.75rem 0 0;
+	padding: 0;
+	li {
+		span {
+			font-size: 3.75rem;
+			display: inline-block;
+			width: 100%;
+			color: var(--#{$variable-prefix}primary);
+		}
+		&:last-child {
+			margin-right: 0;
+		}
+	}
+}
+.iq-comingsoon-form {
+	position: relative;
+	button {
+		position: absolute;
+		right: 0px;
+		top: 0;
+		padding: 0.375rem 1.875rem;
+	}
+}
+

@@ -1,0 +1,24 @@
+.product{
+    span.categry{
+        &:before {
+            right:0px;
+            left: unset;
+        }
+    }
+    .offer {
+        right: 0.625rem;
+        left:unset;
+    }
+}
+
+.product{
+    .circle-category{
+        span.categry{
+            &:before {
+                right:0.938rem;
+                left: unset;
+            }
+        }        
+    }
+}
+

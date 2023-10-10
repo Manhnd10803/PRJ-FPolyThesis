@@ -1,0 +1,19 @@
+
+.feather-icon {
+	a {
+		color:$secondary;
+		font-weight: 300;
+		&:hover {
+			color: var(--#{$variable-prefix}primary);
+		}
+	}
+}
+.message-icon {
+	a {
+		color:$secondary;
+		font-weight: 300;
+		&:hover {
+			color: var(--#{$variable-prefix}primary);
+		}
+	}
+}

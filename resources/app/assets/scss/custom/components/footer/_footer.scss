@@ -1,0 +1,121 @@
+/*---------------------------------------------------------------------
+Footer
+-----------------------------------------------------------------------*/
+.iq-footer {
+	padding: 0.938rem;
+	margin-left: 15rem;
+	width: calc(100% - 31rem);
+
+	@if $enable-shadows ==true {
+		@include shadow-mixin($box-shadow);
+	}
+
+	@if $enable-transitions ==true {
+		@include transition-mixin(all 0.3s ease-in-out);
+	}
+
+	ul {
+		li {
+			a {
+				color: $body-color;
+
+				&:hover {
+					color: var(--#{$variable-prefix}primary);
+					text-decoration: none;
+				}
+			}
+		}
+	}
+}
+
+.bg-banner-image.style-three {
+	height: 150px;
+	// background: url('../images/bg-03.jpg');
+}
+
+.iq-mt--70 {
+	margin-top: -4.375rem;
+}
+
+.banner-main-text {
+	position: absolute;
+	left: 15%;
+	bottom: 13%;
+}
+
+// @media (max-width: 1299px){
+// .iq-footer, body.sidebar-main .iq-footer {
+//     margin-left: 0;
+//     width: 100%;}
+// }
+@include media-breakpoint-down(xl) {
+	.iq-footer {
+		padding: 0.938rem 0.625rem;
+		margin-left: 0;
+		width: 100%;
+	}
+
+	body.sidebar-main {
+		.iq-footer {
+			padding: 0.938rem 0.625rem;
+			margin-left: 0;
+			width: 100%;
+		}
+	}
+}
+
+@include media-breakpoint-down(lg) {
+	.iq-footer {
+		.col-lg-6 {
+			text-align: center !important;
+		}
+
+		.col-lg-6.d-flex.justify-content-end {
+			text-align: center !important;
+			justify-content: center !important;
+		}
+	}
+}
+
+.iq-float-menu-item.dropbtn {
+	border: none;
+}
+
+
+.drop-one {
+	position: relative;
+	display: inline-block;
+}
+
+.dropdown-content {
+	display: none;
+	position: absolute;
+	background-color: $body-bg;
+	min-width: auto;
+	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+	z-index: 1;
+	right: -3px;
+	top: 0;
+
+}
+
+.dropdown-content a {
+	color: black;
+	padding: 12px 16px;
+	text-decoration: none;
+	display: block;
+}
+
+.dropdown-content a:hover {
+	background-color: #ddd;
+}
+
+.dropbtn.iq-float-menu-item:hover .dropdown-content {
+	display: block;
+}
+
+.customizer-btn {
+	-webkit-transform: rotate(-45deg);
+	-ms-transform: rotate(-45deg);
+	transform: rotate(-45deg);
+}

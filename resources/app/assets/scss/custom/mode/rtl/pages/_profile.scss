@@ -1,0 +1,77 @@
+.social-info{
+    p{
+        text-align: center;
+    }
+}
+.profile-detail{
+    h3{
+        text-align: center;
+    }
+}
+.news-icon {
+	margin-left: 1.25rem;
+    margin-right: unset;
+}
+.comment-activity {
+	>a {
+		margin-left:0.625rem;
+		margin-right: unset;
+	}
+}
+form.comment-text {
+	input {
+		padding-left:8.125rem;
+		padding-right:.75rem;
+	}
+}
+ul.header-nav {
+	left:0;
+	right:auto;
+}
+.comment-attagement {
+    right: auto;
+    left: 0;
+}
+
+.offcanvas-header{
+	.btn-close {
+		 margin: unset;
+	}
+} 
+
+ul.header-nav{
+	li{
+		a{
+			margin: 0 0 0 0.938rem;
+		}
+	}
+}
+.event-post{
+	h5{
+		text-align: center;
+	}
+	p{
+		text-align: center;
+	}
+}
+.inner-page-title {
+    right: 1.875rem;
+	left: unset;
+}
+a{
+	&.image-edit-btn {
+		right: auto;
+		left: 0.938rem;
+	}
+}
+
+.iq-profile-avatar:before {
+	left: 0;
+	right: unset;
+}
+h6.frd-name{
+	justify-content: end;
+}
+ul.setting-profile{
+	margin-left: 0.85rem !important;
+}

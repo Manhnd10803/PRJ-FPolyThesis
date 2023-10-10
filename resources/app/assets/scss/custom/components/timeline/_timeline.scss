@@ -1,0 +1,22 @@
+.iq-timeline {
+	padding: 0;
+	width: 100%;
+	border-left: 3px solid rgba(var(--#{$variable-prefix}primary-rgb),0.2);
+	li {
+		margin-left: 0.938rem;
+		position: relative;
+		padding: 0.938rem 0.625rem;
+		list-style-type: none;
+		.timeline-dots {
+			position: absolute;
+			top: 1.25rem;
+			left: -1.5rem;
+			border: 3px solid var(--#{$variable-prefix}primary);
+			padding: 0.313rem;
+			background: $white;
+            @if $enable-rounded == true {
+                @include radius-mixin($border-radius-pill);
+            }
+		}
+	}
+}

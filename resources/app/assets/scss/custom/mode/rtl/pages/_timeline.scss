@@ -1,0 +1,20 @@
+.card{
+    .card-body{
+        .iq-timeline {
+            margin: 0 0.5rem 0 0;
+            border-right: 3px solid rgba(var(--#{$variable-prefix}primary-rgb),0.2);
+            border-left: none !important;
+            li {
+                padding: 0.938rem 0.938rem 0 5px;
+            }
+        }
+        .timeline-dots {
+            right: -10px;
+            left: unset !important;
+        }
+    }
+}
+
+.list-unstyled {
+    padding: 0;
+}

@@ -1,0 +1,27 @@
+@each $color in $colors-name {
+    .list-group-item-#{$color}{
+        color: var(--#{$variable-prefix}#{$color}-shade-40);
+        background-color: var(--#{$variable-prefix}#{$color}-tint-80);
+        &.list-group-item-action{
+            &:hover, &:focus{
+                color: var(--#{$variable-prefix}#{$color}-shade-40);
+                background-color: var(--#{$variable-prefix}#{$color}-tint-60);
+            }
+        }
+    }
+}
+.list-group-item{
+    &.active{
+        background-color: var(--#{$variable-prefix}primary);
+        border-color: var(--#{$variable-prefix}primary);
+    }
+}
+
+.list-group-item-action:not(.active){
+    &:hover, &:focus{
+        background-color: transparent;
+    }
+    &:active{
+        background-color: var(--#{$variable-prefix}primary-tint-80);
+    }
+}

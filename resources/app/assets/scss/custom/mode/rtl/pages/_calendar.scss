@@ -1,0 +1,17 @@
+.today-schedule{
+    li{
+        i{
+            margin-left: 0.625rem;
+            margin-right: unset;
+        }
+    }
+}
+.job-classification{
+    li>i {
+        margin-left: 0.625rem;
+        margin-right: unset;        
+        float: right;
+        line-height: normal;
+        margin-top: 0.438rem;
+    }
+}

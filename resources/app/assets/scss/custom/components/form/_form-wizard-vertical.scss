@@ -1,0 +1,79 @@
+#top-tabbar-vertical {
+    overflow: hidden;
+    color: $body-color;
+    margin: 0 -1.25rem 3.75rem;
+
+    li {
+        list-style-type: none;
+        font-size: 1.125rem;
+        width: 100%;
+        float: left;
+        position: relative;
+        font-weight: 400;
+
+        a {
+            background: $white;
+            color: $dark;
+            display: block;
+            padding: 1.25rem 0.938rem;
+            margin: 0.625rem 1.25rem;
+            text-decoration: none;
+            border: 1px solid rgba(var(--#{$variable-prefix}primary-rgb),0.2);
+            @if $enable-rounded == true {
+                @include radius-mixin($border-radius);
+            }  
+            i {
+                display: inline-block;
+                text-align: center;
+                height: 3.125rem;
+                width: 3.125rem;
+                line-height: 3.125rem;
+                font-size: 1.25rem;
+                margin: 0 1.25rem 0 0;
+                @if $enable-rounded == true {
+                    @include radius-mixin($border-radius-pill);
+                } 
+            }
+        }
+        &.active {
+            a {
+                border-color: transparent;
+                i {
+                    background: $white;
+                }
+            }
+            
+            &#personal {
+                a {
+                    background: rgba(var(--#{$variable-prefix}primary-rgb),0.2);
+                }
+            }
+            &#contact {
+                a {
+                    background: rgba($danger,0.2);
+                }
+            }
+            &#official {
+                a {
+                    background: rgba($success,0.2);
+                }
+            }
+            &#payment {
+                a {
+                    background: rgba($warning,0.2);
+                }
+            }
+        }
+    }
+
+    &.active {
+        color: var(--#{$variable-prefix}primary);
+    }
+}
+#form-wizard3 {
+	fieldset {
+		&:not(:first-of-type) {
+			display: none;
+		}
+	}
+}

@@ -1,0 +1,22 @@
+/*!
+* NOTE: This file contains the styling for color variable.
+*
+*/
+
+// Configuration
+@import './bootstrap/functions';
+// Variables
+@import './custom/variables';
+@import './custom/variables/index';
+@import './bootstrap/variables';
+@import './bootstrap/mixins';
+
+@import './customizer/variables';
+@import './customizer/reboot';
+@import './customizer/root';
+
+// Components
+@import './customizer/components';
+@import './customizer/dark';
+@import './customizer/layouts';
+@import './customizer/utilities/utilities';

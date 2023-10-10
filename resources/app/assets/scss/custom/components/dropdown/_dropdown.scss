@@ -1,0 +1,306 @@
+
+.dropdown-menu {
+    animation: fade 400ms ease forwards;
+    @if $enable-shadows == true {
+      @include shadow-mixin(0 2px 6px rgba($black, .2));
+    }
+}
+.dropdown-item {
+  padding: .45rem 1.5rem;
+}
+.dropdown-item.active {
+	color: $white;
+	text-decoration:none;
+	background-color:rgba(var(--bs-primary-rgb), .2);
+}
+.dropdown-item {
+	&:active {
+		color: $white;
+		text-decoration: none;
+		background-color:rgba(var(--bs-primary-rgb), .2);
+	}
+}
+
+@keyframes fade {
+    0% { 
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
+}
+@keyframes fadeInUp {
+    from {
+      opacity: 0;
+      -webkit-transform: translate3d(0, 100%, 0);
+      transform: translate3d(0, 100%, 0);
+    }
+
+    to {
+      opacity: 1;
+      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+    }
+}
+@-webkit-keyframes dropdownAnimation {
+  0% {
+    opacity: 0;
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+  80% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes dropdownAnimation {
+  0% {
+    opacity: 0;
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+  80% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@-webkit-keyframes fade-in-bottom {
+	0% {
+	  -webkit-transform: translateY(50px);
+	  transform: translateY(50px);
+	  -webkit-opacity: 0;
+	  -moz-opacity: 0;
+	  -ms-opacity: 0;
+	  -o-opacity: 0;
+	  opacity: 0; 
+	}
+	100% {
+	  -webkit-transform: translateY(0);
+	  transform: translateY(0);
+	  -webkit-opacity: 1;
+	  -moz-opacity: 1;
+	  -ms-opacity: 1;
+	  -o-opacity: 1;
+	  opacity: 1; 
+	} 
+}
+  
+@keyframes fade-in-bottom {
+	0% {
+	  -webkit-transform: translateY(50px);
+	  transform: translateY(50px);
+	  -webkit-opacity: 0;
+	  -moz-opacity: 0;
+	  -ms-opacity: 0;
+	  -o-opacity: 0;
+	  opacity: 0; 
+	}
+	100% {
+	  -webkit-transform: translateY(0);
+	  transform: translateY(0);
+	  -webkit-opacity: 1;
+	  -moz-opacity: 1;
+	  -ms-opacity: 1;
+	  -o-opacity: 1;
+	  opacity: 1; 
+	} 
+}
+
+//home page dropdown
+.total-comment-block {
+	.dropdown-toggle {
+		&::after {
+			display: none;
+		}
+	}
+}
+.total-like-block {
+	.dropdown-toggle {
+		&::after {
+			display: none;
+		}
+	}
+}
+.like-data {
+	.dropdown-toggle {
+		&::after {
+			display: none;
+		}
+	}
+}
+.total-comment-block {
+	.dropdown {
+		&:hover {
+			>.dropdown-menu {
+				opacity: 1;
+				visibility: visible;
+				@if $enable-transitions == true {
+					@include transition-mixin(all 0.45s ease-in-out);
+				}
+			}
+		}
+		>.dropdown-menu {
+			background-color:var(--bs-primary);
+			>a {
+				color:$white;
+				padding:0.125rem 0.625rem;
+				&:hover{
+					color: var(--bs-primary);
+				}
+				&:focus{
+					background-color:$white !important;
+				}
+			}
+		}
+	}
+	.dropdown-menu {
+		display: block;
+		visibility: hidden;
+		opacity: 0;
+	}
+}
+.total-like-block {
+	.dropdown {
+		&:hover {
+			>.dropdown-menu {
+				opacity: 1;
+				visibility: visible;
+				@if $enable-transitions == true {
+					@include transition-mixin(all 0.45s ease-in-out);
+				}
+			}
+		}
+		>.dropdown-menu {
+			background-color:var(--bs-primary);
+			>a {
+				color:$white;
+				padding:0.125rem 0.625rem;
+				&:hover{
+					color: var(--bs-primary);
+				}
+				&:focus{
+					background-color:$white !important;
+				}
+			}
+		}
+	}
+	.dropdown-menu {
+		display: block;
+		visibility: hidden;
+		opacity: 0;
+	}
+}
+.like-data {
+	.dropdown {
+		&:hover {
+			>.dropdown-menu {
+				opacity: 1;
+				visibility: visible;
+				@if $enable-transitions == true {
+					@include transition-mixin(all 0.45s ease-in-out);
+				}
+			}
+		}
+	}
+	.dropdown-menu {
+		display: block;
+		visibility: hidden;
+		opacity: 0;
+		width: 280px;
+		top: -3.125rem;
+		border: none;
+		@if $enable-shadows == true {
+			@include shadow-mixin(0px 0px 20px 0px rgba(44, 101, 144, 0.1));
+		}
+		@if $enable-transitions == true {
+			@include transition-mixin(all 0.45s ease-in-out);
+		}
+	}
+	&:hover {
+		span {
+			color: var(--#{$variable-prefix}primary);
+			@if $enable-transitions == true {
+				@include transition-mixin(all 0.45s ease-in-out);
+			}
+		}
+	}
+}
+.comment-block {
+	&:hover {
+		a {
+			color: var(--bs-primary);
+			@if $enable-transitions == true {
+				@include transition-mixin(all 0.45s ease-in-out);
+			}
+		}
+	}
+}
+.like-block {
+	span {
+		color: $secondary;
+		cursor: pointer;
+		&:hover {
+			color: var(--bs-primary);
+		}
+	}
+}
+.dropdown-menu {
+    animation: fade 400ms ease forwards;
+}
+@keyframes fade {
+    0% { 
+      opacity: 0;
+    }
+  
+    100% {
+      opacity: 1;
+    }
+}
+@keyframes fadeInUp {
+    from {
+      opacity: 0;
+      -webkit-transform: translate3d(0, 100%, 0);
+      transform: translate3d(0, 100%, 0);
+    }
+  
+    to {
+      opacity: 1;
+      -webkit-transform: translate3d(0, 0, 0);
+      transform: translate3d(0, 0, 0);
+    }
+}
+@-webkit-keyframes dropdownAnimation {
+  0% {
+    opacity: 0;
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+  80% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes dropdownAnimation {
+  0% {
+    opacity: 0;
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+  80% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+  }
+}

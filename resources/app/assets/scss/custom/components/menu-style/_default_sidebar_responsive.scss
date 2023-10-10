@@ -1,0 +1,33 @@
+
+@include media-breakpoint-down(sm) {
+	.sidebar{
+		top: 3rem;
+	}
+    .right-sidebar-mini{
+        top: 3rem;
+    }
+}
+@include media-breakpoint-down(lg) {
+	.sidebar{
+		top: 6.5rem;
+	}
+    .right-sidebar-mini{
+        top: 3.3rem;
+    }
+}
+@media (max-width: 1199.98px){
+    .sidebar{
+        &+.main-content {
+            margin-left: 0;
+        }
+        .sidebar-toggle {
+            right: 18px;
+        }
+        &.sidebar-mini+.main-content {
+            margin-left: 0;
+        }
+        &.sidebar-mini{
+            transform: translateX(-250%);
+        }
+    }
+}

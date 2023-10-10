@@ -1,0 +1,54 @@
+.iq-todo-page {
+	.search-link {
+		left:unset;
+		right:0.625rem;
+	}
+	.todo-search {
+		padding-right: 2.188rem;
+        padding-left:  .75rem;
+	}
+	ul {
+		ul {
+			li {
+				a {
+					padding-right:1.563rem;
+                    padding-left: unset;
+				}
+			}
+		}
+	}
+}
+.iq-todo-right {
+	.search-link {
+		left:unset;
+        right:0.625rem;
+	}
+	.todo-search {
+		padding-left: .75rem;
+        padding-right: 2.188rem;
+	}
+}
+.notification-icon {
+	>span {
+		left: -0.5rem;
+		right: auto;
+        text-align: center;
+	}
+}
+.todo-task-list{
+	li{
+		a{
+			i{
+				float:right;
+			}
+		}
+	}
+}
+
+.add-new-project{
+	a{
+		i{
+			float:right;
+		}
+	}
+}

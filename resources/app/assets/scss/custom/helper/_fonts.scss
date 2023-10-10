@@ -1,0 +1,47 @@
+$icon-fill: 0 !default;
+$icon-weight: 200 !default;
+$icon-grade: 0 !default;
+$iocn-optical-size: 24 !default;
+$font-size-base: 0.875rem !default;
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' $icon-fill,
+  'wght' $icon-weight,
+  'GRAD' $icon-grade,
+  'opsz' $iocn-optical-size;
+}
+.material-symbols-outlined.filled{
+  font-variation-settings:
+  'FILL' 1,
+  'wght' $icon-weight,
+  'GRAD' $icon-grade,
+  'opsz' 20;
+  font-size: $font-size-base;
+}
+
+i.material-icons-outlined.md-14 { font-size: 14px; }
+i.material-icons-outlined.md-16 { font-size: 16px; }
+i.material-icons-outlined.md-18 { font-size: 18px; }
+i.material-icons-outlined.md-20 { font-size: 20px; }
+i.material-icons-outlined.md-32 { font-size: 32px; }
+i.material-icons-outlined.md-36 { font-size: 36px; }
+i.material-icons-outlined.md-42 { font-size: 42px; }
+i.material-icons.md-16 { font-size: 16px; }
+i.material-icons.md-18 { font-size: 18px; }
+i.material-icons.md-14 { font-size: 14px; }
+i.material-icons.md-24 { font-size: 24px; }
+i.material-icons.md-36 { font-size: 36px; }
+i.material-icons.md-48 { font-size: 48px; }
+i.material-symbols-outlined.md-64 {
+  font-size: 64px;
+}
+/******* Custom Font Size: iqCustomFont **********/
+.theme-fs-md {
+  font-size: 16px;
+}
+@media (max-width: 1601px) {
+  .theme-fs-md {
+      font-size: 14px;
+  }
+}
