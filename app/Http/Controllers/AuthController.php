@@ -94,7 +94,13 @@ class AuthController extends Controller
         $checkUser = User::where('email', $user->email)->first();
         if($checkUser){
             //đăng nhập 
-            
+            if($checkUser->status == 0){
+                return response()->json(['message' => 'Tài khoản chưa được kích hoạt'], 403);
+            }else{
+                Auth()->login($checkUser);
+                $token = $checkUser->createToken('authToken')->accessToken;
+                return response()->json(['user' => $user, 'accessToken' => $token], 200);
+            }
         }else{
             // dd($user);
             //đăng ký
