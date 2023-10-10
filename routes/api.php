@@ -32,7 +32,7 @@ Route::resource('/chat', PrivateMessagesController::class);
 Route::delete('/private-messages/{privateMessage}', [PrivateMessagesController::class,'delete']);
 Route::put('/private-messages/{privateMessage}', [PrivateMessagesController::class,'update']);
 //post
-Route::get('/posts/profile/{user}',[PostsController::class,'ShowPostProfile'])->name('post.show');
+Route::get('/posts/profile',[PostsController::class,'ShowPostProfile'])->name('post.show');
 Route::post('/posts',[PostsController::class,'CreatePost'])->name('post.create');
 Route::put('/posts/{post}',[PostsController::class,'UpdatePost'])->name('post.update');
 Route::delete('/posts/{post}',[PostsController::class,'DeletePost'])->name('post.delete');

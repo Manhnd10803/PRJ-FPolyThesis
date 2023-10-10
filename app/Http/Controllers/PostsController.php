@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Validator;
 class PostsController extends Controller
 {
     public function ShowPostProfile(){
-        $posts = Post::where('user_id', ) 
+        $posts = Post::where('user_id', Auth::id()) 
             ->orWhere(function ($query) {
                 $query->where('status', '<>', 1); 
             })
@@ -40,7 +40,7 @@ class PostsController extends Controller
                 'title' => $title,
                 'content' => $content,
                 'images' => $imagePath,
-                'user_id' => 2,
+                'user_id' => Auth::id(),
                 'tags' => $tags,
                 'major_id'=> $major_id,
             ]);
