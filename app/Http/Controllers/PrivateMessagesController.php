@@ -11,15 +11,13 @@ use Illuminate\Support\Facades\Broadcast;
 
 class PrivateMessagesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+
+    public function ShowAllMessage()
     {
         $messages = PrivateMessage::where('sender_id',Auth::id())->with('receiver')->get();
         return response()->json($messages);
     }
-    public function store(Request $request)
+    public function SendMessages(Request $request)
     {   
         $senderID  = Auth::id();
         $receiverId =$request->input('receiver_id');
@@ -34,14 +32,14 @@ class PrivateMessagesController extends Controller
 
         return response()->json(['message' => 'Tin nhắn đã được gửi'], 200); 
     }
-    public function update(Request $request, PrivateMessage $privateMessage)
+    public function UpdateMessage(Request $request, PrivateMessage $privateMessage)
     {
         $privateMessage->update([
             'content' => $request->input('content')
         ]);
         return response()->json(['message' => 'Tin nhắn đã được cập nhật',$privateMessage], 200);
     }
-    public function delete(Request $request, PrivateMessage $privateMessage)
+    public function DeleteMessage( PrivateMessage $privateMessage)
     {
         $privateMessage->delete();
         broadcast(new MessageDeleted($privateMessage->id))->toOthers();
