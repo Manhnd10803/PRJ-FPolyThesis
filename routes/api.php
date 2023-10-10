@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PrivateMessagesController;
 use Illuminate\Http\Request;
@@ -38,3 +39,11 @@ Route::get('/posts/profile',[PostsController::class,'ShowPostProfile'])->name('p
 Route::post('/posts',[PostsController::class,'CreatePost'])->name('post.create');
 Route::put('/posts/{post}',[PostsController::class,'UpdatePost'])->name('post.update');
 Route::delete('/posts/{post}',[PostsController::class,'DeletePost'])->name('post.delete');
+Route::get('posts/count-like/{post}', [PostController::class, 'CountLikeInPost'])->name('like.count');
+Route::get('posts/count-cmt/{post}', [PostController::class, 'CountCommentInPost'])->name('comment.count');
+//Like
+Route::get('/like/{post}',[LikeController::class,'FetchLikeInPost'])->name('like.show');
+Route::post('/like/{post}',[LikeController::class,'LikePost'])->name('like');
+//Comment
+Route::get('/comment/{post}',[CommentController::class,'FetchCommentInPost'])->name('comment.show');
+Route::post('/comment/{post}',[CommentController::class,'AddComment'])->name('comment.add');
