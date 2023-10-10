@@ -8,10 +8,14 @@ import {
   createBrowserRouter,
 } from 'react-router-dom';
 import App from './App';
-import { AdminRouter, RootRouter, SimpleRouter } from './routes';
+import { RootAdminRouter, RootClientRouter, RootSimpleRouter } from './routes';
 
 //define all routes here
-const routes: RouteObject[] = [...RootRouter, ...SimpleRouter, ...AdminRouter];
+const routes: RouteObject[] = [
+  ...RootClientRouter,
+  ...RootAdminRouter,
+  ...RootSimpleRouter,
+];
 
 const router = createBrowserRouter(routes, {
   // basename: process.env.PUBLIC_URL,

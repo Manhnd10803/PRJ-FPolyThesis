@@ -1,12 +1,36 @@
-//layouts
-
-import { DefaultLayout } from '@/layouts/default-layout';
+import { AdminLayout } from '@/layouts/admin-layout';
+import { ClientLayout } from '@/layouts/';
+import { AdminRouter } from './admin-router';
 import { ClientRouter } from './client-router';
+import { LoginPage } from '@/pages/login';
+import { RegisterPage } from '@/pages/register';
 
-export const RootRouter = [
+//Can add more client router here
+export const RootClientRouter = [
   {
     path: '/',
-    element: <DefaultLayout />,
-    children: [...ClientRouter], //can add more router start with / here
+    element: <ClientLayout />,
+    children: [...ClientRouter],
+  },
+];
+
+//Can add more admin router here
+export const RootAdminRouter = [
+  {
+    path: 'admin',
+    element: <AdminLayout />,
+    children: [...AdminRouter],
+  },
+];
+
+// Can add more router start with / here
+export const RootSimpleRouter = [
+  {
+    path: 'login',
+    element: <LoginPage />,
+  },
+  {
+    path: 'register',
+    element: <RegisterPage />,
   },
 ];

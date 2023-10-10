@@ -1,9 +1,9 @@
 import { Outlet } from 'react-router-dom';
 
-export const DefaultLayout = () => {
+export const ClientLayout = () => {
   return (
     <div>
-      DefaultLayout
+      ClientLayout
       <Outlet />
     </div>
   );
