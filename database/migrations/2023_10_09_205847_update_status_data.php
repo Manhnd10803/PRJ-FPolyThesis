@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('group_chat_members', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('chat_id');
-            $table->unsignedBigInteger('user_id');
-            $table->timestamps();
+        Schema::table('posts', function (Blueprint $table) {
+            $table->integer('status')->default(0)->change();
         });
     }
 
@@ -24,6 +21,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('group_chat_members');
+        //
     }
 };
