@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
-
+use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PrivateMessagesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -31,4 +31,8 @@ Route::middleware('auth:api')->group(function(){
 Route::resource('/chat', PrivateMessagesController::class);
 Route::delete('/private-messages/{privateMessage}', [PrivateMessagesController::class,'delete']);
 Route::put('/private-messages/{privateMessage}', [PrivateMessagesController::class,'update']);
-
+//post
+Route::get('/posts/profile',[PostsController::class,'ShowPostProfile'])->name('post.show');
+Route::post('/posts',[PostsController::class,'CreatePost'])->name('post.create');
+Route::put('/posts/{post}',[PostsController::class,'UpdatePost'])->name('post.update');
+Route::delete('/posts/{post}',[PostsController::class,'DeletePost'])->name('post.delete');
