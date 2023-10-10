@@ -40,7 +40,6 @@
     "axios": "^1.5.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
-    "cmdk": "^0.2.0",
     "laravel-echo": "^1.15.3",
     "lucide-react": "^0.284.0",
     "path": "^0.12.7",
