@@ -1,2 +1,2 @@
-export * from './AuthGuard';
-export * from './AdminGuard';
+export * from './auth-guard';
+export * from './admin-guard';

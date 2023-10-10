@@ -1,11 +1,7 @@
 import './bootstrap';
 
-function App() {
-  return (
-    <>
-      <h1>Hello</h1>
-    </>
-  );
+function App(props: { children: React.ReactNode }) {
+  return <>{props.children}</>;
 }
 
 export default App;
