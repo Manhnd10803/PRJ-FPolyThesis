@@ -1,48 +1,69 @@
-import { Fragment, Suspense, lazy } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Fragment, Suspense, lazy } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 
-import { AdminGuard, AuthGuard } from '@/components/guard';
-import { AuthLayout, AdminLayout } from '@/layouts';
-import { RoutesType } from '@/models/IRoutes';
-import { PATH_NAME } from '@/routes/pathName';
-import { RoleRoute } from './RoleRoute';
+import { AdminGuard, AuthGuard } from "@/components/guard";
+import { AdminLayout } from "@/layouts/admin";
+import AuthLayout from "@/layouts/auth";
+import { RoutesType } from "@/models/IRoutes";
+import Home from "@/pages/Home";
+import { PATH_NAME } from "@/routes/pathName";
+import { RoleRoute } from "./RoleRoute";
+import MainLayout from "@/layouts";
 
 //==================== Lazy load pages ====================//
 
-const Error404View = lazy(() => import('@/pages/404'));
-const Login = lazy(() => import('@/pages/Login'));
-const Register = lazy(() => import('@/pages/Register'));
-const HomePage = lazy(() => import('@/pages/Home'));
+const Error404View = lazy(() => import("@/pages/404"));
+const Login = lazy(() => import("@/pages/login"));
+const Signup = lazy(() => import("@/pages/Signup"));
+const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"));
+
+
 
 // Data routes config for react router dom
 const routesConfig: RoutesType[] = [
   //========================== Default routes ==========================//
-  // {
-  //   path: PATH_NAME.ROOT,
-  //   component: () => <Navigate to={PATH_NAME.ROOT} replace />,
-  // },
+  {
+    path: PATH_NAME.ROOT,
+    component: () => <Navigate to={PATH_NAME.HOME} replace />,
+  },
   {
     path: PATH_NAME.ERROR_404,
     component: Error404View,
   },
-  {
-    path: PATH_NAME.LOGIN,
-    component: Login,
-  },
-  {
-    path: PATH_NAME.REGISTER,
-    component: Register,
-  },
   //========================== Auth routes ==========================//
   {
-    path: '/',
+    path: "/",
     guard: AuthGuard,
     layout: AuthLayout,
-    // Nested routes
     routes: [
       {
-        path: PATH_NAME.ROOT,
-        component: HomePage,
+        path: PATH_NAME.LOGIN,
+        component: Login,
+        requireRoles: [],
+      },
+      {
+        path: PATH_NAME.SIGNUP,
+        component: Signup,
+        requireRoles: [],
+      },
+      {
+        path: PATH_NAME.FORGOT_PASSWORD,
+        component: ForgotPassword,
+        requireRoles: [],
+      },
+      {
+        component: () => <Navigate to={PATH_NAME.ERROR_404} />,
+      },
+    ],
+  },
+  {
+    path: "/",
+    guard: AuthGuard,
+    layout: MainLayout,
+    routes: [
+      {
+        path: PATH_NAME.HOME,
+        component: Home,
         requireRoles: [],
       },
       {
@@ -52,14 +73,13 @@ const routesConfig: RoutesType[] = [
   },
   //========================== Admin routes ==========================//
   {
-    path: '/admin',
+    path: "/admin",
     guard: AdminGuard,
     layout: AdminLayout,
-    // Nested routes
     routes: [
       {
         path: PATH_NAME.ADMIN,
-        component: HomePage,
+        component: Home,
         requireRoles: [],
       },
       {
@@ -69,7 +89,7 @@ const routesConfig: RoutesType[] = [
   },
   //=================== Not found page ===================//
   {
-    path: '*',
+    path: "*",
     component: () => <Navigate to={PATH_NAME.ERROR_404} />,
   },
 ];
@@ -79,21 +99,20 @@ const renderNestedRoutes = (routes: RoutesType[], guard: any) => {
     const Guard = guard || Fragment;
     const Component = route.component;
     const requireRoles = route.requireRoles || [];
-
     return (
       <Route
-        key={`routes-nested-${index}`}
-        path={route.path}
-        element={
-          <Suspense fallback={null}>
-            <Guard>
-              <RoleRoute requireRoles={requireRoles}>
-                <Component />
-              </RoleRoute>
-            </Guard>
-          </Suspense>
-        }
-      />
+          key={`routes-nested-${index}`}
+          path={route.path}
+          element={
+              <Suspense fallback={null}>
+                  <Guard>
+                      <RoleRoute requireRoles={requireRoles}>
+                          <Component />
+                      </RoleRoute>
+                  </Guard>
+              </Suspense>
+          }
+      ></Route>
     );
   });
 };
@@ -101,46 +120,43 @@ const renderNestedRoutes = (routes: RoutesType[], guard: any) => {
 const renderRoutes = (routesConfig: RoutesType[]) => {
   return (
     <Routes>
-      {routesConfig.map((route: RoutesType, index: number) => {
-        const Guard = route.guard || Fragment;
-        const Layout = route.layout || Fragment;
-        const Component = route.component;
-        const requireRoles = route.requireRoles || [];
-
-        // If route has nested routes, render nested routes
-        if (route.routes && route.layout) {
-          return (
-            <Route
-              key={`routes-${index}`}
-              path={route.path}
-              element={<Layout />}
-            >
-              {renderNestedRoutes(route.routes, route.guard)}
-            </Route>
-          );
-        }
-
-        // Else render single route
-        return (
-          <Route
-            key={`routes-${index}`}
-            path={route.path}
-            element={
-              <Suspense fallback={null}>
-                <Guard>
-                  <RoleRoute requireRoles={requireRoles}>
-                    <Component />
-                  </RoleRoute>
-                </Guard>
-              </Suspense>
+        {routesConfig.map((route: RoutesType, index: number) => {
+            const Guard = route.guard || Fragment;
+            const Layout = route.layout || Fragment;
+            const Component = route.component;
+            const requireRoles = route.requireRoles || [];
+            // If route has nested routes, render nested routes
+            if (route.routes && route.layout) {
+              return (
+                <Route
+                  key={`routes-${index}`}
+                  path={route.path}
+                  element={<Layout />}
+                  >
+                  {renderNestedRoutes(route.routes, route.guard)}
+                </Route>
+              );
             }
-          />
-        );
-      })}
+             // Else render route
+            return (
+              <Route
+                key={`routes-${index}`}
+                path={route.path}
+                element={
+                  <Suspense fallback={null}>
+                    <Guard>
+                      <RoleRoute requireRoles={requireRoles}>
+                        <Component />
+                      </RoleRoute>
+                    </Guard>
+                  </Suspense>
+                }
+              ></Route>
+            );
+        })}
     </Routes>
   );
 };
-
 function MyRoutes() {
   return renderRoutes(routesConfig);
 }
