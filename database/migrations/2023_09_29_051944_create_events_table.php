@@ -23,7 +23,6 @@ return new class extends Migration
             $table->string('status')->default('unactive');
             //status ('unactive','active','end')
             $table->timestamps();
-            $table->foreign('event_creator')->references('id')->on('users');
         });
     }
 

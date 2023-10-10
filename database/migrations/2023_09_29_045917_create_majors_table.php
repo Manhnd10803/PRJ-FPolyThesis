@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('majors', function (Blueprint $table) {
             $table->id();
             $table->string('majors_name');
-            $table->string('majors_code')->unique();
-            $table->text('description');
+            $table->string('majors_code')->unique()->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
         });
     }
