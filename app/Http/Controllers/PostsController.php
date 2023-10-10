@@ -31,7 +31,7 @@ class PostsController extends Controller
             if($request->hasFile('images') ){
                 $image = $request->file('images');
                 if (!$image->isValid() || !in_array($image->getClientOriginalExtension(), ['jpg','jpeg','png'])) {
-                    return redirect()->back()->with('error', 'Tệp tin không hợp lệ. Chỉ chấp nhận tệp tin JPEG , JPG hoặc PNG.');
+                    return response()->json(['error', 'Tệp tin không hợp lệ. Chỉ chấp nhận tệp tin JPEG , JPG hoặc PNG.'],400);
                 }
                 $imagePath = time() . '.' . $image->extension();
                 $image->move(storage_path('app/public'), $imagePath);
@@ -66,7 +66,7 @@ class PostsController extends Controller
                 }
                 $image = $request->file('images');
                 if (!$image->isValid() || !in_array($image->getClientOriginalExtension(), ['jpg','jpeg','png'])) {
-                    return redirect()->back()->with('error', 'Tệp tin không hợp lệ. Chỉ chấp nhận tệp tin JPEG , JPG hoặc PNG.');
+                    return response()->json(['error', 'Tệp tin không hợp lệ. Chỉ chấp nhận tệp tin JPEG , JPG hoặc PNG.'],400);
                 }
                 $imagePath = time() . '.' . $image->extension();
                 $image->move(storage_path('app/public'), $imagePath);
