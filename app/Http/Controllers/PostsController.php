@@ -95,4 +95,12 @@ class PostsController extends Controller
         $post->delete();
         return response()->json(['message' =>'Xóa thành công'] ,200);
     }
+    public function CountLikeInPost(Post $post){
+        $likeCount = $post->likes->count();
+        return response()->json($likeCount);
+     }
+     public function CountCommentInPost(Post $post){
+        $commentCount = $post->comments->count();
+        return response()->json($commentCount);
+     }
 }

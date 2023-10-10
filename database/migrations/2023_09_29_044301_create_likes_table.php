@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('emotion_id');
             $table->unsignedBigInteger('post_id');
             $table->timestamps();
+            $table->unique(['user_id', 'post_id']);
         });
     }
 
