@@ -11,7 +11,7 @@ export default function Header() {
                         "absolute left-8 top-4 md:left-8 md:top-8 text-xl"
                     )}
                 >
-                    Linkedin
+                    Home
                 </Link>
        
     );

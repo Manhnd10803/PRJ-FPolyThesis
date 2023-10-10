@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from './components/Header';
 import SideImage from './components/SideImage';
+import { Toaster } from '@/components/ui/toaster';
 
 export default function AuthLayout(props: { children?: ReactNode }) {
   return (
@@ -10,6 +11,7 @@ export default function AuthLayout(props: { children?: ReactNode }) {
       {props.children}
       <Outlet />
       <SideImage/>
+      <Toaster/>
     </main>
   );
 }
