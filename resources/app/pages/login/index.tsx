@@ -1,6 +1,6 @@
 import { UserAuthFormLogin } from "./components/user-form-login";
 
-export default function AuthenticationPage() {
+export default function LoginPage() {
     return (
         <>
             <div className="lg:p-8">

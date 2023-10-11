@@ -19,7 +19,6 @@ import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useNavigate } from "react-router-dom";
 import { Checkbox } from "@/components/ui/checkbox";
-import LoginGoogle from "./login-google";
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const userAuthFormSchema = z.object({
@@ -45,6 +44,7 @@ type UserAuthFormValues = z.infer<typeof userAuthFormSchema>;
 export function UserAuthFormLogin({ className, ...props }: UserAuthFormProps) {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const { toast } = useToast();
+    const navigate = useNavigate();
     const form = useForm<UserAuthFormValues>({
         resolver: zodResolver(userAuthFormSchema),
     });
@@ -140,8 +140,27 @@ export function UserAuthFormLogin({ className, ...props }: UserAuthFormProps) {
                     </span>
                 </div>
             </div>
-            <LoginGoogle/>
-               
+            <Button
+                onClick={() => {
+                    fetch("http://localhost:8000/api/google-auth", {
+                        mode: "no-cors",
+                    }).then(() => {
+                        window.open(
+                            "https://accounts.google.com/o/oauth2/auth?client_id=667013799420-s3s1c82l9da8vkuif91dkt4mp51qnqg3.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fapi%2Fgoogle-callback&scope=openid+profile+email&response_type=code"
+                        );
+                    });
+                }}
+                variant="outline"
+                type="button"
+                disabled={isLoading}
+            >
+                {isLoading ? (
+                    <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                    <Icons.gitHub className="mr-2 h-4 w-4" />
+                )}{" "}
+                Login width Google
+            </Button>
         </div>
     );
 }

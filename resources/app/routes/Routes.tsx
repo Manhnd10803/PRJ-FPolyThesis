@@ -2,18 +2,18 @@ import { Fragment, Suspense, lazy } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
 import { AdminGuard, AuthGuard } from "@/components/guard";
-import AdminLayout from "@/layouts/admin";
 import AuthLayout from "@/layouts/auth";
-import { RoutesType } from "@/models/IRoutes";
 import Home from "@/pages/Home";
 import { PATH_NAME } from "@/routes/pathName";
 import RoleRoute from "./RoleRoute";
 import MainLayout from "@/layouts/main";
+import { AdminLayout } from "@/layouts/admin-layout";
+import { RoutesType } from "@/models/routes.model";
 
 //==================== Lazy load pages ====================//
 
 const Error404View = lazy(() => import("@/pages/404"));
-const Login = lazy(() => import("@/pages/Login"));
+const Login = lazy(() => import("@/pages/login"));
 const Signup = lazy(() => import("@/pages/Signup"));
 
 // Data routes config for react router dom
