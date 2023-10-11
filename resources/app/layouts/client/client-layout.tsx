@@ -1,8 +1,8 @@
 import { Outlet } from 'react-router-dom';
-import { Sidebar } from './components/sidebar';
 import { Header } from './components/header';
 import { RightSidebar } from './components/right-header';
 import { Footer } from './components/footer';
+import { Sidebar } from './components/sidebar';
 
 export const ClientLayout = () => {
   return (
