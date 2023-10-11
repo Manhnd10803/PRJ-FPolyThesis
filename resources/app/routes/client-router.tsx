@@ -1,5 +1,5 @@
 import { ChatPage } from '@/pages/client/chat';
-import HomePage from '@/pages/client/home';
+import { HomePage } from '@/pages/client/home';
 
 export const ClientRouter = [
   {

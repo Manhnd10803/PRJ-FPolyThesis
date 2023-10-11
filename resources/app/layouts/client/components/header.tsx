@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 const imageUrl = 'https://picsum.photos/50';
 
 //Componets
-import { CustomToggle } from '@/components/shared/custom-toggle';
+import { CustomToggle } from '@/components/custom/custom-toggle';
 // import DropdownMenu from "react-bootstrap/esm/DropdownMenu";
 
 export const Header = () => {
