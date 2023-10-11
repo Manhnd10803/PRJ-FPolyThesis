@@ -1,6 +1,6 @@
-import { UserAuthFormRegister } from "./components/user-form-signup";
+import { UserAuthFormRegister } from "./components/user-form-register";
 
-export default function AuthenticationPage() {
+export default function RegisterPage() {
     return (
         <>
             <div className="lg:p-8">

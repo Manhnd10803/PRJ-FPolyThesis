@@ -1,5 +1,3 @@
-"use client";
-
 import * as z from "zod";
 import {
     Form,
@@ -15,15 +13,19 @@ import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/shared/icon";
-import { toast } from "@/components/ui/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Checkbox } from "@/components/ui/checkbox";
-import images from "@/assets/images";
+import axios from 'axios'; // Thêm thư viện Axios
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 const userAuthFormSchema = z.object({
+    username: z.string({
+        required_error: "Username is required",
+    }),
+
     email: z
         .string({
             required_error: "Email is required",
@@ -31,9 +33,6 @@ const userAuthFormSchema = z.object({
         .email({
             message: "Must be an email",
         }),
-    username: z.string({
-        required_error: "Username is required",
-    }),
     password: z
         .string({
             required_error: "Password is required",
@@ -42,35 +41,42 @@ const userAuthFormSchema = z.object({
         .min(8, {
             message: "Min 8 characters",
         }),
-   
 });
 
 type UserAuthFormValues = z.infer<typeof userAuthFormSchema>;
 
-export function UserAuthFormRegister
-
-({ className, ...props }: UserAuthFormProps) {
+export function UserAuthFormRegister({
+    className,
+    ...props
+}: UserAuthFormProps) {
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
+    const { toast } = useToast();
+    const navigate = useNavigate();
     const form = useForm<UserAuthFormValues>({
         resolver: zodResolver(userAuthFormSchema),
     });
 
-    const onSubmit = (data: UserAuthFormValues) => {
+    const onSubmit = async (data: UserAuthFormValues) => {
         setIsLoading(true);
 
-        setTimeout(() => {
+        try {
+            const response = await axios.post("http://127.0.0.1:8000/api/register", data);
+
+            if (response.status === 201) {
+                setIsLoading(false);
+                toast({
+                    title: "Registration successful",
+                    description: "You have successfully registered.",
+                });
+                navigate('/login'); // Chuyển hướng đến trang đăng nhập sau khi đăng ký thành công.
+            }
+        } catch (error: any) {
             setIsLoading(false);
-        }, 3000);
-        toast({
-            title: "You submitted the following values:",
-            description: (
-                <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-                    <code className="text-white">
-                        {JSON.stringify(data, null, 2)}
-                    </code>
-                </pre>
-            ),
-        });
+            toast({
+                title: "Registration error",
+                description: error.response.data.message,
+            });
+        }
     };
 
     return (
@@ -78,7 +84,7 @@ export function UserAuthFormRegister
             <Form {...form}>
                 <form
                     onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-4"
+                    className="space-y-5"
                 >
                     <FormField
                         control={form.control}
@@ -87,7 +93,7 @@ export function UserAuthFormRegister
                             <FormItem>
                                 <FormLabel>Username</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Username" {...field} />
+                                    <Input placeholder="username" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -126,7 +132,6 @@ export function UserAuthFormRegister
                             </FormItem>
                         )}
                     />
-                    
                     <Link
                         className="underline float-right mt-0 decoration-solid"
                         to="/forgot_password"
@@ -160,14 +165,29 @@ export function UserAuthFormRegister
                     </span>
                 </div>
             </div>
-            <Button variant="outline" className="text-[#2B3674]" type="button">
-                <img
-                    src={images.iconGoogle}
-                    alt="icon"
-                    width={25}
-                    height={25}
-                />{" "}
-                Sign in with Google
+            <Button
+                onClick={() => {
+                    fetch("http://localhost:8000/api/google-auth", {
+                        headers: new Headers({ accept: "application/json" }),
+                    })
+                        .then((response) => {
+                            if (response.ok) {
+                                return response.json();
+                            }
+                            throw new Error("Something went wrong!");
+                        })
+                        .then(({ url }) => window.open(url));
+                }}
+                variant="outline"
+                type="button"
+                disabled={isLoading}
+            >
+                {isLoading ? (
+                    <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                    <Icons.google className="mr-2 h-4 w-4" />
+                )}{" "}
+                Login with Google
             </Button>
         </div>
     );

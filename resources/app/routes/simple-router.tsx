@@ -1,5 +1,5 @@
-import LoginPage from '@/pages/login';
-import { RegisterPage } from '@/pages/register';
+import RegisterPage from '@/pages/Signup';
+import LoginPage from '@/pages/Login';
 
 export const SimpleRouter = [
   {
