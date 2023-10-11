@@ -143,12 +143,15 @@ export function UserAuthFormLogin({ className, ...props }: UserAuthFormProps) {
             <Button
                 onClick={() => {
                     fetch("http://localhost:8000/api/google-auth", {
-                        mode: "no-cors",
-                    }).then(() => {
-                        window.open(
-                            "https://accounts.google.com/o/oauth2/auth?client_id=667013799420-s3s1c82l9da8vkuif91dkt4mp51qnqg3.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A8000%2Fapi%2Fgoogle-callback&scope=openid+profile+email&response_type=code"
-                        );
-                    });
+                        headers: new Headers({ accept: "application/json" }),
+                    })
+                        .then((response) => {
+                            if (response.ok) {
+                                return response.json();
+                            }
+                            throw new Error("Something went wrong!");
+                        })
+                        .then(({ url }) => window.open(url));
                 }}
                 variant="outline"
                 type="button"
@@ -157,7 +160,7 @@ export function UserAuthFormLogin({ className, ...props }: UserAuthFormProps) {
                 {isLoading ? (
                     <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
                 ) : (
-                    <Icons.gitHub className="mr-2 h-4 w-4" />
+                    <Icons.google className="mr-2 h-4 w-4" />
                 )}{" "}
                 Login width Google
             </Button>
