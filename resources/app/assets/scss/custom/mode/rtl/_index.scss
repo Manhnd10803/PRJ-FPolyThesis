@@ -1,0 +1,38 @@
+[dir="rtl"]{
+    @import "./reboot/reboot";
+    @import "./utilities/utilities-reset";
+    @import "./utilities/utilities";
+    @import "../../../bootstrap/utilities/api";
+
+    //menu
+    @import "./menu-style/index";
+
+    //pages
+    @import "./pages/footer";
+    @import "./pages/profile";
+    @import "./pages/group";
+    @import "./pages/chat";
+    @import "./pages/todo";
+    @import "./pages/datepicker";
+    @import "./pages/weather";
+    @import "./pages/calendar";
+    @import "./pages/store";
+    @import "./pages/music";
+    @import "./pages/blog";
+    @import "./pages/email";
+    @import "./pages/pagination";
+    @import "./pages/icons";
+    @import "./pages/auth";
+    @import "./pages/timeline";
+    @import "./pages/alert";
+
+
+    //Imported from components
+    @import "./components/dropdown/dropdown";
+    @import "./components/group/group";
+    @import "./components/form/form-control";
+    @import "./components/button-group/button-group";
+    @import "./components/button-group/btn-fixed";
+    @import "./components/form/form-wizard";
+
+}

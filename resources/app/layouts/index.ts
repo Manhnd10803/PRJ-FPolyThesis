@@ -1,3 +1,3 @@
-export * from './client-layout';
+export * from './client/client-layout';
 
-export * from './admin-layout';
+export * from './admin/admin-layout';

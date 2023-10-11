@@ -20,9 +20,9 @@ class CommentController extends Controller
                 'content' => $content,
             ]);
             $comment->save();
-            return redirect()->back()->with('success', 'Comment added successfully');
+            return response()->json(['success', 'Comment added successfully'],200);
         } else {
-            return redirect()->back()->with('error', 'You must be logged in to comment');
+            return response()->json(['error', 'You must be logged in to comment'],401);
         }
     }
     public function FetchCommentInPost(Post $post){

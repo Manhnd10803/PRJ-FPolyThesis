@@ -1,0 +1,35 @@
+@each $color in $colors-name {
+    .alert-#{$color} {
+        color: var(--#{$variable-prefix}#{$color}-shade-20);
+        background: var(--#{$variable-prefix}#{$color}-tint-40);
+        border-color: var(--#{$variable-prefix}#{$color});
+        .alert-link {
+            color: var(--#{$variable-prefix}#{$color}-shade-40);
+        }
+        &.alert-solid {
+            color: var(--#{$variable-prefix}white);
+            background: var(--#{$variable-prefix}#{$color});
+            border-color: var(--#{$variable-prefix}#{$color});
+        }
+    }
+    .alert-left {
+        &.alert-#{$color} {
+            border-color: var(--#{$variable-prefix}#{$color});
+        }
+    }
+    .alert-top {
+        &.alert-#{$color} {
+            border-color: var(--#{$variable-prefix}#{$color});
+        }
+    }
+    .alert-right {
+        &.alert-#{$color} {
+            border-color: var(--#{$variable-prefix}#{$color});
+        }
+    }
+    .alert-bottom {
+        &.alert-#{$color} {
+            border-color: var(--#{$variable-prefix}#{$color});
+        }
+    }
+}

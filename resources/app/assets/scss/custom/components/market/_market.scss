@@ -1,0 +1,36 @@
+.hr-horizontal {
+    border-top: unset;
+    height: 1px;
+    background: transparent;
+    margin: 0.5rem 0;
+    background-image: -webkit-gradient(linear, left top, right top, from(transparent), color-stop(rgba(0, 0, 0, 0.4)), to(transparent));
+    background-image: -webkit-linear-gradient(left, transparent, rgba(0, 0, 0, 0.4), transparent);
+    background-image: -o-linear-gradient(left, transparent, rgba(0, 0, 0, 0.4), transparent);
+    background-image: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.4), transparent);
+}
+.cardnavbar{
+    border-radius: 30px;
+}
+
+.nav-rounded{
+    .nav-item{
+        .nav-link{
+            padding: 1rem;
+            border-radius: 50rem;
+        }
+    }
+}
+.card{
+    &.cardhover{
+        border: 2px solid transparent;
+        transition: all 150ms ease;
+    }
+}
+.card{
+    &.cardhover:hover{
+        border:2px solid var(--bs-primary);
+        border-color:var(--bs-primary);
+        transition: all 150ms ease;
+    }
+
+}

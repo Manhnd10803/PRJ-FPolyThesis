@@ -1,0 +1,55 @@
+
+.blog-grid.blog-single{
+    .blog-description{
+        h5{
+            text-align: right;
+        }
+    }
+
+}
+
+.blog-grid{
+    .blog-description{
+        h5{
+            text-align: center;
+        }
+    }
+}
+
+.blog-description{
+    .position-right-side{
+        div{
+            i{
+                float: right;
+            }
+        }
+        div.comments{
+            i{
+                float: none;
+            }
+        }
+    }
+}
+
+.blog-list.list-even{
+    .blog-description {
+        right: auto;
+        left: 0.127rem;
+        text-align: left;
+    }
+    h5,p{
+        text-align: left;
+    }
+} 
+
+.blog-detail, .blog{
+    .blog-description{
+        .position-right-side{
+            div, .comments{
+                i{
+                    float: right;
+                }
+            }
+        }
+    }
+}

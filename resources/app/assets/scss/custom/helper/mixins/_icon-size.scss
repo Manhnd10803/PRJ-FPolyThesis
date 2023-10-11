@@ -1,0 +1,6 @@
+@use "sass:math";
+
+@mixin icons ($value, $radius: 0) {
+    $value_rem: math.div($value,16);
+    font-size: $value_rem + rem !important;
+}

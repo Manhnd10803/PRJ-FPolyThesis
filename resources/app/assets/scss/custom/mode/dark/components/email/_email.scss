@@ -1,0 +1,76 @@
+.iq-email-listbox {
+	.iq-email-sender-list {
+		& > li {
+			.iq-unread-inner {
+                border-color: $border-color;
+			}
+            &:hover {
+                background: $body-bg;
+            }
+            .iq-social-media {
+                background: $body-bg;
+            }
+		}
+	}
+}
+.email-app-details {
+    background-color: $card-bg;
+}
+li {
+    .iq-email-sender-info {
+        .iq-email-title {
+            color: $body-color;
+        }
+        .iq-star-toggle {
+            color: $body-color;
+        }
+    }
+    .iq-email-content {
+        .iq-email-subject {
+            color: $body-color;
+        }
+        .iq-email-date {
+            color: $body-color;
+        }
+    }
+    &:hover {
+        .iq-email-sender-info {
+            .iq-email-title {
+                color: var(--bs-primary);
+            }
+            .iq-star-toggle {
+                color: var(--bs-primary);
+            }
+        }
+        .iq-email-content {
+            .iq-email-subject {
+                color: var(--bs-primary);
+            }
+            .iq-email-date {
+                color: var(--bs-primary);
+            }
+        } 
+    }
+}
+
+.iq-email-list {
+	.iq-email-ui {
+		a { 
+            color: $body-color;
+
+            &:hover {
+                color: var(--bs-primary);
+            }
+		}
+	}
+}
+.select2-container--default {
+	.select2-selection--multiple {
+        background-color: $card-bg;
+        border-color: $border-color;
+	}
+}
+
+.email-app-details {
+    background-color: transparent;
+}

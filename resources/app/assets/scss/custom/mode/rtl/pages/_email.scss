@@ -1,0 +1,89 @@
+.iq-email-search {
+	.form-control {
+		padding-left: 2rem;
+		padding-right: .75rem;
+	}
+	 .search-link {
+		left: 0.538rem;
+        right:unset;
+    }
+}
+
+.iq-email-content {
+	right: 18.75rem;
+	left: 0;
+	.iq-email-date {
+		left: 1.25rem;
+        right:unset;
+		text-align: left;
+		padding-right: 0.625rem;
+        padding-left: unset;
+	}
+	.iq-email-subject {
+		right: 0;
+		left: 6.875rem;
+	}
+}
+
+.iq-email-sender-info {
+	.iq-checkbox-mail {
+		float: right;
+	}
+	.iq-star-toggle {
+		float: right;
+		margin-right: 0.625rem;
+        margin-left: unset;
+	}
+	.iq-email-title {
+		right: 5.313rem;
+		left: 0;
+	}
+}
+
+.iq-email-listbox {
+	.iq-email-sender-list {
+		li {
+			&:hover {
+				.iq-social-media {
+					left: -1.25rem;
+                    right: unset;
+				}
+			}
+		}
+	}
+}
+
+.iq-email-sender-list {
+	.iq-social-media {
+		left: -14.688rem;
+        right: unset;
+    }
+}
+
+.email-app-details {
+    -webkit-transform: translateX(-100%);
+    -ms-transform: translateX(-100%);
+    transform: translateX(-100%);
+    right: auto;
+    left: 0;
+    &.show{
+        visibility: visible;
+        opacity: 1;
+        -webkit-transform: translateX(0);
+        -ms-transform: translateX(0);
+        transform: translateX(0);
+    }
+}
+
+.iq-subject-status {
+    margin-left: unset;
+    margin-right: 0.938rem;
+}
+
+.iq-email-list{
+    .iq-email-ui i {
+        margin-left: 0.625rem;
+        margin-right: unset;
+        float: right;
+    }
+} 

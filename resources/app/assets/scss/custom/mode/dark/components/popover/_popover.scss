@@ -1,0 +1,25 @@
+.popover-header {
+    background-color: $border-color;
+    border-bottom: 1px solid $card-bg;
+}
+.popover {
+    background-color: $border-color;
+}
+
+.bs-popover-end>.popover-arrow::after, .bs-popover-auto[data-popper-placement^="right"]>.popover-arrow::after {
+    border-right-color:  $card-bg;
+}
+
+.bs-popover-top>.popover-arrow::after, .bs-popover-auto[data-popper-placement^="top"]>.popover-arrow::after {
+    border-top-color:  $card-bg;
+}
+
+.bs-popover-bottom>.popover-arrow::after, .bs-popover-auto[data-popper-placement^="bottom"]>.popover-arrow::after {
+    border-bottom-color: $card-bg;
+}
+.bs-popover-start>.popover-arrow::after, .bs-popover-auto[data-popper-placement^="left"]>.popover-arrow::after {
+    border-left-color: $card-bg;
+}
+.popover-body {
+    color: $body-color;
+}

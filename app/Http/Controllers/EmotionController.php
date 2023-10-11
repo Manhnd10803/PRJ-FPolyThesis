@@ -13,7 +13,7 @@ class EmotionController extends Controller
        try{
         $icon = $request->file('images');
         if(!$icon->isValid() || !in_array($icon->getClientOriginalExtension(),['jpg','jpeg','png','gif'])){
-            return response()->json('error', 'Tệp tin không hợp lệ. Chỉ chấp nhận tệp tin JPEG , JPG hoặc PNG.');
+            return response()->json(['error', 'Tệp tin không hợp lệ. Chỉ chấp nhận tệp tin JPEG , JPG hoặc PNG.'],400);
         }
         $iconPath = time() . '.' . $icon->extension();
         $icon->move(storage_path('app/public'),$iconPath);

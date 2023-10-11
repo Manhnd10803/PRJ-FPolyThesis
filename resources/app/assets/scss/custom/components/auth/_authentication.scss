@@ -1,0 +1,183 @@
+.sign-in-detail {
+	color: $white;
+	padding: 6.25rem;
+	height: 100vh;
+}
+.sign-in-page {
+	height: 100vh;
+	background: var(--bs-primary);
+	background: rgba(var(--bs-primary-rgb),.8);
+	background: -moz-linear-gradient(-45deg, rgba(var(--bs-primary-rgb),.8) 0%, var(--bs-primary) 100%);
+	background: -webkit-linear-gradient(-45deg, rgba(var(--bs-primary-rgb),.8) 0%, var(--bs-primary) 100%);
+	background: linear-gradient(135deg, rgba(var(--bs-primary-rgb),.8) 0%, var(--bs-primary) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='rgba(var(--bs-primary-rgb),.8)', endColorstr='var(--bs-primary)', GradientType=1);
+	position: relative;
+	overflow: hidden;
+	height: 100vh;
+	width: 100%;
+	margin: 0rem auto;
+	padding: 0rem auto;
+	.container {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+	}
+}
+.sign-in-logo {
+	display: inline-block;
+	width: 100%;
+	img {
+		height: 3.125rem;
+	}
+}
+.sign-in-from {
+	padding: 0 3.75rem;
+}
+.sign-info {
+	border-top: 1px solid $border-color;
+	margin-top: 1.875rem;
+	padding-top: 1.25rem;
+}
+.iq-social-media {
+	margin: 0;
+	padding: 0;
+	float: right;
+	li {
+		list-style: none;
+		float: left;
+		margin-right: 0.625rem;
+		&:last-child {
+			margin-right: 0;
+		}
+		a {
+			height: 1.875rem;
+			width: 1.875rem;
+			text-align: center;
+			font-size: 1.125rem;
+			line-height: 1.875rem;
+			display: inline-block;
+			background:rgba(var(--bs-primary-rgb),.2);;
+			color: var(--bs-primary) !important;
+            @if $enable-rounded == true {
+                @include radius-mixin($border-radius);
+            }
+			&:hover {
+				text-decoration: none;
+			}
+		}
+	}
+}
+#container-inside {
+	position: relative;
+    height: 100vh;
+    width: 100vw;
+    margin: 0px auto;
+    padding: 0px auto;
+    overflow: visible;
+}
+#circle-small {
+	-webkit-animation: circle-small-scale 3s ease-in-out infinite alternate;
+	animation: circle-small-scale 3s ease-in-out infinite alternate;
+	animation-timing-function: cubic-bezier(.6, 0, .4, 1);
+	animation-delay: 0s;
+	position: absolute;
+	top: 12.5rem;
+	left: -9.375rem;
+	background: $white;
+	width: 18.75rem;
+	height: 18.75rem;
+	@if $enable-rounded == true {
+		@include radius-mixin($border-radius-pill);
+	}
+	opacity: 0.4;
+}
+#circle-medium {
+	-webkit-animation: circle-small-scale 3s ease-in-out infinite alternate;
+	animation: circle-small-scale 3s ease-in-out infinite alternate;
+	animation-timing-function: cubic-bezier(.6, 0, .4, 1);
+	animation-delay: 0.3s;
+	position: absolute;
+	top: 3.125rem;
+	left: -18.75rem;
+	background: $white;
+	width: 37.5rem;
+	height: 37.5rem;
+	@if $enable-rounded == true {
+		@include radius-mixin($border-radius-pill);
+	}
+	opacity: 0.3;
+}
+#circle-large {
+	-webkit-animation: circle-small-scale 3s ease-in-out infinite alternate;
+	animation: circle-small-scale 3s ease-in-out infinite alternate;
+	animation-timing-function: cubic-bezier(.6, 0, .4, 1);
+	animation-delay: 0.6s;
+	position: absolute;
+	top: -6.25rem;
+	left: -28.125rem;
+	background: $white;
+	width: 56.25rem;
+	height: 56.25rem;
+	@if $enable-rounded == true {
+		@include radius-mixin($border-radius-pill);
+	}
+	opacity: 0.2;
+}
+#circle-xlarge {
+	-webkit-animation: circle-small-scale 3s ease-in-out infinite alternate;
+	animation: circle-small-scale 3s ease-in-out infinite alternate;
+	animation-timing-function: cubic-bezier(.6, 0, .4, 1);
+	animation-delay: 0.9s;
+	position: absolute;
+	top: -15.625rem;
+	left: -37.5rem;
+	background: $white;
+	width: 75rem;
+	height: 75rem;
+	@if $enable-rounded == true {
+		@include radius-mixin($border-radius-pill);
+	}
+	opacity: 0.1;
+}
+#circle-xxlarge {
+	-webkit-animation: circle-small-scale 3s ease-in-out infinite alternate;
+	animation: circle-small-scale 3s ease-in-out infinite alternate;
+	animation-timing-function: cubic-bezier(.6, 0, .4, 1);
+	animation-delay: 1.2s;
+	position: absolute;
+	top: -25rem;
+	left: -46.875rem;
+	background: $white;
+	width: 93.75rem;
+	height: 93.75rem;
+	@if $enable-rounded == true {
+		@include radius-mixin($border-radius-pill);
+	}
+	opacity: 0.05;
+}
+
+@include media-breakpoint-down(lg) {
+    .sign-in-page {
+        overflow-y: scroll;
+    }
+    .sign-in-detail {
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+    }
+}
+@include media-breakpoint-down(md) {
+    .sign-in-detail {
+        padding: 3.125rem 1.25rem;
+    }
+}
+
+@-webkit-keyframes circle-small-scale {
+    0% { -webkit-transform: scale(1.0); }
+    100% { -webkit-transform: scale(1.1); }
+}
+@keyframes circle-small-scale {
+    0% { transform: scale(1.0); }
+    100% { transform: scale(1.1); }
+}

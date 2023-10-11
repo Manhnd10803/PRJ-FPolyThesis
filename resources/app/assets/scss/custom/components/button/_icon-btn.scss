@@ -1,0 +1,144 @@
+.btn {
+    .btn-inner{
+        i:not(.fas):not(.fab) {
+            position: relative;
+            top: 0.125rem;
+        }
+        svg{
+            position: relative;
+            top: -0.125rem;
+            width: 1.5rem;
+        }
+    }
+}
+
+
+.btn-sm {
+    .btn-inner{
+        svg{
+            width: 1.25rem;
+        }
+    }
+}
+.btn-xs {
+    .btn-inner{
+        svg{
+            width: 1rem;
+        }
+    }
+}
+
+.btn-lg {
+    .btn-inner{
+        svg{
+            width: 2rem;
+        }
+    }
+    &.btn-icon {
+        .btn-inner {
+            svg {
+                top: 0;
+            }
+        }
+    }
+}
+//button//
+.bd-example {
+	>.btn {
+		margin: .25rem .125rem;
+	}
+	>.btn-group {
+		margin: .25rem .125rem;
+	}
+}
+
+.btn-setting {
+    padding: $spacer * .5;
+    z-index: $zindex-general + 100;
+    top: 50%;
+}
+.btn-fixed-end {
+    position: fixed;
+    right: 0;
+}
+
+.animated-rotate {
+    animation: animRotate 8s 0s ease-in-out infinite;
+}
+@keyframes animRotate {
+    0% {transform: rotate(0deg);}
+    100% {transform: rotate(360deg);}
+}
+
+$btn-icon-width:      2.5rem !default;
+$btn-icon-height:      2.5rem !default;
+
+$btn-icon-width-sm:      1.875rem !default;
+$btn-icon-height-sm:      1.875rem !default;
+
+$btn-icon-width-lg:      3rem !default;
+$btn-icon-height-lg:      3rem !default;
+.btn-icon {
+    height: $btn-icon-height;
+    width: $btn-icon-width;
+    padding: 0;
+    text-align: center;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+   &.btn{
+        .btn-inner{
+            display: inline-flex;
+            svg{
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+        }
+    }
+    &.btn-sm {
+        height: $btn-icon-height-sm;
+        width: $btn-icon-width-sm;
+        padding: 0;
+        text-align: center;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        .btn-inner{
+            svg{
+                width: 1rem;
+                height: 1rem;
+            }
+        }
+    }
+    &.btn-lg {
+        height: $btn-icon-height-lg;
+        width: $btn-icon-width-lg;
+        padding: 0;
+        text-align: center;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        .btn-inner{
+            svg{
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+        }   
+    }
+}
+
+.btn-setting {
+    padding: $spacer * .5;
+    z-index: $zindex-general + 100;
+    top: 50%;
+}
+
+.customizer-btn{
+    transform: rotate(-45deg);
+}
+
+@include media-breakpoint-down(lg) {
+    .btn-setting {
+        top: 75%;
+    } 
+}

@@ -1,0 +1,46 @@
+.table-responsive{
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    #exampleInputSearch {
+        width: auto;
+    }
+} 
+.table {
+    thead {
+      th {
+          text-transform: uppercase;
+          border: 0;
+      }  
+    }   
+}
+.table.forum-table{
+    overflow: hidden;
+}
+.table.forum-table>:not(caption)>*>* {
+    padding: $spacer;
+}
+
+.forum-table.table>:not(:first-child) {
+    border-top: 0px solid currentColor;
+}
+@include media-breakpoint-down(md) {
+    .table-responsive {
+        #exampleInputSearch {
+            width: 100%;
+        }
+    }
+    .user-list-files.d-flex {
+        display: block !important;
+        text-align: center;
+        margin-top: 1.875rem;
+        width: 100%;
+    }
+    .table {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 1rem;
+        display: block;
+        overflow-x: auto;
+    }
+}

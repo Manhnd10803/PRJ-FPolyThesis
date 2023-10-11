@@ -1,0 +1,14 @@
+.btn-border{
+    &.active{
+        border-color: var(--#{$variable-prefix}primary);
+    }
+}
+.btn-check:checked+.btn-outline-primary,
+.btn-check:active+.btn-outline-primary,
+.btn-outline-primary:active,
+.btn-outline-primary.active,
+.btn-outline-primary.dropdown-toggle.show{
+    background-color: var(--#{$variable-prefix}primary);
+    color: $white;
+    border-color: var(--#{$variable-prefix}primary);
+}

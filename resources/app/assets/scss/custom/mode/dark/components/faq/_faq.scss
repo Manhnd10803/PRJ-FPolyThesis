@@ -1,0 +1,32 @@
+.accordion-item {
+	background: $card-bg;
+	.accordion-button {
+		background: $card-bg;
+		color: $body-color;
+	}
+}
+.accordion-item {
+    .accordion-body{
+        p{
+            color: $body-color;
+        }
+    }
+}
+
+
+.accordion{
+    .accordion-item{
+        .accordion-header{
+            .accordion-button{
+                background-color: $card-bg;
+                &:not(.collapsed){
+                    color: var(--#{$variable-prefix}primary-shade-20);
+        			background-color: var(--#{$variable-prefix}primary-shade-60);
+                }
+                &:focus{
+                    box-shadow: unset;
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,82 @@
+.scroller {
+	overflow-y: auto;
+	scrollbar-color: var(--#{$variable-prefix}primary) rgba(var(--#{$variable-prefix}primary-rgb), .2);
+	scrollbar-width: thin;
+	&::-webkit-scrollbar-thumb {
+		background-color: var(--#{$variable-prefix}primary);
+	}
+	&::-webkit-scrollbar-track {
+		background-color:rgba(var(--#{$variable-prefix}primary-rgb), .2);
+	}
+}
+::-webkit-scrollbar {
+	width: 0.5rem;
+	height: 0.5rem;
+	@if $enable-rounded == true {
+		@include radius-mixin(20px);
+	}
+}
+::-webkit-scrollbar-track {
+	background: $border-color;
+	@if $enable-rounded == true {
+		@include radius-mixin(20px);
+	}
+}
+::-webkit-scrollbar-thumb {
+	background: $secondary;
+	@if $enable-rounded == true {
+		@include radius-mixin(20px);
+	}
+	&:hover {
+		background: $dark;
+		@if $enable-rounded == true {
+			@include radius-mixin(20px);
+		}
+
+    }
+}
+
+.content-page {
+    overflow: hidden;
+    padding:1rem .5rem 0rem .5rem;
+    min-height: 100vh;
+	@if $enable-transitions == true {
+		@include transition-mixin(all 0.3s ease-in-out);
+	}
+}
+/*file*/ 
+.list-user-action a {
+    font-size: 1rem;
+    height: 1.563rem;
+    width: 1.563rem;
+    text-align: center;
+    line-height: 1.563rem;
+    margin: 0 0.188rem;
+    display: inline-block;
+    @if $enable-rounded == true {
+		@include radius-mixin($border-radius);
+	}
+}
+.user-list-files a {
+    padding: 0.625rem 0.938rem;
+    margin: 0 0 0 0.625rem;
+	@if $enable-rounded == true {
+		@include radius-mixin($border-radius);
+	}
+    line-height: normal;
+}
+@media (min-width:1200px) {
+	.container, .container-lg, .container-md, .container-sm, .container-xl { max-width: 62.5rem; }
+}
+@include media-breakpoint-down(md) {
+	.iq-birthday-block .d-flex {
+		display: block !important;
+		text-align: center;
+		margin:0.625rem 0;
+	}
+}
+@include media-breakpoint-down(sm) {
+	.toast {
+		width: auto;
+	}
+}

@@ -1,0 +1,70 @@
+.profile-feed-items {
+	li {
+		a {
+			&.nav-link {
+                color: $body-color;
+			}
+            &:hover {
+                color: var(--#{$variable-prefix}primary);
+            }
+            &.active {
+                color: $white;
+            }
+		}
+	}
+}
+.friend-list-items {
+	&.nav-pills {
+		.nav-link {
+			&.active {
+                color: $light;
+			}
+		}
+	}
+}
+.feather-icon {
+    a {
+        color: $body-color;
+    }
+}
+.comment-attagement {
+    a {
+        color: $body-color; 
+    }
+}
+ul {
+	&.request-list {
+		& > li {
+            border-color: $border-color;
+		}
+	}
+}
+.forum-content {
+    p {
+        span {
+            &.text-dark {
+                color: $light !important;
+            }
+        }
+    }
+}
+ul{
+    &.media-story{
+        li>{
+            i{
+                border-color: rgba($white,.1);
+            }
+        }
+    }
+}
+.header-for-bg {
+	.data-block {
+		background:$body-dark;
+	}
+}
+img.img-fluid.iq-error-img{
+    filter: invert(100);
+}
+img.job-icon.market-job-icon{
+    filter: invert(1);
+}

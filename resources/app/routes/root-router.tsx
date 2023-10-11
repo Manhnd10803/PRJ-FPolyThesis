@@ -1,5 +1,4 @@
-import { AdminLayout } from '@/layouts/admin-layout';
-import { ClientLayout } from '@/layouts/';
+import { AdminLayout, ClientLayout } from '@/layouts/';
 import { AdminRouter } from './admin-router';
 import { ClientRouter } from './client-router';
 import { LoginPage } from '@/pages/login';

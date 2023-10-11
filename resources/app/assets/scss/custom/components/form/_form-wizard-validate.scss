@@ -1,0 +1,83 @@
+.stepwizard-row {
+
+    a {
+        &.btn {
+            background: $white;
+            color: $body-color;
+            font-size: 1.125rem;
+            font-weight: 400;
+            display: block;
+            width: 20%;
+            padding: 3.125rem 0.938rem;
+            margin: 0.625rem 1.25rem;
+            text-decoration: none;
+            border: 1px solid rgba(var(--#{$variable-prefix}primary-rgb),0.2);
+            @if $enable-rounded == true {
+                @include radius-mixin($border-radius);
+            }  
+        }
+        i {
+            display: block;
+            text-align: center;
+            height: 4.063rem;
+            width: 4.063rem;
+            line-height: 4.063rem;
+            font-size: 1.563rem;
+            margin: 0 auto 1.25rem;
+            background-color: rgba(var(--#{$variable-prefix}primary-rgb),0.2);
+            color: var(--#{$variable-prefix}primary);
+            @if $enable-rounded == true {
+                @include radius-mixin($border-radius-pill);
+            } 
+        }
+    }
+    &.active {
+        a {
+            background-color: rgba(var(--#{$variable-prefix}primary-rgb),0.2);  
+            border-color: var(--#{$variable-prefix}primary);
+
+            i {
+                background-color: $white;
+            }
+        }
+    }
+    #document {
+        &.active {
+            background-color: rgba($danger,0.2);  
+            border-color: $danger; 
+        }
+    }
+    #bank {
+        &.active {
+            background-color: rgba($success,0.2);  
+            border-color: $success; 
+        }
+    }
+    #confirm {
+        &.active {
+            background-color: rgba($warning,0.2);  
+            border-color: $warning; 
+        }
+    }
+}
+.setup-content {
+    margin-top: 3.75rem;
+}
+@include media-breakpoint-down(lg) {
+    .stepwizard-row {
+        a {
+            &.btn {
+                width: 44%;
+            }
+        }
+    }
+}
+@include media-breakpoint-down(md) {
+    .stepwizard-row {
+        a {
+            &.btn {
+                width: 100%;
+            }
+        }
+    }
+}

@@ -1,0 +1,15 @@
+.form-check-input{
+    &:checked{
+        border-color: var(--#{$variable-prefix}primary-shade-20);
+        background-color: var(--#{$variable-prefix}primary-shade-20);
+    }
+    &:focus{
+        border-color: var(--#{$variable-prefix}primary-shade-20);
+    }
+}
+
+@each $color in $colors-name {
+    .border-#{$color}{
+        border-color: var(--#{$variable-prefix}#{$color}) !important;
+    }
+}

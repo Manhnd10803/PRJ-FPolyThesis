@@ -1,0 +1,18 @@
+.post{
+    position: relative;
+    background: linear-gradient(183deg, rgba(195,42,71,0.7091211484593838) 35%, rgba(195,42,71,0.3757878151260504) 100%);
+    
+}
+
+  .post .data {
+    position: absolute;
+    top: 80px;
+    right: 200px;
+    color: white;
+    overflow: hidden;
+    font-weight: bold;
+    text-align: center;
+    font-size: 30px;
+  }
+
+  

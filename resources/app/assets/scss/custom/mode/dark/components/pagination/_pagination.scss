@@ -1,0 +1,55 @@
+.page-item {
+	&.active {
+		.page-link {
+            z-index: 3;
+            color: $white;
+            background-color: var(--#{$variable-prefix}primary);
+            border-color: $secondary;
+        }
+    }
+} 
+.page-item {
+    .page-link {
+        background-color: $card-bg;
+        border-color: $secondary;
+        color: $body-color;
+            &.disabled {
+                .page-link {
+                background-color: $body-bg;
+            }
+        }
+    }
+}
+.list-group{
+    .list-group-item{
+        &:not(.list-group-item-action){
+            color: $body-color;
+        }
+        &.list-group-item-action{
+            &:not(.active){
+                background-color: $body-bg;
+                color: $white;
+            }
+        }
+        border-color: $border-color;
+    }
+}
+.bg-light {
+    background: $dark !important;
+}
+@each $state, $value in $theme-colors {
+    .list-group{
+        .list-group-item{
+            &.list-group-item-action{
+                &.list-group-item-#{$state} {
+                    background-color: rgba($value,10%);
+                    color: $white;
+                    &:hover{
+                        background-color: rgba($value,5%);
+                        color: $value;
+                    }
+                }
+            }
+        }
+    }
+}

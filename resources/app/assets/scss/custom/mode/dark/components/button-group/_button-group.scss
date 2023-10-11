@@ -1,0 +1,5 @@
+.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+    color: $white;
+    background-color: $border-color;
+    border-color: $border-color $border-color $white;
+}

@@ -1,0 +1,71 @@
+.profile-pic {
+	max-width: 100%;
+	display: block;
+	border-radius: 50%;
+	-webkit-border-radius: 50%;
+}
+.profile-img-edit {
+	position: relative;
+	display: inline-block;
+	height: 150px;
+	width: 150px;
+}
+.file-upload {
+	display: none;
+}
+.p-image {
+	position: absolute;
+	top: auto;
+	right: 8px;
+	bottom: 10px;
+	transition: all .3s cubic-bezier(.175, .885, .32, 1.275);
+	background: var(--#{$variable-prefix}primary);
+	color: $white;
+	border-radius: 50%;
+	height: 30px;
+	width: 30px;
+	line-height: 28px;
+	text-align: center;
+	font-size: 12px;
+	cursor: pointer;
+}
+.upload-button {
+	font-size: 1.5em;
+}
+.iq-edit-profile {
+	.nav-link {
+		padding: 20px 15px;
+		border-radius: 0;
+		color: var(--iq-body-text);
+		text-align: center;
+		font-size: 16px;
+		border-left: 1px solid var(--iq-light-primary);
+	}
+}
+.iq-edit-profile.nav-pills {
+	.nav-link.active {
+		color: $white;
+		background: var(--#{$variable-prefix}primary);
+	}
+	.show {
+		>.nav-link {
+			color: $white;
+			background: var(--#{$variable-prefix}primary);
+		}
+	}
+}
+ul.iq-edit-profile {
+	li {
+		&:first-child {
+			a {
+				border-radius: 5px 0 0 5px;
+				border-left: none;
+			}
+		}
+		&:last-child {
+			a {
+				border-radius: 0 5px 5px 0;
+			}
+		}
+	}
+}

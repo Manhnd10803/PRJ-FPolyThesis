@@ -1,0 +1,11 @@
+.dropdown-menu{
+    text-align:right;
+}
+
+.dropdown-menu.dropdown-menu-right{
+    .dropdown-item{
+        i{
+            float: right;
+        }
+    }
+}

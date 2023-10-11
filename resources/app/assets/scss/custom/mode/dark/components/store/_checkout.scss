@@ -1,0 +1,41 @@
+.checkout-product {
+	a {
+		&.text-dark{
+			color: $body-color !important;
+		}
+	}
+}
+#quantity {
+	color: $body-color;
+	background: $body-bg;
+	border-color: $border-color;
+}
+button {
+	&.qty-btn {
+		color: $body-color;
+		background: $body-bg;
+		border-color: $border-color;
+	}
+}
+.cart-card-block {
+	span {
+		&.text-dark {
+			color: $body-color !important;
+		}
+	}
+}
+.iq-checkout-policy {
+	ul {
+		li {
+			border-color: $border-color;
+		}
+	}
+}
+.quantity.buttons_added .minus{
+	color: $body-color;
+	background-color: $body-dark;
+}
+.quantity.buttons_added .plus{
+	color: $body-color;
+	background-color: $body-dark;
+}

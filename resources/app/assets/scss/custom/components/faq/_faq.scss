@@ -1,0 +1,13 @@
+.accordion-item {
+	background: $white;
+	border: 0;
+	@if $enable-rounded == true {
+		@include radius-mixin($border-radius);
+	}
+	&:not(:first-of-type) {
+		border: 0;
+	}
+	.accordion-button {
+		background: $white;
+	}
+}
