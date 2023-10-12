@@ -1,6 +1,5 @@
-import { CustomToggle } from '@/components/custom';
 import { useState } from 'react';
-import { Card, Dropdown, Modal, Nav, Tab } from 'react-bootstrap';
+import { Card, Dropdown, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { TabsCreatePost } from './tabs-create-post';
 

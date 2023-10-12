@@ -64,7 +64,7 @@ export const CreateFeed = () => {
                 <span className="btn btn-primary">Friend</span>
               </Dropdown.Toggle>
               <Dropdown.Menu className=" m-0 p-0">
-                <Dropdown.Item className=" p-3" to="#">
+                <Dropdown.Item className=" p-3" href="#">
                   <div className="d-flex align-items-top">
                     <i className="ri-save-line h4"></i>
                     <div className="data ms-2">
@@ -73,7 +73,7 @@ export const CreateFeed = () => {
                     </div>
                   </div>
                 </Dropdown.Item>
-                <Dropdown.Item className="p-3" to="#">
+                <Dropdown.Item className="p-3" href="#">
                   <div className="d-flex align-items-top">
                     <i className="ri-close-circle-line h4"></i>
                     <div className="data ms-2">
@@ -82,7 +82,7 @@ export const CreateFeed = () => {
                     </div>
                   </div>
                 </Dropdown.Item>
-                <Dropdown.Item className=" p-3" to="#">
+                <Dropdown.Item className=" p-3" href="#">
                   <div className="d-flex align-items-top">
                     <i className="ri-user-unfollow-line h4"></i>
                     <div className="data ms-2">
@@ -91,7 +91,7 @@ export const CreateFeed = () => {
                     </div>
                   </div>
                 </Dropdown.Item>
-                <Dropdown.Item className=" p-3" to="#">
+                <Dropdown.Item className=" p-3" href="#">
                   <div className="d-flex align-items-top">
                     <i className="ri-notification-line h4"></i>
                     <div className="data ms-2">

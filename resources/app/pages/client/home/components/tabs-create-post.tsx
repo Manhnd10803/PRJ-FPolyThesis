@@ -18,5 +18,5 @@ const tabsConfig = [
 ];
 
 export const TabsCreatePost = () => {
-  return <CustomTabs tabsConfig={tabsConfig} defaultActiveKey={'Profile'} />;
+  return <CustomTabs tabsConfig={tabsConfig} defaultActiveKey={'News Feed'} />;
 };
