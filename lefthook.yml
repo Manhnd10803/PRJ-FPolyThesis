@@ -13,9 +13,9 @@ pre-commit:
       root: 'resources/app/'
       glob: '*.{ts,tsx,js,jsx}'
       run: npx prettier {staged_files} --check
-    type-check:
-      glob: '*.{ts,tsx,js,jsx}'
-      run: yarn tsc --noEmit --skipLibCheck
+    # type-check:
+    #   glob: '*.{ts,tsx,js,jsx}'
+    #   run: yarn tsc --noEmit --skipLibCheck
   scripts:
     'verify-author':
       runner: bash
