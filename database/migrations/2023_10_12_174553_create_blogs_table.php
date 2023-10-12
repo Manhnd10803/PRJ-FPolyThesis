@@ -11,15 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('likes', function (Blueprint $table) {
+        Schema::create('blogs', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->string('emotion');
-            $table->unsignedBigInteger('post_id')->default(null);
-            $table->unsignedBigInteger('blog_id')->default(null);
-            $table->unsignedBigInteger('qa_id')->default(null);
+            $table->string('title');
+            $table->text('content');
+            $table->string('thumbnail');
+            $table->unsignedBigInteger('majors_id');
+            $table->string('hashtag')->nullable();
+            $table->integer('views')->default(0);
             $table->timestamps();
-            $table->unique(['user_id', 'post_id']);
         });
     }
 
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('likes');
+        Schema::dropIfExists('blogs');
     }
 };

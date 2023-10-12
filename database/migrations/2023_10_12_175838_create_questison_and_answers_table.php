@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('comments', function (Blueprint $table) {
+        Schema::create('questison_and_answers', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
+            $table->string('title');
             $table->text('content');
-            $table->unsignedBigInteger('parent_id');
-            $table->unsignedBigInteger('post_id')->default(null);
-            $table->unsignedBigInteger('blog_id')->default(null);
-            $table->unsignedBigInteger('qa_id')->default(null);
+            $table->unsignedBigInteger('majors_id');
+            $table->string('hashtag')->nullable();
+            $table->integer('views')->default(0);
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('comments');
+        Schema::dropIfExists('questison_and_answers');
     }
 };

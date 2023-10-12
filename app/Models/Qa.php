@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Post extends Model
+class Qa extends Model
 {
     use HasFactory;
-    protected $fillable =[
-        'user_id','content','feeling','image','hashtag','status','views'
+    protected $fillable = [
+    'title','content','majors_id','hashtag','views'
     ];
     public function likes()
 {
