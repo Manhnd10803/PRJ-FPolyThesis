@@ -11,7 +11,7 @@ import { CustomToggle } from '@/components/custom/custom-toggle';
 
 export const Header = () => {
   const minisidebar = () => {
-    document.getElementsByTagName('ASIDE')[0].classList.toggle('sidebar-mini');
+    (document.getElementById('first-tour') as HTMLElement).classList.toggle('sidebar-mini');
   };
 
   const [show, setShow] = useState(false);

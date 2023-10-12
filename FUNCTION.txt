@@ -1,0 +1,50 @@
+Các chức năng chính CLIENT 
+1. NewsFeed ( đăng gì cũng được giống fb , chấp nhận ảnh và text, càm xúc)
+         - người đăng ( user_id)
+         - cảm xúc ( bạn đang cảm thấy như thế nào)
+         - content ( nội dung bài viết )
+         - hashtag ( thẻ của bài viết để dễ tìm kiếm )
+         - image ( 1 hoặc 0 hoặc nhiều - tối đa 5 cái )
+         - status ( ẩn hoặc hiển )
+         - view  ( số lượt xem bài viết) chưa biết làm kiểu gì HỎI THẦY ^^
+         - like ( số lượt thích )
+             + trong like có nhiều emotions ( cảm xúc của like )
+         comment ( bình luận của bài viết )
+              + 🥹CÒN TIME nested comment - comment đa cấp ( tối đa 2 cấp)
+         share 🥹( CÒN TIME thì làm )
+
+2. Q & A  ( Đăng bài hỏi đáp gần giống Stackoverflow, còn thời gian tích hợp Chat GPT )
+         - Người đăng 
+         - Ngành học ( CNTT, Marketing, … )
+         - Tiêu đề Tittle ( Question hỏi ngắn gọn )
+         - Content (Nội dung muốn hỏi)
+         - hashtag ( thẻ của bài viết để dễ tìm kiếm , tối đa 5 tag )
+         - comment (  anwser của những người dùng khác )
+             - Like & Unlike  ( Biểu đạt độ uy tín của comment )
+         🥲 một trường lọc duplicate câu hỏi (CÒN TIME thì làm)
+
+3. Blog ( Đăng chia sẻ kiến thức , chia sẻ những sản phẩm tốt ) Note: Bỏ chức năng chia sẻ file document và thay vào đó sẽ đăng vào trang Blog và chèn link ( Mục đích để đỡ phải validate file họ đăng lên là gì và đỡ tốn bộ nhớ lưu trữ những file đó) 
+         - Người đăng 
+         - Ngành học ( CNTT, Marketing, … )
+         - Thumbnail - 1 Ảnh mô tả blog
+         - Tiêu đề Tittle ( Tiêu đề muốnc chia sẻ )
+         - Content (Nội dung người đăng muốn chia sẻ)
+         - hashtag ( thẻ của bài viết để dễ tìm kiếm , tối đa 5 tag )
+         - comment (  bình luận về blog )
+         - Like theo blog
+4. Profile ( Trang cá nhân ) 
+5. Account setting
+6. Friend ( Bạn bè )
+     Friend list
+     Friend request
+     Friend profile
+7. Chat chit ( Realtime )
+8.Notification ( Thông báo ) BE tự tính toán xem lưu thế nào
+9.🥹Trạng thái người dùng ( online, offline )
+10.🥹Birthday của bạn bè 
+11.🥹Search everything ( trên header : search bạn bè, câu hỏi, bài viết ….)
+     Search recent ( Những từ khoá đã search gần đây)
+     Suggestions ( Gợi ý nội dung search )
+12.🥹Group ( Làm sau )
+
+Tập trung vào 2 chức năng chính ( NewsFeed và Q&A )
