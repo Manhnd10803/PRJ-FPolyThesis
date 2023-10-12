@@ -28,8 +28,9 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
     'plugin:prettier/recommended',
+    'plugin:@tanstack/eslint-plugin-query/recommended',
   ],
-  plugins: ['prettier', '@typescript-eslint'],
+  plugins: ['prettier', '@typescript-eslint', '@tanstack/query'],
   rules: {
     'object-curly-spacing': ['warn', 'always'],
 
@@ -64,5 +65,9 @@ module.exports = {
     //   'error',
     //   { devDependencies: false, optionalDependencies: false, peerDependencies: false },
     // ],
+
+    '@tanstack/query/exhaustive-deps': 'error',
+    '@tanstack/query/prefer-query-object-syntax': 'error',
+    '@tanstack/query/stable-query-client': 'error',
   },
 };
