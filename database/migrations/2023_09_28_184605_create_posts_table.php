@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->string('content');
             $table->string('feeling')->nullable();
-            $table->string('image')->nullable();
+            $table->json('image')->nullable();
             $table->string('hashtag')->nullable();
             $table->integer('status')->default(0);
             $table->integer('views')->default(0);
