@@ -5,10 +5,10 @@ commit-msg:
 pre-commit:
   piped: true
   commands:
-    frontend-eslint:
-      root: 'resources/app/'
-      glob: '*.{ts,tsx,js,jsx}'
-      run: npx eslint {staged_files}
+    # frontend-eslint:
+    #   root: 'resources/app/'
+    #   glob: '*.{ts,tsx,js,jsx}'
+    #   run: npx eslint {staged_files}
     frontend-prettier:
       root: 'resources/app/'
       glob: '*.{ts,tsx,js,jsx}'

@@ -3,6 +3,7 @@ import { Header } from './components/header';
 import { RightSidebar } from './components/right-header';
 import { Footer } from './components/footer';
 import { Sidebar } from './components/sidebar';
+import { SettingOffCanvas } from '@/components/setting/setting-offcanvas';
 
 export const ClientLayout = () => {
   return (
@@ -14,6 +15,7 @@ export const ClientLayout = () => {
       </div>
       <RightSidebar />
       <Footer />
+      <SettingOffCanvas />
     </>
   );
 };

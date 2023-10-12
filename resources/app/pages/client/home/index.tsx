@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { Card, CustomToggle, ShareOffCanvas } from '@/components/custom';
 
 //image
-const imageUrl = 'https://picsum.photos/50';
+const imageUrl = 'https://picsum.photos/20';
 
 export const HomePage = () => {
   const [show, setShow] = useState(false);
