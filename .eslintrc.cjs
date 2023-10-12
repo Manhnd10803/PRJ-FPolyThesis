@@ -46,7 +46,6 @@ module.exports = {
     ],
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
-    'object-curly-spacing': ['warn', 'always'],
     'max-len': 'off',
     'no-plusplus': [
       'error',
@@ -61,11 +60,9 @@ module.exports = {
     'react/jsx-key': 'error',
     'react-hooks/exhaustive-deps': 'warn',
 
-    'import/no-extraneous-dependencies': [
-      'error',
-      {
-        devDependencies: ['**/*.test.js', '**/*.test.jsx', '**/*.test.ts', '**/*.test.tsx', 'src/tests/**/*'],
-      },
-    ],
+    // 'import/no-extraneous-dependencies': [
+    //   'error',
+    //   { devDependencies: false, optionalDependencies: false, peerDependencies: false },
+    // ],
   },
 };
