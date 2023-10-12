@@ -24,7 +24,7 @@ public function blog()
 {
     return $this->belongsTo(Blog::class);
 }
-public function Qa()
+public function qa()
 {
     return $this->belongsTo(Qa::class);
 }
