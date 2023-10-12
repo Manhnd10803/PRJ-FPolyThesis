@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 
-//router
 import { Link, useLocation } from 'react-router-dom';
 
-//react-bootstrap
 import { Accordion, Nav, OverlayTrigger, Tooltip } from 'react-bootstrap';
+
 import { CustomToggle } from './custom-toggle';
 
 export const VerticalNavbar = React.memo(() => {
@@ -16,10 +15,10 @@ export const VerticalNavbar = React.memo(() => {
   // console.log(document);
 
   return (
-    <React.Fragment>
+    <>
       <Accordion as="ul" className="navbar-nav iq-main-menu" id="sidebar-menu">
         <li className="nav-item static-item">
-          <Link className="nav-link static-item disabled" to="#" tabIndex="-1">
+          <Link className="nav-link static-item disabled" to="#" tabIndex={-1}>
             <span className="default-icon">Social</span>
             <span className="mini-icon" data-bs-toggle="tooltip" title="Social" data-bs-placement="right">
               -
@@ -2009,6 +2008,6 @@ export const VerticalNavbar = React.memo(() => {
           </Accordion.Collapse>
         </Accordion.Item>
       </Accordion>
-    </React.Fragment>
+    </>
   );
 });

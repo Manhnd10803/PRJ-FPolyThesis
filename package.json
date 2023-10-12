@@ -2,13 +2,15 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prepare": "npx lefthook install",
     "dev": "concurrently \"npm run dev:laravel\" \"npm run dev:react\"",
     "dev:laravel": "php artisan serve",
     "dev:react": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "format": "prettier --write \"resources/**/*.{js,jsx,ts,tsx}\""
+    "format": "prettier --check \"resources/**/*.{js,jsx,ts,tsx}\"",
+    "format:fix": "prettier --write \"resources/**/*.{js,jsx,ts,tsx}\""
   },
   "devDependencies": {
     "@types/lodash": "^4.14.199",
@@ -27,6 +29,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
     "laravel-vite-plugin": "^0.8.0",
+    "lefthook": "^1.5.2",
     "prettier": "^3.0.3",
     "pretty-quick": "^3.1.3",
     "typescript": "^5.2.2",

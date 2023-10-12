@@ -181,3 +181,5 @@ export const {
   heading_font_family,
   setSetting,
 } = settingSlice.actions;
+
+export const settingAction = settingSlice.actions;
