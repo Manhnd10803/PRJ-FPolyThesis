@@ -2,8 +2,8 @@ import { AdminLayout, ClientLayout } from '@/layouts/';
 import { AdminRouter } from './admin-router';
 import { ClientRouter } from './client-router';
 import { LoginPage } from '@/pages/login';
-import { RegisterPage } from '@/pages/register';
-import { ForgotPasswordPage } from '@/pages/forgotpassword';
+import { SignupPage } from '@/pages/Signup';
+import { ForgotPasswordPage } from '@/pages/ForgotPassword';
 
 //Can add more client router here
 export const RootClientRouter = [
@@ -30,8 +30,8 @@ export const RootSimpleRouter = [
     element: <LoginPage />,
   },
   {
-    path: 'register',
-    element: <RegisterPage />,
+    path: 'signup',
+    element: <SignupPage />,
   },
   {
     path: 'forgotpassword',

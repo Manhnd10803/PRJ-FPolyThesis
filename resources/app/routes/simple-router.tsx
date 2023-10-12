@@ -1,5 +1,5 @@
-import RegisterPage from '@/pages/Signup';
-import LoginPage from '@/pages/Login';
+import {SignupPage} from '@/pages/Signup';
+import {LoginPage} from '@/pages/login';
 
 export const SimpleRouter = [
   {
@@ -7,7 +7,7 @@ export const SimpleRouter = [
     element: <LoginPage />,
   },
   {
-    path: 'register',
-    element: <RegisterPage />,
+    path: 'signup',
+    element: <SignupPage />,
   },
 ];
