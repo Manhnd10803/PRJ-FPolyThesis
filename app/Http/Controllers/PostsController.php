@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\PostRequest;
+use App\Models\Comment;
+use App\Models\Like;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
 
 class PostsController extends Controller
 {
@@ -22,85 +23,111 @@ class PostsController extends Controller
     public function CreatePost(PostRequest $request)
     {
         DB::beginTransaction();
-        try{
+        try {
             $content = $request->input('content');
-            $title = substr(strip_tags($content), 0, 30);
-            $imagePath = null;
-            $tags = $request->input('tags');
-            $major_id = $request->input('major_id');
-            if($request->hasFile('images') ){
-                $image = $request->file('images');
-                if (!$image->isValid() || !in_array($image->getClientOriginalExtension(), ['jpg','jpeg','png'])) {
-                    return response()->json(['error', 'Tệp tin không hợp lệ. Chỉ chấp nhận tệp tin JPEG , JPG hoặc PNG.'],400);
+            $feeling = $request->input('feeling');
+            $hashtag = $request->input('hashtag');
+            $imagePaths = [];
+            if ($request->hasFile('images')) {
+                $images = $request->file('images');
+                if (count($images) > 5) {
+                    DB::rollBack();
+                    return response()->json(['error' => 'Không thể tải lên quá 5 hình ảnh.'], 400);
                 }
-                $imagePath = time() . '.' . $image->extension();
-                $image->move(storage_path('app/public'), $imagePath);
+                foreach ($images as $image) {
+                    if (!$image->isValid() || !in_array($image->getClientOriginalExtension(), ['jpg', 'jpeg', 'png'])) {
+                        DB::rollBack();
+                        return response()->json(['error' => 'Tệp tin không hợp lệ. Chỉ chấp nhận tệp tin JPEG, JPG hoặc PNG.'], 400);
+                    }
+                    $imagePath = time() . '_' . uniqid() . '.' . $image->extension();
+                    $image->move(storage_path('app/public'), $imagePath);
+                    $imagePaths[] = $imagePath;
+                }
             }
             $post = new Post([
-                'title' => $title,
-                'content' => $content,
-                'images' => $imagePath,
                 'user_id' => Auth::id(),
-                'tags' => $tags,
-                'major_id'=> $major_id,
+                'content' => $content,
+                'feeling' => $feeling,
+                'images' => $imagePaths,
+                'hashtag' => $hashtag,
             ]);
             $post->save();
-            DB::commit();
-            return response()->json($post, 200);
-        }catch(\Exception $e){
-            DB::rollBack();
-            return response()->json(['errors'=> $e->getMessage()], 400);
-        }
-    }
-    public function UpdatePost(Request $request, Post $post)
-    {
-        DB::beginTransaction();
-        try {
-            $oldImagePath = $post->images;    
-            if ($request->hasFile('images')) {
-                if ($oldImagePath) {
-                    $oldImagePath = storage_path('app/public') . '/' . $oldImagePath;
-                    if (file_exists($oldImagePath)) {
-                        unlink($oldImagePath);
-                    }
-                }
-                $image = $request->file('images');
-                if (!$image->isValid() || !in_array($image->getClientOriginalExtension(), ['jpg','jpeg','png'])) {
-                    return response()->json(['error', 'Tệp tin không hợp lệ. Chỉ chấp nhận tệp tin JPEG , JPG hoặc PNG.'],400);
-                }
-                $imagePath = time() . '.' . $image->extension();
-                $image->move(storage_path('app/public'), $imagePath);
-            }
-            $content = $request->input('content', $post->content);
-            $tags = $request->input('tags', $post->tags);
-            $major_id = $request->input('major_id', $post->major_id);
-            $status = $request->input('status', $post->status);
-            $post->update([
-                'content' => $content,
-                'images' => $imagePath,
-                'tags' => $tags,
-                'major_id' => $major_id,
-                'status' => $status
-            ]);
-    
             DB::commit();
             return response()->json($post, 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()], 400);
         }
-    }    
-    public function DeletePost(Post $post)
-    {
-        $post->delete();
-        return response()->json(['message' =>'Xóa thành công'] ,200);
+    }
+    
+    public function UpdatePost(Request $request, Post $post){
+    DB::beginTransaction();
+    try {
+        $imagePath = $post->images;  
+        if ($request->hasFile('images')) {
+            $images = $request->file('images');   
+            if (count($images) > 5) {
+                DB::rollBack();
+                return response()->json(['error' => 'Không thể tải lên quá 5 hình ảnh.'], 400);
+            }
+            if ($imagePath) {
+                $imagePath = storage_path('app/public') . '/' . $imagePath;
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+            }  
+            $newImagePaths = [];
+            foreach ($images as $image) {
+                if (!$image->isValid() || !in_array($image->getClientOriginalExtension(), ['jpg', 'jpeg', 'png'])) {
+                    DB::rollBack();
+                    return response()->json(['error' => 'Tệp tin không hợp lệ. Chỉ chấp nhận tệp tin JPEG, JPG hoặc PNG.'], 400);
+                }  
+                $imagePath = time() . '_' . uniqid() . '.' . $image->extension();
+                $image->move(storage_path('app/public'), $imagePath);
+                $newImagePaths[] = $imagePath;
+            }
+        }
+        $content = $request->input('content', $post->content);
+        $hashtag = $request->input('hashtag', $post->hashtag);
+        $status = $request->input('status', $post->status);
+        $feeling = $request->input('feeling', $post->feeling);  
+        $post->update([
+            'content' => $content,
+            'feeling' => $feeling,
+            'images' => $newImagePaths ? $newImagePaths : $imagePath, 
+            'hashtag' => $hashtag,
+            'status' => $status,
+        ]);
+        DB::commit();
+        return response()->json($post, 200);
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json(['errors' => $e->getMessage()], 400);
+    }
+}
+    public function DeletePost(Post $post){
+        DB::beginTransaction();
+        try {
+            Comment::where('post_id', $post->id)->delete();
+            Like::where('post_id',$post->id)->delete();
+            $post->likes()->delete();
+            $post->comments()->delete();
+            $post->delete();
+            DB::commit();
+            return response()->json(['message' => 'Bài viết đã bị xóa thành công.'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()], 400);
+        }
     }
     public function CountLikeInPost(Post $post){
         $likeCount = $post->likes->count();
         return response()->json($likeCount);
      }
      public function CountCommentInPost(Post $post){
-        $commentCount = $post->comments->count();
-        return response()->json($commentCount);
+        $commentCount = Comment::where('post_id', $post->id)->count();
+        $replyCount = Comment::where('post_id', $post->id)->where('parent_id', '>', 0)->count();
+        $totalCommentsAndReplies = $commentCount + $replyCount;
+        return response()->json(['total' => $totalCommentsAndReplies], 200);
      }
 }

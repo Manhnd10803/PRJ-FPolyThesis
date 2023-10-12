@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('likes', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('emotion_id');
+            $table->string('emotion');
             $table->unsignedBigInteger('post_id');
             $table->timestamps();
             $table->unique(['user_id', 'post_id']);
