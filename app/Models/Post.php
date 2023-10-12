@@ -9,7 +9,7 @@ class Post extends Model
 {
     use HasFactory;
     protected $fillable =[
-        'title','content','images','tags','major_id','user_id','status'
+        'user_id','content','feeling','image','hashtag','status','view'
     ];
     public function likes()
 {
