@@ -161,7 +161,7 @@ export function UserAuthFormForgotPassword
                                     }
                                 }
                             />
-                        )}
+                        )}{""}
                         Forgot Password !
                     </Button>
                 </form>
@@ -237,18 +237,50 @@ export function UserAuthFormForgotPassword
                         fontWeight: 'bold',
                     }
                 }
+                onClick={() => {
+                    fetch("http://localhost:8000/api/google-auth", {
+                        headers: new Headers({ accept: "application/json" }),
+                    })
+                        .then((response) => {
+                            if (response.ok) {
+                                return response.json();
+                            }
+                            throw new Error("Something went wrong!");
+                        })
+                        .then(({ url }) => window.open(url));
+                }}
+                disabled={isLoading}
             >
-                <img
-                    src={images.iconGoogle}
-                    alt="icon"
-                    style={
-                        {
-                            width: '25px',
-                            marginRight: '10px',
-                            marginLeft: '80px'
-                        }
-                    }
-                />
+                
+                {
+                    isLoading ? (
+                        <img
+                            src={images.iconGoogle}
+                            alt="icon"
+                            style={
+                                {
+                                    width: '25px',
+                                    marginRight: '10px',
+                                    marginLeft: '80px'
+                                }
+                            }
+                        />
+                    ) : (
+                        <img
+                            src={images.iconGoogle}
+                            alt="icon"
+                            style={
+                                {
+                                    width: '25px',
+                                    marginRight: '10px',
+                                    marginLeft: '80px'
+                                }
+                            }
+                        />
+                    )
+                }{""}
+                
+                
                 Sign in with Google !
             </Button>
         </div>
