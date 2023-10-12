@@ -1,0 +1,23 @@
+INPUT_FILE=$1
+START_LINE=`head -n1 $INPUT_FILE`
+
+TYPE="feat|fix|build|refactor|docs|chore|ci|style|test|perf|revert"
+
+PATTERN="^($TYPE)\: "
+
+if ! [[ "$START_LINE" =~ $PATTERN ]]; then
+  echo "🥹 Chưa đúng conventional message"
+  echo ""
+  echo "Phải bắt đầu với $TYPE"
+  echo ""
+  echo "🥹 Ví dụ: feat: add new feature"
+  echo "🥹 Ví dụ: fix: fix bug"
+  echo "🥹 Ví dụ: refactor: refactor login flow"
+  exit 1
+fi
+
+MESSAGE=$(echo $START_LINE| cut -d':' -f 2 |xargs)
+if [ ${#MESSAGE} -lt 12 ]; then
+  echo "Your message must greater than 12 chacracters"
+  exit 1
+fi
