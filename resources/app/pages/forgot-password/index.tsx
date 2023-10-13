@@ -1,12 +1,14 @@
 import React from 'react';
 import { Row, Col, Button, Form, Container, Image } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import images from '@/assets/images';
 import { AuthFormForgotPassword } from './components/form-forgot-password';
+import { AuthFormGetVerify } from './components/form-get-vetify';
 
 export const ForgotPasswordPage = () => {
+  const location = useLocation();
   return (
     <>
       <section className="sign-in-page">
@@ -61,67 +63,15 @@ export const ForgotPasswordPage = () => {
             </Col>
 
             {/* Right */}
-            <AuthFormForgotPassword />
+            {location.pathname === '/get-forgot-password' ? (
+              <AuthFormForgotPassword />
+            ) : location.pathname === '/get-verify' ? (
+              <AuthFormGetVerify />
+            ) : null}
+            {/* <AuthFormForgotPassword /> */}
           </Row>
         </Container>
       </section>
     </>
   );
-
-  // return (
-  //   <>
-  //     <div
-  //       className="lg:p-8"
-  //       style={{
-  //         padding: '2rem',
-  //         backgroundColor: '#EEEEEE',
-  //         width: '800px',
-  //         marginLeft: 'auto',
-  //         marginRight: 'auto',
-  //         marginTop: '100px',
-  //         marginBottom: '100px',
-  //         borderRadius: '10px',
-  //       }}
-  //     >
-  //       <div
-  //         className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]"
-  //         style={{
-  //           display: 'flex',
-  //           flexDirection: 'column',
-  //           marginLeft: 'auto',
-  //           marginRight: 'auto',
-  //           justifyContent: 'center',
-  //           marginTop: '1.5rem',
-  //           marginBottom: '1.5rem',
-  //           width: '350px',
-  //         }}
-  //       >
-  //         <div
-  //           className="flex flex-col space-y-2 text-center"
-  //           style={{
-  //             display: 'flex',
-  //             flexDirection: 'column',
-  //             marginTop: '0.5rem',
-  //             marginBottom: '0.5rem',
-  //             textAlign: 'center',
-  //           }}
-  //         >
-  //           <h1
-  //             className="text-2xl font-semibold tracking-tight"
-  //             style={{
-  //               fontSize: '2rem',
-  //               lineHeight: '2rem',
-  //               fontWeight: '900',
-  //               letterSpacing: '-0.05em',
-  //               marginBottom: '0.5rem',
-  //             }}
-  //           >
-  //             FORGOT PASSWORD
-  //           </h1>
-  //         </div>
-  //         <UserAuthFormForgotPassword />
-  //       </div>
-  //     </div>
-  //   </>
-  // );
 };

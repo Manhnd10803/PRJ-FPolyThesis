@@ -134,4 +134,48 @@ class AuthController extends Controller
             }
         }
     }
+
+    // Forgot password
+    public function forgotPassword(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email'
+        ]);
+        DB::beginTransaction();
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        try{
+            // Kiểm tra email của người dùng
+            $checkUser = User::where('email', $request->email)->first();
+            if (!$checkUser) {
+                return response()->json(['message' => 'Email bạn nhập không đúng !'], 404);
+            }else{
+                
+                // Tạo mã xác nhận mới
+                $verificationCode = str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
+                // $checkUser->update(['verification_code' => $verificationCode]);
+                DB::table('users')->where('email', $request->email)->update(['verification_code' => $verificationCode]);
+                Mail::to($request->email)->send(new VerifyAccount($verificationCode));
+                DB::commit();
+                return response()->json(['message' => 'Mã xác nhận đã được gửi đến mail của bạn. Kiểm tra ngay nhé!'], 200);
+            }
+            
+        } catch (\Exception $e) {
+            DB::rollback();
+            // Log::alert($e);
+            return response()->json(['message' => 'Có lỗi xảy ra trong quá trình xử lý. Vui lòng thử lại sau.'], 500);
+        }
+    }
+    
+    public function resetPassword(Request $request)
+    {
+        
+        $checkUser = User::where('email', $request->email)->first();
+        if (!$checkUser || $request->verification_code != $checkUser->verification_code) {
+            return response()->json(['message' => 'Mã xác nhận không chính xác'], 403);
+        }
+        // $checkUser->update(['password' => Hash::make($request->password)]);
+        DB::table('users')->where('email', $request->email)->update(['password' => Hash::make($request->password)]);
+        return response()->json(['message' => 'Mật khẩu đã được đặt lại thành công'], 200);
+    }
 }

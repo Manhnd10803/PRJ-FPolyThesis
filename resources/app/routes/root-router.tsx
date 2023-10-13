@@ -34,7 +34,11 @@ export const RootSimpleRouter = [
     element: <RegisterPage />,
   },
   {
-    path: 'forgot-password',
+    path: 'get-forgot-password',
+    element: <ForgotPasswordPage />,
+  },
+  {
+    path: 'get-verify',
     element: <ForgotPasswordPage />,
   },
 ];
