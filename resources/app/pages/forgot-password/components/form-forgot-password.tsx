@@ -16,7 +16,7 @@ const userAuthFormSchema = z.object({
 type UserAuthFormValues = z.infer<typeof userAuthFormSchema>;
 
 export function AuthFormForgotPassword({ className, ...props }: UserAuthFormProps) {
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  // const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -39,18 +39,19 @@ export function AuthFormForgotPassword({ className, ...props }: UserAuthFormProp
       });
 
       if (response.ok) {
-        setIsLoading(true);
+        // setIsLoading(true);
 
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 3000);
+        // setTimeout(() => {
+        //   setIsLoading(false);
+        // }, 3000);
 
-        setSuccessMessage('Mã xác nhận đã được gửi đến mail của bạn. Kiểm tra ngay nhé !');
+        setSuccessMessage('Mã xác nhận đã được gửi đến mail của bạn.');
         setErrorMessage(null);
         navigate('/get-verify');
       } else {
-        const errorData = await response.json();
-        setErrorMessage(errorData.message);
+        // const errorData = await response.json();
+        // setErrorMessage(errorData.message);
+        setErrorMessage('Email bạn nhập không đúng !');
         setSuccessMessage(null);
       }
     } catch (error) {
@@ -84,7 +85,7 @@ export function AuthFormForgotPassword({ className, ...props }: UserAuthFormProp
             {errors.email && <span style={{ color: 'red' }}>{errors.email.message}</span>}
           </Form.Group>
           <div className="d-inline-block w-100">
-            <Button variant="primary" type="submit" className="float-right mt-3" disabled={isLoading}>
+            <Button variant="primary" type="submit" className="float-right mt-3">
               Gửi
             </Button>
           </div>

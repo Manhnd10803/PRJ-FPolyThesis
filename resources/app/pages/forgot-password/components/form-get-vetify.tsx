@@ -23,7 +23,6 @@ const userAuthFormSchema = z.object({
 type UserAuthFormValues = z.infer<typeof userAuthFormSchema>;
 
 export function AuthFormGetVerify({ className, ...props }: UserAuthFormProps) {
-  // const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -36,14 +35,8 @@ export function AuthFormGetVerify({ className, ...props }: UserAuthFormProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const onSubmit = async (data: UserAuthFormValues) => {
-    // setIsLoading(true);
-
-    // setTimeout(() => {
-    //   setIsLoading(false);
-    // }, 3000);
-
     try {
-      const response = await fetch('/api/resetPassword', {
+      const response = await fetch('/api/post-verify', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,7 +51,8 @@ export function AuthFormGetVerify({ className, ...props }: UserAuthFormProps) {
       } else {
         const errorData = await response.json();
         setErrorMessage(errorData.message);
-        setSuccessMessage(null);
+        // setErrorMessage('Tạo mật khẩu mới thất bại');
+        // setSuccessMessage(null);
       }
     } catch (error) {
       setErrorMessage('Đã xảy ra lỗi. Vui lòng thử lại');
@@ -70,6 +64,7 @@ export function AuthFormGetVerify({ className, ...props }: UserAuthFormProps) {
     <Col md="6" className="bg-white pt-5 pt-5 pb-lg-0 pb-5">
       <div className="sign-in-from">
         <h1 className="mb-0">Nhập mã xác nhận</h1>
+
         {successMessage && <Alert variant="success">{successMessage}</Alert>}
         {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
 
