@@ -15,9 +15,13 @@ const userAuthFormSchema = z.object({
     .min(1, { message: 'Mã xác nhận là bắt buộc' })
     .refine(value => /^\d{5}$/.test(value), {
       message: 'Mã xác nhận phải là 5 số !',
-      path: ['text'],
     }),
-  password: z.string().min(1, { message: 'Mật khẩu mới là bắt buộc' }),
+  password: z
+    .string()
+    .min(8, { message: 'Mật khẩu phải có ít nhất 8 ký tự' })
+    .refine(value => /[A-Za-z]/.test(value) && /\d/.test(value), {
+      message: 'Mật khẩu phải chứa ít nhất một chữ cái và một số',
+    }),
 });
 
 type UserAuthFormValues = z.infer<typeof userAuthFormSchema>;

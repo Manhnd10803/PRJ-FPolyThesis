@@ -12,7 +12,7 @@
         <div style="font-size: 24px; color: #3498db; margin-bottom: 20px;">Mã xác nhận tài khoản</div>
         <p>Cảm ơn bạn đã đăng ký tài khoản.<br>
         Để hoàn tất quá trình đăng ký, vui lòng sử dụng mã xác nhận dưới đây:</p>
-        <div style="font-size: 36px; color: #2ecc71; margin-bottom: 40px;">{{ $codeVerify }}</div>
+        <div style="font-size: 36px; color: #2ecc71; margin-bottom: 20px;">{{ $codeVerify }}</div>
         <p>Chúng tôi chỉ chấp nhận mã này trong vòng 5 phút.</p>
         <p>Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này.</p>
     </div>

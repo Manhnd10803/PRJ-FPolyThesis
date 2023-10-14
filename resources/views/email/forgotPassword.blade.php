@@ -33,7 +33,7 @@
                 <h1>Thay Đổi Mật Khẩu Thành Công</h1>
                 <h3 style=" margin-bottom: 20px;">Xin chào <span style=" color: #2ecc71; margin-bottom: 20px;">{{$username}}</span>,</h3>
                 <p>Mật khẩu của bạn đã được thay đổi thành công. Bây giờ bạn có thể đăng nhập bằng mật khẩu mới.</p>
-                <p style="font-size: 20px; color: #2ecc71; margin-bottom: 40px;">{{ $password }}</p>
+                <p style="font-size: 20px; color: #2ecc71; margin-bottom: 20px;">{{ $password }}</p>
                
                 <p>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!</p>
             </td>
