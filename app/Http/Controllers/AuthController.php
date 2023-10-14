@@ -182,7 +182,7 @@ class AuthController extends Controller
         }else{
             // $checkUser->update(['password' => Hash::make($request->password)]);
             DB::table('users')->where('verification_code', $request->verification_code)->update(['password' => Hash::make($request->password)]);
-            Mail::to($checkVerify->email)->send(new ForgotPassword($request->password));
+            Mail::to($checkVerify->email)->send(new ForgotPassword($request->password, $checkVerify->username));
             DB::commit();
             return response()->json(['message' => 'Mật khẩu đã được đặt lại thành công'], 200);
         }
