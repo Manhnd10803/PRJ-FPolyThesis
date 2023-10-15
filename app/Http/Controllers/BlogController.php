@@ -106,7 +106,17 @@ class BlogController extends Controller
         }
         return response()->json($blogs);
     }
-
+    //bài viết chờ duyệt
+    public function listPedingBlog()
+    {
+        $blogs = Blog::where('status', config('default.blog.status.pending'))->get();
+        //lấy kèm thông tin người đăng
+        //sau cần lấy ra conmment, like, rate sẽ cập nhật trong sprint 3
+        foreach ($blogs as $blog) {
+            $user = $blog->user;
+        }
+        return response()->json($blogs);
+    }
 
 
 
