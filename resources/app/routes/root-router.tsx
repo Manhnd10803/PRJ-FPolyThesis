@@ -1,8 +1,8 @@
 import { AdminLayout, ClientLayout } from '@/layouts/';
 import { AdminRouter } from './admin-router';
 import { ClientRouter } from './client-router';
-import { RegisterPage } from '@/pages/register';
-import LoginPage from '@/pages/login';
+import { AuthRouter } from './auth-router';
+import { AuthLayout } from '@/layouts/auth/auth-layout';
 
 //Can add more client router here
 export const RootClientRouter = [
@@ -13,7 +13,7 @@ export const RootClientRouter = [
   },
 ];
 
-//Can add more admin router here
+//Can add more admin router here``
 export const RootAdminRouter = [
   {
     path: 'admin',
@@ -23,13 +23,10 @@ export const RootAdminRouter = [
 ];
 
 // Can add more router start with / here
-export const RootSimpleRouter = [
+export const RootAuthRouter = [
   {
-    path: 'login',
-    element: <LoginPage />,
-  },
-  {
-    path: 'register',
-    element: <RegisterPage />,
+    path: '/',
+    element: <AuthLayout />,
+    children: [...AuthRouter],
   },
 ];
