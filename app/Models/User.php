@@ -10,7 +10,7 @@ use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable,HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -34,7 +34,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
-    
+
     /**
      * The attributes that should be cast.
      *
@@ -45,7 +45,11 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
     public function messages()
-{
-  return $this->hasMany(PrivateMessage::class,'sender_id');
-}
+    {
+        return $this->hasMany(PrivateMessage::class, 'sender_id');
+    }
+    public function blogs()
+    {
+        return $this->hasMany(Blog::class, 'user_id');
+    }
 }

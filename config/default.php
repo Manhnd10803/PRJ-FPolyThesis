@@ -12,5 +12,12 @@ return [
             'lock' => '0',
             'active' => '1',
         ],
-    ]
+    ],
+    'blog' => [
+        'status' => [
+            'pending' => 0,
+            'approved' => 1,
+            'reject' => 2,
+        ],
+    ],
 ];
