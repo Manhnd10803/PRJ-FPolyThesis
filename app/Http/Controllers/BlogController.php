@@ -117,7 +117,30 @@ class BlogController extends Controller
         }
         return response()->json($blogs);
     }
-
-
+    //duyệt bài viết
+    public function approveBlog(Blog $blog)
+    {
+        DB::beginTransaction();
+        try {
+            $blog->update(['status' => config('default.blog.status.approved')]);
+            DB::commit();
+            return response()->json(['message' => 'Duyệt thành công'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()], 400);
+        }
+    }
+    public function rejectBlog(Blog $blog)
+    {
+        DB::beginTransaction();
+        try {
+            $blog->update(['status' => config('default.blog.status.reject')]);
+            DB::commit();
+            return response()->json(['message' => 'Từ chối thành công'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()], 400);
+        }
+    }
 
 }
