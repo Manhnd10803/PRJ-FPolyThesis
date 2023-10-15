@@ -1,8 +1,8 @@
 import { AdminLayout, ClientLayout } from '@/layouts/';
 import { AdminRouter } from './admin-router';
 import { ClientRouter } from './client-router';
-import { LoginPage } from '@/pages/login';
 import { RegisterPage } from '@/pages/register';
+import LoginPage from '@/pages/login';
 
 //Can add more client router here
 export const RootClientRouter = [

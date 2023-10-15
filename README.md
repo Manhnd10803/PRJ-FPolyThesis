@@ -39,6 +39,10 @@ Run the database migrations (**Set the database connection in .env before migrat
 
     php artisan migrate (tạm thời chưa cần chạy vì chưa có db chuẩn)
 
+Creat Client ID and Client secret
+
+    php artisan passport:install
+
 Start the local development server
 
     php artisan serve
