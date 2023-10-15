@@ -142,5 +142,12 @@ class BlogController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
-
+    //chi tiết bài viết
+    public function detailBlog(Blog $blog)
+    {
+        //lấy kèm thông tin người đăng
+        //sau cần lấy ra conmment, like, rate sẽ cập nhật trong sprint 3
+        $blog->user;
+        return response()->json($blog);
+    }
 }
