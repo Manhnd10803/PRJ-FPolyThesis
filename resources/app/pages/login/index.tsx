@@ -1,6 +1,26 @@
+import { useState } from 'react';
 import { Col, Form, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+
 export const LoginPage = () => {
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+  });
+
+  const handleInputChange = (event: any) => {
+    const { name, value } = event.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSignIn = () => {
+    console.log('Email:', formData.email);
+    console.log('Password:', formData.password);
+  };
+
   return (
     <>
       <Col md="6" className="bg-white pt-5 pt-5 pb-lg-0 pb-5">
@@ -10,21 +30,37 @@ export const LoginPage = () => {
           <Form className="mt-4">
             <Form.Group className="form-group">
               <Form.Label>Email address</Form.Label>
-              <Form.Control type="email" className="mb-0" id="exampleInputEmail1" placeholder="Enter email" />
+              <Form.Control
+                type="email"
+                className="mb-0"
+                id="exampleInputEmail1"
+                placeholder="Enter email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+              />
             </Form.Group>
             <Form.Group className="form-group">
               <Form.Label>Password</Form.Label>
-              <Link to="#" className="float-end">
+              <Link to="/forgot-password" className="float-end">
                 Forgot password?
               </Link>
-              <Form.Control type="password" className="mb-0" id="exampleInputPassword1" placeholder="Password" />
+              <Form.Control
+                type="password"
+                className="mb-0"
+                id="exampleInputPassword1"
+                placeholder="Password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+              />
             </Form.Group>
             <div className="d-inline-block w-100">
               <Form.Check className="d-inline-block mt-2 pt-1">
                 <Form.Check.Input type="checkbox" className="me-2" id="customCheck11" />
                 <Form.Check.Label>Remember Me</Form.Check.Label>{' '}
               </Form.Check>
-              <Button variant="primary" type="button" className="float-end">
+              <Button variant="primary" type="button" className="float-end" onClick={handleSignIn}>
                 Sign in
               </Button>
             </div>
