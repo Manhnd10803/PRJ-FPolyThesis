@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\EmotionController;
+use App\Http\Controllers\FriendController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\PrivateMessagesController;
@@ -80,3 +81,7 @@ Route::post('/comment/{blog}', [CommentController::class, 'AddCommentToBlog'])->
 //Comment --Q&a
 Route::get('/comment/{qa}', [CommentController::class, 'FetchCommentInQa'])->name('qa.show');
 Route::post('/comment/{qa}', [CommentController::class, 'AddCommentToQa'])->name('qa.comment');
+//friend --relationship
+Route::post('/send-request/{recipient}',[FriendController::class,'SendFriendRequest'])->name('friend.send');
+Route::post('/comfirm-request/{sender}',[FriendController::class,'ConfirmFriendRequest'])->name('friend.confirm');
+Route::put('/update-relation/{friend}',[CommentController::class,'UpdateFriendshipType'])->name('friend.update');

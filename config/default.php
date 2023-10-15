@@ -20,4 +20,15 @@ return [
             'reject' => 2,
         ],
     ],
+    'friend' => [
+        'status' =>[
+            'pending' => 0,
+            'accepted' => 1,
+        ],
+        'friendship_type' => [
+            'request' => 0,
+            'friend' => 1,
+            'favourite' => 2,
+        ]
+    ],
 ];
