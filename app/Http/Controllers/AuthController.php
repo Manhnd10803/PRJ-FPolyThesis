@@ -87,7 +87,8 @@ class AuthController extends Controller
         return response()->json(['message' => 'Đăng xuất thành công'], 200);
     }
     public function googleAuth(){
-        return Socialite::driver('google')->stateless()->redirect();
+        $redirectUrl = Socialite::driver('google')->stateless()->redirect()->getTargetUrl();
+        return response()->json(['googleLoginUrl' => $redirectUrl]);
     }
     public function googleCallback(){
         $user = Socialite::driver('google')->stateless()->user();
