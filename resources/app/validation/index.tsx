@@ -1,3 +1,3 @@
-import { LoginSchema } from './yup/auth';
+import { LoginSchema, RegisterSchema } from './yup/auth';
 
-export { LoginSchema };
+export { LoginSchema, RegisterSchema };
