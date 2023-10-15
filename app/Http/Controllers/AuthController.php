@@ -17,17 +17,17 @@ use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
-    public function register(Request $request){
+    public function register(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'username' => 'required|string|unique:users',
             'email' => 'required|email|unique:users',
             'password' => 'required|string|min:8'
         ]);
         DB::beginTransaction();
-        try{
-            if(!$validator->fails()){
-                //3-student, 4-guest
-                $groupId = strpos($request->email, '@fpt.edu.vn') ? 3 : 4;
+        try {
+            if (!$validator->fails()) {
+                $groupId = strpos($request->email, '@fpt.edu.vn') ? config('default.user.groupID.student') : config('default.user.groupID.guest');
                 $codeVerify = str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
                 DB::table('users')->insert(
                     [
@@ -35,87 +35,91 @@ class AuthController extends Controller
                         'password' => Hash::make($request->password),
                         'email' => $request->email,
                         'group_id' => $groupId,
-                        'status' => 0, //lock
+                        'status' => config('default.user.status.lock'),
                         'verification_code' => $codeVerify,
                     ]
                 );
                 Mail::to($request->email)->send(new VerifyAccount($codeVerify));
                 DB::commit();
                 return response()->json(['message' => 'Đăng ký thành công'], 201);
-            }else{
+            } else {
                 return response()->json(['errors' => $validator->errors()], 422);
             }
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             DB::rollback();
             // Log::alert($e);
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
-    public function verify(Request $request){
+    public function verify(Request $request)
+    {
         $user = User::where('email', $request->email)->first();
-        if($request->verification_code == $user->verification_code){
-            $user->update(['status' => 1]);
-        }else{
+        if ($request->verification_code == $user->verification_code) {
+            $user->update(['status' => config('default.user.status.active')]);
+        } else {
             return response()->json(['message' => 'Mã xác nhận không chính xác'], 403);
         }
     }
-    public function login(Request $request){
+    public function login(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required|string|min:8'
         ]);
-        if(!$validator->fails()){
-            if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
+        if (!$validator->fails()) {
+            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
                 $user = Auth::user();
-                if($user->status == 0){
+                if ($user->status == config('default.user.status.lock')) {
                     return response()->json(['message' => 'Tài khoản chưa được kích hoạt'], 403);
                 }
                 $token = $user->createToken('authToken')->accessToken;
                 return response()->json(['user' => $user, 'accessToken' => $token], 200);
-            }else{
+            } else {
                 return response()->json(['message' => 'Đăng nhập thất bại'], 400);
             }
-        }else{
+        } else {
             return response()->json(['errors' => $validator->errors()], 422);
         }
     }
-    public function logout(Request $request){
+    public function logout(Request $request)
+    {
         $user = Auth::user();
         $user->tokens->each(function ($token) {
             $token->delete();
         });
         return response()->json(['message' => 'Đăng xuất thành công'], 200);
     }
-    public function googleAuth(){
+    public function googleAuth()
+    {
         $redirectUrl = Socialite::driver('google')->stateless()->redirect()->getTargetUrl();
         return response()->json(['googleLoginUrl' => $redirectUrl]);
     }
-    public function googleCallback(){
+    public function googleCallback()
+    {
         $user = Socialite::driver('google')->stateless()->user();
         $checkUser = User::where('email', $user->email)->first();
-        if($checkUser){
+        if ($checkUser) {
             //đăng nhập 
-            if($checkUser->status == 0){
+            if ($checkUser->status == config('default.user.status.lock')) {
                 return response()->json(['message' => 'Tài khoản chưa được kích hoạt'], 403);
-            }else{
+            } else {
                 Auth()->login($checkUser);
                 $token = $checkUser->createToken('authToken')->accessToken;
                 return response()->json(['user' => $user, 'accessToken' => $token], 200);
             }
-        }else{
+        } else {
             // dd($user);
             //đăng ký
             DB::beginTransaction();
-            try{
+            try {
                 $username = explode('@', $user->email)[0];
-                // dd(config('default.password'));
                 DB::table('users')->insert(
                     [
                         'username' => $username,
-                        'password' => Hash::make(config('default.password')),
+                        'password' => Hash::make(config('default.user.password')),
                         'email' => $user->email,
-                        'group_id' => 3,
-                        'status' => 1, //lock
+                        'group_id' => config('default.user.groupID.student'),
+                        'status' => config('default.user.status.active'),
                     ]
                 );
                 DB::commit();
@@ -123,7 +127,7 @@ class AuthController extends Controller
                 Auth()->login($checkUser);
                 $token = $checkUser->createToken('authToken')->accessToken;
                 return response()->json(['user' => $user, 'accessToken' => $token], 200);
-            }catch(\Exception $e){
+            } catch (\Exception $e) {
                 DB::rollback();
                 // Log::alert($e);
                 return response()->json(['errors' => $e->getMessage()], 400);
