@@ -20,10 +20,6 @@ export const ClientRouter = [
     element: <QuestionAndAnswerPage />,
   },
   {
-    path: '/form-ask-question',
-    element: <FormAskQuestionPage />,
-  },
-  {
     path: '/blog',
     element: <BlogPage />,
   },
