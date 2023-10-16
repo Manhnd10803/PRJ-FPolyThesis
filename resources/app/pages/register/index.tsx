@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { Col, Form, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { Register } from '@/apis/auth';
+import { Register, SigninWithGoogle } from '@/apis/auth';
 import { RegisterSchema } from '@/validation';
 
 interface UserData {
@@ -17,7 +17,6 @@ function RegisterPage() {
     email: '',
     password: '',
   });
-  const [showA1, setShowA1] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const { mutate, isLoading } = useMutation((formData: UserData) => {
     return Register(formData);
@@ -45,6 +44,9 @@ function RegisterPage() {
           setErrors(validationErrors);
         }
       });
+  };
+  const loginWithGoogle = () => {
+    SigninWithGoogle();
   };
 
   return (
@@ -99,20 +101,32 @@ function RegisterPage() {
             <Button type="submit" className="btn-primary w-100 mb-3" onClick={handleRegister} disabled={isLoading}>
               {isLoading ? 'Signing Up...' : 'Sign Up'}
             </Button>
-            {/* <Button type="submit" className="btn-primary w-100" onClick={handleRegister} >
-           
-                  <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 488 512" fill='#ffffff'>
-                    <path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z" />
-                  </svg>
-                <span className='mx-2'>Signup with Google</span>
-                
-            </Button> */}
+
+            <Button
+              variant="primary"
+              style={{ width: '100%' }}
+              type="button"
+              className="mt-2 d-flex align-items-center justify-content-center gap-1"
+              onClick={loginWithGoogle}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                className="bi bi-google"
+                viewBox="0 0 16 16"
+              >
+                <path d="M15.545 6.558a9.42 9.42 0 0 1 .139 1.626c0 2.434-.87 4.492-2.384 5.885h.002C11.978 15.292 10.158 16 8 16A8 8 0 1 1 8 0a7.689 7.689 0 0 1 5.352 2.082l-2.284 2.284A4.347 4.347 0 0 0 8 3.166c-2.087 0-3.86 1.408-4.492 3.304a4.792 4.792 0 0 0 0 3.063h.003c.635 1.893 2.405 3.301 4.492 3.301 1.078 0 2.004-.276 2.722-.764h-.003a3.702 3.702 0 0 0 1.599-2.431H8v-3.08h7.545z" />
+              </svg>{' '}
+              Login with Google
+            </Button>
           </div>
           <div className="sign-info">
             <span className="dark-color d-inline-block line-height-2">
               Already Have an Account? <Link to="/login">Log In</Link>
             </span>
-            <ul className="iq-social-media">
+            {/* <ul className="iq-social-media">
               <li>
                 <Link to="#">
                   <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 488 512" fill="currentColor">
@@ -120,7 +134,7 @@ function RegisterPage() {
                   </svg>
                 </Link>
               </li>
-            </ul>
+            </ul> */}
           </div>
         </Form>
       </div>

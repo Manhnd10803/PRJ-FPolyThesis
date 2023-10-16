@@ -9,9 +9,7 @@ const Register = (data: any) => {
 };
 
 const SigninWithGoogle = () => {
-  fetch('http://localhost:8000/api/google-auth', {
-    mode: 'no-cors',
-  })
+  fetch('http://localhost:8000/api/google-auth')
     .then(response => {
       if (response.ok) {
         return response.json();
