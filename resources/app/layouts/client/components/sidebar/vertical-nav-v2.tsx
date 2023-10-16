@@ -18,6 +18,8 @@ const circleIcon = (
 
 // ========== Configs =========== //
 
+// Thêm route mới của client thì chỉ cần giống cấu trúc bên dưới
+
 const NAVBAR_SOCIAL_CONFIGS = [
   {
     title: 'Newsfeed',
@@ -40,29 +42,29 @@ const NAVBAR_SOCIAL_CONFIGS = [
     pathname: '/chat',
   },
   {
-    title: 'Profiles',
+    title: 'Profile',
     icon: <i className="icon material-symbols-outlined">person</i>,
     pathname: '/profile',
-    eventKey: 'profile-menu',
-    subNav: [
-      {
-        pathname: '/profile',
-        icon: circleIcon,
-        title: 'Profile',
-        miniTitle: 'P',
-      },
-      {
-        pathname: '/profiles/profile1',
-        icon: circleIcon,
-        title: 'Profile 1',
-        miniTitle: 'P1',
-      },
-    ],
   },
   {
-    title: 'Friend',
+    title: 'Friends',
     icon: <i className="icon material-symbols-outlined">people</i>,
     pathname: '/friend-list',
+    eventKey: 'friend-menu',
+    subNav: [
+      {
+        title: 'Friend List',
+        pathname: '/friend-list',
+        icon: circleIcon,
+        miniTitle: 'F',
+      },
+      {
+        title: 'Friend Request',
+        pathname: '/friend-request',
+        icon: circleIcon,
+        miniTitle: 'F1',
+      },
+    ],
   },
   {
     title: 'Group',
