@@ -6,6 +6,7 @@ import { Col, Button, Form, Alert } from 'react-bootstrap';
 import { Link, BrowserRouter as Router, Route, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Spinner from 'react-bootstrap/Spinner';
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -16,7 +17,7 @@ const userAuthFormSchema = z.object({
 type UserAuthFormValues = z.infer<typeof userAuthFormSchema>;
 
 export function AuthFormForgotPassword({ className, ...props }: UserAuthFormProps) {
-  // const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const {
     register,
     handleSubmit,
@@ -39,11 +40,11 @@ export function AuthFormForgotPassword({ className, ...props }: UserAuthFormProp
       });
 
       if (response.ok) {
-        // setIsLoading(true);
+        setIsLoading(true);
 
-        // setTimeout(() => {
-        //   setIsLoading(false);
-        // }, 3000);
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 3000);
 
         setSuccessMessage('Mã xác nhận đã được gửi đến mail của bạn.');
         setErrorMessage(null);
@@ -86,7 +87,7 @@ export function AuthFormForgotPassword({ className, ...props }: UserAuthFormProp
           </Form.Group>
           <div className="d-inline-block w-100">
             <Button variant="primary" type="submit" className="float-right mt-3">
-              Nhận mã xác nhận
+              {isLoading ? 'Đang gửi mã xác nhận ...' : 'Nhận mã xác nhận'}
             </Button>
           </div>
         </Form>
