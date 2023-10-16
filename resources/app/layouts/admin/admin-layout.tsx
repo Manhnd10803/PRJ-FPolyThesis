@@ -1,10 +1,15 @@
 import { Outlet } from 'react-router-dom';
-
+import { Header } from './components/header';
+import { Sidebar } from './components/sidebar';
 export const AdminLayout = () => {
   return (
-    <div>
-      AdminLayout
-      <Outlet />
-    </div>
+    <>
+      <Sidebar />
+      <Header />
+      <div className="main-content">
+        <Outlet />
+      </div>
+    </>
   );
 };
+``;
