@@ -55,7 +55,6 @@ export const LoginPage = () => {
   const loginWithGoogle = () => {
     SigninWithGoogle();
   };
-
   return (
     <>
       <Col md="6" className="bg-white pt-5 pt-5 pb-lg-0 pb-5">
