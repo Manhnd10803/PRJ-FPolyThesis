@@ -85,3 +85,4 @@ Route::post('/comment/{qa}', [CommentController::class, 'AddCommentToQa'])->name
 Route::post('/send-request/{recipient}',[FriendController::class,'SendFriendRequest'])->name('friend.send');
 Route::post('/comfirm-request/{sender}',[FriendController::class,'ConfirmFriendRequest'])->name('friend.confirm');
 Route::put('/update-relation/{friend}',[CommentController::class,'UpdateFriendshipType'])->name('friend.update');
+Route::get('/friend',[FriendController::class,'FetchAllFriend'])->name('friend.list');
