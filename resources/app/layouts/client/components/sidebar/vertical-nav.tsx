@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 import { Accordion, Nav, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
-import { CustomToggle } from './custom-toggle';
+import { CustomToggle } from '../custom-toggle';
 
 export const VerticalNavbar = React.memo(() => {
   const [activeMenu, setActiveMenu] = useState(false);
@@ -309,7 +309,7 @@ export const VerticalNavbar = React.memo(() => {
           </Link>
         </Nav.Item>
         <li className="nav-item static-item">
-          <Link className="nav-link static-item disabled" to="#" tabIndex="-1">
+          <Link className="nav-link static-item disabled" to="#" tabIndex={-1}>
             <span className="default-icon">FEATURED</span>
             <span className="mini-icon" data-bs-toggle="tooltip" title="Social" data-bs-placement="right">
               -
@@ -402,7 +402,7 @@ export const VerticalNavbar = React.memo(() => {
           </Link>
         </Nav.Item>
         <li className="nav-item static-item">
-          <Link className="nav-link static-item disabled" to="#" tabIndex="-1">
+          <Link className="nav-link static-item disabled" to="#" tabIndex={-1}>
             <span className="default-icon">OTHER PAGES</span>
             <span className="mini-icon">-</span>
           </Link>
