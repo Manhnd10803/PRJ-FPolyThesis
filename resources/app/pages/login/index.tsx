@@ -1,14 +1,36 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Col, Form, Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { LoginSchema } from '@/validation';
+import { Login } from '@/apis/auth';
+import { useMutation } from '@tanstack/react-query';
 
 export const LoginPage = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const handleInputChange = (event: any) => {
+  const navigate = useNavigate();
+
+  const loginUser = async (formData: { email: string; password: string }) => {
+    try {
+      const response = await Login(formData);
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const { mutate, isLoading, isError, error } = useMutation(loginUser, {
+    onSuccess: data => {
+      sessionStorage.setItem('user', JSON.stringify(data));
+      navigate('/');
+    },
+  });
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData({
       ...formData,
@@ -17,16 +39,26 @@ export const LoginPage = () => {
   };
 
   const handleSignIn = () => {
-    console.log('Email:', formData.email);
-    console.log('Password:', formData.password);
+    LoginSchema.validate(formData, { abortEarly: false })
+      .then(() => {
+        mutate(formData);
+      })
+      .catch((err: any) => {
+        if (err.inner) {
+          const validationErrors: { [key: string]: string } = {};
+          err.inner.forEach((error: any) => {
+            validationErrors[error.path] = error.message;
+          });
+          setErrors(validationErrors);
+        }
+      });
   };
-
   return (
     <>
       <Col md="6" className="bg-white pt-5 pt-5 pb-lg-0 pb-5">
         <div className="sign-in-from">
           <h1 className="mb-0">Sign in</h1>
-          <p>Enter your email address and password to access admin panel.</p>
+          <p>Enter your email address and password to access the admin panel.</p>
           <Form className="mt-4">
             <Form.Group className="form-group">
               <Form.Label>Email address</Form.Label>
@@ -39,6 +71,7 @@ export const LoginPage = () => {
                 value={formData.email}
                 onChange={handleInputChange}
               />
+              {errors.email && <div className="error-message text-danger">{errors.email}</div>}
             </Form.Group>
             <Form.Group className="form-group">
               <Form.Label>Password</Form.Label>
@@ -54,14 +87,19 @@ export const LoginPage = () => {
                 value={formData.password}
                 onChange={handleInputChange}
               />
+              {isError ? (
+                <div className="error-message text-danger">{(error as any)?.response?.data?.message}</div>
+              ) : (
+                errors.password && <div className="error-message text-danger">{errors.password}</div>
+              )}
             </Form.Group>
             <div className="d-inline-block w-100">
               <Form.Check className="d-inline-block mt-2 pt-1">
                 <Form.Check.Input type="checkbox" className="me-2" id="customCheck11" />
                 <Form.Check.Label>Remember Me</Form.Check.Label>{' '}
               </Form.Check>
-              <Button variant="primary" type="button" className="float-end" onClick={handleSignIn}>
-                Sign in
+              <Button variant="primary" type="button" className="float-end" onClick={handleSignIn} disabled={isLoading}>
+                {isLoading ? 'Sign in...' : 'Sign in'}
               </Button>
             </div>
             <div className="sign-info">
