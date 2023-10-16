@@ -104,7 +104,7 @@ export function AuthFormGetVerify({ className, ...props }: UserAuthFormProps) {
 
           <div className="d-inline-block w-100">
             <Button variant="primary" type="submit" className="float-right mt-3">
-              Gửi
+              Đổi mật khẩu
             </Button>
           </div>
         </Form>

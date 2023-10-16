@@ -64,7 +64,7 @@ export function AuthFormForgotPassword({ className, ...props }: UserAuthFormProp
   return (
     <Col md="6" className="bg-white pt-5 pt-5 pb-lg-0 pb-5">
       <div className="sign-in-from">
-        <h1 className="mb-0">Quên mật khẩu</h1>
+        <h1 className="mb-0">Quên mật khẩu </h1>
 
         {successMessage && <Alert variant="success">{successMessage}</Alert>}
         {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
@@ -86,7 +86,7 @@ export function AuthFormForgotPassword({ className, ...props }: UserAuthFormProp
           </Form.Group>
           <div className="d-inline-block w-100">
             <Button variant="primary" type="submit" className="float-right mt-3">
-              Gửi
+              Nhận mã xác nhận
             </Button>
           </div>
         </Form>

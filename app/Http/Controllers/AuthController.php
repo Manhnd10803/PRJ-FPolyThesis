@@ -77,8 +77,8 @@ class AuthController extends Controller
                 return response()->json(['message' => 'Đăng nhập thất bại'], 400);
             }
         }else{
-            return response()->json(['message' => 'Đăng nhập thành công'], 200);
-            // return response()->json(['errors' => $validator->errors()], 422);
+            // return response()->json(['message' => 'Đăng nhập thành công'], 200);
+            return response()->json(['errors' => $validator->errors()], 422);
         }
     }
     public function logout(Request $request){
