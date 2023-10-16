@@ -11,13 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('friends', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('user_id_1');
-            $table->unsignedBigInteger('user_id_2');
-            $table->integer('status');
-            $table->string('friendship_type');
-            $table->timestamps();
+        Schema::table('blogs', function (Blueprint $table) {
+            $table->integer('status')->after('id')->nullable();
         });
     }
 
@@ -26,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('friends');
+        Schema::table('blogs', function (Blueprint $table) {
+            $table->dropColumn('status');
+        });
     }
 };

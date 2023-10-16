@@ -8,10 +8,12 @@ import { useSelector } from 'react-redux';
 //components
 import Scrollbar from 'smooth-scrollbar';
 import { VerticalNavbar } from './vertical-nav';
+import { VerticalNavbarV2 } from './vertical-nav-v2';
 
 export const Sidebar = () => {
   const sidebarType = useSelector(SettingSelector.sidebar_type); // array
   const sidebarMenuStyle = useSelector(SettingSelector.sidebar_menu_style);
+
   useEffect(() => {
     Scrollbar.init(document.querySelector('.data-scrollbar') as HTMLElement);
 
@@ -64,7 +66,7 @@ export const Sidebar = () => {
       >
         <div className="sidebar-body pt-0 data-scrollbar">
           <div className="sidebar-list">
-            <VerticalNavbar />
+            <VerticalNavbarV2 />
           </div>
         </div>
         <div className="sidebar-footer"></div>

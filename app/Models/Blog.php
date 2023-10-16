@@ -9,14 +9,18 @@ class Blog extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'user_id','title','content','thumbnail','majors_id','hashtag','views',
+        'user_id', 'title', 'content', 'thumbnail', 'majors_id', 'hashtag', 'views', 'status'
     ];
     public function likes()
     {
         return $this->hasMany(Like::class);
     }
-        public function comments()
-    {   
+    public function comments()
+    {
         return $this->hasMany(Comment::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
