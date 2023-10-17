@@ -1,0 +1,20 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "PRJ - FpolyThesis",
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/users": {
+            "get": {
+                "summary": "Lấy danh sách người dùng",
+                "operationId": "178e3682280ab30428610b72cd9b1218",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách người dùng"
+                    }
+                }
+            }
+        }
+    }
+}
