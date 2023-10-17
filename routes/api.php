@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminPostController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmotionController;
 use App\Http\Controllers\LikeController;
@@ -53,3 +54,7 @@ Route::get('/comment/{post}',[CommentController::class,'FetchCommentInPost'])->n
 Route::post('/comment/{post}',[CommentController::class,'AddComment'])->name('comment.add');
 //emotion
 Route::post('/emotion/create',[EmotionController::class,'CreateEmotion'])->name('emotion.create');
+//admin post
+Route::get('/post',[AdminPostController::class,'index'])->name('posts.list');
+Route::get('/post/{post}', [AdminPostController::class, 'show'])->name('posts.show');
+Route::delete('/post/{post}', [AdminPostController::class, 'destroy']);
