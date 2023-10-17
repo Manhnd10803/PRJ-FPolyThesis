@@ -170,6 +170,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         Laravel\Passport\PassportServiceProvider::class,
         Laravel\Socialite\SocialiteServiceProvider::class,
+        L5Swagger\L5SwaggerServiceProvider::class,
     ])->toArray(),
     /*
     |--------------------------------------------------------------------------
@@ -187,6 +188,7 @@ return [
         'Redis' => Illuminate\Support\Facades\Redis::class,
         'Passport' => Laravel\Passport\Passport::class,
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
+        'L5Swagger' => L5Swagger\L5SwaggerFacade::class,
     ])->toArray(),
 
 ];
