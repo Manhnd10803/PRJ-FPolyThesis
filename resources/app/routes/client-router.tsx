@@ -7,6 +7,8 @@ import { HomePage } from '@/pages/client/home';
 import { NotificationPage } from '@/pages/client/notification';
 import { ProfilePage } from '@/pages/client/profile';
 import { QuestionAndAnswerPage } from '@/pages/client/question-and-answer';
+import { FormAskQuestionPage } from '@/pages/client/question-and-answer/components/form-ask-question';
+import { ListQandAPage } from '@/pages/client/question-and-answer/components/list-qanda';
 
 export const ClientRouter = [
   {
