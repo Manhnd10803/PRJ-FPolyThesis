@@ -74,7 +74,7 @@ export const LoginPage = () => {
                 value={formData.email}
                 onChange={handleInputChange}
               />
-              {errors.email && <div className="error-message text-danger">{errors.email}</div>}
+              {!isError && errors.email && <div className="error-message text-danger">{errors.email}</div>}
             </Form.Group>
             <Form.Group className="form-group">
               <Form.Label>Password</Form.Label>
