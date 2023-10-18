@@ -51,6 +51,7 @@ public function UpdateQa(Request $request, Qa $qa) {
 public function DeleteQa(Qa $qa){
     DB::beginTransaction();
     try {
+        if(Auth::check() && Auth::user()->id === $qa->user_id){
         Comment::where('qa_id', $qa->id)->delete();
         Like::where('qa_id',$qa->id)->delete();
         $qa->likes()->delete();
@@ -58,6 +59,10 @@ public function DeleteQa(Qa $qa){
         $qa->delete();
         DB::commit();
         return response()->json(['message' => 'Bài Q&a đã bị xóa thành công.'], 200);
+        }else{
+             DB::rollBack();
+            return response()->json(['message' => 'Bạn không có quyền này']);
+        }
     } catch (\Exception $e) {
         DB::rollBack();
         return response()->json(['errors' => $e->getMessage()], 400);

@@ -108,6 +108,7 @@ class PostsController extends Controller
     public function DeletePost(Post $post){
         DB::beginTransaction();
         try {
+            if(Auth::check() && Auth::user()->id === $post->user_id){
             Comment::where('post_id', $post->id)->delete();
             Like::where('post_id',$post->id)->delete();
             $post->likes()->delete();
@@ -115,6 +116,10 @@ class PostsController extends Controller
             $post->delete();
             DB::commit();
             return response()->json(['message' => 'Bài viết đã bị xóa thành công.'], 200);
+            }else{
+                DB::rollBack();
+                return response()->json(['message' => 'Bạn không có quyền này']);
+            }
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()], 400);
