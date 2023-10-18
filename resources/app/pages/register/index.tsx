@@ -92,12 +92,6 @@ function RegisterPage() {
             {errors.password && <div className="error-message text-danger">{errors.password}</div>}
           </Form.Group>
           <div className="d-inline-block w-100">
-            {/* <Form.Check className="d-inline-block mt-2 pt-1">
-              <Form.Check.Input type="checkbox" className="me-2" id="customCheck1" />
-              <Form.Check.Label>
-                I accept <Link to="#">Terms and Conditions</Link>
-              </Form.Check.Label>
-            </Form.Check> */}
             <Button type="submit" className="btn-primary w-100 mb-3" onClick={handleRegister} disabled={isLoading}>
               {isLoading ? 'Signing Up...' : 'Sign Up'}
             </Button>
@@ -126,15 +120,6 @@ function RegisterPage() {
             <span className="dark-color d-inline-block line-height-2">
               Already Have an Account? <Link to="/login">Log In</Link>
             </span>
-            {/* <ul className="iq-social-media">
-              <li>
-                <Link to="#">
-                  <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 488 512" fill="currentColor">
-                    <path d="M488 261.8C488 403.3 391.1 504 248 504 110.8 504 0 393.2 0 256S110.8 8 248 8c66.8 0 123 24.5 166.3 64.9l-67.5 64.9C258.5 52.6 94.3 116.6 94.3 256c0 86.5 69.1 156.6 153.7 156.6 98.2 0 135-70.4 140.8-106.9H248v-85.3h236.1c2.3 12.7 3.9 24.9 3.9 41.4z" />
-                  </svg>
-                </Link>
-              </li>
-            </ul> */}
           </div>
         </Form>
       </div>

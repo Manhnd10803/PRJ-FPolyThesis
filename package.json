@@ -37,6 +37,7 @@
     "vite": "^4.0.0"
   },
   "dependencies": {
+    "@mui/x-data-grid-premium": "^6.16.2",
     "@reduxjs/toolkit": "^1.9.7",
     "@tanstack/react-query": "^4.36.1",
     "@tanstack/react-query-devtools": "^4.36.1",
