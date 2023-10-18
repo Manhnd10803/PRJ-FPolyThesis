@@ -1,4 +1,4 @@
-# Fpoly Thesissss
+# Fpoly Thesis
 
 ## Getting started
 
