@@ -81,6 +81,7 @@ class BlogController extends Controller
     {
         DB::beginTransaction();
         try {
+            if(Auth::check() && Auth::user()->id === $blog->user_id){
             Comment::where('blog_id', $blog->id)->delete();
             Like::where('blog_id', $blog->id)->delete();
             $blog->likes()->delete();
@@ -88,6 +89,10 @@ class BlogController extends Controller
             $blog->delete();
             DB::commit();
             return response()->json(['message' => 'Bài blog đã bị xóa thành công.'], 200);
+           }else{
+            DB::rollBack();
+            return response()->json(['message' => 'Bạn không có quyền này']);
+           }
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()], 400);

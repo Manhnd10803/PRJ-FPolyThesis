@@ -27,6 +27,9 @@ Route::get('/google-auth', [AuthController::class, 'googleAuth'])->name('user.go
 Route::get('/google-callback', [AuthController::class, 'googleCallback'])->name('user.googleCallback');
 Route::post('/login', [AuthController::class, 'login'])->name('user.login');
 Route::post('/verify', [AuthController::class, 'verify'])->name('user.verify');
+Route::post('/post-forgot-password', [AuthController::class, 'forgotPassword'])->name('user.forgotPassword');
+Route::post('/post-verify', [AuthController::class, 'resetPassword'])->name('user.postVerify');
+
 Route::middleware('auth:api')->group(function () {
     //route has been authenticated
     Route::post('/logout', [AuthController::class, 'logout'])->name('user.logout');
