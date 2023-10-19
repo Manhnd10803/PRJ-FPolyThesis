@@ -17,6 +17,41 @@ use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
+    /**
+     * @OA\Post(
+     *     path="/api/register",
+     *     tags={"Authentication"},
+     *     summary="Đăng ký tài khoản",
+     *     description="Tạo một tài khoản mới.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             required={"username", "email", "password"},
+     *             @OA\Property(
+     *                 property="username",
+     *                 type="string",
+     *                 description="Tên đăng nhập của người dùng"
+     *             ),
+     *             @OA\Property(
+     *                 property="email",
+     *                 type="string",
+     *                 format="email",
+     *                 description="Địa chỉ email của người dùng"
+     *             ),
+     *             @OA\Property(
+     *                 property="password",
+     *                 type="string",
+     *                 minLength=8,
+     *                 description="Mật khẩu của người dùng"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Tạo tài khoản thành công"),
+     *     @OA\Response(response=400, description="Lỗi trong quá trình xử lý"),
+     *     @OA\Response(response=422, description="Dữ liệu không hợp lệ")
+     * )
+     */
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -51,6 +86,35 @@ class AuthController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
+    /**
+     * @OA\Post(
+     *     path="/api/verify",
+     *     tags={"Authentication"},
+     *     summary="Xác minh tài khoản",
+     *     description="Xác minh tài khoản người dùng bằng mã xác nhận.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             required={"email", "verification_code"},
+     *             @OA\Property(
+     *                 property="email",
+     *                 type="string",
+     *                 format="email",
+     *                 description="Địa chỉ email của người dùng"
+     *             ),
+     *             @OA\Property(
+     *                 property="verification_code",
+     *                 type="string",
+     *                 description="Mã xác nhận"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Xác minh tài khoản thành công"),
+     *     @OA\Response(response=403, description="Mã xác nhận không chính xác"),
+     *     @OA\Response(response=404, description="Không tìm thấy tài khoản")
+     * )
+     */
     public function verify(Request $request)
     {
         $user = User::where('email', $request->email)->first();
@@ -60,6 +124,37 @@ class AuthController extends Controller
             return response()->json(['message' => 'Mã xác nhận không chính xác'], 403);
         }
     }
+    /**
+     * @OA\Post(
+     *     path="/api/login",
+     *     tags={"Authentication"},
+     *     summary="Đăng nhập",
+     *     description="Đăng nhập vào hệ thống bằng địa chỉ email và mật khẩu.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             required={"email", "password"},
+     *             @OA\Property(
+     *                 property="email",
+     *                 type="string",
+     *                 format="email",
+     *                 description="Địa chỉ email của người dùng"
+     *             ),
+     *             @OA\Property(
+     *                 property="password",
+     *                 type="string",
+     *                 minLength=8,
+     *                 description="Mật khẩu của người dùng"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Đăng nhập thành công"),
+     *     @OA\Response(response=400, description="Đăng nhập thất bại"),
+     *     @OA\Response(response=403, description="Tài khoản chưa được kích hoạt"),
+     *     @OA\Response(response=422, description="Dữ liệu không hợp lệ")
+     * )
+     */
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -81,6 +176,16 @@ class AuthController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/logout",
+     *     tags={"Authentication"},
+     *     summary="Đăng xuất",
+     *     description="Đăng xuất khỏi hệ thống và hủy bỏ tất cả các token truy cập.",
+     *     @OA\Response(response=200, description="Đăng xuất thành công")
+     * )
+     */
     public function logout(Request $request)
     {
         $user = Auth::user();
@@ -89,11 +194,33 @@ class AuthController extends Controller
         });
         return response()->json(['message' => 'Đăng xuất thành công'], 200);
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/google-auth",
+     *     tags={"Authentication"},
+     *     summary="Khởi tạo quá trình đăng nhập bằng Google",
+     *     description="Khởi tạo quá trình đăng nhập bằng Google và trả về URL để chuyển hướng đến trang đăng nhập Google.",
+     *     @OA\Response(response=200, description="URL đăng nhập Google")
+     * )
+     */
     public function googleAuth()
     {
         $redirectUrl = Socialite::driver('google')->stateless()->redirect()->getTargetUrl();
         return response()->json(['googleLoginUrl' => $redirectUrl]);
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/google-callback",
+     *     tags={"Authentication"},
+     *     summary="Xử lý đăng nhập bằng Google",
+     *     description="Xử lý việc đăng nhập bằng Google, lấy thông tin trả về từ Google thực hiện đăng ký hoặc đăng nhập.",
+     *     @OA\Response(response=200, description="Đăng nhập bằng Google thành công"),
+     *     @OA\Response(response=403, description="Tài khoản bị khóa hoặc lỗi trong quá trình xử lý"),
+     *     @OA\Response(response=400, description="Lỗi trong quá trình xử lý")
+     * )
+     */
     public function googleCallback()
     {
         $user = Socialite::driver('google')->stateless()->user();

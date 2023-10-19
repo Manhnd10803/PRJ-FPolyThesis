@@ -1,0 +1,209 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "FpolyZone",
+        "version": "0.1"
+    },
+    "paths": {
+        "/api": {},
+        "/api/register": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Đăng ký tài khoản",
+                "description": "Tạo một tài khoản mới.",
+                "operationId": "8a56853624e025573120a09a4c75d468",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username",
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "description": "Tên đăng nhập của người dùng",
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "description": "Địa chỉ email của người dùng",
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "description": "Mật khẩu của người dùng",
+                                        "type": "string",
+                                        "minLength": 8
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tạo tài khoản thành công"
+                    },
+                    "400": {
+                        "description": "Lỗi trong quá trình xử lý"
+                    },
+                    "422": {
+                        "description": "Dữ liệu không hợp lệ"
+                    }
+                }
+            }
+        },
+        "/api/verify": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Xác minh tài khoản",
+                "description": "Xác minh tài khoản người dùng bằng mã xác nhận.",
+                "operationId": "6d7ca1d412597b8b2a3c35429817fabb",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "verification_code"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "description": "Địa chỉ email của người dùng",
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "verification_code": {
+                                        "description": "Mã xác nhận",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Xác minh tài khoản thành công"
+                    },
+                    "403": {
+                        "description": "Mã xác nhận không chính xác"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy tài khoản"
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Đăng nhập",
+                "description": "Đăng nhập vào hệ thống bằng địa chỉ email và mật khẩu.",
+                "operationId": "a3b306d14572d1f4bd6c064b3233e7b8",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "description": "Địa chỉ email của người dùng",
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "description": "Mật khẩu của người dùng",
+                                        "type": "string",
+                                        "minLength": 8
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Đăng nhập thành công"
+                    },
+                    "400": {
+                        "description": "Đăng nhập thất bại"
+                    },
+                    "403": {
+                        "description": "Tài khoản chưa được kích hoạt"
+                    },
+                    "422": {
+                        "description": "Dữ liệu không hợp lệ"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Đăng xuất",
+                "description": "Đăng xuất khỏi hệ thống và hủy bỏ tất cả các token truy cập.",
+                "operationId": "fe8f3429cd6979b3b4517e186505f9f9",
+                "responses": {
+                    "200": {
+                        "description": "Đăng xuất thành công"
+                    }
+                }
+            }
+        },
+        "/api/google-auth": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Khởi tạo quá trình đăng nhập bằng Google",
+                "description": "Khởi tạo quá trình đăng nhập bằng Google và trả về URL để chuyển hướng đến trang đăng nhập Google.",
+                "operationId": "1d2fb816281cc46db4153353e93e550c",
+                "responses": {
+                    "200": {
+                        "description": "URL đăng nhập Google"
+                    }
+                }
+            }
+        },
+        "/api/google-callback": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Xử lý đăng nhập bằng Google",
+                "description": "Xử lý việc đăng nhập bằng Google, lấy thông tin trả về từ Google thực hiện đăng ký hoặc đăng nhập.",
+                "operationId": "6fa6fff7fee22a10f89963df94831b59",
+                "responses": {
+                    "200": {
+                        "description": "Đăng nhập bằng Google thành công"
+                    },
+                    "403": {
+                        "description": "Tài khoản bị khóa hoặc lỗi trong quá trình xử lý"
+                    },
+                    "400": {
+                        "description": "Lỗi trong quá trình xử lý"
+                    }
+                }
+            }
+        }
+    }
+}
