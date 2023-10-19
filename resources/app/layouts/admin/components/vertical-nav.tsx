@@ -28,8 +28,12 @@ export const VerticalNavbar = React.memo(() => {
             <span className="item-name">Dashboard</span>
           </Link>
         </li>
-        <li className={`${location.pathname === '/' ? 'active' : ''} nav-item `}>
-          <Link className={`${location.pathname === '/' ? 'active' : ''} nav-link `} aria-current="page" to="/">
+        <li className={`${location.pathname === '/admin/users' ? 'active' : ''} nav-item `}>
+          <Link
+            className={`${location.pathname === '/admin/users' ? 'active' : ''} nav-link `}
+            aria-current="page"
+            to="/admin/users"
+          >
             <OverlayTrigger placement="right" overlay={<Tooltip>Users</Tooltip>}>
               <i className="icon material-symbols-outlined">people</i>
             </OverlayTrigger>
