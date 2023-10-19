@@ -1,5 +1,5 @@
 import { LoginPage } from '@/pages/login';
-import RegisterPage from '@/pages/register';
+// import RegisterPage from '@/pages/register';
 
 export const AuthRouter = [
   {
@@ -8,6 +8,6 @@ export const AuthRouter = [
   },
   {
     path: 'register',
-    element: <RegisterPage />,
+    // element: <RegisterPage />,
   },
 ];
