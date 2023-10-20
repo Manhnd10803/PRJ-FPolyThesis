@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { Col, Form, Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { LoginSchema } from '@/validation';
-import { Login, SigninWithGoogle } from '@/apis/auth';
 import { useMutation } from '@tanstack/react-query';
+import { AuthService } from '@/apis/services/auth.service';
+
+type FormDataType = { email: string; password: string };
 
 export const LoginPage = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormDataType>({
     email: '',
     password: '',
   });
@@ -14,9 +16,9 @@ export const LoginPage = () => {
 
   const navigate = useNavigate();
 
-  const loginUser = async (formData: { email: string; password: string }) => {
+  const loginUser = async (formData: FormDataType) => {
     try {
-      const response = await Login(formData);
+      const response = await AuthService.Login<FormDataType>(formData);
       return response.data;
     } catch (error) {
       throw error;
@@ -53,7 +55,7 @@ export const LoginPage = () => {
       });
   };
   const loginWithGoogle = () => {
-    SigninWithGoogle();
+    AuthService.LoginWithGoogle();
   };
   return (
     <>
