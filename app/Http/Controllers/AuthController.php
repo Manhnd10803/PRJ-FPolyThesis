@@ -19,7 +19,7 @@ class AuthController extends Controller
 {
     /**
      * @OA\Post(
-     *     path="/api/register",
+     *     path="/api/auth/register",
      *     tags={"Authentication"},
      *     summary="Đăng ký tài khoản",
      *     description="Tạo một tài khoản mới.",
@@ -88,7 +88,7 @@ class AuthController extends Controller
     }
     /**
      * @OA\Post(
-     *     path="/api/verify",
+     *     path="/api/auth/verify",
      *     tags={"Authentication"},
      *     summary="Xác minh tài khoản",
      *     description="Xác minh tài khoản người dùng bằng mã xác nhận.",
@@ -120,13 +120,14 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
         if ($request->verification_code == $user->verification_code) {
             $user->update(['status' => config('default.user.status.active')]);
+            return response()->json(['message' => 'Kích hoạt tài khoản thành công'], 200);
         } else {
             return response()->json(['message' => 'Mã xác nhận không chính xác'], 403);
         }
     }
     /**
      * @OA\Post(
-     *     path="/api/login",
+     *     path="/api/auth/login",
      *     tags={"Authentication"},
      *     summary="Đăng nhập",
      *     description="Đăng nhập vào hệ thống bằng địa chỉ email và mật khẩu.",
@@ -167,6 +168,9 @@ class AuthController extends Controller
                 if ($user->status == config('default.user.status.lock')) {
                     return response()->json(['message' => 'Tài khoản chưa được kích hoạt'], 403);
                 }
+                if ($user->status == config('default.user.status.suspend')) {
+                    return response()->json(['message' => 'Tài khoản đã bị khóa'], 403);
+                }
                 $token = $user->createToken('authToken')->accessToken;
                 return response()->json(['user' => $user, 'accessToken' => $token], 200);
             } else {
@@ -179,7 +183,7 @@ class AuthController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/logout",
+     *     path="/api/auth/logout",
      *     tags={"Authentication"},
      *     summary="Đăng xuất",
      *     description="Đăng xuất khỏi hệ thống và hủy bỏ tất cả các token truy cập.",
@@ -197,7 +201,7 @@ class AuthController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/google-auth",
+     *     path="/api/auth/google-auth",
      *     tags={"Authentication"},
      *     summary="Khởi tạo quá trình đăng nhập bằng Google",
      *     description="Khởi tạo quá trình đăng nhập bằng Google và trả về URL để chuyển hướng đến trang đăng nhập Google.",
@@ -212,7 +216,7 @@ class AuthController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/google-callback",
+     *     path="/api/auth/google-callback",
      *     tags={"Authentication"},
      *     summary="Xử lý đăng nhập bằng Google",
      *     description="Xử lý việc đăng nhập bằng Google, lấy thông tin trả về từ Google thực hiện đăng ký hoặc đăng nhập.",
@@ -261,19 +265,20 @@ class AuthController extends Controller
             }
         }
     }
-    public function refreshToken(){
+    public function refreshToken()
+    {
         DB::beginTransaction();
-        try{
-        $user = auth()->user();
-        $user->tokens->each(function ($token, $key) {
-            $token->delete();
-        });
-        $newToken = auth()->user()->createToken('authToken')->accessToken;
-        DB::commit();
-        return response()->json(['access_token' => $newToken],200);
-        }catch(\Exception $e){
+        try {
+            $user = auth()->user();
+            $user->tokens->each(function ($token, $key) {
+                $token->delete();
+            });
+            $newToken = auth()->user()->createToken('authToken')->accessToken;
+            DB::commit();
+            return response()->json(['access_token' => $newToken], 200);
+        } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['errors'=> $e->getMessage()], 400);
+            return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminBlogController;
+use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CommentController;
@@ -24,7 +25,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 //auth
-Route::prefix('auth')->group(function(){
+Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('user.register');
     Route::get('/google-auth', [AuthController::class, 'googleAuth'])->name('user.googleAuth');
     Route::get('/google-callback', [AuthController::class, 'googleCallback'])->name('user.googleCallback');
@@ -36,7 +37,7 @@ Route::prefix('auth')->group(function(){
 Route::middleware('auth:api')->group(function () {
     //route has been authenticated
     Route::post('/auth/logout', [AuthController::class, 'logout'])->name('user.logout');
-    Route::post('/auth/refresh-token', [AuthController::class,'refreshToken'])->name('token.refresh');
+    Route::post('/auth/refresh-token', [AuthController::class, 'refreshToken'])->name('token.refresh');
     Route::get('/hello', function () {
         return 'ok';
     });
@@ -93,3 +94,12 @@ Route::post('/send-request/{recipient}', [FriendController::class, 'SendFriendRe
 Route::post('/comfirm-request/{sender}', [FriendController::class, 'ConfirmFriendRequest'])->name('friend.confirm');
 Route::put('/update-relation/{friend}', [FriendController::class, 'UpdateFriendshipType'])->name('friend.update');
 Route::get('/friend', [FriendController::class, 'FetchAllFriend'])->name('friend.list');
+
+//admin User 
+Route::prefix('user')->group(function () {
+    Route::get('/', [AdminUserController::class, 'listUser'])->name('admin.user.list');
+    Route::get('/detail/{user}', [AdminUserController::class, 'detailUser'])->name('admin.user.detail');
+    Route::put('/suspend/{user}', [AdminUserController::class, 'suspendUser'])->name('admin.user.suspend');
+    Route::put('/active/{user}', [AdminUserController::class, 'activeUser'])->name('admin.user.active');
+    Route::delete('/delete/{user}', [AdminUserController::class, 'deleteUser'])->name('admin.user.delete');
+});

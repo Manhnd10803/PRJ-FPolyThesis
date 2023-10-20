@@ -6,14 +6,343 @@
     },
     "paths": {
         "/api": {},
-        "/api/register": {
+        "/api/admin/user/": {
+            "get": {
+                "tags": [
+                    "User Management"
+                ],
+                "summary": "Danh sách tất cả tài khoản người dùng",
+                "description": "Lấy danh sách tất cả tài khoản người dùng trong hệ thống.",
+                "operationId": "0a04c845a99fd15de3b30f480021778d",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách tài khoản người dùng thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "description": "ID tài khoản người dùng",
+                                                "type": "integer",
+                                                "format": "int64"
+                                            },
+                                            "username": {
+                                                "description": "Tên đăng nhập",
+                                                "type": "string"
+                                            },
+                                            "first_name": {
+                                                "description": "Họ",
+                                                "type": "string"
+                                            },
+                                            "last_name": {
+                                                "description": "Tên",
+                                                "type": "string"
+                                            },
+                                            "group_id": {
+                                                "description": "ID nhóm",
+                                                "type": "integer",
+                                                "format": "int32"
+                                            },
+                                            "email": {
+                                                "description": "Địa chỉ email",
+                                                "type": "string",
+                                                "format": "email"
+                                            },
+                                            "birthday": {
+                                                "description": "Ngày sinh",
+                                                "type": "string"
+                                            },
+                                            "avatar": {
+                                                "description": "Link đến ảnh đại diện",
+                                                "type": "string"
+                                            },
+                                            "phone": {
+                                                "description": "Số điện thoại",
+                                                "type": "string"
+                                            },
+                                            "address": {
+                                                "description": "Địa chỉ",
+                                                "type": "string"
+                                            },
+                                            "biography": {
+                                                "description": "Tiểu sử",
+                                                "type": "string"
+                                            },
+                                            "gender": {
+                                                "description": "Giới tính",
+                                                "type": "string"
+                                            },
+                                            "status": {
+                                                "description": "Trạng thái",
+                                                "type": "integer",
+                                                "format": "int32"
+                                            },
+                                            "major_id": {
+                                                "description": "ID ngành học",
+                                                "type": "integer",
+                                                "format": "int32"
+                                            },
+                                            "permissions": {
+                                                "description": "Danh sách quyền",
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "verification_code": {
+                                                "description": "Mã xác minh",
+                                                "type": "string"
+                                            },
+                                            "created_at": {
+                                                "description": "Ngày tạo",
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "updated_at": {
+                                                "description": "Ngày cập nhật",
+                                                "type": "string",
+                                                "format": "date-time"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/admin/user/detail/{user}": {
+            "get": {
+                "tags": [
+                    "User Management"
+                ],
+                "summary": "Xem chi tiết tài khoản người dùng",
+                "description": "Xem chi tiết thông tin tài khoản người dùng.",
+                "operationId": "438eb505190666bbc07a7ad55613aac8",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "ID của tài khoản người dùng",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thông tin chi tiết của tài khoản người dùng",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "description": "ID tài khoản người dùng",
+                                            "type": "integer",
+                                            "format": "int64"
+                                        },
+                                        "username": {
+                                            "description": "Tên đăng nhập",
+                                            "type": "string"
+                                        },
+                                        "first_name": {
+                                            "description": "Họ",
+                                            "type": "string"
+                                        },
+                                        "last_name": {
+                                            "description": "Tên",
+                                            "type": "string"
+                                        },
+                                        "group_id": {
+                                            "description": "ID nhóm",
+                                            "type": "integer",
+                                            "format": "int32"
+                                        },
+                                        "email": {
+                                            "description": "Địa chỉ email",
+                                            "type": "string",
+                                            "format": "email"
+                                        },
+                                        "birthday": {
+                                            "description": "Ngày sinh",
+                                            "type": "string"
+                                        },
+                                        "avatar": {
+                                            "description": "Link đến ảnh đại diện",
+                                            "type": "string"
+                                        },
+                                        "phone": {
+                                            "description": "Số điện thoại",
+                                            "type": "string"
+                                        },
+                                        "address": {
+                                            "description": "Địa chỉ",
+                                            "type": "string"
+                                        },
+                                        "biography": {
+                                            "description": "Tiểu sử",
+                                            "type": "string"
+                                        },
+                                        "gender": {
+                                            "description": "Giới tính",
+                                            "type": "string"
+                                        },
+                                        "status": {
+                                            "description": "Trạng thái",
+                                            "type": "integer",
+                                            "format": "int32"
+                                        },
+                                        "major_id": {
+                                            "description": "ID ngành học",
+                                            "type": "integer",
+                                            "format": "int32"
+                                        },
+                                        "permissions": {
+                                            "description": "Danh sách quyền",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "verification_code": {
+                                            "description": "Mã xác minh",
+                                            "type": "string"
+                                        },
+                                        "created_at": {
+                                            "description": "Ngày tạo",
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "updated_at": {
+                                            "description": "Ngày cập nhật",
+                                            "type": "string",
+                                            "format": "date-time"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy tài khoản"
+                    }
+                }
+            }
+        },
+        "/api/admin/user/suspend/{user}": {
+            "put": {
+                "tags": [
+                    "User Management"
+                ],
+                "summary": "Tạm khóa tài khoản người dùng",
+                "description": "Tạm khóa tài khoản người dùng dựa trên ID.",
+                "operationId": "858b4c93688c2026457c1ff85d4d1e8e",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "ID của tài khoản người dùng",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tạm khóa tài khoản thành công"
+                    },
+                    "400": {
+                        "description": "Lỗi trong quá trình xử lý"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy tài khoản"
+                    }
+                }
+            }
+        },
+        "/api/admin/user/active/{user}": {
+            "put": {
+                "tags": [
+                    "User Management"
+                ],
+                "summary": "Mở khóa tài khoản người dùng",
+                "description": "Mở khóa tài khoản người dùng dựa trên ID.",
+                "operationId": "a28a63c9aaa7014b0b82c2ec63442b8e",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "ID của tài khoản người dùng",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Mở khóa tài khoản thành công"
+                    },
+                    "400": {
+                        "description": "Lỗi trong quá trình xử lý"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy tài khoản"
+                    }
+                }
+            }
+        },
+        "/api/admin/user/delete/{user}": {
+            "delete": {
+                "tags": [
+                    "User Management"
+                ],
+                "summary": "Xóa tài khoản người dùng",
+                "description": "Xóa tài khoản người dùng dựa trên ID.",
+                "operationId": "f8ece4233a9eae56293e927d468291b0",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "ID của tài khoản người dùng",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xóa tài khoản thành công"
+                    },
+                    "400": {
+                        "description": "Lỗi trong quá trình xử lý"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy tài khoản"
+                    }
+                }
+            }
+        },
+        "/api/auth/register": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Đăng ký tài khoản",
                 "description": "Tạo một tài khoản mới.",
-                "operationId": "8a56853624e025573120a09a4c75d468",
+                "operationId": "d764dd091cc4494ae0baf360b03319f3",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -58,14 +387,14 @@
                 }
             }
         },
-        "/api/verify": {
+        "/api/auth/verify": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Xác minh tài khoản",
                 "description": "Xác minh tài khoản người dùng bằng mã xác nhận.",
-                "operationId": "6d7ca1d412597b8b2a3c35429817fabb",
+                "operationId": "86a3349a0306cb26904691a7211faf38",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -104,14 +433,14 @@
                 }
             }
         },
-        "/api/login": {
+        "/api/auth/login": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Đăng nhập",
                 "description": "Đăng nhập vào hệ thống bằng địa chỉ email và mật khẩu.",
-                "operationId": "a3b306d14572d1f4bd6c064b3233e7b8",
+                "operationId": "8dcb70df1020986038d098cc08d05dae",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -154,14 +483,14 @@
                 }
             }
         },
-        "/api/logout": {
+        "/api/auth/logout": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Đăng xuất",
                 "description": "Đăng xuất khỏi hệ thống và hủy bỏ tất cả các token truy cập.",
-                "operationId": "fe8f3429cd6979b3b4517e186505f9f9",
+                "operationId": "69281b12abb272c76871f19cb17ca563",
                 "responses": {
                     "200": {
                         "description": "Đăng xuất thành công"
@@ -169,14 +498,14 @@
                 }
             }
         },
-        "/api/google-auth": {
+        "/api/auth/google-auth": {
             "get": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Khởi tạo quá trình đăng nhập bằng Google",
                 "description": "Khởi tạo quá trình đăng nhập bằng Google và trả về URL để chuyển hướng đến trang đăng nhập Google.",
-                "operationId": "1d2fb816281cc46db4153353e93e550c",
+                "operationId": "49726d6677ed1f5bf2215a336e5f2b62",
                 "responses": {
                     "200": {
                         "description": "URL đăng nhập Google"
@@ -184,14 +513,14 @@
                 }
             }
         },
-        "/api/google-callback": {
+        "/api/auth/google-callback": {
             "get": {
                 "tags": [
                     "Authentication"
                 ],
                 "summary": "Xử lý đăng nhập bằng Google",
                 "description": "Xử lý việc đăng nhập bằng Google, lấy thông tin trả về từ Google thực hiện đăng ký hoặc đăng nhập.",
-                "operationId": "6fa6fff7fee22a10f89963df94831b59",
+                "operationId": "efce55f6e0a2c532daa7c439214d443c",
                 "responses": {
                     "200": {
                         "description": "Đăng nhập bằng Google thành công"

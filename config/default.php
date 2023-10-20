@@ -11,6 +11,7 @@ return [
         'status' => [
             'lock' => '0',
             'active' => '1',
+            'suspend' => '2',
         ],
     ],
     'blog' => [
@@ -21,7 +22,7 @@ return [
         ],
     ],
     'friend' => [
-        'status' =>[
+        'status' => [
             'pending' => 0,
             'accepted' => 1,
         ],
