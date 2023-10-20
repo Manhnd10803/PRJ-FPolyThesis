@@ -24,17 +24,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 //auth
-Route::post('/register', [AuthController::class, 'register'])->name('user.register');
-Route::get('/google-auth', [AuthController::class, 'googleAuth'])->name('user.googleAuth');
-Route::get('/google-callback', [AuthController::class, 'googleCallback'])->name('user.googleCallback');
-Route::post('/login', [AuthController::class, 'login'])->name('user.login');
-Route::post('/verify', [AuthController::class, 'verify'])->name('user.verify');
-Route::post('/post-forgot-password', [AuthController::class, 'forgotPassword'])->name('user.forgotPassword');
-Route::post('/post-verify', [AuthController::class, 'resetPassword'])->name('user.postVerify');
-
+Route::prefix('auth')->group(function(){
+    Route::post('/register', [AuthController::class, 'register'])->name('user.register');
+    Route::get('/google-auth', [AuthController::class, 'googleAuth'])->name('user.googleAuth');
+    Route::get('/google-callback', [AuthController::class, 'googleCallback'])->name('user.googleCallback');
+    Route::post('/login', [AuthController::class, 'login'])->name('user.login');
+    Route::post('/verify', [AuthController::class, 'verify'])->name('user.verify');
+    Route::post('/post-forgot-password', [AuthController::class, 'forgotPassword'])->name('user.forgotPassword');
+    Route::post('/post-verify', [AuthController::class, 'resetPassword'])->name('user.postVerify');
+});
 Route::middleware('auth:api')->group(function () {
     //route has been authenticated
-    Route::post('/logout', [AuthController::class, 'logout'])->name('user.logout');
+    Route::post('/auth/logout', [AuthController::class, 'logout'])->name('user.logout');
+    Route::post('/auth/refresh-token', [AuthController::class,'refreshToken'])->name('token.refresh');
     Route::get('/hello', function () {
         return 'ok';
     });

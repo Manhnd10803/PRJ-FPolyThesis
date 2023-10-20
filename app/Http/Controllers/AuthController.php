@@ -261,4 +261,19 @@ class AuthController extends Controller
             }
         }
     }
+    public function refreshToken(){
+        DB::beginTransaction();
+        try{
+        $user = auth()->user();
+        $user->tokens->each(function ($token, $key) {
+            $token->delete();
+        });
+        $newToken = auth()->user()->createToken('authToken')->accessToken;
+        DB::commit();
+        return response()->json(['access_token' => $newToken],200);
+        }catch(\Exception $e){
+            DB::rollBack();
+            return response()->json(['errors'=> $e->getMessage()], 400);
+        }
+    }
 }
