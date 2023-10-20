@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminBlogController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CommentController;
@@ -57,11 +58,11 @@ Route::prefix('blogs')->group(function () {
     Route::put('/{blog}', [BlogController::class, 'UpdateBlog'])->name('blog.update');
     Route::delete('/{blog}', [BlogController::class, 'DeleteBlog'])->name('blog.delete');
     //admin (sau cần middleware admin)
-    Route::get('/list-approved', [BlogController::class, 'listAllBlog'])->name('blog.approved');
-    Route::get('/list-pending', [BlogController::class, 'listPedingBlog'])->name('blog.pending');
-    Route::get('/approve/{blog}', [BlogController::class, 'approveBlog'])->name('blog.approve');
-    Route::get('/reject/{blog}', [BlogController::class, 'rejectBlog'])->name('blog.reject');
-    Route::get('/detail/{blog}', [BlogController::class, 'detailBlog'])->name('blog.detailBlog');
+    Route::get('/list-approved', [AdminBlogController::class, 'listAllBlog'])->name('admin.blog.approved');
+    Route::get('/list-pending', [AdminBlogController::class, 'listPedingBlog'])->name('admin.blog.pending');
+    Route::get('/approve/{blog}', [AdminBlogController::class, 'approveBlog'])->name('admin.blog.approve');
+    Route::get('/reject/{blog}', [AdminBlogController::class, 'rejectBlog'])->name('admin.blog.reject');
+    Route::get('/detail/{blog}', [AdminBlogController::class, 'detailBlog'])->name('admin.blog.detailBlog');
 });
 //qa
 Route::post('/quests', [QaController::class, 'CreateQa'])->name('qa.create');
@@ -86,7 +87,7 @@ Route::post('/comment/{blog}', [CommentController::class, 'AddCommentToBlog'])->
 Route::get('/comment/{qa}', [CommentController::class, 'FetchCommentInQa'])->name('qa.show');
 Route::post('/comment/{qa}', [CommentController::class, 'AddCommentToQa'])->name('qa.comment');
 //friend --relationship
-Route::post('/send-request/{recipient}',[FriendController::class,'SendFriendRequest'])->name('friend.send');
-Route::post('/comfirm-request/{sender}',[FriendController::class,'ConfirmFriendRequest'])->name('friend.confirm');
-Route::put('/update-relation/{friend}',[FriendController::class,'UpdateFriendshipType'])->name('friend.update');
-Route::get('/friend',[FriendController::class,'FetchAllFriend'])->name('friend.list');
+Route::post('/send-request/{recipient}', [FriendController::class, 'SendFriendRequest'])->name('friend.send');
+Route::post('/comfirm-request/{sender}', [FriendController::class, 'ConfirmFriendRequest'])->name('friend.confirm');
+Route::put('/update-relation/{friend}', [FriendController::class, 'UpdateFriendshipType'])->name('friend.update');
+Route::get('/friend', [FriendController::class, 'FetchAllFriend'])->name('friend.list');

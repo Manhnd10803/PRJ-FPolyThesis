@@ -81,78 +81,21 @@ class BlogController extends Controller
     {
         DB::beginTransaction();
         try {
-            if(Auth::check() && Auth::user()->id === $blog->user_id){
-            Comment::where('blog_id', $blog->id)->delete();
-            Like::where('blog_id', $blog->id)->delete();
-            $blog->likes()->delete();
-            $blog->comments()->delete();
-            $blog->delete();
-            DB::commit();
-            return response()->json(['message' => 'Bài blog đã bị xóa thành công.'], 200);
-           }else{
-            DB::rollBack();
-            return response()->json(['message' => 'Bạn không có quyền này']);
-           }
+            if (Auth::check() && Auth::user()->id === $blog->user_id) {
+                Comment::where('blog_id', $blog->id)->delete();
+                Like::where('blog_id', $blog->id)->delete();
+                $blog->likes()->delete();
+                $blog->comments()->delete();
+                $blog->delete();
+                DB::commit();
+                return response()->json(['message' => 'Bài blog đã bị xóa thành công.'], 200);
+            } else {
+                DB::rollBack();
+                return response()->json(['message' => 'Bạn không có quyền này']);
+            }
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()], 400);
         }
-    }
-
-    //Admin
-    //bài viết đã duyệt
-    public function listAllBlog()
-    {
-        $blogs = Blog::where('status', config('default.blog.status.approved'))->get();
-        //lấy kèm thông tin người đăng
-        //sau cần lấy ra conmment, like, rate sẽ cập nhật trong sprint 3
-        foreach ($blogs as $blog) {
-            $user = $blog->user;
-        }
-        return response()->json($blogs);
-    }
-    //bài viết chờ duyệt
-    public function listPedingBlog()
-    {
-        $blogs = Blog::where('status', config('default.blog.status.pending'))->get();
-        //lấy kèm thông tin người đăng
-        //sau cần lấy ra conmment, like, rate sẽ cập nhật trong sprint 3
-        foreach ($blogs as $blog) {
-            $user = $blog->user;
-        }
-        return response()->json($blogs);
-    }
-    //duyệt bài viết
-    public function approveBlog(Blog $blog)
-    {
-        DB::beginTransaction();
-        try {
-            $blog->update(['status' => config('default.blog.status.approved')]);
-            DB::commit();
-            return response()->json(['message' => 'Duyệt thành công'], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['errors' => $e->getMessage()], 400);
-        }
-    }
-    public function rejectBlog(Blog $blog)
-    {
-        DB::beginTransaction();
-        try {
-            $blog->update(['status' => config('default.blog.status.reject')]);
-            DB::commit();
-            return response()->json(['message' => 'Từ chối thành công'], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['errors' => $e->getMessage()], 400);
-        }
-    }
-    //chi tiết bài viết
-    public function detailBlog(Blog $blog)
-    {
-        //lấy kèm thông tin người đăng
-        //sau cần lấy ra conmment, like, rate sẽ cập nhật trong sprint 3
-        $blog->user;
-        return response()->json($blog);
     }
 }
