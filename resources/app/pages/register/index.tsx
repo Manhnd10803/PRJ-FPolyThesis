@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { Col, Form, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { Register, SigninWithGoogle } from '@/apis/auth';
 import { RegisterSchema } from '@/validation';
+import { AuthService } from '@/apis/services/auth.service';
 
 interface UserData {
   username: string;
@@ -19,7 +19,7 @@ function RegisterPage() {
   });
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const { mutate, isLoading } = useMutation((formData: UserData) => {
-    return Register(formData);
+    return AuthService.Register(formData);
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,7 +46,7 @@ function RegisterPage() {
       });
   };
   const loginWithGoogle = () => {
-    SigninWithGoogle();
+    AuthService.LoginWithGoogle();
   };
 
   return (
