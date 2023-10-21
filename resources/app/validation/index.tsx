@@ -1,3 +1,3 @@
-import { LoginSchema, RegisterSchema } from './yup/auth';
+import { signUpSchema, TSignUpSchema } from './zod/auth';
 
-export { LoginSchema, RegisterSchema };
+export { signUpSchema, type TSignUpSchema };
