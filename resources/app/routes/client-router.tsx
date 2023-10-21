@@ -1,4 +1,5 @@
 import { BlogPage } from '@/pages/client/blog';
+import { BlogDetailPage } from '@/pages/client/blog/blog-detail';
 import { ChatPage } from '@/pages/client/chat';
 import { FriendListPage } from '@/pages/client/friend-list';
 import { FriendRequestPage } from '@/pages/client/friend-request';
@@ -25,6 +26,10 @@ export const ClientRouter = [
   {
     path: '/blog',
     element: <BlogPage />,
+  },
+  {
+    path: '/blog-detail',
+    element: <BlogDetailPage />,
   },
   {
     path: '/chat',

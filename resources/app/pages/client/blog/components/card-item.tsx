@@ -37,7 +37,7 @@ export const CardItem: React.FC<CardItemProps> = ({ data }) => {
                     </div>
                     <h5 className="mb-2">{blog.title}</h5>
                     <p>{blog.description}</p>
-                    <Link to="#" className="d-flex align-items-center">
+                    <Link to="/blog-detail" className="d-flex align-items-center">
                       Read More <i className="material-symbols-outlined md-14 filled">arrow_forward_ios</i>
                     </Link>
                     <div className="group-smile mt-4 d-flex flex-wrap align-items-center justify-content-between position-right-side">
