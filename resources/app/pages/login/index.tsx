@@ -1,61 +1,38 @@
-import React, { useState } from 'react';
 import { Col, Form, Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import { LoginSchema } from '@/validation';
-import { useMutation } from '@tanstack/react-query';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { save } from '@/utilities/local-storage';
 import { AuthService } from '@/apis/services/auth.service';
-
-type FormDataType = { email: string; password: string };
+import { TSignUpSchema, signUpSchema } from '@/validation';
 
 export const LoginPage = () => {
-  const [formData, setFormData] = useState<FormDataType>({
-    email: '',
-    password: '',
-  });
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
-
   const navigate = useNavigate();
-
-  const loginUser = async (formData: FormDataType) => {
-    try {
-      const response = await AuthService.Login<FormDataType>(formData);
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  const { mutate, isLoading, isError, error } = useMutation(loginUser, {
-    onSuccess: data => {
-      sessionStorage.setItem('user', JSON.stringify(data));
-      navigate('/');
-    },
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    setError,
+  } = useForm<TSignUpSchema>({
+    resolver: zodResolver(signUpSchema),
   });
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-  const handleSignIn = () => {
-    LoginSchema.validate(formData, { abortEarly: false })
-      .then(() => {
-        mutate(formData);
-      })
-      .catch((err: any) => {
-        if (err.inner) {
-          const validationErrors: { [key: string]: string } = {};
-          err.inner.forEach((error: any) => {
-            validationErrors[error.path] = error.message;
-          });
-          setErrors(validationErrors);
-        }
-      });
-  };
-  const loginWithGoogle = () => {
-    AuthService.LoginWithGoogle();
+  const onSubmit = async (dataForm: TSignUpSchema) => {
+    try {
+      const { data } = await AuthService.Login(dataForm);
+      save(`user-${data.user.id}`, data);
+      reset();
+      navigate('/');
+    } catch (error: any) {
+      if (error) {
+        const serverError = error.message;
+        setError('password', {
+          type: 'server',
+          message: serverError,
+        });
+      }
+    }
   };
   return (
     <>
@@ -63,19 +40,18 @@ export const LoginPage = () => {
         <div className="sign-in-from">
           <h1 className="mb-0">Sign in</h1>
           <p>Enter your email address and password to access the admin panel.</p>
-          <Form className="mt-4">
+          <Form onSubmit={handleSubmit(onSubmit)} className="mt-4">
             <Form.Group className="form-group">
               <Form.Label>Email address</Form.Label>
               <Form.Control
-                type="email"
+                {...register('email')}
+                type="text"
                 className="mb-0"
                 id="exampleInputEmail1"
                 placeholder="Enter email"
                 name="email"
-                value={formData.email}
-                onChange={handleInputChange}
               />
-              {!isError && errors.email && <div className="error-message text-danger">{errors.email}</div>}
+              {errors.email && <p className="text-danger">{`${errors.email.message}`}</p>}
             </Form.Group>
             <Form.Group className="form-group">
               <Form.Label>Password</Form.Label>
@@ -83,36 +59,28 @@ export const LoginPage = () => {
                 Forgot password?
               </Link>
               <Form.Control
+                {...register('password')}
                 type="password"
                 className="mb-0"
                 id="exampleInputPassword1"
                 placeholder="Password"
                 name="password"
-                value={formData.password}
-                onChange={handleInputChange}
               />
-              {isError ? (
-                <div className="error-message text-danger">{(error as any)?.response?.data?.message}</div>
-              ) : (
-                errors.password && <div className="error-message text-danger">{errors.password}</div>
-              )}
+              {errors.password && <p className="text-danger">{`${errors.password.message}`}</p>}
             </Form.Group>
             <div className="d-inline-block w-100">
               <Form.Check className="d-inline-block mt-2 pt-1">
                 <Form.Check.Input type="checkbox" className="me-2" id="customCheck11" />
-                <Form.Check.Label>Remember Me</Form.Check.Label>{' '}
+                <Form.Check.Label>Remember Me</Form.Check.Label>
               </Form.Check>
-              <Button variant="primary" type="button" className="float-end" onClick={handleSignIn} disabled={isLoading}>
-                {isLoading ? (
-                  <>
-                    <div className="spinner-border spinner-border-sm" style={{ marginRight: '5px' }} role="status">
-                      <span className="visually-hidden">Loading...</span>
-                    </div>
-                    Loadding
-                  </>
-                ) : (
-                  'Sign in'
-                )}
+              <Button
+                disabled={isSubmitting}
+                type="submit"
+                className="disabled:bg-gray-500"
+                variant="primary"
+                style={{ width: '100%' }}
+              >
+                Sign in
               </Button>
             </div>
             <Button
@@ -120,7 +88,6 @@ export const LoginPage = () => {
               style={{ width: '100%' }}
               type="button"
               className="mt-3 d-flex align-items-center justify-content-center gap-1"
-              onClick={loginWithGoogle}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
