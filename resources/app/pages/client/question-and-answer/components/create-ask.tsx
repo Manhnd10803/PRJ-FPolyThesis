@@ -67,6 +67,47 @@ export const CreateAsk = () => {
               />
             </Col>
           </Row>
+          <hr />
+          <div className="other-option">
+            <div className="d-flex align-items-center justify-content-between">
+              <div className="d-flex align-items-center">
+                <div className="user-img me-3">
+                  <img src={imageUrl} alt="user1" className="avatar-60 rounded-circle img-fluid" />
+                </div>
+                <h6>Your Name</h6>
+              </div>
+              <div className="card-post-toolbar">
+                <Dropdown>
+                  <Dropdown.Toggle as={CustomToggle} role="button">
+                    <span className="btn btn-primary">Public</span>
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu className=" m-0 p-0">
+                    <Dropdown.Item className=" p-3" href="#">
+                      <div className="d-flex align-items-top">
+                        <i className="ri-save-line h4"></i>
+                        <div className="data ms-2">
+                          <h6>Public</h6>
+                          <p className="mb-0">Everyone will know you.</p>
+                        </div>
+                      </div>
+                    </Dropdown.Item>
+                    <Dropdown.Item className="p-3" href="#">
+                      <div className="d-flex align-items-top">
+                        <i className="ri-close-circle-line h4"></i>
+                        <div className="data ms-2">
+                          <h6>Anonymous Question</h6>
+                          <p className="mb-0">Everyone will not know you.</p>
+                        </div>
+                      </div>
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
+            </div>
+          </div>
+          <button type="submit" className="btn btn-primary d-block w-100 mt-3">
+            Post Questions
+          </button>
         </form>
       </div>
       {/* <hr /> */}
@@ -97,7 +138,7 @@ export const CreateAsk = () => {
           </div>
         </li> */}
       </ul>
-      <hr />
+      {/* <hr />
       <div className="other-option">
         <div className="d-flex align-items-center justify-content-between">
           <div className="d-flex align-items-center">
@@ -137,7 +178,7 @@ export const CreateAsk = () => {
       </div>
       <button type="submit" className="btn btn-primary d-block w-100 mt-3">
         Post Questions
-      </button>
+      </button> */}
     </>
   );
 };

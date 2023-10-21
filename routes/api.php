@@ -32,7 +32,7 @@ Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('user.login');
     Route::post('/verify', [AuthController::class, 'verify'])->name('user.verify');
     Route::post('/post-forgot-password', [AuthController::class, 'forgotPassword'])->name('user.forgotPassword');
-    Route::post('/post-verify', [AuthController::class, 'resetPassword'])->name('user.postVerify');
+    Route::post('/post-reset-password', [AuthController::class, 'resetPassword'])->name('user.resetPassword');
 });
 Route::middleware('auth:api')->group(function () {
     //route has been authenticated

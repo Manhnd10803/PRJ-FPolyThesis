@@ -3,6 +3,8 @@ export const ApiConstants = {
   LOGIN: `/auth/login`,
   LOGINGOOGLE: `/auth/google-auth`,
   REGISTER: `/auth/register`,
+  FORGOTPASSWORD: '/auth/post-forgot-password',
+  RESETPASSWORD: '/auth/post-reset-password',
   LOGOUT: `/auth/logout`,
   REFRESH: `/auth/refresh`,
 

@@ -1,30 +1,17 @@
 import { Row, Col, Nav, Tab, Dropdown, Badge, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { Card, CustomToggle, ShareOffCanvas } from '@/components/custom';
+
 const imageUrl = 'https://picsum.photos/20';
+
 export const ListQandAPage = () => {
   return (
     <>
       {/* Danh sách câu hỏi */}
-
       <Card>
         <Card.Body className="p-0">
           <div className="user-tabing">
             <Tab.Container defaultActiveKey="f1">
-              {/* <Nav  variant="pills" className="d-flex align-items-center justify-content-center profile-feed-items p-0 m-0">
-                <Col sm="3" as="li" className="nav-item col-12 p-0">
-                  <Nav.Link eventKey="f1" href="#Posts">Posts</Nav.Link>
-                </Col>
-                <Col sm="3" as="li" className="nav-item col-12 p-0">
-                  <Nav.Link eventKey="f2" href="#Abouts">About</Nav.Link>
-                </Col>
-                <Col sm="3" as="li" className="nav-item col-12 p-0">
-                  <Nav.Link eventKey="f3" href="#Friends">Friends</Nav.Link>
-                </Col>
-                <Col sm="3" as="li" className="nav-item col-12 p-0">
-                  <Nav.Link eventKey="f4" href="#Photos">Photos</Nav.Link>
-                </Col>
-              </Nav> */}
               <Col sm="12">
                 <Card>
                   <Card.Body className="p-0">
@@ -96,14 +83,13 @@ export const ListQandAPage = () => {
                             </div>
                           </div>
 
-                          <h6>Text</h6>
+                          <Link to={'/detail-question'} className="h3">
+                            Tiêu đề câu hỏi
+                          </Link>
 
                           <p>
                             ReactQuill 2 is here, baby! And it brings a full port to TypeScript and React 16+, a
-                            refactored build system, and a general tightening of the internal logic. We worked hard to
-                            avoid introducing any behavioral changes. For the vast majority of the cases, no migration
-                            is necessary at all. However, support for long-deprecated props, the ReactQuill Mixin, and
-                            the Toolbar component have been removed. Be sure to read the migration guide.
+                            refactored build system, and a general tightening of the internal logic.
                           </p>
                           <Row className="mt-2">
                             {/* IMAGE */}
@@ -123,6 +109,7 @@ export const ListQandAPage = () => {
                               #All Hash Tag
                             </Badge>{' '}
                           </div>
+                          {/* Icon like cmt */}
                           <div className="d-flex flex-wrap justify-content-evenly mb-0 mt-2">
                             <div className="d-flex align-items-center">
                               <i className="material-symbols-outlined md-16"> thumb_up </i>

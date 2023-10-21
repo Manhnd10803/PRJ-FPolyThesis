@@ -14,6 +14,16 @@ type RegisterResponseType = {
   email: string;
   password: string;
 };
+type ForgotPasswordResponseType = {
+  // Define the properties of the response data
+  id: number;
+  name: string;
+};
+type ResetPasswordResponseType = {
+  // Define the properties of the response data
+  id: number;
+  name: string;
+};
 
 const Login = <T>(data: T) => {
   return httpRequest.post<LoginResponseType>(ApiConstants.LOGIN, data);
@@ -21,6 +31,14 @@ const Login = <T>(data: T) => {
 
 const Register = <T>(data: T) => {
   return httpRequest.post<RegisterResponseType>(ApiConstants.REGISTER, data);
+};
+
+const ForgotPassword = <T>(data: T) => {
+  return httpRequest.post<ForgotPasswordResponseType>(ApiConstants.FORGOTPASSWORD, data);
+};
+
+const ResetPassword = <T>(data: T) => {
+  return httpRequest.post<ResetPasswordResponseType>(ApiConstants.RESETPASSWORD, data);
 };
 
 const LoginWithGoogle = () => {
@@ -44,4 +62,4 @@ const LoginWithGoogle = () => {
     });
 };
 
-export const AuthService = { Login, Register, LoginWithGoogle };
+export const AuthService = { Login, Register, ForgotPassword, ResetPassword, LoginWithGoogle };
