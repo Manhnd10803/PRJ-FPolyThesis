@@ -6,6 +6,8 @@ export const ApiConstants = {
   FORGOTPASSWORD: '/auth/post-forgot-password',
   RESETPASSWORD: '/auth/post-reset-password',
   LOGOUT: `/auth/logout`,
+  VERIFYREMAILREGISTER: `/auth/verify`,
+
   REFRESH: `/auth/refresh`,
 
   // user

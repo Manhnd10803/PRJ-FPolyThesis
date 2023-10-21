@@ -1,7 +1,8 @@
 import { ForgotPasswordPage } from '@/pages/forgot-password';
 import { ResetPasswordPage } from '@/pages/forgot-password/components/form-reset-password';
 import { LoginPage } from '@/pages/login';
-import RegisterPage from '@/pages/register';
+import { RegisterPage } from '@/pages/register';
+import { VerifyRegisterPage } from '@/pages/verify-register';
 
 export const AuthRouter = [
   {
@@ -19,5 +20,9 @@ export const AuthRouter = [
   {
     path: 'get-reset-password',
     element: <ResetPasswordPage />,
+  },
+  {
+    path: 'verify-register',
+    element: <VerifyRegisterPage />,
   },
 ];

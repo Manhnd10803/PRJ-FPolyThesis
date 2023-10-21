@@ -10,6 +10,10 @@ export const signUpSchema = z.object({
   email: z.string().min(1, 'Email is required').email(),
   password: z.string().min(1, 'Password is required').min(8, 'Password must be at least 8 characters'),
 });
+export const verifyRegisterSchema = z.object({
+  verification_code: z.string().min(1, 'Code is required'),
+  email: z.string().nullable(),
+});
 
 export const forgotPasswordSchema = z.object({
   email: z.string().min(1, { message: 'Bạn chưa nhập địa chỉ email' }).email({ message: 'Email bạn nhập không đúng' }),
@@ -31,5 +35,7 @@ export const resetPasswordSchema = z.object({
 });
 
 export type TSignUpSchema = z.infer<typeof signUpSchema>;
+export type TSignInSchema = z.infer<typeof signInSchema>;
 export type TforgotPasswordSchema = z.infer<typeof forgotPasswordSchema>;
 export type TresetPasswordSchema = z.infer<typeof resetPasswordSchema>;
+export type TSVerifyRegisterSchema = z.infer<typeof verifyRegisterSchema>;

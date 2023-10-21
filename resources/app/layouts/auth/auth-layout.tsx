@@ -1,5 +1,6 @@
 import { Row, Col, Container, Form, Button, Image } from 'react-bootstrap';
 import { Link, Outlet } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 
 //swiper
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -65,6 +66,7 @@ export const AuthLayout = () => {
               </div>
             </Col>
             <Outlet />
+            <Toaster />
           </Row>
         </Container>
       </section>

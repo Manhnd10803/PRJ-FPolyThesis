@@ -23,6 +23,11 @@ type ResetPasswordResponseType = {
   // Define the properties of the response data
   id: number;
   name: string;
+}
+type VerifyEmailRegisterResponseType = {
+  // Define the properties of the response data
+  verification_code: number;
+  email: string;
 };
 
 const Login = <T>(data: T) => {
@@ -31,6 +36,9 @@ const Login = <T>(data: T) => {
 
 const Register = <T>(data: T) => {
   return httpRequest.post<RegisterResponseType>(ApiConstants.REGISTER, data);
+};
+const VerifyEmailRegister = <T>(data: T) => {
+  return httpRequest.post<VerifyEmailRegisterResponseType>(ApiConstants.VERIFYREMAILREGISTER, data);
 };
 
 const ForgotPassword = <T>(data: T) => {
@@ -62,4 +70,4 @@ const LoginWithGoogle = () => {
     });
 };
 
-export const AuthService = { Login, Register, ForgotPassword, ResetPassword, LoginWithGoogle };
+export const AuthService = { Login, Register, LoginWithGoogle, ForgotPassword, ResetPassword, VerifyEmailRegister };
