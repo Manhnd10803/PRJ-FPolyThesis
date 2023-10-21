@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\VerifyAccount;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -171,7 +172,13 @@ class AuthController extends Controller
                 if ($user->status == config('default.user.status.suspend')) {
                     return response()->json(['message' => 'Tài khoản đã bị khóa'], 403);
                 }
-                $token = $user->createToken('authToken')->accessToken;
+                if ($user->group_id == config('default.user.groupID.superAdmin') || $user->group_id == config('default.user.groupID.admin')) {
+                    //Token role admin
+                    $token = $user->createToken('authToken', ['admin'])->accessToken;
+                } else {
+                    //Token role user
+                    $token = $user->createToken('authToken')->accessToken;
+                }
                 return response()->json(['user' => $user, 'accessToken' => $token], 200);
             } else {
                 return response()->json(['message' => 'Đăng nhập thất bại'], 400);
@@ -233,11 +240,19 @@ class AuthController extends Controller
             //đăng nhập 
             if ($checkUser->status == config('default.user.status.lock')) {
                 return response()->json(['message' => 'Tài khoản chưa được kích hoạt'], 403);
+            };
+            if ($checkUser->status == config('default.user.status.suspend')) {
+                return response()->json(['message' => 'Tài khoản đã bị khóa'], 403);
+            };
+            if ($checkUser->group_id == config('default.user.groupID.superAdmin') || $checkUser->group_id == config('default.user.groupID.admin')) {
+                //Token role admin
+                $token = $checkUser->createToken('authToken', ['admin'])->accessToken;
             } else {
-                Auth()->login($checkUser);
+                //Token role user
                 $token = $checkUser->createToken('authToken')->accessToken;
-                return response()->json(['user' => $user, 'accessToken' => $token], 200);
             }
+            Auth()->login($checkUser);
+            return response()->json(['user' => $checkUser, 'accessToken' => $token], 200);
         } else {
             // dd($user);
             //đăng ký
