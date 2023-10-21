@@ -4,13 +4,15 @@ import { TokenService } from './token.service';
 
 type LoginResponseType = {
   // Define the properties of the response data
-  id: number;
-  name: string;
+  email: string;
+  password: string;
 };
 type RegisterResponseType = {
   // Define the properties of the response data
-  id: number;
-  name: string;
+
+  username: string;
+  email: string;
+  password: string;
 };
 
 const Login = <T>(data: T) => {
@@ -22,14 +24,14 @@ const Register = <T>(data: T) => {
 };
 
 const LoginWithGoogle = () => {
-  fetch('http://localhost:8000/api/google-auth')
+  fetch('http://localhost:8000/api/auth/google-auth')
     .then(response => {
       if (response.ok) {
         return response.json();
       }
       throw new Error('Something went wrong!');
     })
-    .then(({ url }) => (window.location.href = url))
+    .then(({ googleLoginUrl }) => (window.location.href = googleLoginUrl))
     .then(response => {
       console.log(response);
       // save token to local storage
