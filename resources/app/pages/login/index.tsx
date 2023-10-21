@@ -4,21 +4,21 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { save } from '@/utilities/local-storage';
 import { AuthService } from '@/apis/services/auth.service';
-import { TSignUpSchema, signUpSchema } from '@/validation';
+import { TSignInSchema, signInSchema } from '@/validation';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
   const {
-    register,
+    register: login,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
     setError,
-  } = useForm<TSignUpSchema>({
-    resolver: zodResolver(signUpSchema),
+  } = useForm<TSignInSchema>({
+    resolver: zodResolver(signInSchema),
   });
 
-  const onSubmit = async (dataForm: TSignUpSchema) => {
+  const onSubmit = async (dataForm: TSignInSchema) => {
     try {
       const { data } = await AuthService.Login(dataForm);
       save(`user-${data.user.id}`, data);
@@ -34,6 +34,9 @@ export const LoginPage = () => {
       }
     }
   };
+  const loginWithGoogle = () => {
+    AuthService.LoginWithGoogle();
+  };
   return (
     <>
       <Col md="6" className="bg-white pt-5 pt-5 pb-lg-0 pb-5">
@@ -44,7 +47,7 @@ export const LoginPage = () => {
             <Form.Group className="form-group">
               <Form.Label>Email address</Form.Label>
               <Form.Control
-                {...register('email')}
+                {...login('email')}
                 type="text"
                 className="mb-0"
                 id="exampleInputEmail1"
@@ -59,7 +62,7 @@ export const LoginPage = () => {
                 Forgot password?
               </Link>
               <Form.Control
-                {...register('password')}
+                {...login('password')}
                 type="password"
                 className="mb-0"
                 id="exampleInputPassword1"

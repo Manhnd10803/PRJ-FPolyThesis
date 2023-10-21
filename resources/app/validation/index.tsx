@@ -1,3 +1,3 @@
-import { signUpSchema, TSignUpSchema } from './zod/auth';
+import { signUpSchema, TSignUpSchema, signInSchema, TSignInSchema } from './zod/auth';
 
-export { signUpSchema, type TSignUpSchema };
+export { signUpSchema, type TSignUpSchema, signInSchema, type TSignInSchema };
