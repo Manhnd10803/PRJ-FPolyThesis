@@ -7,8 +7,7 @@ import { HomePage } from '@/pages/client/home';
 import { NotificationPage } from '@/pages/client/notification';
 import { ProfilePage } from '@/pages/client/profile';
 import { QuestionAndAnswerPage } from '@/pages/client/question-and-answer';
-import { FormAskQuestionPage } from '@/pages/client/question-and-answer/components/form-ask-question';
-import { ListQandAPage } from '@/pages/client/question-and-answer/components/list-qanda';
+import { DetailQuestionPage } from '@/pages/client/question-and-answer/components/detail-question';
 
 export const ClientRouter = [
   {
@@ -20,8 +19,8 @@ export const ClientRouter = [
     element: <QuestionAndAnswerPage />,
   },
   {
-    path: '/form-ask-question',
-    element: <FormAskQuestionPage />,
+    path: '/detail-question',
+    element: <DetailQuestionPage />,
   },
   {
     path: '/blog',

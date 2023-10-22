@@ -1,77 +1,65 @@
-import React from 'react';
-import { Row, Col, Button, Form, Container, Image } from 'react-bootstrap';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-
-import { Swiper, SwiperSlide } from 'swiper/react';
-const images = 'https://picsum.photos/20';
-import { AuthFormForgotPassword } from './components/form-forgot-password';
-import { AuthFormGetVerify } from './components/form-get-vetify';
+import { Button, Col, Form } from 'react-bootstrap';
+import { Link, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { AuthService } from '@/apis/services/auth.service';
+import { TforgotPasswordSchema, forgotPasswordSchema } from '@/validation/zod/auth';
 
 export const ForgotPasswordPage = () => {
-  const location = useLocation();
+  const navigate = useNavigate();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    setError,
+  } = useForm<TforgotPasswordSchema>({
+    resolver: zodResolver(forgotPasswordSchema),
+  });
+
+  const onSubmit = async (dataForm: TforgotPasswordSchema) => {
+    try {
+      const { data } = await AuthService.ForgotPassword(dataForm);
+      reset();
+      navigate('/get-reset-password');
+    } catch (error: any) {
+      if (error) {
+        const serverError = error.message;
+        setError('email', {
+          type: 'server',
+          message: serverError,
+        });
+      }
+    }
+  };
+
   return (
-    <>
-      <section className="sign-in-page">
-        <div id="container-inside">
-          <div id="circle-small"></div>
-          <div id="circle-medium"></div>
-          <div id="circle-large"></div>
-          <div id="circle-xlarge"></div>
-          <div id="circle-xxlarge"></div>
-        </div>
-
-        <Container className="p-0">
-          {/* Left */}
-          <Row className="no-gutters">
-            <Col md="6" className="text-center pt-5">
-              <div className="sign-in-detail text-white">
-                <Link className="sign-in-logo mb-5" to="#">
-                  <Image src={images} className="img-fluid" alt="logo" />
-                </Link>
-                <div className="sign-slider overflow-hidden">
-                  <Swiper
-                    spaceBetween={30}
-                    centeredSlides={true}
-                    autoplay={{
-                      delay: 2000,
-                      disableOnInteraction: false,
-                    }}
-                    className="list-inline m-0 p-0"
-                  >
-                    <SwiperSlide>
-                      <Image src={images} className="img-fluid mb-4" alt="logo" />
-                      <h4 className="mb-1 text-white">Cùng nhau chia sẻ kiến thức</h4>
-                      <p>Kho tài liệu hay, mới mẻ và chất lượng dành cho sinh viên mọi ngành nghề.</p>
-                    </SwiperSlide>
-
-                    {/* 
-                    <SwiperSlide>
-                      <Image src={images} className="img-fluid mb-4" alt="logo"/> 
-                      <h4 className="mb-1 text-white">Connect with the world</h4>
-                      <p>It is a long established fact that a reader will be distracted by the readable content.</p>
-                    </SwiperSlide>
-
-                    <SwiperSlide>
-                      <Image src={images} className="img-fluid mb-4" alt="logo"/>
-                      <h4 className="mb-1 text-white">Create new events</h4>
-                      <p>It is a long established fact that a reader will be distracted by the readable content.</p>
-                    </SwiperSlide>
-                     */}
-                  </Swiper>
-                </div>
-              </div>
-            </Col>
-
-            {/* Right */}
-            {location.pathname === 'get-forgot-password' ? (
-              <AuthFormForgotPassword />
-            ) : location.pathname === 'get-verify' ? (
-              <AuthFormGetVerify />
-            ) : null}
-            {/* <AuthFormForgotPassword /> */}
-          </Row>
-        </Container>
-      </section>
-    </>
+    <Col md="6" className="bg-white pt-5 pt-5 pb-lg-0 pb-5">
+      <div className="sign-in-from">
+        <h1 className="mb-0">Quên mật khẩu </h1>
+        <p>Nhập Email của bạn và chúng tôi sẽ gửi mã xác nhận email cho bạn trong vài giây tới.</p>
+        <Form className="mt-4" onSubmit={handleSubmit(onSubmit)}>
+          <Form.Group>
+            <Form.Label>Email address</Form.Label>
+            <Form.Control
+              {...register('email')}
+              name="email"
+              type="email"
+              className="mb-0"
+              id="exampleInputEmail1"
+              placeholder="Nhập địa chỉ email của bạn ..."
+              isInvalid={!!errors.email}
+            />
+            {errors.email && <span style={{ color: 'red' }}>{errors.email.message}</span>}
+          </Form.Group>
+          <div className="d-inline-block w-100">
+            <Button disabled={isSubmitting} variant="primary" type="submit" className="float-right mt-3">
+              Nhận mã xác nhận
+            </Button>
+          </div>
+        </Form>
+      </div>
+    </Col>
   );
 };
