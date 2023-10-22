@@ -6,7 +6,7 @@ import { TSignUpSchema, signUpSchema } from '@/validation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-function RegisterPage() {
+export const RegisterPage = () => {
   const navigate = useNavigate();
   const {
     register,
@@ -22,8 +22,8 @@ function RegisterPage() {
     try {
       const { data } = await AuthService.Register(dataForm);
       console.log(data);
+      navigate('/verify-register', { state: { email: data.email } });
       reset();
-      // navigate('/login');
     } catch (error: any) {
       if (error) {
         const serverError = error.errors.email;
@@ -105,6 +105,4 @@ function RegisterPage() {
       </div>
     </Col>
   );
-}
-
-export default RegisterPage;
+};
