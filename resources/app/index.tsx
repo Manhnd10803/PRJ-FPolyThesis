@@ -1,6 +1,5 @@
 import { StrictMode } from 'react';
 
-import '@/styles/index.scss';
 import ReactDOM from 'react-dom/client';
 import { RouteObject, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import App from './App';
