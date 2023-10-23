@@ -11,6 +11,27 @@ use Illuminate\Support\Facades\DB;
 
 class BlogController extends Controller
 {
+       /**
+     * @OA\Post(
+     *     path="/api/blogs",
+     *     tags={"Blogs"},
+     *     summary="Tạo blog mới",
+     *     description="Tạo một blog mới",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"title", "content", "majors_id", "thumbnail"},
+     *             @OA\Property(property="title", type="string", description="Tiêu đề của blog", maxLength=255),
+     *             @OA\Property(property="content", type="string", description="Nội dung của blog"),
+     *             @OA\Property(property="majors_id", type="integer", description="ID của chuyên ngành liên quan đến blog"),
+     *             @OA\Property(property="hashtag", type="string", description="Hashtag của blog", maxLength=255, nullable=true),
+     *             @OA\Property(property="thumbnail", type="string", format="binary", description="Hình ảnh đại diện của blog (JPEG, JPG hoặc PNG)")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Blog đã được tạo thành công"),
+     *     @OA\Response(response=400, description="Tệp tin không hợp lệ")
+     * )
+     */
     public function CreateBlog(Request $request)
     {
         DB::beginTransaction();
@@ -45,6 +66,36 @@ class BlogController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
+
+        /**
+     * @OA\Put(
+     *     path="/api/blogs/{blog}",
+     *     tags={"Blogs"},
+     *     summary="Cập nhật thông tin blog",
+     *     description="Cập nhật thông tin của một blog đã tồn tại",
+     *     @OA\Parameter(
+     *         name="blog",
+     *         in="path",
+     *         required=true,
+     *         description="ID của blog cần cập nhật",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"title", "content", "majors_id", "thumbnail"},
+     *             @OA\Property(property="title", type="string", description="Tiêu đề của blog", maxLength=255),
+     *             @OA\Property(property="content", type="string", description="Nội dung của blog"),
+     *             @OA\Property(property="majors_id", type="integer", description="ID của chuyên ngành liên quan đến blog"),
+     *             @OA\Property(property="hashtag", type="string", description="Hashtag của blog", maxLength=255, nullable=true),
+     *             @OA\Property(property="thumbnail", type="string", format="binary", description="Hình ảnh đại diện của blog (JPEG, JPG hoặc PNG)")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Blog đã được cập nhật thành công"),
+     *     @OA\Response(response=400, description="Tệp tin không hợp lệ hoặc lỗi xử lý")
+     * )
+     */
+
     public function UpdateBlog(Request $request, Blog $blog)
     {
         DB::beginTransaction();
@@ -77,6 +128,28 @@ class BlogController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
+
+    /**
+     * @OA\Delete(
+     *     path="/api/blogs/{blog}",
+     *     tags={"Blogs"},
+     *     summary="Xóa blog",
+     *     description="Xóa một blog đã tồn tại",
+     *     @OA\Parameter(
+     *         name="blog",
+     *         in="path",
+     *         required=true,
+     *         description="ID của blog cần xóa",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Bài blog đã bị xóa thành công", @OA\JsonContent()),
+     *     @OA\Response(response=401, description="Unauthorized", @OA\JsonContent()),
+     *     @OA\Response(response=403, description="Forbidden", @OA\JsonContent()),
+     *     @OA\Response(response=404, description="Bài blog không tồn tại", @OA\JsonContent()),
+     *     @OA\Response(response=500, description="Lỗi xảy ra khi xóa bài blog", @OA\JsonContent())
+     * )
+     */
+
     public function DeleteBlog(Blog $blog)
     {
         DB::beginTransaction();

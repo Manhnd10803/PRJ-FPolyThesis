@@ -12,6 +12,37 @@ use Illuminate\Support\Facades\DB;
 
 class PostsController extends Controller
 {
+   /**
+     * @OA\Get(
+     *     path="/api/posts/profile",
+     *     tags={"Posts"},
+     *     summary="Lấy danh sách bài viết của người dùng hoặc các bài viết không được công bố",
+     *     description="Lấy danh sách bài viết của người dùng hiện tại hoặc các bài viết không được công bố (trạng thái khác 1)",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Danh sách bài viết đã được lấy thành công",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="user_id", type="integer"),
+     *                 @OA\Property(property="content", type="string"),
+     *                 @OA\Property(property="feeling", type="string", nullable=true),
+     *                 @OA\Property(property="image", type="object", nullable=true),
+     *                 @OA\Property(property="hashtag", type="string", nullable=true),
+     *                 @OA\Property(property="status", type="integer"),
+     *                 @OA\Property(property="views", type="integer"),
+     *                 @OA\Property(property="created_at", type="string"),
+     *                 @OA\Property(property="updated_at", type="string")
+     *             )
+     *         )
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     }
+     * )
+     */
+
     public function ShowPostProfile(){
         $posts = Post::where('user_id', Auth::id()) 
             ->orWhere(function ($query) {
@@ -20,6 +51,28 @@ class PostsController extends Controller
             ->orderBy('created_at', 'DESC')->get();
         return response()->json($posts);
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/posts",
+     *     tags={"Posts"},
+     *     summary="Tạo bài viết mới",
+     *     description="Tạo một bài viết mới với nội dung, cảm xúc, hashtag và hình ảnh tải lên (tối đa 5 hình ảnh).",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"content"},
+     *             @OA\Property(property="content", type="string", description="Nội dung của bài viết", maxLength=255),
+     *             @OA\Property(property="feeling", type="string", description="Cảm xúc của bài viết", nullable=true),
+     *             @OA\Property(property="hashtag", type="string", description="Hashtag của bài viết", maxLength=255, nullable=true),
+     *             @OA\Property(property="images", type="array", @OA\Items(type="string", format="binary", description="Hình ảnh đính kèm (JPEG, JPG hoặc PNG)"), maxItems=5, nullable=true)
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Bài viết đã được tạo thành công"),
+     *     @OA\Response(response=400, description="Lỗi khi tạo bài viết")
+     * )
+     */
+
     public function CreatePost(PostRequest $request)
     {
         DB::beginTransaction();
@@ -60,6 +113,35 @@ class PostsController extends Controller
         }
     }
     
+    /**
+     * @OA\Put(
+     *     path="/api/posts/{post}",
+     *     tags={"Posts"},
+     *     summary="Cập nhật bài viết",
+     *     description="Cập nhật một bài viết với nội dung, cảm xúc, hashtag và hình ảnh tải lên (tối đa 5 hình ảnh).",
+     *     @OA\Parameter(
+     *         name="post",
+     *         in="path",
+     *         required=true,
+     *         description="ID của bài viết cần cập nhật",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"content"},
+     *             @OA\Property(property="content", type="string", description="Nội dung của bài viết", maxLength=255),
+     *             @OA\Property(property="feeling", type="string", description="Cảm xúc của bài viết", nullable=true),
+     *             @OA\Property(property="hashtag", type="string", description="Hashtag của bài viết", maxLength=255, nullable=true),
+     *             @OA\Property(property="images", type="array", @OA\Items(type="string", format="binary", description="Hình ảnh đính kèm (JPEG, JPG hoặc PNG)"), maxItems=5, nullable=true),
+     *             @OA\Property(property="status", type="integer", description="Trạng thái của bài viết", enum={0, 1}),
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Bài viết đã được cập nhật thành công"),
+     *     @OA\Response(response=400, description="Lỗi khi cập nhật bài viết")
+     * )
+     */
+
     public function UpdatePost(Request $request, Post $post){
     DB::beginTransaction();
     try {
@@ -105,6 +187,27 @@ class PostsController extends Controller
         return response()->json(['errors' => $e->getMessage()], 400);
     }
 }
+
+    /**
+     * @OA\Delete(
+     *     path="/api/posts/{post}",
+     *     tags={"Posts"},
+     *     summary="Xóa bài viết",
+     *     description="Xóa một bài viết cùng với các comments và likes liên quan.",
+     *     @OA\Parameter(
+     *         name="post",
+     *         in="path",
+     *         required=true,
+     *         description="ID của bài viết cần xóa",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Bài viết đã bị xóa thành công"),
+     *     @OA\Response(response=400, description="Lỗi khi xóa bài viết"),
+     *     @OA\Response(response=401, description="Bạn không có quyền xóa bài viết"),
+     *     @OA\Response(response=404, description="Bài viết không được tìm thấy")
+     * )
+     */
+
     public function DeletePost(Post $post){
         DB::beginTransaction();
         try {
@@ -125,14 +228,93 @@ class PostsController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
+    /**
+     * @OA\Get(
+     *     path="/api/posts/count-like/{post}",
+     *     tags={"Posts"},
+     *     summary="Lấy số lượng lượt thích của bài viết",
+     *     description="Lấy số lượng lượt thích của một bài viết dựa trên ID của bài viết.",
+     *     @OA\Parameter(
+     *         name="post",
+     *         in="path",
+     *         required=true,
+     *         description="ID của bài viết",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Số lượng lượt thích của bài viết"),
+     *     @OA\Response(response=404, description="Bài viết không được tìm thấy")
+     * )
+     */
+
     public function CountLikeInPost(Post $post){
         $likeCount = $post->likes->count();
         return response()->json($likeCount);
      }
+     /**
+     * @OA\Get(
+     *     path="/api/posts/count-cmt/{post}",
+     *     tags={"Posts"},
+     *     summary="Lấy số lượng bình luận và trả lời của bài viết",
+     *     description="Lấy số lượng bình luận và trả lời của một bài viết dựa trên ID của bài viết.",
+     *     @OA\Parameter(
+     *         name="post",
+     *         in="path",
+     *         required=true,
+     *         description="ID của bài viết",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Số lượng bình luận và trả lời của bài viết"),
+     *     @OA\Response(response=404, description="Bài viết không được tìm thấy")
+     * )
+     */
+
      public function CountCommentInPost(Post $post){
         $commentCount = Comment::where('post_id', $post->id)->count();
         $replyCount = Comment::where('post_id', $post->id)->where('parent_id', '>', 0)->count();
         $totalCommentsAndReplies = $commentCount + $replyCount;
         return response()->json(['total' => $totalCommentsAndReplies], 200);
      }
+     //Admin Posts
+     
+     /**
+     * @OA\Get(
+     *     path="/api/list-posts",
+     *     tags={"Admin Posts"},
+     *     summary="Lấy danh sách bài viết",
+     *     description="Trả về danh sách các bài viết.",
+     *     @OA\Response(response=200, description="Danh sách các bài viết")
+     * )
+     */
+     public function index()
+    {
+        $posts = Post::all();
+        return response()->json(['posts' => $posts], 200);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/posts/{post}",
+     *     tags={"Admin Posts"},
+     *     summary="Lấy thông tin của một bài viết",
+     *     description="Trả về thông tin của một bài viết dựa trên đối tượng Post.",
+     *     @OA\Parameter(
+     *         name="post",
+     *         in="path",
+     *         required=true,
+     *         description="Đối tượng Post",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Thông tin của bài viết"),
+     *     @OA\Response(response=404, description="Bài viết không tồn tại"),
+     * )
+     */
+    public function show(Post $post)
+    {
+        if (!$post) {
+            return response()->json(['error' => 'Bài viết không tồn tại'], 404);
+        }
+
+        return response()->json(['post' => $post], 200);
+    }
+
 }
