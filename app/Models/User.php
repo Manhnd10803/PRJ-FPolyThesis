@@ -52,4 +52,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Blog::class, 'user_id');
     }
+    public function friends()
+    {
+        return $this->belongsToMany(User::class, 'friends', 'user_id_1', 'user_id_2')
+            ->withPivot('status')
+            ->wherePivot('status', 'accepted');
+    }
 }

@@ -48,12 +48,15 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('/messages/{privateMessage}', [PrivateMessagesController::class, 'DeleteMessage'])->name('message.delete');
 
     //post
-    Route::get('/posts/profile', [PostsController::class, 'ShowPostProfile'])->name('profile.show');
-    Route::post('/posts', [PostsController::class, 'CreatePost'])->name('post.create');
-    Route::put('/posts/{post}', [PostsController::class, 'UpdatePost'])->name('post.update');
-    Route::delete('/posts/{post}', [PostsController::class, 'DeletePost'])->name('post.delete');
-    Route::get('posts/count-like/{post}', [PostsController::class, 'CountLikeInPost'])->name('like.count');
-    Route::get('posts/count-cmt/{post}', [PostsController::class, 'CountCommentInPost'])->name('comment.count');
+    Route::prefix('posts')->group(function () {
+    Route::get('/profile', [PostsController::class, 'ShowPostProfile'])->name('profile.show');
+    Route::post('/', [PostsController::class, 'CreatePost'])->name('post.create');
+    Route::put('/{post}', [PostsController::class, 'UpdatePost'])->name('post.update');
+    Route::delete('/{post}', [PostsController::class, 'DeletePost'])->name('post.delete');
+    Route::get('/count-like/{post}', [PostsController::class, 'CountLikeInPost'])->name('like.count');
+    Route::get('/count-cmt/{post}', [PostsController::class, 'CountCommentInPost'])->name('comment.count');
+    Route::get('/newfeed',[PostsController::class,'ShowAllPosts'])->name('post.all');
+    });
     //blog
     Route::prefix('blogs')->group(function () {
         Route::post('/', [BlogController::class, 'CreateBlog'])->name('blog.create');
