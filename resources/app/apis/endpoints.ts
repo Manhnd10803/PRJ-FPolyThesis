@@ -1,12 +1,12 @@
 export const ApiConstants = {
   // auth
   LOGIN: `/auth/login`,
-  LOGINGOOGLE: `/auth/google-auth`,
+  LOGIN_GOOGLE: `/auth/google-auth`,
   REGISTER: `/auth/register`,
-  FORGOTPASSWORD: '/auth/post-forgot-password',
-  RESETPASSWORD: '/auth/post-reset-password',
+  FORGOT_PASSWORD: '/auth/post-forgot-password',
+  RESET_PASSWORD: '/auth/post-reset-password',
   LOGOUT: `/auth/logout`,
-  VERIFYREMAILREGISTER: `/auth/verify`,
+  VERIFY_EMAIL_REGISTER: `/auth/verify`,
 
   REFRESH: `/auth/refresh`,
 
@@ -15,6 +15,9 @@ export const ApiConstants = {
 
   // post
   POSTS: `/posts`,
+
+  // admin
+  USERS_ADMIN: `/admin/users`,
 
   // Add more endpoints as needed
 } as const;

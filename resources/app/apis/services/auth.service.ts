@@ -23,7 +23,7 @@ type ResetPasswordResponseType = {
   // Define the properties of the response data
   id: number;
   name: string;
-}
+};
 type VerifyEmailRegisterResponseType = {
   // Define the properties of the response data
   verification_code: number;
@@ -38,15 +38,15 @@ const Register = <T>(data: T) => {
   return httpRequest.post<RegisterResponseType>(ApiConstants.REGISTER, data);
 };
 const VerifyEmailRegister = <T>(data: T) => {
-  return httpRequest.post<VerifyEmailRegisterResponseType>(ApiConstants.VERIFYREMAILREGISTER, data);
+  return httpRequest.post<VerifyEmailRegisterResponseType>(ApiConstants.VERIFY_EMAIL_REGISTER, data);
 };
 
 const ForgotPassword = <T>(data: T) => {
-  return httpRequest.post<ForgotPasswordResponseType>(ApiConstants.FORGOTPASSWORD, data);
+  return httpRequest.post<ForgotPasswordResponseType>(ApiConstants.FORGOT_PASSWORD, data);
 };
 
 const ResetPassword = <T>(data: T) => {
-  return httpRequest.post<ResetPasswordResponseType>(ApiConstants.RESETPASSWORD, data);
+  return httpRequest.post<ResetPasswordResponseType>(ApiConstants.RESET_PASSWORD, data);
 };
 
 const LoginWithGoogle = () => {
