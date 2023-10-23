@@ -8,3 +8,13 @@ export interface IUser {
   updatedAt: string;
   __v: number;
 }
+export interface IUsersAdmin {
+  id: number;
+  username: string;
+  email: string;
+  birthday: string;
+  phone: string;
+  gender: string;
+  major_id: string;
+  status: string;
+}

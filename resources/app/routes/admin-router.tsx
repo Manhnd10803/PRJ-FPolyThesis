@@ -1,5 +1,6 @@
 import { Dashboard } from '@/pages/admin/dashboard';
-import UserPage from '@/pages/admin/user';
+import { UserPage } from '@/pages/admin/user';
+import { ProfileAdminPage } from '@/pages/admin/user/profile';
 
 export const AdminRouter = [
   {
@@ -13,5 +14,9 @@ export const AdminRouter = [
   {
     path: 'users',
     element: <UserPage />,
+  },
+  {
+    path: 'users/profile',
+    element: <ProfileAdminPage />,
   },
 ];
