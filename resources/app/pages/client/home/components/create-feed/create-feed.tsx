@@ -37,7 +37,7 @@ export const CreateFeed = () => {
             </form>
           </div>
           <hr></hr>
-          <ul className=" post-opt-block d-flex list-inline m-0 p-0 flex-wrap">
+          <ul className="post-opt-block d-flex list-inline m-0 p-0 flex-wrap">
             <li className="me-3 mb-md-0 mb-2">
               <Link to="#" className="btn btn-soft-primary">
                 <img src={imageUrl} alt="icon" className="img-fluid me-2" /> Photo/Video

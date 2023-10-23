@@ -1,6 +1,6 @@
 import { Col, Container, Row } from 'react-bootstrap';
 
-import { CreateFeed } from './components/feed/create-feed';
+import { CreateFeed } from './components/create-feed/create-feed';
 import { FeedList } from './components/feed/feed-list';
 import { ListBirthDay } from './components/list-birthday';
 import { ListEvent } from './components/list-event';
