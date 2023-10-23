@@ -173,19 +173,47 @@ class AuthController extends Controller
                 if ($user->status == config('default.user.status.suspend')) {
                     return response()->json(['message' => 'Tài khoản đã bị khóa'], 403);
                 }
+                 // Tạo token
                 if ($user->group_id == config('default.user.groupID.superAdmin') || $user->group_id == config('default.user.groupID.admin')) {
-                    //Token role admin
-                    $token = $user->createToken('authToken', ['admin'])->accessToken;
+                // Token cho admin
+                    $token = $user->createToken('authToken', ['admin']);
                 } else {
-                    //Token role user
-                    $token = $user->createToken('authToken')->accessToken;
+                // Token cho user
+                    $token = $user->createToken('authToken');
                 }
-                return response()->json(['user' => $user, 'accessToken' => $token], 200);
+                // Lấy access token
+                $accessToken = $token->accessToken;
+                // Lấy thời gian hết hạn của token
+                $expiresAt = $token->token->expires_at;
+                return response()->json(['user' => $user, 'accessToken' => $accessToken, 'expiresAt' => $expiresAt], 200);
             } else {
                 return response()->json(['message' => 'Đăng nhập thất bại'], 400);
             }
         } else {
             return response()->json(['errors' => $validator->errors()], 422);
+        }
+    }
+    public function refreshToken()
+    {
+        DB::beginTransaction();
+        try {
+            $user = auth()->user();
+            $user->tokens->each(function ($token, $key) {
+                $token->delete();
+            });
+            // tạo lại token dựa trên user đã đăng nhập và role 
+            if ($user->group_id == config('default.user.groupID.superAdmin') || $user->group_id == config('default.user.groupID.admin')) {
+                // Token cho admin
+                $newToken = auth()->user()->createToken('authToken',['admin'])->accessToken;        
+                } else {
+                // Token cho user
+                $newToken = auth()->user()->createToken('authToken')->accessToken;
+                }
+            DB::commit();
+            return response()->json(['access_token' => $newToken], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
 
@@ -281,20 +309,5 @@ class AuthController extends Controller
             }
         }
     }
-    public function refreshToken()
-    {
-        DB::beginTransaction();
-        try {
-            $user = auth()->user();
-            $user->tokens->each(function ($token, $key) {
-                $token->delete();
-            });
-            $newToken = auth()->user()->createToken('authToken')->accessToken;
-            DB::commit();
-            return response()->json(['access_token' => $newToken], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['errors' => $e->getMessage()], 400);
-        }
-    }
+   
 }
