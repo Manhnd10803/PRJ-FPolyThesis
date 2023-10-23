@@ -1,4 +1,6 @@
+import { BlogPending } from '@/pages/admin/blog-pending';
 import { Dashboard } from '@/pages/admin/dashboard';
+import { PostList } from '@/pages/admin/post';
 import UserPage from '@/pages/admin/user';
 
 export const AdminRouter = [
@@ -13,5 +15,13 @@ export const AdminRouter = [
   {
     path: 'users',
     element: <UserPage />,
+  },
+  {
+    path: 'posts',
+    element: <PostList />,
+  },
+  {
+    path: 'blogs-pending',
+    element: <BlogPending />,
   },
 ];

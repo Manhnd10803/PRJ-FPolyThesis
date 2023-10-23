@@ -1,5 +1,7 @@
 import { load, remove, save } from '@/utilities/local-storage';
-import { IUser } from '../types';
+import { ILoginResponse, IUser } from '../types';
+import httpRequest from '../axios-instance';
+import { ApiConstants } from '../endpoints';
 
 const getLocalRefreshToken = () => {
   const user = load<any>('user');
@@ -9,6 +11,12 @@ const getLocalRefreshToken = () => {
 const getLocalAccessToken = () => {
   const user = load<any>('user');
   return user?.accessToken;
+};
+
+const refreshToken = () => {
+  return httpRequest.post<ILoginResponse>(ApiConstants.REFRESH, {
+    refreshToken: getLocalRefreshToken(),
+  });
 };
 
 const updateLocalAccessToken = (token: string) => {
@@ -34,4 +42,5 @@ export const TokenService = {
   getUser,
   setUser,
   removeUser,
+  refreshToken,
 };

@@ -8,7 +8,7 @@ export const ApiConstants = {
   LOGOUT: `/auth/logout`,
   VERIFYREMAILREGISTER: `/auth/verify`,
 
-  REFRESH: `/auth/refresh`,
+  REFRESH: `/auth/refresh-token`,
 
   // user
   USER: `/users`,
@@ -16,5 +16,9 @@ export const ApiConstants = {
   // post
   POSTS: `/posts`,
 
+  // admin blog
+  BLOG_PENDING: `/admin/blogs/list-pending`,
+  BLOG_DETAIL: `/admin/blogs/detail`,
+  BLOG_APPROVE: `admin/blogs/approve`,
   // Add more endpoints as needed
 } as const;

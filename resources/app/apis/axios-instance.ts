@@ -1,5 +1,4 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import { ILoginResponse } from './types';
 import { ApiConstants } from './endpoints';
 import { TokenService } from './services/token.service';
 
@@ -19,7 +18,7 @@ const httpRequest = axios.create(requestConfig);
 httpRequest.interceptors.request.use(
   config => {
     // Get token from local storage
-    const token = localStorage.getItem('token');
+    const token = TokenService.getLocalAccessToken();
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
@@ -49,9 +48,7 @@ httpRequest.interceptors.response.use(
         originalRequest._retry = true;
 
         try {
-          const rs = await httpRequest.post<ILoginResponse>(ApiConstants.REFRESH, {
-            refreshToken: TokenService.getLocalRefreshToken(),
-          });
+          const rs = await TokenService.refreshToken();
 
           const { access_token } = rs.data;
           TokenService.updateLocalAccessToken(access_token);

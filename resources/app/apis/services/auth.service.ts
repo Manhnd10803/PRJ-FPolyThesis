@@ -23,7 +23,7 @@ type ResetPasswordResponseType = {
   // Define the properties of the response data
   id: number;
   name: string;
-}
+};
 type VerifyEmailRegisterResponseType = {
   // Define the properties of the response data
   verification_code: number;

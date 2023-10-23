@@ -21,7 +21,7 @@ export const LoginPage = () => {
   const onSubmit = async (dataForm: TSignInSchema) => {
     try {
       const { data } = await AuthService.Login(dataForm);
-      save(`user-${data.user.id}`, data);
+      save(`user`, data);
       reset();
       navigate('/');
     } catch (error: any) {
