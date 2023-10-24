@@ -16,7 +16,7 @@ export const AdminRouter = [
     element: <UserPage />,
   },
   {
-    path: 'users/profile',
+    path: 'users/profile/:id',
     element: <ProfileAdminPage />,
   },
 ];

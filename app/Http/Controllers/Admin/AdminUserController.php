@@ -53,6 +53,7 @@ class AdminUserController extends Controller
     public function listUser()
     {
         $users = User::all();
+        $users->load('major'); 
         return response()->json(['users' => $users], 200);
     }
 
@@ -104,6 +105,7 @@ class AdminUserController extends Controller
      */
     public function detailUser(User $user)
     {
+        $user->load('major'); 
         return response()->json(['user' => $user], 200);
     }
     //tạm khóa người dùng

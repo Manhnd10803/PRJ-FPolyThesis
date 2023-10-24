@@ -4,8 +4,10 @@ import { AdminService } from '@/apis/services/admin.service';
 import { useQuery } from '@tanstack/react-query';
 import { ActionsCell } from './components/actions';
 import { IUsersAdmin } from '@/models/user';
+import { useNavigate } from 'react-router-dom';
 
 export const UserPage = () => {
+  const navigate = useNavigate();
   const handleDeleteClick = (id: number) => {
     // Xử lý logic khi nhấn nút "Delete"
     console.log(`Deleted user with ID ${id}`);
@@ -13,22 +15,58 @@ export const UserPage = () => {
 
   const handleDetailsClick = (id: number) => {
     // Xử lý logic khi nhấn nút "Xem chi tiết"
+    navigate(`profile/${id}`, { state: { id: id } });
     console.log(`View details of user with ID ${id}`);
   };
-
+  const getDisplayValue = (value: any) => value || 'chưa cập nhật';
   const columns: GridColDef[] = [
     {
       field: 'stt',
       headerName: 'STT',
       width: 40,
     },
-    { field: 'username', headerName: 'Tên', width: 150 },
-    { field: 'email', headerName: 'Email', width: 200 },
-    { field: 'birthday', headerName: 'Birthday', width: 150 },
-    { field: 'phone', headerName: 'Số điện thoại', width: 150 },
-    { field: 'gender', headerName: 'Giới tính', width: 100 },
-    { field: 'major_id', headerName: 'Chuyên ngành', width: 150 },
-    { field: 'status', headerName: 'Status', width: 100 },
+    {
+      field: 'username',
+      headerName: 'Tên',
+      width: 150,
+      renderCell: params => <div>{getDisplayValue(params.row.username)}</div>,
+    },
+    {
+      field: 'email',
+      headerName: 'Email',
+      width: 200,
+      renderCell: params => <div>{getDisplayValue(params.row.email)}</div>,
+    },
+    {
+      field: 'birthday',
+      headerName: 'Birthday',
+      width: 150,
+      renderCell: params => <div>{getDisplayValue(params.row.birthday)}</div>,
+    },
+    {
+      field: 'phone',
+      headerName: 'Số điện thoại',
+      width: 150,
+      renderCell: params => <div>{getDisplayValue(params.row.phone)}</div>,
+    },
+    {
+      field: 'gender',
+      headerName: 'Giới tính',
+      width: 100,
+      renderCell: params => <div>{getDisplayValue(params.row.gender)}</div>,
+    },
+    {
+      field: 'major.majors_name',
+      headerName: 'Chuyên ngành',
+      width: 150,
+      renderCell: params => <div>{getDisplayValue(params.row.major.majors_name)}</div>,
+    },
+    {
+      field: 'status',
+      headerName: 'Status',
+      width: 100,
+      renderCell: params => <div>{getDisplayValue(params.row.status)}</div>,
+    },
     {
       field: 'actions',
       headerName: 'Actions',

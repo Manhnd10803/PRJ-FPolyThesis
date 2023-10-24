@@ -22,6 +22,7 @@ class User extends Authenticatable
         'email',
         'password',
         'group_id',
+        'major_id',
         'status',
     ];
 
@@ -51,5 +52,9 @@ class User extends Authenticatable
     public function blogs()
     {
         return $this->hasMany(Blog::class, 'user_id');
+    }
+    public function major()
+    {
+        return $this->belongsTo(Major::class, 'major_id');
     }
 }

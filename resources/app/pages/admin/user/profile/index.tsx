@@ -1,13 +1,27 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Container, Row, Col, Nav, Tab } from 'react-bootstrap';
 import { Card } from '@/components/custom';
-
+import { AdminService } from '@/apis/services/admin.service';
+import { IUsersAdmin } from '@/models/user';
+import { useQuery } from '@tanstack/react-query';
+import noImage from '@/assets/images/no-image.png';
 export const ProfileAdminPage = () => {
+  const location = useLocation();
+  const id = location.state && location.state.id;
+  const fetchUsers = async (): Promise<IUsersAdmin> => {
+    const { data } = await AdminService.getUserProfile(id);
+    const userData = data.user;
+    return userData;
+  };
+
+  const { data } = useQuery<IUsersAdmin>({ queryKey: ['users'], queryFn: fetchUsers });
+
+  const fullName = data?.first_name && data?.last_name ? `${data?.first_name} ${data?.last_name}` : 'chưa cập nhật';
+
   const imageBanner =
     'https://marketplace.canva.com/EAENvp21inc/1/0/1600w/canva-simple-work-linkedin-banner-qt_TMRJF4m0.jpg';
   const image =
     'https://images.unsplash.com/photo-1697807650304-907257330a3e?auto=format&fit=crop&q=60&w=600&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwxOXx8fGVufDB8fHx8fA%3D%3D';
-  const imageAvata = '	http://localhost:3000/static/media/11.e3b79bb5dc4e5f425f58.png';
   return (
     <>
       <Container>
@@ -20,11 +34,16 @@ export const ProfileAdminPage = () => {
                     <img loading="lazy" src={imageBanner} alt="profile-bg" className="rounded img-fluid" />
                   </div>
                   <div className="user-detail text-center mb-3">
-                    <div className="profile-img">
-                      <img loading="lazy" src={imageAvata} alt="profile-img" className="avatar-130 img-fluid" />
+                    <div>
+                      <img
+                        loading="lazy"
+                        src={data?.avatar || noImage}
+                        alt="profile-img"
+                        className="avatar-130 img-fluid rounded-circle"
+                      />
                     </div>
                     <div className="profile-detail">
-                      <h3 className="">Bni Cyst</h3>
+                      <h3 className="">{fullName} </h3>
                     </div>
                   </div>
                   <div className="profile-info p-3 d-flex align-items-center justify-content-between position-relative">
@@ -63,17 +82,17 @@ export const ProfileAdminPage = () => {
                     >
                       <Col sm="4" as="li" className="nav-item col-12 p-0">
                         <Nav.Link eventKey="f2" href="#Abouts">
-                          About
+                          Giới thiệu
                         </Nav.Link>
                       </Col>
                       <Col sm="4" as="li" className="nav-item col-12 p-0">
                         <Nav.Link eventKey="f3" href="#Friends">
-                          Friends
+                          Bạn bè
                         </Nav.Link>
                       </Col>
                       <Col sm="4" as="li" className="nav-item col-12 p-0">
                         <Nav.Link eventKey="f4" href="#Photos">
-                          Photos
+                          Album
                         </Nav.Link>
                       </Col>
                     </Nav>
@@ -81,77 +100,72 @@ export const ProfileAdminPage = () => {
                       <Tab.Pane eventKey="f2" className="fade show" id="Photos" role="tabpanel">
                         <Card>
                           <Card.Body>
-                            <h4>Contact Information</h4>
+                            <h4>Chuyên ngành</h4>
                             <hr />
                             <Row>
-                              <Col className="col-3">
-                                <h6>Email</h6>
-                              </Col>
-                              <Col className="col-9">
-                                <p className="mb-0">Bnijohn@gmail.com</p>
-                              </Col>
-                              <Col className="col-3">
-                                <h6>Mobile</h6>
-                              </Col>
-                              <Col className="col-9">
-                                <p className="mb-0">(001) 4544 565 456</p>
-                              </Col>
-                              <Col className="col-3">
-                                <h6>Address</h6>
-                              </Col>
-                              <Col className="col-9">
-                                <p className="mb-0">United States of America</p>
+                              <Col className="col-12 ">
+                                <h6 className="d-flex align-items-center gap-1">
+                                  <span className="material-symbols-outlined">import_contacts</span>{' '}
+                                  {data?.major?.majors_name || 'chưa cập nhật'}
+                                </h6>
                               </Col>
                             </Row>
-                            <h4 className="mt-3">Websites and Social Links</h4>
+
+                            <h4 className="mt-3">Tổng quan</h4>
                             <hr />
                             <Row>
-                              <Col className="col-3">
-                                <h6>Website</h6>
+                              <Col className="col-3 ">
+                                <h6 className="d-flex align-items-center gap-1">
+                                  <span className="material-symbols-outlined">mail</span> Email
+                                </h6>
                               </Col>
                               <Col className="col-9">
-                                <p className="mb-0">www.bootstrap.com</p>
+                                <p className="mb-0">{data?.email || 'chưa cập nhật'}</p>
                               </Col>
                               <Col className="col-3">
-                                <h6>Social Link</h6>
+                                <h6 className="d-flex align-items-center gap-1">
+                                  <span className="material-symbols-outlined">call</span> Di động
+                                </h6>
                               </Col>
                               <Col className="col-9">
-                                <p className="mb-0">www.bootstrap.com</p>
+                                <p className="mb-0">{data?.phone || 'chưa cập nhật'}</p>
+                              </Col>
+                              <Col className="col-3">
+                                <h6 className="d-flex align-items-center gap-1">
+                                  <span className="material-symbols-outlined">home_pin</span> Sống tại
+                                </h6>
+                              </Col>
+                              <Col className="col-9">
+                                <p className="mb-0">{data?.address || 'chưa cập nhật'}</p>
+                              </Col>
+                            </Row>
+                            <h4 className="mt-3">Tiểu sử</h4>
+                            <hr />
+                            <Row>
+                              <Col className="col-9">
+                                <p className="mb-0">{data?.biography || 'chưa cập nhật'}</p>
                               </Col>
                             </Row>
                             <hr />
-                            <h4 className="mt-3">Basic Information</h4>
+                            <h4 className="mt-3">Thông tin cơ bản</h4>
                             <hr />
                             <Row>
                               <Col className="col-3">
-                                <h6>Birth Date</h6>
+                                <h6 className="d-flex align-items-center gap-1">
+                                  <span className="material-symbols-outlined">cake</span> Sinh nhật
+                                </h6>
                               </Col>
                               <Col className="col-9">
-                                <p className="mb-0">24 January</p>
+                                <p className="mb-0">{data?.birthday || 'chưa cập nhật'}</p>
                               </Col>
+
                               <Col className="col-3">
-                                <h6>Birth Year</h6>
+                                <h6 className="d-flex align-items-center gap-1">
+                                  <span className="material-symbols-outlined">transgender</span> Giới tính
+                                </h6>
                               </Col>
                               <Col className="col-9">
-                                <p className="mb-0">1994</p>
-                              </Col>
-                              <Col className="col-3">
-                                <h6>Gender</h6>
-                              </Col>
-                              <Col className="col-9">
-                                <p className="mb-0">Female</p>
-                              </Col>
-                              <Col className="col-3">
-                                <h6>interested in</h6>
-                              </Col>
-                              <Col className="col-9">
-                                <p className="mb-0">Designing</p>
-                              </Col>
-                              <Col className="col-3">
-                                <h6>language</h6>
-                              </Col>
-                              <Col className="col-9">
-                                <p className="mb-0">English, French</p>
+                                <p className="mb-0">{data?.gender || 'chưa cập nhật'}</p>
                               </Col>
                             </Row>
                           </Card.Body>

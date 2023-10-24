@@ -18,6 +18,7 @@ export const ApiConstants = {
 
   // admin
   USERS_ADMIN: `/admin/users`,
+  USER_PROFILE: `/admin/users/detail`,
 
   // Add more endpoints as needed
 } as const;

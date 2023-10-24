@@ -11,10 +11,18 @@ export interface IUser {
 export interface IUsersAdmin {
   id: number;
   username: string;
+  first_name: string;
+  last_name: string;
+  avatar: string;
   email: string;
   birthday: string;
+  biography: string;
   phone: string;
   gender: string;
+  address: string;
   major_id: string;
+  major: {
+    majors_name: string;
+  };
   status: string;
 }
