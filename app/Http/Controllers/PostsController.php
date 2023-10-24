@@ -51,7 +51,43 @@ class PostsController extends Controller
             ->orderBy('created_at', 'DESC')->get();
         return response()->json($posts);
     }
-
+   /**
+    * @OA\Get(
+    *     path="/api/posts/newfeed",
+    *     tags={"Posts"},
+    *     summary="Lấy tất cả bài viết của người dùng và bạn bè",
+    *     description="Lấy danh sách tất cả bài viết của người dùng đã đăng nhập và các bài viết của bạn bè của họ.",
+    *     security={{"bearerAuth": {}}},
+    *     @OA\Response(
+    *         response=200,
+    *         description="Danh sách bài viết đã lấy thành công",
+    *         @OA\JsonContent(
+    *             type="array",
+    *               @OA\Items(
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="user_id", type="integer"),
+     *                 @OA\Property(property="content", type="string"),
+     *                 @OA\Property(property="feeling", type="string", nullable=true),
+     *                 @OA\Property(property="image", type="object", nullable=true),
+     *                 @OA\Property(property="hashtag", type="string", nullable=true),
+     *                 @OA\Property(property="status", type="integer"),
+     *                 @OA\Property(property="views", type="integer"),
+     *                 @OA\Property(property="created_at", type="string"),
+     *                 @OA\Property(property="updated_at", type="string")
+     *             )
+    *         )
+    *     ),
+    *     @OA\Response(response=401, description="Không xác thực"),
+    * )
+    */
+    public function ShowAllPosts(){
+        $user = Auth::user();
+        $friends = $user->friends;
+        $friendIds = $friends->pluck('id')->toArray();
+        $friendIds[] = $user->id;
+        $posts = Post::whereIn('user_id', $friendIds)->latest()->get();
+        return response()->json($posts,200);
+    }
     /**
      * @OA\Post(
      *     path="/api/posts",
@@ -315,6 +351,6 @@ class PostsController extends Controller
         }
 
         return response()->json(['post' => $post], 200);
-    }
+    }    
 
 }
