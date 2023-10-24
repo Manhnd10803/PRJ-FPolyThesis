@@ -3,6 +3,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { Provider as ReduxProvider } from 'react-redux';
 import { store } from './redux/store/store';
+import { TooltipProvider } from './components/plate-ui/tooltip';
 
 const queryClient = new QueryClient();
 
@@ -15,7 +16,9 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     <QueryClientProvider client={queryClient}>
       <ReduxProvider store={store}>
         <ReactQueryDevtools position="bottom-right" />
-        {children}
+        <TooltipProvider disableHoverableContent delayDuration={500} skipDelayDuration={0}>
+          {children}
+        </TooltipProvider>
       </ReduxProvider>
     </QueryClientProvider>
   );

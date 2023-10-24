@@ -2,6 +2,8 @@ import './bootstrap';
 //scss
 import './assets/scss/index.scss';
 import './assets/scss/customizer.scss';
+
+import './styles/global.css';
 import { useDispatch } from 'react-redux';
 import { setSetting } from './redux/slice';
 

@@ -5,6 +5,7 @@ import { FriendRequestPage } from '@/pages/client/friend-request';
 import { GroupPage } from '@/pages/client/group';
 import { HomePage } from '@/pages/client/home';
 import { NotificationPage } from '@/pages/client/notification';
+import { PlateEditorPage } from '@/pages/client/plate-edior';
 import { ProfilePage } from '@/pages/client/profile';
 import { QuestionAndAnswerPage } from '@/pages/client/question-and-answer';
 import { DetailQuestionPage } from '@/pages/client/question-and-answer/components/detail-question';
@@ -49,5 +50,9 @@ export const ClientRouter = [
   {
     path: '/notification',
     element: <NotificationPage />,
+  },
+  {
+    path: '/plate-editor',
+    element: <PlateEditorPage />,
   },
 ];
