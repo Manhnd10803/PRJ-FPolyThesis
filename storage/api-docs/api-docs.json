@@ -6,6 +6,120 @@
     },
     "paths": {
         "/api": {},
+        "/api/blogs/list-approved": {
+            "get": {
+                "tags": [
+                    "Admin Blogs"
+                ],
+                "summary": "Danh sách các bài viết đã được duyệt",
+                "description": "Lấy danh sách tất cả các bài viết đã được duyệt bởi admin",
+                "operationId": "b8714cfb1f96dc47908b6052fa556c1b",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách các bài viết đã được duyệt"
+                    }
+                }
+            }
+        },
+        "/api/blogs/list-pending": {
+            "get": {
+                "tags": [
+                    "Admin Blogs"
+                ],
+                "summary": "Danh sách các bài viết chờ duyệt",
+                "description": "Lấy danh sách tất cả các bài viết đang chờ duyệt",
+                "operationId": "ae8813742f8f89ae065b047a9cf24031",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách các bài viết chờ duyệt"
+                    }
+                }
+            }
+        },
+        "/api/blogs/approve/{blog}": {
+            "get": {
+                "tags": [
+                    "Admin Blogs"
+                ],
+                "summary": "Duyệt một bài viết",
+                "description": "Duyệt một bài viết chờ duyệt dựa trên ID của bài viết.",
+                "operationId": "b70434bddcba6c83f8a9769e7aa890ea",
+                "parameters": [
+                    {
+                        "name": "blog",
+                        "in": "path",
+                        "description": "ID của bài viết cần duyệt",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bài viết đã được duyệt thành công"
+                    }
+                }
+            }
+        },
+        "/api/blogs/reject/{blog}": {
+            "get": {
+                "tags": [
+                    "Admin Blogs"
+                ],
+                "summary": "Từ chối một blog",
+                "description": "Từ chối một blog dựa trên ID.",
+                "operationId": "6f13caa446b35d0c63e5cca753ff0038",
+                "parameters": [
+                    {
+                        "name": "blog",
+                        "in": "path",
+                        "description": "ID của blog cần từ chối",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Từ chối blog thành công"
+                    },
+                    "400": {
+                        "description": "Lỗi trong quá trình xử lý"
+                    }
+                }
+            }
+        },
+        "/api/blogs/detail/{blog}": {
+            "get": {
+                "tags": [
+                    "Admin Blogs"
+                ],
+                "summary": "Xem chi tiết một bài viết",
+                "description": "Trả về thông tin chi tiết của một bài viết dựa trên ID của bài viết.",
+                "operationId": "8a09ef599950debca45be8ae7fdd2481",
+                "parameters": [
+                    {
+                        "name": "blog",
+                        "in": "path",
+                        "description": "ID của bài viết cần xem chi tiết",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thông tin chi tiết của bài viết"
+                    },
+                    "404": {
+                        "description": "Bài viết không tồn tại"
+                    }
+                }
+            }
+        },
         "/api/admin/user/": {
             "get": {
                 "tags": [
@@ -532,6 +646,695 @@
                         "description": "Lỗi trong quá trình xử lý"
                     }
                 }
+            }
+        },
+        "/api/blogs": {
+            "post": {
+                "tags": [
+                    "Blogs"
+                ],
+                "summary": "Tạo blog mới",
+                "description": "Tạo một blog mới",
+                "operationId": "08cc875e13b08dbeb3a38bc960317115",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "content",
+                                    "majors_id",
+                                    "thumbnail"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "description": "Tiêu đề của blog",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "content": {
+                                        "description": "Nội dung của blog",
+                                        "type": "string"
+                                    },
+                                    "majors_id": {
+                                        "description": "ID của chuyên ngành liên quan đến blog",
+                                        "type": "integer"
+                                    },
+                                    "hashtag": {
+                                        "description": "Hashtag của blog",
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "nullable": true
+                                    },
+                                    "thumbnail": {
+                                        "description": "Hình ảnh đại diện của blog (JPEG, JPG hoặc PNG)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Blog đã được tạo thành công"
+                    },
+                    "400": {
+                        "description": "Tệp tin không hợp lệ"
+                    }
+                }
+            }
+        },
+        "/api/blogs/{blog}": {
+            "put": {
+                "tags": [
+                    "Blogs"
+                ],
+                "summary": "Cập nhật thông tin blog",
+                "description": "Cập nhật thông tin của một blog đã tồn tại",
+                "operationId": "cdaffdc408503e449d35d97bee40baca",
+                "parameters": [
+                    {
+                        "name": "blog",
+                        "in": "path",
+                        "description": "ID của blog cần cập nhật",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "content",
+                                    "majors_id",
+                                    "thumbnail"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "description": "Tiêu đề của blog",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "content": {
+                                        "description": "Nội dung của blog",
+                                        "type": "string"
+                                    },
+                                    "majors_id": {
+                                        "description": "ID của chuyên ngành liên quan đến blog",
+                                        "type": "integer"
+                                    },
+                                    "hashtag": {
+                                        "description": "Hashtag của blog",
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "nullable": true
+                                    },
+                                    "thumbnail": {
+                                        "description": "Hình ảnh đại diện của blog (JPEG, JPG hoặc PNG)",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Blog đã được cập nhật thành công"
+                    },
+                    "400": {
+                        "description": "Tệp tin không hợp lệ hoặc lỗi xử lý"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Blogs"
+                ],
+                "summary": "Xóa blog",
+                "description": "Xóa một blog đã tồn tại",
+                "operationId": "e616de80cbfe71db08626de369f4ae9a",
+                "parameters": [
+                    {
+                        "name": "blog",
+                        "in": "path",
+                        "description": "ID của blog cần xóa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bài blog đã bị xóa thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Bài blog không tồn tại",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Lỗi xảy ra khi xóa bài blog",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/posts/profile": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Lấy danh sách bài viết của người dùng hoặc các bài viết không được công bố",
+                "description": "Lấy danh sách bài viết của người dùng hiện tại hoặc các bài viết không được công bố (trạng thái khác 1)",
+                "operationId": "6e3f25c15613024199bc3d52fb67d81b",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách bài viết đã được lấy thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer"
+                                            },
+                                            "user_id": {
+                                                "type": "integer"
+                                            },
+                                            "content": {
+                                                "type": "string"
+                                            },
+                                            "feeling": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "image": {
+                                                "type": "object",
+                                                "nullable": true
+                                            },
+                                            "hashtag": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "status": {
+                                                "type": "integer"
+                                            },
+                                            "views": {
+                                                "type": "integer"
+                                            },
+                                            "created_at": {
+                                                "type": "string"
+                                            },
+                                            "updated_at": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/posts": {
+            "post": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Tạo bài viết mới",
+                "description": "Tạo một bài viết mới với nội dung, cảm xúc, hashtag và hình ảnh tải lên (tối đa 5 hình ảnh).",
+                "operationId": "2538809b283533ce7a2633cf174c4e93",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "content"
+                                ],
+                                "properties": {
+                                    "content": {
+                                        "description": "Nội dung của bài viết",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "feeling": {
+                                        "description": "Cảm xúc của bài viết",
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "hashtag": {
+                                        "description": "Hashtag của bài viết",
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "nullable": true
+                                    },
+                                    "images": {
+                                        "type": "array",
+                                        "items": {
+                                            "description": "Hình ảnh đính kèm (JPEG, JPG hoặc PNG)",
+                                            "type": "string",
+                                            "format": "binary"
+                                        },
+                                        "maxItems": 5,
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Bài viết đã được tạo thành công"
+                    },
+                    "400": {
+                        "description": "Lỗi khi tạo bài viết"
+                    }
+                }
+            }
+        },
+        "/api/posts/{post}": {
+            "get": {
+                "tags": [
+                    "Admin Posts"
+                ],
+                "summary": "Lấy thông tin của một bài viết",
+                "description": "Trả về thông tin của một bài viết dựa trên đối tượng Post.",
+                "operationId": "12b3a7d5c579087f2d5d644b5213adb7",
+                "parameters": [
+                    {
+                        "name": "post",
+                        "in": "path",
+                        "description": "Đối tượng Post",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thông tin của bài viết"
+                    },
+                    "404": {
+                        "description": "Bài viết không tồn tại"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Cập nhật bài viết",
+                "description": "Cập nhật một bài viết với nội dung, cảm xúc, hashtag và hình ảnh tải lên (tối đa 5 hình ảnh).",
+                "operationId": "acd141fbc91f692391061d1ff33f7fc2",
+                "parameters": [
+                    {
+                        "name": "post",
+                        "in": "path",
+                        "description": "ID của bài viết cần cập nhật",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "content"
+                                ],
+                                "properties": {
+                                    "content": {
+                                        "description": "Nội dung của bài viết",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "feeling": {
+                                        "description": "Cảm xúc của bài viết",
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "hashtag": {
+                                        "description": "Hashtag của bài viết",
+                                        "type": "string",
+                                        "maxLength": 255,
+                                        "nullable": true
+                                    },
+                                    "images": {
+                                        "type": "array",
+                                        "items": {
+                                            "description": "Hình ảnh đính kèm (JPEG, JPG hoặc PNG)",
+                                            "type": "string",
+                                            "format": "binary"
+                                        },
+                                        "maxItems": 5,
+                                        "nullable": true
+                                    },
+                                    "status": {
+                                        "description": "Trạng thái của bài viết",
+                                        "type": "integer",
+                                        "enum": [
+                                            0,
+                                            1
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Bài viết đã được cập nhật thành công"
+                    },
+                    "400": {
+                        "description": "Lỗi khi cập nhật bài viết"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Xóa bài viết",
+                "description": "Xóa một bài viết cùng với các comments và likes liên quan.",
+                "operationId": "5c3a7c262aaff92e7ca4b24b16647748",
+                "parameters": [
+                    {
+                        "name": "post",
+                        "in": "path",
+                        "description": "ID của bài viết cần xóa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Bài viết đã bị xóa thành công"
+                    },
+                    "400": {
+                        "description": "Lỗi khi xóa bài viết"
+                    },
+                    "401": {
+                        "description": "Bạn không có quyền xóa bài viết"
+                    },
+                    "404": {
+                        "description": "Bài viết không được tìm thấy"
+                    }
+                }
+            }
+        },
+        "/api/posts/count-like/{post}": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Lấy số lượng lượt thích của bài viết",
+                "description": "Lấy số lượng lượt thích của một bài viết dựa trên ID của bài viết.",
+                "operationId": "05b94ef7a3751e97778ef17747d6b7e2",
+                "parameters": [
+                    {
+                        "name": "post",
+                        "in": "path",
+                        "description": "ID của bài viết",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Số lượng lượt thích của bài viết"
+                    },
+                    "404": {
+                        "description": "Bài viết không được tìm thấy"
+                    }
+                }
+            }
+        },
+        "/api/posts/count-cmt/{post}": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Lấy số lượng bình luận và trả lời của bài viết",
+                "description": "Lấy số lượng bình luận và trả lời của một bài viết dựa trên ID của bài viết.",
+                "operationId": "773f9cd3c9f5d7f5b820a3e452b86286",
+                "parameters": [
+                    {
+                        "name": "post",
+                        "in": "path",
+                        "description": "ID của bài viết",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Số lượng bình luận và trả lời của bài viết"
+                    },
+                    "404": {
+                        "description": "Bài viết không được tìm thấy"
+                    }
+                }
+            }
+        },
+        "/api/list-posts": {
+            "get": {
+                "tags": [
+                    "Admin Posts"
+                ],
+                "summary": "Lấy danh sách bài viết",
+                "description": "Trả về danh sách các bài viết.",
+                "operationId": "7a54460d4ecf667e040735f379b2a58f",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách các bài viết"
+                    }
+                }
+            }
+        },
+        "/api/quests": {
+            "post": {
+                "tags": [
+                    "Q&A"
+                ],
+                "summary": "Tạo câu hỏi mới",
+                "description": "Tạo một câu hỏi mới với tiêu đề, nội dung, chuyên ngành liên quan và hashtag.",
+                "operationId": "f38d1be5470bf3cedbc04b60f975020b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "content",
+                                    "majors_id",
+                                    "hashtag"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "description": "Tiêu đề của câu hỏi",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "content": {
+                                        "description": "Nội dung của câu hỏi",
+                                        "type": "string"
+                                    },
+                                    "majors_id": {
+                                        "description": "ID của chuyên ngành liên quan đến câu hỏi",
+                                        "type": "integer"
+                                    },
+                                    "hashtag": {
+                                        "description": "Hashtag của câu hỏi",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Câu hỏi đã được tạo thành công"
+                    },
+                    "400": {
+                        "description": "Lỗi khi tạo câu hỏi"
+                    }
+                }
+            }
+        },
+        "/api/quests/{qa}": {
+            "put": {
+                "tags": [
+                    "Q&A"
+                ],
+                "summary": "Cập nhật câu hỏi",
+                "description": "Cập nhật một câu hỏi với tiêu đề, nội dung, chuyên ngành liên quan và hashtag.",
+                "operationId": "0f3aa64bf9f8d9253b19f58588dd5430",
+                "parameters": [
+                    {
+                        "name": "qa",
+                        "in": "path",
+                        "description": "ID của câu hỏi cần cập nhật",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "content",
+                                    "majors_id",
+                                    "hashtag"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "description": "Tiêu đề của câu hỏi",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "content": {
+                                        "description": "Nội dung của câu hỏi",
+                                        "type": "string"
+                                    },
+                                    "majors_id": {
+                                        "description": "ID của chuyên ngành liên quan đến câu hỏi",
+                                        "type": "integer"
+                                    },
+                                    "hashtag": {
+                                        "description": "Hashtag của câu hỏi",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Câu hỏi đã được cập nhật thành công"
+                    },
+                    "400": {
+                        "description": "Lỗi khi cập nhật câu hỏi"
+                    },
+                    "404": {
+                        "description": "Câu hỏi không được tìm thấy"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Q&A"
+                ],
+                "summary": "Xóa câu hỏi và câu trả lời",
+                "description": "Xóa một câu hỏi và tất cả các câu trả lời liên quan dựa trên ID.",
+                "operationId": "5b51b3e0794bcfb497cef789cca648a5",
+                "parameters": [
+                    {
+                        "name": "qa",
+                        "in": "path",
+                        "description": "ID của câu hỏi cần xóa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Câu hỏi và câu trả lời đã bị xóa thành công"
+                    },
+                    "400": {
+                        "description": "Lỗi khi xóa câu hỏi và câu trả lời"
+                    },
+                    "401": {
+                        "description": "Không được phép xóa câu hỏi và câu trả lời"
+                    },
+                    "404": {
+                        "description": "Câu hỏi không được tìm thấy"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "responses": {
+            "400": {
+                "description": "Lỗi trong quá trình xử lý"
             }
         }
     }
