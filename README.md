@@ -67,3 +67,11 @@ nếu gặp lỗi chạy npm i (npm install) rồi chạy lại câu trên
     laravel-echo-server start(Run larave-echo)
 
     php artisan queue:work
+
+## Run & update swagger
+
+php artisan l5-swagger:generate
+
+## Create api key
+
+php artisan passport:keys
