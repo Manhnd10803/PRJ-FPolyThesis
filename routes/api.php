@@ -41,7 +41,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/hello', function () {
         return 'ok';
     });
-    //chat
+    //chatj
     Route::get('/messages', [PrivateMessagesController::class, 'ShowAllMessage'])->name('message.show');
     Route::post('/messages', [PrivateMessagesController::class, 'SendMessages'])->name('message.create');
     Route::put('/messages/{privateMessage}', [PrivateMessagesController::class, 'UpdateMessage'])->name('message.update');
@@ -55,7 +55,10 @@ Route::middleware('auth:api')->group(function () {
     Route::get('posts/count-like/{post}', [PostsController::class, 'CountLikeInPost'])->name('like.count');
     Route::get('posts/count-cmt/{post}', [PostsController::class, 'CountCommentInPost'])->name('comment.count');
     //blog
+    
     Route::prefix('blogs')->group(function () {
+        Route::get('/', [BlogController::class, 'ListBlog'])->name('blog.list');
+        Route::get('/{blog}', [BlogController::class, 'GetBlogDetails'])->name('blog.detail');
         Route::post('/', [BlogController::class, 'CreateBlog'])->name('blog.create');
         Route::put('/{blog}', [BlogController::class, 'UpdateBlog'])->name('blog.update');
         Route::delete('/{blog}', [BlogController::class, 'DeleteBlog'])->name('blog.delete');
@@ -78,6 +81,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/comment/{post}', [CommentController::class, 'AddCommentToPost'])->name('post.comment');
     //Comment --blog
     Route::get('/comment/{blog}', [CommentController::class, 'FetchCommentInBlog'])->name('blog.show');
+    Route::post('/comment', [CommentController::class, 'store'])->name('blog.comment');
     Route::post('/comment/{blog}', [CommentController::class, 'AddCommentToBlog'])->name('blog.comment');
     //Comment --Q&a
     Route::get('/comment/{qa}', [CommentController::class, 'FetchCommentInQa'])->name('qa.show');

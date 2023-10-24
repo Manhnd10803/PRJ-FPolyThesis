@@ -28,7 +28,7 @@ export const ClientRouter = [
     element: <BlogPage />,
   },
   {
-    path: '/blog-detail',
+    path: '/blog-detail/:id',
     element: <BlogDetailPage />,
   },
   {

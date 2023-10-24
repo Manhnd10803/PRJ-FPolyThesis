@@ -1,39 +1,18 @@
-import { Container, Row, Col, Image, Card } from 'react-bootstrap';
-
-import { CardItem } from './components/card-item';
+import { Container, Col } from 'react-bootstrap';
+import { ListCard } from './components/list-card';
 import { Link } from 'react-router-dom';
-
-// Tạo một mảng chứa thông tin về bài viết
-const blogData = [
-  {
-    id: 1,
-    title: 'Containing coronavirus spread comes',
-    description:
-      'In the blogpost, the IMF experts observed, "Success in containing the virus comes at the price of slowing economic activity."',
-    date: '4 Month ago',
-    image:
-      'https://images.unsplash.com/photo-1697441642505-0f4ce8fbe98a?auto=format&fit=crop&q=60&w=600&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWltZmVlZHw3fHx8ZW58MHx8fHx8', // Thêm tên ảnh của bài viết
-  },
-  {
-    id: 2,
-    title: 'Another blog title',
-    description: 'Description of the second blog post.',
-    date: '2 Month ago',
-    image:
-      'https://images.unsplash.com/photo-1697441642505-0f4ce8fbe98a?auto=format&fit=crop&q=60&w=600&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWltZmVlZHw3fHx8ZW58MHx8fHx8', // Thêm tên ảnh của bài viết
-  },
-  {
-    id: 3,
-    title: 'Another blog title',
-    description: 'Description of the second blog post.',
-    date: '2 Month ago',
-    image:
-      'https://images.unsplash.com/photo-1697441642505-0f4ce8fbe98a?auto=format&fit=crop&q=60&w=600&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWltZmVlZHw3fHx8ZW58MHx8fHx8', // Thêm tên ảnh của bài viết
-  },
-  // Thêm các bài viết khác vào đây
-];
+import { BlogService } from '@/apis/services/blog.service';
+import { IBlogResponse } from '@/models/blog';
+import { useQuery } from '@tanstack/react-query';
 
 export const BlogPage = () => {
+  const fetchBlogs = async (): Promise<IBlogResponse> => {
+    const { data } = await BlogService.getBlogs();
+    const blogData = data;
+    return blogData;
+  };
+  const { data, isLoading } = useQuery<IBlogResponse>({ queryKey: ['blogs'], queryFn: fetchBlogs });
+
   return (
     <>
       <div id="content-page" className="content-page">
@@ -52,7 +31,7 @@ export const BlogPage = () => {
               </Link>
             </div>
           </Col>
-          <CardItem data={blogData} />
+          <ListCard data={data || []} />
         </Container>
       </div>
     </>

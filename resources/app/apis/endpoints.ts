@@ -15,8 +15,16 @@ export const ApiConstants = {
 
   // post
   POSTS: `/posts`,
+  // blog
+
+  BLOGS: `/blogs`,
+  BLOG_DETAIL: `/blogs`,
+
+  // comments
+  POST_COMMENT: ``,
 
   // admin
+
   USERS_ADMIN: `/admin/users`,
 
   // Add more endpoints as needed

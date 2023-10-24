@@ -11,6 +11,24 @@ use Illuminate\Support\Facades\DB;
 
 class BlogController extends Controller
 {
+
+    public function ListBlog()
+    {
+        $blogs = Blog::with('comments') 
+        ->orderBy('created_at', 'desc')
+        ->get();
+        return response()->json($blogs, 200);
+    }
+
+    public function GetBlogDetails($id)
+    {
+        $blog = Blog::with(['comments.user.major', 'likes'])->find($id);
+    if (!$blog) {
+        return response()->json(['message' => 'Không tìm thấy blog'], 404);
+    }
+
+    return response()->json($blog, 200);
+}
        /**
      * @OA\Post(
      *     path="/api/blogs",

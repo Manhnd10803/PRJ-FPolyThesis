@@ -42,7 +42,7 @@ class CommentController extends Controller
                 'user_id' => $user->id,
                 'blog_id' => $blog->id,
                 'content' => $content,
-                'parent_id' => $parent_id, 
+                'parent_id' => $parent_id,  
             ]);
             $comment->save();
             DB::commit();
@@ -51,6 +51,14 @@ class CommentController extends Controller
             DB::rollBack();
             return response()->json(['error' => 'You must be logged in to comment'], 401);
         }
+    }
+    public function store(Request $request) {
+        $data = $request->all();
+    
+        $comment = new Comment($data);
+        $comment->save();
+    
+        return response()->json(['message' => 'Bình luận đã được đăng thành công'], 200);
     }
     public function AddCommentToQa(Request $request, Qa $qa) {
         DB::beginTransaction();
