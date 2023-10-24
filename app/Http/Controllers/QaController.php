@@ -10,18 +10,45 @@ use Illuminate\Support\Facades\DB;
 
 class QaController extends Controller
 {
+    public function ListQa(Request $request)
+    {
+        $hashtag = $request->input('hashtag');
+        $majorsId = $request->input('majors_id');
+        $query = Qa::orderBy("created_at", "desc");
+        if ($hashtag) {
+            $query->where('hashtag', 'LIKE', '%' . $hashtag . '%');
+        }
+        if ($majorsId) {
+            $query->where('majors_id', $majorsId);
+        }
+        $qa = $query->paginate(10);
+        return response()->json($qa, 200);
+    }
+    
   public function CreateQa(Request $request){
     DB::beginTransaction();
     try{
-        $data = $request->all();
-      
+        $data = $request->all();  
        $qa = new Qa([
         'user_id' => Auth::id(),
         'title' => $data['title'],
         'content' => $data['content'],
         'majors_id' => $data['majors_id'],
-        'hashtag' => $data['hashtag'],
        ]);
+        if (isset($data['hashtag']) && !empty($data['hashtag'])) {
+            // Tách chuỗi thành mảng các từ (dùng khoảng trắng để tách)
+            $words = preg_split('/\s+/', $data['hashtag']);
+            $hashtags = [];
+            // Lọc các từ có dấu '#' ở đầu
+            foreach ($words as $word) {
+                if (strpos($word, '#') === 0) {
+                    $hashtags[] = $word;
+                }
+            }
+            // Giới hạn số lượng hashtag tối đa là 5
+            $hashtags = array_slice($hashtags, 0, 5);
+            $qa->hashtag = implode(',', $hashtags);
+        }
        $qa->save();
        DB::commit();
        return response()->json($qa, 200);
@@ -34,11 +61,23 @@ public function UpdateQa(Request $request, Qa $qa) {
     DB::beginTransaction();
     try {
         $data = $request->all();
+        if (isset($data['hashtag']) && !empty($data['hashtag'])) {
+            $words = preg_split('/\s+/', $data['hashtag']);
+            $hashtags = [];
+            // Lọc các từ có dấu '#' ở đầu
+            foreach ($words as $word) {
+                if (strpos($word, '#') === 0) {
+                    $hashtags[] = $word;
+                }
+            }
+            // Giới hạn số lượng hashtag tối đa là 5
+            $hashtags = array_slice($hashtags, 0, 5);
+            $qa->hashtag = implode(',', $hashtags);
+        }
         $qa->update([
             'title' => $data['title'],
             'content' => $data['content'],
             'majors_id' => $data['majors_id'],
-            'hashtag' => $data['hashtag'],
         ]);
         $qa->save();
         DB::commit();
