@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminBlogController;
+use App\Http\Controllers\Admin\AdminEmotionController;
 use App\Http\Controllers\Admin\AdminMajorController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\AuthController;
@@ -35,15 +36,6 @@ Route::prefix('auth')->group(function () {
     Route::post('/verify', [AuthController::class, 'verify'])->name('user.verify');
     Route::post('/post-forgot-password', [AuthController::class, 'forgotPassword'])->name('user.forgotPassword');
     Route::post('/post-reset-password', [AuthController::class, 'resetPassword'])->name('user.resetPassword');
-});
-
-//Major Admin
-Route::prefix('majors')->group(function () {
-    Route::get('/', [AdminMajorController::class, 'index'])->name('admin.majors.index');
-    Route::get('/{major}', [AdminMajorController::class, 'show'])->name('admin.majors.show');
-    Route::post('/', [AdminMajorController::class, 'store'])->name('admin.majors.store');
-    Route::put('/{major}', [AdminMajorController::class, 'update'])->name('admin.majors.update');
-    Route::delete('/{major}', [AdminMajorController::class, 'destroy'])->name('admin.majors.destroy');
 });
 
 Route::middleware('auth:api')->group(function () {
@@ -132,6 +124,20 @@ Route::middleware('auth:api')->group(function () {
             Route::get('/approve/{blog}', [AdminBlogController::class, 'approveBlog'])->name('admin.blog.approve');
             Route::get('/reject/{blog}', [AdminBlogController::class, 'rejectBlog'])->name('admin.blog.reject');
             Route::get('/detail/{blog}', [AdminBlogController::class, 'detailBlog'])->name('admin.blog.detailBlog');
+        });
+        //Major Admin
+        Route::prefix('majors')->group(function () {
+            Route::get('/', [AdminMajorController::class, 'index'])->name('admin.majors.index');
+            Route::get('/{major}', [AdminMajorController::class, 'show'])->name('admin.majors.show');
+            Route::post('/', [AdminMajorController::class, 'store'])->name('admin.majors.store');
+            Route::put('/{major}', [AdminMajorController::class, 'update'])->name('admin.majors.update');
+            Route::delete('/{major}', [AdminMajorController::class, 'destroy'])->name('admin.majors.destroy');
+        });
+        //Emotion Admin
+        Route::prefix('emotions')->group(function () {
+            Route::post('/', [AdminEmotionController::class, 'addEmotion'])->name('admin.emotion.add');
+            Route::put('/{oldEmotion}', [AdminEmotionController::class, 'updateEmotion'])->name('admin.emotion.update');
+            Route::delete('/{emotionToDelete}', [AdminEmotionController::class, 'deleteEmotion'])->name('admin.emotion.delete');
         });
     });
 });

@@ -120,6 +120,200 @@
                 }
             }
         },
+        "/api/emotions": {
+            "post": {
+                "tags": [
+                    "Admin Emotions"
+                ],
+                "summary": "Add a new emotion",
+                "description": "Add a new emotion to the list of valid emotions.",
+                "operationId": "addEmotion",
+                "requestBody": {
+                    "description": "Emotion object to be added",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "emotion"
+                                ],
+                                "properties": {
+                                    "emotion": {
+                                        "type": "string",
+                                        "example": "Happy"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Emotion added successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Emotion added successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Emotion already exists",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Emotion already exists"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/emotions/{oldEmotion}": {
+            "put": {
+                "tags": [
+                    "Admin Emotions"
+                ],
+                "summary": "Update an existing emotion",
+                "description": "Update an existing emotion in the list of valid emotions.",
+                "operationId": "updateEmotion",
+                "parameters": [
+                    {
+                        "name": "oldEmotion",
+                        "in": "path",
+                        "description": "Old emotion to be updated",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Updated emotion object",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "new_emotion"
+                                ],
+                                "properties": {
+                                    "new_emotion": {
+                                        "type": "string",
+                                        "example": "Joyful"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Emotion updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Emotion updated successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Emotion not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Emotion not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/emotions/{emotionToDelete}": {
+            "delete": {
+                "tags": [
+                    "Admin Emotions"
+                ],
+                "summary": "Delete an existing emotion",
+                "description": "Delete an existing emotion from the list of valid emotions.",
+                "operationId": "deleteEmotion",
+                "parameters": [
+                    {
+                        "name": "emotionToDelete",
+                        "in": "path",
+                        "description": "Emotion to be deleted",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Emotion deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Emotion deleted successfully"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Emotion not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string",
+                                            "example": "Emotion not found"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/majors": {
             "get": {
                 "tags": [
