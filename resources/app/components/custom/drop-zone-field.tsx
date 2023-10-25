@@ -1,4 +1,4 @@
-import { useDropzone, FileRejection } from 'react-dropzone';
+import { useDropzone, FileRejection, DropzoneOptions } from 'react-dropzone';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const baseStyle = {
@@ -33,17 +33,26 @@ const rejectStyle = {
 //   onDrop: (acceptedFiles: Array<File>) => void;
 // };
 
-export const DropImageField = () => {
+type DropZoneFieldProps = {
+  onChange?: (files: Array<File>) => void;
+} & DropzoneOptions;
+
+export const DropZoneField = ({ onChange, multiple = true, ...rest }: DropZoneFieldProps) => {
   //state
   const [files, setFiles] = useState<Array<File & { preview: string }>>([]);
   const [rejected, setRejected] = useState<FileRejection[]>([]);
 
   const onDrop = useCallback((acceptedFiles: Array<File>, rejectedFiles: FileRejection[]) => {
-    if (acceptedFiles?.length) {
-      setFiles(previousFiles => [
-        ...previousFiles,
-        ...acceptedFiles.map(file => Object.assign(file, { preview: URL.createObjectURL(file) })),
-      ]);
+    if (multiple) {
+      if (acceptedFiles?.length) {
+        setFiles(previousFiles => [
+          ...previousFiles,
+          ...acceptedFiles.map(file => Object.assign(file, { preview: URL.createObjectURL(file) })),
+        ]);
+      }
+    } else {
+      const singleFile = acceptedFiles.map(file => Object.assign(file, { preview: URL.createObjectURL(file) }));
+      setFiles(singleFile);
     }
 
     if (rejectedFiles?.length) {
@@ -54,11 +63,11 @@ export const DropImageField = () => {
   const { acceptedFiles, getRootProps, getInputProps, isDragActive, isFocused, isDragAccept, isDragReject } =
     useDropzone({
       onDrop,
-      accept: { 'image/*': [] },
-      // maxSize: 1024 * 1000,
-      maxFiles: 5,
+      multiple,
+      ...rest,
     });
 
+  console.log('acceptedFiles', acceptedFiles);
   const removeFile = (name: string) => {
     setFiles(files => files.filter(file => file.name !== name));
   };
@@ -88,6 +97,7 @@ export const DropImageField = () => {
 
   return (
     <>
+      <button onClick={removeAll}>Remove all files</button>
       <div {...getRootProps({ style })}>
         <input {...getInputProps()} />
         {isDragActive ? <p>Drop the files here ...</p> : <p>Drag 'n' drop some files here, or click to select files</p>}
@@ -97,13 +107,30 @@ export const DropImageField = () => {
         <>
           {files.map(file => {
             return (
-              <div className="mb-5 w-100">
+              <div className="mb-5 w-100" key={file.preview}>
                 <img src={file.preview} alt="Upload preview" className="img-fluid" />
+                <button onClick={() => removeFile(file.name)}>Remove</button>
               </div>
             );
           })}
         </>
       ) : null}
+      <ul className="mt-6 flex flex-col">
+        <h3>Rejected files</h3>
+        {rejected.map(({ file, errors }) => (
+          <li key={file.name} className="flex items-start justify-between">
+            <div>
+              <p className="">{file.name}</p>
+              <ul className="text-danger">
+                {errors.map(error => (
+                  <li key={error.code}>{error.message}</li>
+                ))}
+              </ul>
+            </div>
+            <button onClick={() => removeRejected(file.name)}>remove</button>
+          </li>
+        ))}
+      </ul>
     </>
   );
 };

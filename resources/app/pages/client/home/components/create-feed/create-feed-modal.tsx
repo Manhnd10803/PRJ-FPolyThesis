@@ -1,4 +1,4 @@
-import { DropImageField } from '@/components/custom/drop-image-field';
+import { DropZoneField } from '@/components/custom/drop-zone-field';
 import { Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { DropdownPrivacy } from './dropdown-privacy';
@@ -18,18 +18,19 @@ export const CreateFeedModal = ({ handleClose, show }: CreateFeedModalProps) => 
   async function handleOnSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
 
-    if (typeof acceptedFiles[0] === 'undefined') return;
+    // if (!files?.length) return
 
-    const formData = new FormData();
+    // const formData = new FormData()
+    // files.forEach(file => formData.append('file', file))
+    // formData.append('upload_preset', 'friendsbook')
 
-    // formData.append('file', acceptedFiles[0]);
-    // formData.append('upload_preset', '<Your Upload Preset>');
-    // formData.append('api_key', import.meta.env.VITE_CLOUDINARY_API_KEY);
-
-    // const results = await fetch('https://api.cloudinary.com/v1_1/<Your Cloud Name>/image/upload', {
+    // const URL = process.env.NEXT_PUBLIC_CLOUDINARY_URL
+    // const data = await fetch(URL, {
     //   method: 'POST',
-    //   body: formData,
-    // }).then(r => r.json());
+    //   body: formData
+    // }).then(res => res.json())
+
+    // console.log(data);
 
     // console.log('results', results);
   }
@@ -77,7 +78,8 @@ export const CreateFeedModal = ({ handleClose, show }: CreateFeedModalProps) => 
               />
 
               {/* ======= drag zone ====== */}
-              {isHaveImage ? <DropImageField /> : null}
+
+              {isHaveImage ? <DropZoneField maxFiles={3} accept={{ 'image/*': [] }} /> : null}
             </form>
           </div>
           <hr />
