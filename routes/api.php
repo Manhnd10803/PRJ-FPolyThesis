@@ -56,8 +56,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/', [PostsController::class, 'CreatePost'])->name('post.create');
     Route::put('/{post}', [PostsController::class, 'UpdatePost'])->name('post.update');
     Route::delete('/{post}', [PostsController::class, 'DeletePost'])->name('post.delete');
-    Route::get('/count-like/{post}', [PostsController::class, 'CountLikeInPost'])->name('like.count');
-    Route::get('/count-cmt/{post}', [PostsController::class, 'CountCommentInPost'])->name('comment.count');
+    Route::get('/count-like/{post}/like-info', [PostsController::class, 'CountLikeInPost'])->name('likepost.count');
+    Route::get('/count-cmt/{post}', [PostsController::class, 'CountCommentInPost'])->name('commentpost.count');
     Route::get('/newfeed',[PostsController::class,'ShowAllPosts'])->name('post.all');
     });
     //blog
@@ -65,6 +65,8 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/', [BlogController::class, 'CreateBlog'])->name('blog.create');
         Route::put('/{blog}', [BlogController::class, 'UpdateBlog'])->name('blog.update');
         Route::delete('/{blog}', [BlogController::class, 'DeleteBlog'])->name('blog.delete');
+        Route::get('/count-like/{blog}/like-info', [BlogController::class, 'CountLikeInBlog'])->name('likeblog.count');
+        Route::get('/count-cmt/{blog}', [BlogController::class, 'CountCommentInBlog'])->name('commentblog.count');
     });
     //qa
     Route::prefix('quests')->group(function(){
@@ -72,17 +74,19 @@ Route::middleware('auth:api')->group(function () {
         Route::put('/{qa}', [QaController::class, 'UpdateQa'])->name('qa.update');
         Route::delete('/{qa}', [QaController::class, 'DeleteqQ'])->name('qa.delete');
         Route::get('/list',[QaController::class,'ListQa'])->name('qa.list');
+        Route::get('/count-like/{qa}/like-info', [QaController::class, 'CountLikeInQa'])->name('likeqa.count');
+        Route::get('/count-cmt/{qa}', [QaController::class, 'CountCommentInQa'])->name('commentqa.count');
     });
    
     Route::prefix('like')->group(function () {
         //Like --post
-        Route::get('/{post}', [LikeController::class, 'FetchLikeInPost'])->name('post.like');
+        // Route::get('/{post}', [LikeController::class, 'FetchLikeInPost'])->name('post.like');
         Route::post('/{post}', [LikeController::class, 'LikePost'])->name('like.post');
         //Like --blog
-        Route::get('/{blog}', [LikeController::class, 'FetchLikeInBlog'])->name('blog.like');
+        // Route::get('/{blog}', [LikeController::class, 'FetchLikeInBlog'])->name('blog.like');
         Route::post('/{blog}', [LikeController::class, 'LikeBlog'])->name('like.blog');
         //Like --Q&a
-        Route::get('/{qa}', [LikeController::class, 'FetchLikeInQa'])->name('qa.like');
+        // Route::get('/{qa}', [LikeController::class, 'FetchLikeInQa'])->name('qa.like');
         Route::post('/{qa}', [LikeController::class, 'LikeQa'])->name('like.qa');
         
     });
