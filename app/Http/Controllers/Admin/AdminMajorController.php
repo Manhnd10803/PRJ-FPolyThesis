@@ -10,7 +10,7 @@ class AdminMajorController extends Controller
 {
     /**
      * @OA\Get(
-     *     path="/api/majors",
+     *     path="/api/admin/majors",
      *     summary="Get the list of majors",
      *     tags={"Admin Majors"},
      *     @OA\Response(
@@ -32,7 +32,7 @@ class AdminMajorController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/api/majors",
+     *     path="/api/admin/majors",
      *     summary="Create a new major",
      *     tags={"Admin Majors"},
      *     @OA\RequestBody(
@@ -71,7 +71,7 @@ class AdminMajorController extends Controller
 
    /**
      * @OA\Get(
-     *     path="/api/majors/{major}",
+     *     path="/api/admin/majors/{major}",
      *     summary="Get details of a major",
      *     tags={"Admin Majors"},
      *     @OA\Parameter(
@@ -106,7 +106,7 @@ class AdminMajorController extends Controller
 
     /**
      * @OA\Put(
-     *     path="/api/majors/{major}",
+     *     path="/api/admin/majors/{major}",
      *     summary="Update a major",
      *     tags={"Admin Majors"},
      *     @OA\Parameter(
@@ -158,7 +158,7 @@ class AdminMajorController extends Controller
     }
     /**
      * @OA\Delete(
-     *     path="/api/majors/{major}",
+     *     path="/api/admin/majors/{major}",
      *     summary="Delete a major",
      *     tags={"Admin Majors"},
      *     @OA\Parameter(
