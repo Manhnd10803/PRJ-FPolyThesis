@@ -120,6 +120,260 @@
                 }
             }
         },
+        "/api/majors": {
+            "get": {
+                "tags": [
+                    "Admin Majors"
+                ],
+                "summary": "Get the list of majors",
+                "operationId": "4a26156a663b5dcc402bd75540fde5c8",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Admin Majors"
+                ],
+                "summary": "Create a new major",
+                "operationId": "10a805bd1d80e9bc577bf47242e56f61",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "majors_name": {
+                                        "type": "string",
+                                        "example": "Computer Science"
+                                    },
+                                    "majors_code": {
+                                        "type": "string",
+                                        "example": "CS"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Study of computer systems and software engineering."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Major created successfully"
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "majors_name": [
+                                                    "The majors name field is required."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/majors/{major}": {
+            "get": {
+                "tags": [
+                    "Admin Majors"
+                ],
+                "summary": "Get details of a major",
+                "operationId": "bf156f6fe598e88f4b2d15a115797611",
+                "parameters": [
+                    {
+                        "name": "major",
+                        "in": "path",
+                        "description": "ID of the major",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Major not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Major not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Admin Majors"
+                ],
+                "summary": "Update a major",
+                "operationId": "553f6e0a22e4850f7c94013b2e997bdd",
+                "parameters": [
+                    {
+                        "name": "major",
+                        "in": "path",
+                        "description": "ID of the major",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "majors_name": {
+                                        "type": "string",
+                                        "example": "New Major Name"
+                                    },
+                                    "majors_code": {
+                                        "type": "string",
+                                        "example": "NEW"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Updated description of the major."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Major updated successfully"
+                    },
+                    "404": {
+                        "description": "Major not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Major not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "majors_name": [
+                                                    "The majors name field must be a string."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Admin Majors"
+                ],
+                "summary": "Delete a major",
+                "operationId": "fb45b738cf6fb709ec6344ea5dbd9791",
+                "parameters": [
+                    {
+                        "name": "major",
+                        "in": "path",
+                        "description": "ID of the major",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Major deleted successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Major deleted."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Major not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Major not found."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/admin/user/": {
             "get": {
                 "tags": [
@@ -905,6 +1159,74 @@
                 ]
             }
         },
+        "/api/posts/newfeed": {
+            "get": {
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Lấy tất cả bài viết của người dùng và bạn bè",
+                "description": "Lấy danh sách tất cả bài viết của người dùng đã đăng nhập và các bài viết của bạn bè của họ.",
+                "operationId": "3c9a4fa5ea605cabe2f46da00b5f1329",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách bài viết đã lấy thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer"
+                                            },
+                                            "user_id": {
+                                                "type": "integer"
+                                            },
+                                            "content": {
+                                                "type": "string"
+                                            },
+                                            "feeling": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "image": {
+                                                "type": "object",
+                                                "nullable": true
+                                            },
+                                            "hashtag": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "status": {
+                                                "type": "integer"
+                                            },
+                                            "views": {
+                                                "type": "integer"
+                                            },
+                                            "created_at": {
+                                                "type": "string"
+                                            },
+                                            "updated_at": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Không xác thực"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/posts": {
             "post": {
                 "tags": [
@@ -1171,161 +1493,6 @@
                 "responses": {
                     "200": {
                         "description": "Danh sách các bài viết"
-                    }
-                }
-            }
-        },
-        "/api/quests": {
-            "post": {
-                "tags": [
-                    "Q&A"
-                ],
-                "summary": "Tạo câu hỏi mới",
-                "description": "Tạo một câu hỏi mới với tiêu đề, nội dung, chuyên ngành liên quan và hashtag.",
-                "operationId": "f38d1be5470bf3cedbc04b60f975020b",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "title",
-                                    "content",
-                                    "majors_id",
-                                    "hashtag"
-                                ],
-                                "properties": {
-                                    "title": {
-                                        "description": "Tiêu đề của câu hỏi",
-                                        "type": "string",
-                                        "maxLength": 255
-                                    },
-                                    "content": {
-                                        "description": "Nội dung của câu hỏi",
-                                        "type": "string"
-                                    },
-                                    "majors_id": {
-                                        "description": "ID của chuyên ngành liên quan đến câu hỏi",
-                                        "type": "integer"
-                                    },
-                                    "hashtag": {
-                                        "description": "Hashtag của câu hỏi",
-                                        "type": "string",
-                                        "maxLength": 255
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Câu hỏi đã được tạo thành công"
-                    },
-                    "400": {
-                        "description": "Lỗi khi tạo câu hỏi"
-                    }
-                }
-            }
-        },
-        "/api/quests/{qa}": {
-            "put": {
-                "tags": [
-                    "Q&A"
-                ],
-                "summary": "Cập nhật câu hỏi",
-                "description": "Cập nhật một câu hỏi với tiêu đề, nội dung, chuyên ngành liên quan và hashtag.",
-                "operationId": "0f3aa64bf9f8d9253b19f58588dd5430",
-                "parameters": [
-                    {
-                        "name": "qa",
-                        "in": "path",
-                        "description": "ID của câu hỏi cần cập nhật",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "title",
-                                    "content",
-                                    "majors_id",
-                                    "hashtag"
-                                ],
-                                "properties": {
-                                    "title": {
-                                        "description": "Tiêu đề của câu hỏi",
-                                        "type": "string",
-                                        "maxLength": 255
-                                    },
-                                    "content": {
-                                        "description": "Nội dung của câu hỏi",
-                                        "type": "string"
-                                    },
-                                    "majors_id": {
-                                        "description": "ID của chuyên ngành liên quan đến câu hỏi",
-                                        "type": "integer"
-                                    },
-                                    "hashtag": {
-                                        "description": "Hashtag của câu hỏi",
-                                        "type": "string",
-                                        "maxLength": 255
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Câu hỏi đã được cập nhật thành công"
-                    },
-                    "400": {
-                        "description": "Lỗi khi cập nhật câu hỏi"
-                    },
-                    "404": {
-                        "description": "Câu hỏi không được tìm thấy"
-                    }
-                }
-            },
-            "delete": {
-                "tags": [
-                    "Q&A"
-                ],
-                "summary": "Xóa câu hỏi và câu trả lời",
-                "description": "Xóa một câu hỏi và tất cả các câu trả lời liên quan dựa trên ID.",
-                "operationId": "5b51b3e0794bcfb497cef789cca648a5",
-                "parameters": [
-                    {
-                        "name": "qa",
-                        "in": "path",
-                        "description": "ID của câu hỏi cần xóa",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Câu hỏi và câu trả lời đã bị xóa thành công"
-                    },
-                    "400": {
-                        "description": "Lỗi khi xóa câu hỏi và câu trả lời"
-                    },
-                    "401": {
-                        "description": "Không được phép xóa câu hỏi và câu trả lời"
-                    },
-                    "404": {
-                        "description": "Câu hỏi không được tìm thấy"
                     }
                 }
             }
