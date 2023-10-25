@@ -266,10 +266,10 @@ class PostsController extends Controller
     }
     /**
      * @OA\Get(
-     *     path="/api/posts/count-like/{post}",
+     *     path="/api/posts/count-like/{post}/like-info",
      *     tags={"Posts"},
-     *     summary="Lấy số lượng lượt thích của bài viết",
-     *     description="Lấy số lượng lượt thích của một bài viết dựa trên ID của bài viết.",
+     *     summary="Lấy số lượng lượt thích của bài viết kèm info user",
+     *     description="Lấy số lượng lượt thích thông tin user và sắp xếp theo loại cảm xúc của một bài viết dựa trên ID của bài viết.",
      *     @OA\Parameter(
      *         name="post",
      *         in="path",
@@ -281,11 +281,29 @@ class PostsController extends Controller
      *     @OA\Response(response=404, description="Bài viết không được tìm thấy")
      * )
      */
-
-    public function CountLikeInPost(Post $post){
+    public function CountLikeInPost(Post $post) {
+        DB::beginTransaction();
+        try{
+        // Đếm số lượt thích của bài viết
         $likeCount = $post->likes->count();
-        return response()->json($likeCount);
-     }
+        // Lấy danh sách người đã like bài viết và thông tin của họ
+        $likers = $post->likes->map(function ($like) {
+            return [
+                'user' => $like->user,
+                'emotion' => $like->emotion,
+            ];
+        });
+        // Sắp xếp danh sách người đã like dựa trên biểu cảm
+        $likers = $likers->sortBy('emotion');
+        DB::commit();
+        return response()->json(['like_count' => $likeCount, 'likers' => $likers->values()->all(),]);
+        }catch(\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()], 400);
+        }
+       
+    }
+    
      /**
      * @OA\Get(
      *     path="/api/posts/count-cmt/{post}",

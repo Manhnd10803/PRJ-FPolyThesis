@@ -171,4 +171,65 @@ class BlogController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
+     /**
+     * @OA\Get(
+     *     path="/api/blogs/count-like/{blog}/like-info",
+     *     tags={"Blogs"},
+     *     summary="Lấy số lượng lượt thích của bài viết kèm info user",
+     *     description="Lấy số lượng lượt thích thông tin user và sắp xếp theo loại cảm xúc của một bài viết dựa trên ID của bài viết.",
+     *     @OA\Parameter(
+     *         name="blog",
+     *         in="path",
+     *         required=true,
+     *         description="ID của bài viết",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Số lượng lượt thích của bài viết"),
+     *     @OA\Response(response=404, description="Bài viết không được tìm thấy")
+     * )
+     */
+    public function CountLikeInBlog(Blog $blog){
+        DB::beginTransaction();
+        try{
+            // Đếm lượt thích của blog
+            $likeCount = $blog->likes->count();
+            $likers = $blog->likes->map(function ($like) {
+                return [
+                    'user' => $like->user,
+                    'emotion' => $like->emotion,
+                ];
+            });
+            // Sắp xếp danh sách người đã like dựa trên biểu cảm
+            $likers = $likers->sortBy('emotion');
+            DB::commit();
+            return response()->json(['like_count' => $likeCount, 'likers' => $likers->values()->all(),]);
+        }catch(\Exception $e){
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()], 400);
+        }
+    }
+      /**
+     * @OA\Get(
+     *     path="/api/blogs/count-cmt/{blog}",
+     *     tags={"Blogs"},
+     *     summary="Lấy số lượng bình luận và trả lời của bài viết",
+     *     description="Lấy số lượng bình luận và trả lời của một bài viết dựa trên ID của bài viết.",
+     *     @OA\Parameter(
+     *         name="blog",
+     *         in="path",
+     *         required=true,
+     *         description="ID của bài viết",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Số lượng bình luận và trả lời của bài viết"),
+     *     @OA\Response(response=404, description="Bài viết không được tìm thấy")
+     * )
+     */
+
+     public function CountCommentInBlog(Blog $blog){
+        $commentCount = Comment::where('blog_id', $blog->id)->count();
+        $replyCount = Comment::where('blog_id', $blog->id)->where('parent_id', '>', 0)->count();
+        $totalCommentsAndReplies = $commentCount + $replyCount;
+        return response()->json(['total' => $totalCommentsAndReplies], 200);
+     }
 }
