@@ -1,8 +1,8 @@
+import { DropImageField } from '@/components/custom/drop-image-field';
 import { Modal, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { DropdownPrivacy } from './dropdown-privacy';
-import { useDropzone } from 'react-dropzone';
-import { useCallback, useMemo, useState } from 'react';
+import { useState } from 'react';
 
 const imageUrl = 'https://picsum.photos/20';
 
@@ -11,67 +11,10 @@ type CreateFeedModalProps = {
   show: boolean;
 };
 
-const baseStyle = {
-  flex: 1,
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  padding: '20px',
-  borderWidth: 2,
-  borderRadius: 2,
-  borderColor: '#eeeeee',
-  borderStyle: 'dashed',
-  backgroundColor: '#fafafa',
-  color: '#bdbdbd',
-  outline: 'none',
-  transition: 'border .24s ease-in-out',
-};
-
-const focusedStyle = {
-  borderColor: '#2196f3',
-};
-
-const acceptStyle = {
-  borderColor: '#00e676',
-};
-
-const rejectStyle = {
-  borderColor: '#ff1744',
-};
-
 export const CreateFeedModal = ({ handleClose, show }: CreateFeedModalProps) => {
   //state
-  const [preview, setPreview] = useState<string | ArrayBuffer | null>(null);
+  const [isHaveImage, setIsHaveImage] = useState(false);
 
-  const onDrop = useCallback((acceptedFiles: Array<File>) => {
-    const file = new FileReader();
-
-    file.onload = function () {
-      setPreview(file.result);
-    };
-
-    file.readAsDataURL(acceptedFiles[0]);
-  }, []);
-
-  // const { acceptedFiles, getRootProps, getInputProps, isDragActive } = useDropzone({
-  //   onDrop,
-  // });
-
-  const { acceptedFiles, getRootProps, getInputProps, isDragActive, isFocused, isDragAccept, isDragReject } =
-    useDropzone({
-      onDrop,
-      accept: { 'image/*': [] },
-    });
-
-  const style = useMemo(
-    () => ({
-      ...baseStyle,
-      ...(isFocused ? focusedStyle : {}),
-      ...(isDragAccept ? acceptStyle : {}),
-      ...(isDragReject ? rejectStyle : {}),
-    }),
-    [isFocused, isDragAccept, isDragReject],
-  );
   async function handleOnSubmit(e: React.SyntheticEvent) {
     e.preventDefault();
 
@@ -121,32 +64,20 @@ export const CreateFeedModal = ({ handleClose, show }: CreateFeedModalProps) => 
 
             {/* ============== FORM ============== */}
             <form
-              className="post-text pb-4"
+              className="post-text pb-4 px-2 w-100"
               data-bs-toggle="modal"
               data-bs-target="#post-modal"
               onSubmit={handleOnSubmit}
             >
               <input
                 type="text"
-                className="form-control rounded"
+                className="form-control rounded mb-3 p-0"
                 placeholder="Write something here..."
                 style={{ border: 'none' }}
               />
 
               {/* ======= drag zone ====== */}
-              <div {...getRootProps(style)}>
-                <input {...getInputProps()} />
-                {isDragActive ? (
-                  <p>Drop the files here ...</p>
-                ) : (
-                  <p>Drag 'n' drop some files here, or click to select files</p>
-                )}
-              </div>
-              {preview && (
-                <div className="mb-5 w-100">
-                  <img src={preview as string} alt="Upload preview" className="img-fluid" />
-                </div>
-              )}
+              {isHaveImage ? <DropImageField /> : null}
             </form>
           </div>
           <hr />
@@ -156,7 +87,7 @@ export const CreateFeedModal = ({ handleClose, show }: CreateFeedModalProps) => 
             <ul className="d-flex flex-wrap align-items-center list-inline m-0 p-0">
               <li className="ms-3">
                 <OverlayTrigger placement="top" overlay={<Tooltip>Photo/Video</Tooltip>}>
-                  <div className="bg-soft-primary rounded p-2 pointer">
+                  <div onClick={() => setIsHaveImage(true)} className="bg-soft-primary rounded p-2 pointer">
                     <img src={imageUrl} alt="icon" className="img-fluid" />
                   </div>
                 </OverlayTrigger>
