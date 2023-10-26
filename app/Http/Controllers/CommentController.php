@@ -11,12 +11,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CommentController extends Controller
-{   public function AddComment(Request $request, $type, $id) {
+{
+    public function AddComment(Request $request, $type, $id)
+    {
         DB::beginTransaction();
         if (Auth::check()) {
             $user = Auth::user();
             $content = $request->input('content');
-            $parent_id = $request->input('parent_id'); 
+            $parent_id = $request->input('parent_id');
             // Xác định model tương ứng với loại mục
             $model = null;
             switch ($type) {
@@ -41,7 +43,7 @@ class CommentController extends Controller
                 'user_id' => $user->id,
                 "{$type}_id" => $id,
                 'content' => $content,
-                'parent_id' => $parent_id, 
+                'parent_id' => $parent_id,
             ]);
             $comment->save();
             DB::commit();
@@ -51,7 +53,4 @@ class CommentController extends Controller
             return response()->json(['error' => 'You must be logged in to comment'], 401);
         }
     }
-    
-  
-    
 }

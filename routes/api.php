@@ -46,7 +46,7 @@ Route::middleware('auth:api')->group(function () {
         return 'ok';
     });
     //chat
-    Route::prefix('messages')->group(function(){
+    Route::prefix('messages')->group(function () {
         Route::get('/', [PrivateMessagesController::class, 'ShowAllMessage'])->name('message.show');
         Route::post('/', [PrivateMessagesController::class, 'SendMessages'])->name('message.create');
         Route::put('/{privateMessage}', [PrivateMessagesController::class, 'UpdateMessage'])->name('message.update');
@@ -54,35 +54,41 @@ Route::middleware('auth:api')->group(function () {
     });
 
     //major
-    Route::get('majors',[MajorController::class,'list_majors']);
+    Route::get('majors', [MajorController::class, 'list_majors']);
 
     //post
     Route::prefix('posts')->group(function () {
-        Route::get('/newfeed',[PostsController::class,'ShowAllPosts'])->name('post.show');
+        Route::get('/newfeed', [PostsController::class, 'ShowAllPosts'])->name('post.show');
         Route::get('/profile', [PostsController::class, 'ShowPostProfile'])->name('profile.show');
         Route::post('/', [PostsController::class, 'CreatePost'])->name('post.create');
         Route::put('/{post}', [PostsController::class, 'UpdatePost'])->name('post.update');
-        Route::delete('/{post}', [PostsController::class, 'DeletePost'])->name('post.delete'); 
+        Route::delete('/{post}', [PostsController::class, 'DeletePost'])->name('post.delete');
     });
     //blog
     Route::prefix('blogs')->group(function () {
-        Route::get('/', [PostsController::class,'ShowAllBlogs'])->name('blog.show');
+        Route::get('/', [PostsController::class, 'ShowAllBlogs'])->name('blog.show');
         Route::post('/', [BlogController::class, 'CreateBlog'])->name('blog.create');
         Route::put('/{blog}', [BlogController::class, 'UpdateBlog'])->name('blog.update');
         Route::delete('/{blog}', [BlogController::class, 'DeleteBlog'])->name('blog.delete');
     });
     //qa
-    Route::prefix('quests')->group(function(){
-        Route::get('/', [QaController::class,'ShowAllQa'])->name('qa.show');
+    Route::prefix('quests')->group(function () {
+        Route::get('/', [QaController::class, 'ShowAllQa'])->name('qa.show');
         Route::post('/', [QaController::class, 'CreateQa'])->name('qa.create');
         Route::put('/{qa}', [QaController::class, 'UpdateQa'])->name('qa.update');
         Route::delete('/{qa}', [QaController::class, 'DeleteqQ'])->name('qa.delete');
-        Route::get('/list',[QaController::class,'ListQa'])->name('qa.list');
+        Route::get('/list', [QaController::class, 'ListQa'])->name('qa.list');
     });
-    
-    Route::post('/like/{model}/{id}/{emotion}', [LikeController::class,'LikeItem']);
-    Route::post('comment/{type}/{id}',[CommentController::class,'AddComment']);
-  
+
+    //Like
+    Route::prefix('like')->group(function () {
+        Route::post('/{model}/{id}/{emotion}', [LikeController::class, 'LikeItem']);
+        Route::get('/', [LikeController::class, 'listEmotion']);
+    });
+    Route::prefix('comment')->group(function () {
+        Route::post('/{type}/{id}', [CommentController::class, 'AddComment']);
+    });
+
     //friend --relationship
     Route::post('/send-request/{recipient}', [FriendController::class, 'SendFriendRequest'])->name('friend.send');
     Route::post('/comfirm-request/{sender}', [FriendController::class, 'ConfirmFriendRequest'])->name('friend.confirm');

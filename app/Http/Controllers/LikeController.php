@@ -12,12 +12,13 @@ use Illuminate\Support\Facades\Auth;
 
 class LikeController extends Controller
 {
-    public function LikeItem(Request $request, $model, $item, $emotion) {
+    public function LikeItem(Request $request, $model, $item, $emotion)
+    {
         $user = Auth::user();
-        $validEmotions = config('app.valid_emotions');
+        $validEmotions = config('default.valid_emotions');
         if (!in_array($emotion, $validEmotions)) {
             return response()->json(['error' => 'Invalid emotion type'], 400);
-        } 
+        }
         // Xác định tên của model (Post, Blog, hoặc Qa)
         $modelName = strtolower(class_basename($model));
         // Kiểm tra xem người dùng đã có cảm xúc cho mục này chưa
@@ -42,5 +43,34 @@ class LikeController extends Controller
             $message = 'Emotion added successfully';
         }
         return response()->json(['message' => $message]);
-    } 
+    }
+    /**
+     * @OA\Get(
+     *     path="/api/emotions",
+     *     tags={"Emotions"},
+     *     summary="Danh sách các loại cảm xúc (emotions)",
+     *     description="Lấy danh sách các loại cảm xúc (emotions) được hỗ trợ.",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Danh sách các loại cảm xúc",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="emotions",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="string",
+     *                     enum={"like", "love", "haha", "wow", "sad", "angry"}
+     *                 ),
+     *                 description="Danh sách các loại cảm xúc được hỗ trợ"
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function listEmotion()
+    {
+        $emotions = config('default.valid_emotions');
+        return response()->json(['emotions' => $emotions]);
+    }
 }

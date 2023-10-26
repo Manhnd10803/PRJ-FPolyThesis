@@ -11,29 +11,30 @@ use Illuminate\Support\Facades\DB;
 
 class BlogController extends Controller
 {
-    public function ShowAllBlogs(Request $request){
+    public function ShowAllBlogs(Request $request)
+    {
         DB::beginTransaction();
         try {
             $majorsId = $request->input('majors_id');
-            $hashtag = $request->input('hashtag');  
+            $hashtag = $request->input('hashtag');
             $query = Blog::query();
-    
+
             if ($majorsId) {
                 $query->where('majors_id', $majorsId);
             }
-    
+
             if ($hashtag) {
                 $query->where('content', 'LIKE', '%' . $hashtag . '%');
             }
-    
+
             $blogs = $query->latest()->get();
-    
+
             $result = [];
-    
+
             foreach ($blogs as $blog) {
                 $likeCountsByEmotion = [];
                 $likeCountsByEmotion['total_likes'] = $blog->likes->count();
-                 // Lấy danh sách người đã like bài viết và thông tin của họ
+                // Lấy danh sách người đã like bài viết và thông tin của họ
                 $likers = $blog->likes->map(function ($like) {
                     return [
                         'user' => $like->user,
@@ -49,8 +50,8 @@ class BlogController extends Controller
                 $commentCount = Comment::where('blog_id', $blog->id)->count();
                 $replyCount = Comment::where('blog_id', $blog->id)->where('parent_id', '>', 0)->count();
                 $totalCommentsAndReplies = $commentCount + $replyCount;
-                
-                $comments  =Comment::where('blog_id', $blog->id)->get();
+
+                $comments  = Comment::where('blog_id', $blog->id)->get();
                 $commentsData = [];
                 foreach ($comments as $comment) {
                     // Lấy thông tin người comment
@@ -60,7 +61,7 @@ class BlogController extends Controller
                         ->where('parent_id', $comment->id)
                         ->get();
                     $repliesData = [];
-    
+
                     foreach ($replies as $reply) {
                         // Lấy thông tin người reply
                         $replyUser = $reply->user;
@@ -92,8 +93,8 @@ class BlogController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
-    
-       /**
+
+    /**
      * @OA\Post(
      *     path="/api/blogs",
      *     tags={"Blogs"},
@@ -149,7 +150,7 @@ class BlogController extends Controller
         }
     }
 
-        /**
+    /**
      * @OA\Put(
      *     path="/api/blogs/{blog}",
      *     tags={"Blogs"},
