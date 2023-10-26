@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CommentController extends Controller
-{   public function addComment(Request $request, $type, $id) {
+{   public function AddComment(Request $request, $type, $id) {
         DB::beginTransaction();
         if (Auth::check()) {
             $user = Auth::user();

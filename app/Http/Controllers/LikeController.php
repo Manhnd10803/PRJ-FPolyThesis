@@ -21,7 +21,7 @@ class LikeController extends Controller
         // Xác định tên của model (Post, Blog, hoặc Qa)
         $modelName = strtolower(class_basename($model));
         // Kiểm tra xem người dùng đã có cảm xúc cho mục này chưa
-        $existingLike = Like::where('user_id', $user->id)->where($modelName . '_id', $item->id)->first();
+        $existingLike = Like::where('user_id', $user->id)->where($modelName . '_id', $item)->first();
         if ($existingLike) {
             // Nếu đã tồn tại và cảm xúc trùng khớp với cảm xúc hiện tại, xóa cảm xúc
             if ($existingLike->emotion === $emotion) {
@@ -36,7 +36,7 @@ class LikeController extends Controller
             // Nếu chưa tồn tại, tạo mới cảm xúc
             Like::create([
                 'user_id' => $user->id,
-                $modelName . '_id' => $item->id,
+                $modelName . '_id' => $item,
                 'emotion' => $emotion,
             ]);
             $message = 'Emotion added successfully';
