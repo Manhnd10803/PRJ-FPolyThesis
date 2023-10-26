@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminBlogController;
+use App\Http\Controllers\Admin\AdminMajorController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
@@ -24,6 +25,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
 //auth
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('user.register');
@@ -34,6 +36,7 @@ Route::prefix('auth')->group(function () {
     Route::post('/post-forgot-password', [AuthController::class, 'forgotPassword'])->name('user.forgotPassword');
     Route::post('/post-reset-password', [AuthController::class, 'resetPassword'])->name('user.resetPassword');
 });
+
 Route::middleware('auth:api')->group(function () {
     //route has been authenticated
     Route::post('/auth/logout', [AuthController::class, 'logout'])->name('user.logout');
@@ -111,6 +114,14 @@ Route::middleware('auth:api')->group(function () {
             Route::get('/approve/{blog}', [AdminBlogController::class, 'approveBlog'])->name('admin.blog.approve');
             Route::get('/reject/{blog}', [AdminBlogController::class, 'rejectBlog'])->name('admin.blog.reject');
             Route::get('/detail/{blog}', [AdminBlogController::class, 'detailBlog'])->name('admin.blog.detailBlog');
+        });
+        //Major Admin
+        Route::prefix('majors')->group(function () {
+            Route::get('/', [AdminMajorController::class, 'index'])->name('admin.majors.index');
+            Route::get('/{major}', [AdminMajorController::class, 'show'])->name('admin.majors.show');
+            Route::post('/', [AdminMajorController::class, 'store'])->name('admin.majors.store');
+            Route::put('/{major}', [AdminMajorController::class, 'update'])->name('admin.majors.update');
+            Route::delete('/{major}', [AdminMajorController::class, 'destroy'])->name('admin.majors.destroy');
         });
     });
 });
