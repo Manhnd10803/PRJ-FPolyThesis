@@ -11,6 +11,63 @@ use Illuminate\Support\Facades\DB;
 
 class BlogController extends Controller
 {
+    public function ShowAllBlogs(Request $request){
+        DB::beginTransaction();
+        try {
+            $majorsId = $request->input('majors_id');
+            $hashtag = $request->input('hashtag');  
+            $query = Blog::query();
+    
+            if ($majorsId) {
+                $query->where('majors_id', $majorsId);
+            }
+    
+            if ($hashtag) {
+                $query->where('content', 'LIKE', '%' . $hashtag . '%');
+            }
+    
+            $blogs = $query->latest()->get();
+    
+            $result = [];
+    
+            foreach ($blogs as $blog) {
+                $likeCountsByEmotion = [];
+                $likeCountsByEmotion['total_likes'] = $blog->likes->count();
+    
+                $likers = $blog->likes->map(function ($like) {
+                    return [
+                        'user' => $like->user,
+                        'emotion' => $like->emotion,
+                    ];
+                });
+    
+                $emotions = $likers->pluck('emotion')->unique();
+    
+                foreach ($emotions as $emotion) {
+                    $likeCountsByEmotion[$emotion] = $likers->where('emotion', $emotion)->count();
+                }
+    
+                $commentCount = Comment::where('blog_id', $blog->id)->count();
+                $replyCount = Comment::where('blog_id', $blog->id)->where('parent_id', '>', 0)->count();
+                $totalCommentsAndReplies = $commentCount + $replyCount;
+    
+                $blogData = [
+                    'blog' => $blog,
+                    'like_counts_by_emotion' => $likeCountsByEmotion,
+                    'total_comments' => $totalCommentsAndReplies,
+                    'total_likes' => $likeCountsByEmotion['total_likes'],
+                ];
+                array_push($result, $blogData);
+            }
+    
+            DB::commit();
+            return response()->json($result, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()], 400);
+        }
+    }
+    
        /**
      * @OA\Post(
      *     path="/api/blogs",
@@ -149,7 +206,6 @@ class BlogController extends Controller
      *     @OA\Response(response=500, description="Lỗi xảy ra khi xóa bài blog", @OA\JsonContent())
      * )
      */
-
     public function DeleteBlog(Blog $blog)
     {
         DB::beginTransaction();

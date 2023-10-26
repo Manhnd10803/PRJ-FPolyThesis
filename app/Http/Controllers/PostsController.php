@@ -51,43 +51,57 @@ class PostsController extends Controller
             ->orderBy('created_at', 'DESC')->get();
         return response()->json($posts);
     }
-   /**
-    * @OA\Get(
-    *     path="/api/posts/newfeed",
-    *     tags={"Posts"},
-    *     summary="Lấy tất cả bài viết của người dùng và bạn bè",
-    *     description="Lấy danh sách tất cả bài viết của người dùng đã đăng nhập và các bài viết của bạn bè của họ.",
-    *     security={{"bearerAuth": {}}},
-    *     @OA\Response(
-    *         response=200,
-    *         description="Danh sách bài viết đã lấy thành công",
-    *         @OA\JsonContent(
-    *             type="array",
-    *               @OA\Items(
-     *                 @OA\Property(property="id", type="integer"),
-     *                 @OA\Property(property="user_id", type="integer"),
-     *                 @OA\Property(property="content", type="string"),
-     *                 @OA\Property(property="feeling", type="string", nullable=true),
-     *                 @OA\Property(property="image", type="object", nullable=true),
-     *                 @OA\Property(property="hashtag", type="string", nullable=true),
-     *                 @OA\Property(property="status", type="integer"),
-     *                 @OA\Property(property="views", type="integer"),
-     *                 @OA\Property(property="created_at", type="string"),
-     *                 @OA\Property(property="updated_at", type="string")
-     *             )
-    *         )
-    *     ),
-    *     @OA\Response(response=401, description="Không xác thực"),
-    * )
-    */
-    public function ShowAllPosts(){
-        $user = Auth::user();
-        $friends = $user->friends;
-        $friendIds = $friends->pluck('id')->toArray();
-        $friendIds[] = $user->id;
-        $posts = Post::whereIn('user_id', $friendIds)->latest()->get();
-        return response()->json($posts,200);
+  
+    public function ShowAllPosts() {
+        DB::beginTransaction();
+        try {
+            // Lấy thông tin người đăng bài và thông tin bài viết (lọc theo bạn bè)
+            $user = Auth::user();
+            $friends = $user->friends;
+            $friendIds = $friends->pluck('id')->toArray();
+            $friendIds[] = $user->id;
+            $posts = Post::whereIn('user_id', $friendIds)->latest()->get();
+            
+            $result = [];
+            
+            foreach ($posts as $post) {
+                $likeCountsByEmotion = [];
+                $likeCountsByEmotion['total_likes'] = $post->likes->count();
+                // Lấy danh sách người đã like bài viết và thông tin của họ
+                $likers = $post->likes->map(function ($like) {
+                    return [
+                        'user' => $like->user,
+                        'emotion' => $like->emotion,
+                    ];
+                });
+                // Tính số lượt thích cho mỗi giá trị biểu cảm (emotion)
+                $emotions = $likers->pluck('emotion')->unique();
+                foreach ($emotions as $emotion) {
+                    $likeCountsByEmotion[$emotion] = $likers->where('emotion', $emotion)->count();
+                }
+                // Tính số lượt bình luận cho bài viết
+                $commentCount = Comment::where('post_id', $post->id)->count();
+                $replyCount = Comment::where('post_id', $post->id)->where('parent_id', '>', 0)->count();
+                $totalCommentsAndReplies = $commentCount + $replyCount;
+                
+                // Tạo một mảng chứa thông tin về bài viết và các lượt thích, bình luận của nó
+                $postData = [
+                    'post' => $post,
+                    'like_counts_by_emotion' => $likeCountsByEmotion,
+                    'total_comments' => $totalCommentsAndReplies,
+                    'total_likes' => $likeCountsByEmotion['total_likes'],
+                ];
+                array_push($result, $postData);
+            }
+    
+            DB::commit();
+            return response()->json($result, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()], 400);
+        }
     }
+    
     /**
      * @OA\Post(
      *     path="/api/posts",
@@ -264,52 +278,6 @@ class PostsController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
-    /**
-     * @OA\Get(
-     *     path="/api/posts/count-like/{post}",
-     *     tags={"Posts"},
-     *     summary="Lấy số lượng lượt thích của bài viết",
-     *     description="Lấy số lượng lượt thích của một bài viết dựa trên ID của bài viết.",
-     *     @OA\Parameter(
-     *         name="post",
-     *         in="path",
-     *         required=true,
-     *         description="ID của bài viết",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(response=200, description="Số lượng lượt thích của bài viết"),
-     *     @OA\Response(response=404, description="Bài viết không được tìm thấy")
-     * )
-     */
-
-    public function CountLikeInPost(Post $post){
-        $likeCount = $post->likes->count();
-        return response()->json($likeCount);
-     }
-     /**
-     * @OA\Get(
-     *     path="/api/posts/count-cmt/{post}",
-     *     tags={"Posts"},
-     *     summary="Lấy số lượng bình luận và trả lời của bài viết",
-     *     description="Lấy số lượng bình luận và trả lời của một bài viết dựa trên ID của bài viết.",
-     *     @OA\Parameter(
-     *         name="post",
-     *         in="path",
-     *         required=true,
-     *         description="ID của bài viết",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(response=200, description="Số lượng bình luận và trả lời của bài viết"),
-     *     @OA\Response(response=404, description="Bài viết không được tìm thấy")
-     * )
-     */
-
-     public function CountCommentInPost(Post $post){
-        $commentCount = Comment::where('post_id', $post->id)->count();
-        $replyCount = Comment::where('post_id', $post->id)->where('parent_id', '>', 0)->count();
-        $totalCommentsAndReplies = $commentCount + $replyCount;
-        return response()->json(['total' => $totalCommentsAndReplies], 200);
-     }
      //Admin Posts
      
      /**

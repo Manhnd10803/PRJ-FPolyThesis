@@ -10,6 +10,62 @@ use Illuminate\Support\Facades\DB;
 
 class QaController extends Controller
 {
+    public function ShowAllQa(Request $request){
+        DB::beginTransaction();
+        try {
+            $majorsId = $request->input('majors_id');
+            $hashtag = $request->input('hashtag');  
+            $query = Qa::query();
+    
+            if ($majorsId) {
+                $query->where('majors_id', $majorsId);
+            }
+    
+            if ($hashtag) {
+                $query->where('content', 'LIKE', '%' . $hashtag . '%');
+            }
+    
+            $qas = $query->latest()->get();
+    
+            $result = [];
+    
+            foreach ($qas as $qa) {
+                $likeCountsByEmotion = [];
+                $likeCountsByEmotion['total_likes'] = $qa->likes->count();
+    
+                $likers = $qa->likes->map(function ($like) {
+                    return [
+                        'user' => $like->user,
+                        'emotion' => $like->emotion,
+                    ];
+                });
+    
+                $emotions = $likers->pluck('emotion')->unique();
+    
+                foreach ($emotions as $emotion) {
+                    $likeCountsByEmotion[$emotion] = $likers->where('emotion', $emotion)->count();
+                }
+    
+                $commentCount = Comment::where('qa_id', $qa->id)->count();
+                $replyCount = Comment::where('qa_id', $qa->id)->where('parent_id', '>', 0)->count();
+                $totalCommentsAndReplies = $commentCount + $replyCount;
+    
+                $qaData = [
+                    'qa' => $qa,
+                    'like_counts_by_emotion' => $likeCountsByEmotion,
+                    'total_comments' => $totalCommentsAndReplies,
+                    'total_likes' => $likeCountsByEmotion['total_likes'],
+                ];
+                array_push($result, $qaData);
+            }
+    
+            DB::commit();
+            return response()->json($result, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()], 400);
+        }  
+    }
     public function ListQa(Request $request)
     {
         $hashtag = $request->input('hashtag');
@@ -106,6 +162,5 @@ public function DeleteQa(Qa $qa){
         DB::rollBack();
         return response()->json(['errors' => $e->getMessage()], 400);
     }
-}
-
+}   
 }

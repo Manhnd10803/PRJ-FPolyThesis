@@ -14,7 +14,7 @@ class LikeController extends Controller
 {
     public function LikePost(Request $request, Post $post, $emotion){
         $user = Auth::user();
-        $validEmotions = ['like', 'love', 'haha', 'wow', 'sad', 'angry'];
+        $validEmotions = config('app.valid_emotions');
         if (!in_array($emotion, $validEmotions)){
             return response()->json(['error' => 'Invalid emotion type'], 400);
         }
@@ -34,7 +34,7 @@ class LikeController extends Controller
     }
     public function LikeBlog(Request $request, Blog $blog, $emotion){
         $user = Auth::user();
-        $validEmotions = ['like', 'love', 'haha', 'wow', 'sad', 'angry'];
+        $validEmotions = config('app.valid_emotions');
         if (!in_array($emotion, $validEmotions)){
             return response()->json(['error' => 'Invalid emotion type'], 400);
         }
@@ -54,7 +54,7 @@ class LikeController extends Controller
     }
     public function LikeQa(Request $request, Qa $qa, $emotion){
         $user = Auth::user();
-        $validEmotions = ['like', 'love', 'haha', 'wow', 'sad', 'angry'];
+        $validEmotions = config('app.valid_emotions');
         if (!in_array($emotion, $validEmotions)){
             return response()->json(['error' => 'Invalid emotion type'], 400);
         }
@@ -72,16 +72,16 @@ class LikeController extends Controller
         }
         return response()->json(['message' => $message]);
     }
-    public function FetchLikeInPost(Post $post){
-        $likes = Like::where('post_id',$post->id)->get();
-        return response()->json($likes);
-    }
-    public function FetchLikeInBlog(Blog $blog){
-        $likes = Like::where('blog_id',$blog->id)->get();
-        return response()->json($likes);
-    }
-    public function FetchLikeInQa(Qa $qa){
-        $likes = Like::where('qa_id',$qa->id)->get();
-        return response()->json($likes);
-    }
+    // public function FetchLikeInPost(Post $post){
+    //     $likes = Like::where('post_id',$post->id)->get();
+    //     return response()->json($likes);
+    // }
+    // public function FetchLikeInBlog(Blog $blog){
+    //     $likes = Like::where('blog_id',$blog->id)->get();
+    //     return response()->json($likes);
+    // }
+    // public function FetchLikeInQa(Qa $qa){
+    //     $likes = Like::where('qa_id',$qa->id)->get();
+    //     return response()->json($likes);
+    // }
 }

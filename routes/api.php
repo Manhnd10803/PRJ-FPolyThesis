@@ -51,53 +51,44 @@ Route::middleware('auth:api')->group(function () {
         Route::put('/{privateMessage}', [PrivateMessagesController::class, 'UpdateMessage'])->name('message.update');
         Route::delete('/{privateMessage}', [PrivateMessagesController::class, 'DeleteMessage'])->name('message.delete');
     });
-    
     //post
     Route::prefix('posts')->group(function () {
-    Route::get('/profile', [PostsController::class, 'ShowPostProfile'])->name('profile.show');
-    Route::post('/', [PostsController::class, 'CreatePost'])->name('post.create');
-    Route::put('/{post}', [PostsController::class, 'UpdatePost'])->name('post.update');
-    Route::delete('/{post}', [PostsController::class, 'DeletePost'])->name('post.delete');
-    Route::get('/count-like/{post}', [PostsController::class, 'CountLikeInPost'])->name('like.count');
-    Route::get('/count-cmt/{post}', [PostsController::class, 'CountCommentInPost'])->name('comment.count');
-    Route::get('/newfeed',[PostsController::class,'ShowAllPosts'])->name('post.all');
+        Route::get('/newfeed',[PostsController::class,'ShowAllPosts'])->name('post.show');
+        Route::get('/profile', [PostsController::class, 'ShowPostProfile'])->name('profile.show');
+        Route::post('/', [PostsController::class, 'CreatePost'])->name('post.create');
+        Route::put('/{post}', [PostsController::class, 'UpdatePost'])->name('post.update');
+        Route::delete('/{post}', [PostsController::class, 'DeletePost'])->name('post.delete'); 
     });
     //blog
     Route::prefix('blogs')->group(function () {
+        Route::get('/', [PostsController::class,'ShowAllBlogs'])->name('blog.show');
         Route::post('/', [BlogController::class, 'CreateBlog'])->name('blog.create');
         Route::put('/{blog}', [BlogController::class, 'UpdateBlog'])->name('blog.update');
         Route::delete('/{blog}', [BlogController::class, 'DeleteBlog'])->name('blog.delete');
     });
     //qa
     Route::prefix('quests')->group(function(){
+        Route::get('/', [PostsController::class,'ShowAllQa'])->name('qa.show');
         Route::post('/', [QaController::class, 'CreateQa'])->name('qa.create');
         Route::put('/{qa}', [QaController::class, 'UpdateQa'])->name('qa.update');
         Route::delete('/{qa}', [QaController::class, 'DeleteqQ'])->name('qa.delete');
         Route::get('/list',[QaController::class,'ListQa'])->name('qa.list');
     });
-   
     Route::prefix('like')->group(function () {
         //Like --post
-        Route::get('/{post}', [LikeController::class, 'FetchLikeInPost'])->name('post.like');
         Route::post('/{post}', [LikeController::class, 'LikePost'])->name('like.post');
         //Like --blog
-        Route::get('/{blog}', [LikeController::class, 'FetchLikeInBlog'])->name('blog.like');
         Route::post('/{blog}', [LikeController::class, 'LikeBlog'])->name('like.blog');
         //Like --Q&a
-        Route::get('/{qa}', [LikeController::class, 'FetchLikeInQa'])->name('qa.like');
         Route::post('/{qa}', [LikeController::class, 'LikeQa'])->name('like.qa');
-        
     });
     Route::prefix('comment')->group(function () {
-    //Comment --post
-    Route::get('/{post}', [CommentController::class, 'FetchCommentInPost'])->name('post.show');
-    Route::post('/{post}', [CommentController::class, 'AddCommentToPost'])->name('post.comment');
-    //Comment --blog
-    Route::get('/{blog}', [CommentController::class, 'FetchCommentInBlog'])->name('blog.show');
-    Route::post('/{blog}', [CommentController::class, 'AddCommentToBlog'])->name('blog.comment');
-    //Comment --Q&a
-    Route::get('/{qa}', [CommentController::class, 'FetchCommentInQa'])->name('qa.show');
-    Route::post('/{qa}', [CommentController::class, 'AddCommentToQa'])->name('qa.comment');
+        //Comment --post
+        Route::post('/{post}', [CommentController::class, 'AddCommentToPost'])->name('post.comment');
+        //Comment --blog
+        Route::post('/{blog}', [CommentController::class, 'AddCommentToBlog'])->name('blog.comment');
+        //Comment --Q&a
+        Route::post('/{qa}', [CommentController::class, 'AddCommentToQa'])->name('qa.comment');
     });
   
     //friend --relationship
