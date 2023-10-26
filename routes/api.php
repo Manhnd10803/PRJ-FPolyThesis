@@ -73,28 +73,15 @@ Route::middleware('auth:api')->group(function () {
     });
     //qa
     Route::prefix('quests')->group(function(){
-        Route::get('/', [PostsController::class,'ShowAllQa'])->name('qa.show');
+        Route::get('/', [QaController::class,'ShowAllQa'])->name('qa.show');
         Route::post('/', [QaController::class, 'CreateQa'])->name('qa.create');
         Route::put('/{qa}', [QaController::class, 'UpdateQa'])->name('qa.update');
         Route::delete('/{qa}', [QaController::class, 'DeleteqQ'])->name('qa.delete');
         Route::get('/list',[QaController::class,'ListQa'])->name('qa.list');
     });
-    Route::prefix('like')->group(function () {
-        //Like --post
-        Route::post('/{post}', [LikeController::class, 'LikePost'])->name('like.post');
-        //Like --blog
-        Route::post('/{blog}', [LikeController::class, 'LikeBlog'])->name('like.blog');
-        //Like --Q&a
-        Route::post('/{qa}', [LikeController::class, 'LikeQa'])->name('like.qa');
-    });
-    Route::prefix('comment')->group(function () {
-        //Comment --post
-        Route::post('/{post}', [CommentController::class, 'AddCommentToPost'])->name('post.comment');
-        //Comment --blog
-        Route::post('/{blog}', [CommentController::class, 'AddCommentToBlog'])->name('blog.comment');
-        //Comment --Q&a
-        Route::post('/{qa}', [CommentController::class, 'AddCommentToQa'])->name('qa.comment');
-    });
+    
+    Route::post('/like/{model}/{id}/{emotion}', [LikeController::class,'LikeItem']);
+    Route::post('comment/{type}/{id}',[CommentController::class,'AddComment']);
   
     //friend --relationship
     Route::post('/send-request/{recipient}', [FriendController::class, 'SendFriendRequest'])->name('friend.send');

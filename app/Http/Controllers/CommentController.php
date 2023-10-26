@@ -11,16 +11,35 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CommentController extends Controller
-{
-    public function AddCommentToPost(Request $request, Post $post) {
+{   public function AddComment(Request $request, $type, $id) {
         DB::beginTransaction();
         if (Auth::check()) {
             $user = Auth::user();
             $content = $request->input('content');
             $parent_id = $request->input('parent_id'); 
+            // Xác định model tương ứng với loại mục
+            $model = null;
+            switch ($type) {
+                case 'post':
+                    $model = Post::find($id);
+                    break;
+                case 'blog':
+                    $model = Blog::find($id);
+                    break;
+                case 'qa':
+                    $model = Qa::find($id);
+                    break;
+                default:
+                    DB::rollBack();
+                    return response()->json(['error' => 'Invalid type'], 400);
+            }
+            if (!$model) {
+                DB::rollBack();
+                return response()->json(['error' => 'Item not found'], 404);
+            }
             $comment = new Comment([
                 'user_id' => $user->id,
-                'post_id' => $post->id,
+                "{$type}_id" => $id,
                 'content' => $content,
                 'parent_id' => $parent_id, 
             ]);
@@ -31,58 +50,8 @@ class CommentController extends Controller
             DB::rollBack();
             return response()->json(['error' => 'You must be logged in to comment'], 401);
         }
-    }    
-    public function AddCommentToBlog(Request $request, Blog $blog) {
-        DB::beginTransaction();
-        if (Auth::check()) {
-            $user = Auth::user();
-            $content = $request->input('content');
-            $parent_id = $request->input('parent_id'); 
-            $comment = new Comment([
-                'user_id' => $user->id,
-                'blog_id' => $blog->id,
-                'content' => $content,
-                'parent_id' => $parent_id, 
-            ]);
-            $comment->save();
-            DB::commit();
-            return response()->json(['message' => 'Comment added successfully'], 200);
-        } else {
-            DB::rollBack();
-            return response()->json(['error' => 'You must be logged in to comment'], 401);
-        }
     }
-    public function AddCommentToQa(Request $request, Qa $qa) {
-        DB::beginTransaction();
-        if (Auth::check()) {
-            $user = Auth::user();
-            $content = $request->input('content');
-            $parent_id = $request->input('parent_id'); 
-            $comment = new Comment([
-                'user_id' => $user->id,
-                'qa_id' => $qa->id,
-                'content' => $content,
-                'parent_id' => $parent_id, 
-            ]);
-            $comment->save();
-            DB::commit();
-            return response()->json(['message' => 'Comment added successfully'], 200);
-        } else {
-            DB::rollBack();
-            return response()->json(['error' => 'You must be logged in to comment'], 401);
-        }
-    }    
-    public function FetchCommentInPost(Post $post) {
-        $comments = Comment::with('user')->where('post_id', $post->id)->get();
-        return response()->json($comments);
-    }
-    public function FetchCommentInBlog(Blog $blog) {
-        $comments = Comment::with('user')->where('blog_id', $blog->id)->get();
-        return response()->json($comments);
-    }
-    public function FetchCommentInQa(Qa $qa) {
-        $comments = Comment::with('user')->where('qa_id', $qa->id)->get();
-        return response()->json($comments);
-    }
+    
+  
     
 }

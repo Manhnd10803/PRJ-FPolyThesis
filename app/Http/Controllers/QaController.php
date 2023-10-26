@@ -49,7 +49,31 @@ class QaController extends Controller
                 $commentCount = Comment::where('qa_id', $qa->id)->count();
                 $replyCount = Comment::where('qa_id', $qa->id)->where('parent_id', '>', 0)->count();
                 $totalCommentsAndReplies = $commentCount + $replyCount;
+                $comments  =Comment::where('qa_id', $qa->id)->get();
+                $commentsData = [];
+                foreach ($comments as $comment) {
+                    // Lấy thông tin người comment
+                    $commentUser = $comment->user;
+                    // Lấy danh sách các reply cho comment
+                    $replies = Comment::where('qa_id', $qa->id)
+                        ->where('parent_id', $comment->id)
+                        ->get();
+                    $repliesData = [];
     
+                    foreach ($replies as $reply) {
+                        // Lấy thông tin người reply
+                        $replyUser = $reply->user;
+                        $repliesData[] = [
+                            'reply' => $reply,
+                            'user' => $replyUser,
+                        ];
+                    }
+                    $commentsData[] = [
+                        'comment' => $comment,
+                        'user' => $commentUser,
+                        'replies' => $repliesData,
+                    ];
+                }
                 $qaData = [
                     'qa' => $qa,
                     'like_counts_by_emotion' => $likeCountsByEmotion,
