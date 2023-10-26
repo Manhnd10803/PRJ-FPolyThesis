@@ -42,16 +42,69 @@ class PostsController extends Controller
      *     }
      * )
      */
-
-    public function ShowPostProfile(){
+     public function ShowPostProfile(){
+        DB::beginTransaction();
+        try {
         $posts = Post::where('user_id', Auth::id()) 
             ->orWhere(function ($query) {
                 $query->where('status', '<>', 1); 
-            })
-            ->orderBy('created_at', 'DESC')->get();
-        return response()->json($posts);
+            })->orderBy('created_at', 'DESC')->get();
+        $result = [];
+        foreach ($posts as $post) {
+            // Tính toán số lượt like cho bài viết
+            $likeCount = $post->likes->count();
+            // Tính toán số lượng comment cho bài viết
+            $commentCount = Comment::where('post_id', $post->id)->count();
+            // Tính toán số lượng reply cho mỗi bình luận
+            $comments = Comment::where('post_id', $post->id)->get();
+            $replyCount = 0;
+            foreach ($comments as $comment) {
+                $replyCount += Comment::where('post_id', $post->id)->where('parent_id', $comment->id)->count();
+            }
+            // Lấy thông tin về người like
+            $likers = $post->likes->map(function ($like) {
+                return [
+                    'user' => $like->user,
+                    'emotion' => $like->emotion,
+                ];
+            });
+            // Lấy thông tin về người comment và reply
+            $commentData = [];
+            foreach ($comments as $comment) {
+                $commentUser = $comment->user;
+                $replies = Comment::where('post_id', $post->id)->where('parent_id', $comment->id)->get();
+                $replyData = [];
+                foreach ($replies as $reply) {
+                    $replyUser = $reply->user;
+                    $replyData[] = [
+                        'reply' => $reply,
+                        'user' => $replyUser,
+                    ];
+                }
+                $commentData[] = [
+                    'comment' => $comment,
+                    'user' => $commentUser,
+                    'replies' => $replyData,
+                ];
+            }
+            // Tạo một mảng chứa thông tin về bài viết và tất cả thông tin liên quan
+            $postData = [
+                'post' => $post,
+                'like_count' => $likeCount,
+                'comment_count' => $commentCount,
+                'reply_count' => $replyCount,
+                'likers' => $likers,
+                'comments' => $commentData,
+            ];
+            array_push($result, $postData);
+        }
+        DB::commit();
+        return response()->json($result);
+    }catch(\Exception $e){
+        DB::rollBack();
+        return response()->json(['errors' => $e->getMessage()], 400);
     }
-  
+    }
     public function ShowAllPosts() {
         DB::beginTransaction();
         try {
@@ -61,9 +114,7 @@ class PostsController extends Controller
             $friendIds = $friends->pluck('id')->toArray();
             $friendIds[] = $user->id;
             $posts = Post::whereIn('user_id', $friendIds)->latest()->get();
-            
             $result = [];
-            
             foreach ($posts as $post) {
                 $likeCountsByEmotion = [];
                 $likeCountsByEmotion['total_likes'] = $post->likes->count();
@@ -83,17 +134,43 @@ class PostsController extends Controller
                 $commentCount = Comment::where('post_id', $post->id)->count();
                 $replyCount = Comment::where('post_id', $post->id)->where('parent_id', '>', 0)->count();
                 $totalCommentsAndReplies = $commentCount + $replyCount;
-                
+                // Lấy danh sách các comment cho bài viết
+                $comments = Comment::where('post_id', $post->id)->get();
+                $commentsData = [];
+                foreach ($comments as $comment) {
+                    // Lấy thông tin người comment
+                    $commentUser = $comment->user;
+                    // Lấy danh sách các reply cho comment
+                    $replies = Comment::where('post_id', $post->id)
+                        ->where('parent_id', $comment->id)
+                        ->get();
+                    $repliesData = [];
+    
+                    foreach ($replies as $reply) {
+                        // Lấy thông tin người reply
+                        $replyUser = $reply->user;
+                        $repliesData[] = [
+                            'reply' => $reply,
+                            'user' => $replyUser,
+                        ];
+                    }
+                    $commentsData[] = [
+                        'comment' => $comment,
+                        'user' => $commentUser,
+                        'replies' => $repliesData,
+                    ];
+                }
                 // Tạo một mảng chứa thông tin về bài viết và các lượt thích, bình luận của nó
                 $postData = [
                     'post' => $post,
                     'like_counts_by_emotion' => $likeCountsByEmotion,
                     'total_comments' => $totalCommentsAndReplies,
                     'total_likes' => $likeCountsByEmotion['total_likes'],
+                    'comments' => $commentsData,
+                    'like' => $likers,
                 ];
                 array_push($result, $postData);
             }
-    
             DB::commit();
             return response()->json($result, 200);
         } catch (\Exception $e) {
@@ -101,6 +178,7 @@ class PostsController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
+    
     
     /**
      * @OA\Post(
