@@ -207,7 +207,6 @@ class PostsController extends Controller
         try {
             $content = $request->input('content');
             $feeling = $request->input('feeling');
-            $hashtag = $request->input('hashtag');
             $imagePaths = [];
             if ($request->hasFile('images')) {
                 $images = $request->file('images');
@@ -225,12 +224,20 @@ class PostsController extends Controller
                     $imagePaths[] = $imagePath;
                 }
             }
+            if (isset($content) && !empty($content)) {
+                // Tách chuỗi thành mảng các từ (dùng khoảng trắng để tách)
+                $hashtags = [];
+                preg_match_all("/(?<!\w)(#\w+)/", $content, $matches);
+                $hashtags = $matches[1];    
+                $hashtagString = implode(' ', $hashtags);
+ 
+            }
             $post = new Post([
                 'user_id' => Auth::id(),
                 'content' => $content,
                 'feeling' => $feeling,
                 'images' => $imagePaths,
-                'hashtag' => $hashtag,
+                'hashtag' => $hashtagString,
             ]);
             $post->save();
             DB::commit();
@@ -298,14 +305,20 @@ class PostsController extends Controller
             }
         }
         $content = $request->input('content', $post->content);
-        $hashtag = $request->input('hashtag', $post->hashtag);
         $status = $request->input('status', $post->status);
         $feeling = $request->input('feeling', $post->feeling);  
+        if (isset($content) && !empty($content)) {
+            // Tách chuỗi thành mảng các từ (dùng khoảng trắng để tách)
+            $hashtags = [];
+            preg_match_all("/(?<!\w)(#\w+)/", $content, $matches);
+            $hashtags = $matches[1];    
+            $hashtagString = implode(' ', $hashtags);
+        }
         $post->update([
             'content' => $content,
             'feeling' => $feeling,
             'images' => $newImagePaths ? $newImagePaths : $imagePath, 
-            'hashtag' => $hashtag,
+            'hashtag' => $hashtagString,
             'status' => $status,
         ]);
         DB::commit();
