@@ -53,4 +53,65 @@ class CommentController extends Controller
             return response()->json(['error' => 'You must be logged in to comment'], 401);
         }
     }
+
+    public function allCommentsLevel1($type, $id)
+    {
+        if ($type == 'post' || $type == 'blog' || $type == 'qa') {
+            $comments = Comment::where($type . '_id', $id)->where('parent_id', 0)->get();
+            foreach ($comments as $comment) {
+                $comment->user;
+                $comment->reply = Comment::where($type . '_id', $id)->where('parent_id', $comment->id)->count();
+            };
+            return response()->json(['comments' => $comments]);
+        } else {
+            return response()->json(['error' => 'Invalid type'], 400);
+        }
+    }
+    public function allSubordinateComments($type, $id, $comment_id)
+    {
+        if ($type == 'post' || $type == 'blog' || $type == 'qa') {
+            $comments = Comment::where($type . '_id', $id)->where('parent_id', $comment_id)->get();
+            foreach ($comments as $comment) {
+                $comment->user;
+                $comment->reply = Comment::where($type . '_id', $id)->where('parent_id', $comment->id)->count();
+            };
+            return response()->json(['comments' => $comments]);
+        } else {
+            return response()->json(['error' => 'Invalid type'], 400);
+        }
+    }
+    public function editComment(Request $request, Comment $comment)
+    {
+        try {
+            DB::beginTransaction();
+            if (Auth::user()->id == $comment->user_id) {
+                $comment->update([
+                    'content' => $request->content,
+                ]);
+                DB::commit();
+                return response()->json(['message' => 'Updated'], 200);
+            } else {
+                return response()->json(['error' => 'Authorization Error'], 400);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()], 400);
+        }
+    }
+    public function deleteComment(Comment $comment)
+    {
+        try {
+            DB::beginTransaction();
+            if (Auth::user()->id == $comment->user_id) {
+                $comment->delete();
+                DB::commit();
+                return response()->json(['message' => 'Deleted'], 200);
+            } else {
+                return response()->json(['error' => 'Authorization Error'], 400);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()], 400);
+        }
+    }
 }

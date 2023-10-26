@@ -47,40 +47,19 @@ class QaController extends Controller
                 foreach ($emotions as $emotion) {
                     $likeCountsByEmotion[$emotion] = $likers->where('emotion', $emotion)->count();
                 }
-
-                $commentCount = Comment::where('qa_id', $qa->id)->count();
-                $replyCount = Comment::where('qa_id', $qa->id)->where('parent_id', '>', 0)->count();
-                $totalCommentsAndReplies = $commentCount + $replyCount;
-                $comments  = Comment::where('qa_id', $qa->id)->get();
-                $commentsData = [];
-                foreach ($comments as $comment) {
-                    // Lấy thông tin người comment
-                    $commentUser = $comment->user;
-                    // Lấy danh sách các reply cho comment
-                    $replies = Comment::where('qa_id', $qa->id)
-                        ->where('parent_id', $comment->id)
-                        ->get();
-                    $repliesData = [];
-
-                    foreach ($replies as $reply) {
-                        // Lấy thông tin người reply
-                        $replyUser = $reply->user;
-                        $repliesData[] = [
-                            'reply' => $reply,
-                            'user' => $replyUser,
-                        ];
-                    }
-                    $commentsData[] = [
-                        'comment' => $comment,
-                        'user' => $commentUser,
-                        'replies' => $repliesData,
-                    ];
+                // Tổng số bình luận + 3 bình luận demo
+                $totalComment = Comment::where('qa_id', $qa->id)->count();
+                $commentDemos = Comment::where('qa_id', $qa->id)->where('parent_id', 0)->limit(3)->get();
+                foreach ($commentDemos as $commentDemo) {
+                    $commentDemo->user;
+                    //số lượng reply
+                    $commentDemo->reply = Comment::where('qa_id', $qa->id)->where('parent_id', $commentDemo->id)->count();
                 }
                 $qaData = [
                     'qa' => $qa,
                     'like_counts_by_emotion' => $likeCountsByEmotion,
-                    'total_comments' => $totalCommentsAndReplies,
-                    'total_likes' => $likeCountsByEmotion['total_likes'],
+                    'total_comments' => $totalComment,
+                    'comments' => $commentDemos,
                 ];
                 array_push($result, $qaData);
             }

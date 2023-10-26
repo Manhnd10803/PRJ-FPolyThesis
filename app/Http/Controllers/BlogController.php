@@ -46,43 +46,20 @@ class BlogController extends Controller
                 foreach ($emotions as $emotion) {
                     $likeCountsByEmotion[$emotion] = $likers->where('emotion', $emotion)->count();
                 }
-                // Tính số lượt bình luận cho bài viết
-                $commentCount = Comment::where('blog_id', $blog->id)->count();
-                $replyCount = Comment::where('blog_id', $blog->id)->where('parent_id', '>', 0)->count();
-                $totalCommentsAndReplies = $commentCount + $replyCount;
-
-                $comments  = Comment::where('blog_id', $blog->id)->get();
-                $commentsData = [];
-                foreach ($comments as $comment) {
-                    // Lấy thông tin người comment
-                    $commentUser = $comment->user;
-                    // Lấy danh sách các reply cho comment
-                    $replies = Comment::where('blog_id', $blog->id)
-                        ->where('parent_id', $comment->id)
-                        ->get();
-                    $repliesData = [];
-
-                    foreach ($replies as $reply) {
-                        // Lấy thông tin người reply
-                        $replyUser = $reply->user;
-                        $repliesData[] = [
-                            'reply' => $reply,
-                            'user' => $replyUser,
-                        ];
-                    }
-                    $commentsData[] = [
-                        'comment' => $comment,
-                        'user' => $commentUser,
-                        'replies' => $repliesData,
-                    ];
+                // Tổng số bình luận + 3 bình luận demo
+                $totalComment = Comment::where('blog_id', $blog->id)->count();
+                $commentDemos = Comment::where('blog_id', $blog->id)->where('parent_id', 0)->limit(3)->get();
+                foreach ($commentDemos as $commentDemo) {
+                    $commentDemo->user;
+                    //số lượng reply
+                    $commentDemo->reply = Comment::where('blog_id', $blog->id)->where('parent_id', $commentDemo->id)->count();
                 }
                 $blogData = [
                     'blog' => $blog,
                     'like_counts_by_emotion' => $likeCountsByEmotion,
-                    'total_comments' => $totalCommentsAndReplies,
-                    'total_likes' => $likeCountsByEmotion['total_likes'],
                     'like' => $likers,
-                    'comment' => $commentsData,
+                    'total_comments' => $totalComment,
+                    'comment' => $commentDemos,
                 ];
                 array_push($result, $blogData);
             }

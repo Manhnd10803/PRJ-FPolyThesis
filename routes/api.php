@@ -66,7 +66,7 @@ Route::middleware('auth:api')->group(function () {
     });
     //blog
     Route::prefix('blogs')->group(function () {
-        Route::get('/', [PostsController::class, 'ShowAllBlogs'])->name('blog.show');
+        Route::get('/', [BlogController::class, 'ShowAllBlogs'])->name('blog.show');
         Route::post('/', [BlogController::class, 'CreateBlog'])->name('blog.create');
         Route::put('/{blog}', [BlogController::class, 'UpdateBlog'])->name('blog.update');
         Route::delete('/{blog}', [BlogController::class, 'DeleteBlog'])->name('blog.delete');
@@ -87,6 +87,10 @@ Route::middleware('auth:api')->group(function () {
     });
     Route::prefix('comment')->group(function () {
         Route::post('/{type}/{id}', [CommentController::class, 'AddComment']);
+        Route::get('/{type}/{id}', [CommentController::class, 'allCommentsLevel1']);
+        Route::get('/{type}/{id}/{commentParent}', [CommentController::class, 'allSubordinateComments']);
+        Route::put('/{comment}', [CommentController::class, 'editComment']);
+        Route::delete('/{comment}', [CommentController::class, 'deleteComment']);
     });
 
     //friend --relationship
