@@ -16,6 +16,12 @@ export const ApiConstants = {
   // post
   POSTS: `/posts`,
 
+  // blog
+  CREATE_BLOG: `/blogs`,
+
+  // major
+  MAJORS: `/majors`,
+
   // admin
   USERS_ADMIN: `/admin/users`,
 
