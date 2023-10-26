@@ -8,6 +8,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\MajorController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\QaController;
 use App\Http\Controllers\PrivateMessagesController;
@@ -51,6 +52,10 @@ Route::middleware('auth:api')->group(function () {
         Route::put('/{privateMessage}', [PrivateMessagesController::class, 'UpdateMessage'])->name('message.update');
         Route::delete('/{privateMessage}', [PrivateMessagesController::class, 'DeleteMessage'])->name('message.delete');
     });
+
+    //major
+    Route::get('majors',[MajorController::class,'list_majors']);
+
     //post
     Route::prefix('posts')->group(function () {
         Route::get('/newfeed',[PostsController::class,'ShowAllPosts'])->name('post.show');
