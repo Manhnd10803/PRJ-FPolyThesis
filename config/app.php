@@ -190,6 +190,5 @@ return [
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
         'L5Swagger' => L5Swagger\L5SwaggerFacade::class,
     ])->toArray(),
-    
-    'valid_emotions' => ['like', 'love', 'haha', 'wow', 'sad', 'angry'],
+
 ];

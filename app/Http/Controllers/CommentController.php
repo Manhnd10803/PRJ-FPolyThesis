@@ -31,7 +31,7 @@ class CommentController extends Controller
             DB::rollBack();
             return response()->json(['error' => 'You must be logged in to comment'], 401);
         }
-    }    
+    }
     public function AddCommentToBlog(Request $request, Blog $blog) {
         DB::beginTransaction();
         if (Auth::check()) {
@@ -85,4 +85,6 @@ class CommentController extends Controller
         return response()->json($comments);
     }
     
+
+    //
 }

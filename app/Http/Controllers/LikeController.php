@@ -12,10 +12,11 @@ use Illuminate\Support\Facades\Auth;
 
 class LikeController extends Controller
 {
-    public function LikePost(Request $request, Post $post, $emotion){
+    public function LikePost(Request $request, Post $post, $emotion)
+    {
         $user = Auth::user();
-        $validEmotions = config('app.valid_emotions');
-        if (!in_array($emotion, $validEmotions)){
+        $validEmotions = config('default.valid_emotions');
+        if (!in_array($emotion, $validEmotions)) {
             return response()->json(['error' => 'Invalid emotion type'], 400);
         }
         $existingLike = Like::where('user_id', $user->id)->where('post_id', $post->id)->where('emotion', $emotion)->first();
@@ -32,10 +33,11 @@ class LikeController extends Controller
         }
         return response()->json(['message' => $message]);
     }
-    public function LikeBlog(Request $request, Blog $blog, $emotion){
+    public function LikeBlog(Request $request, Blog $blog, $emotion)
+    {
         $user = Auth::user();
-        $validEmotions = config('app.valid_emotions');
-        if (!in_array($emotion, $validEmotions)){
+        $validEmotions = config('default.valid_emotions');
+        if (!in_array($emotion, $validEmotions)) {
             return response()->json(['error' => 'Invalid emotion type'], 400);
         }
         $existingLike = Like::where('user_id', $user->id)->where('blog_id', $blog->id)->where('emotion', $emotion)->first();
@@ -52,10 +54,11 @@ class LikeController extends Controller
         }
         return response()->json(['message' => $message]);
     }
-    public function LikeQa(Request $request, Qa $qa, $emotion){
+    public function LikeQa(Request $request, Qa $qa, $emotion)
+    {
         $user = Auth::user();
-        $validEmotions = config('app.valid_emotions');
-        if (!in_array($emotion, $validEmotions)){
+        $validEmotions = config('default.valid_emotions');
+        if (!in_array($emotion, $validEmotions)) {
             return response()->json(['error' => 'Invalid emotion type'], 400);
         }
         $existingLike = Like::where('user_id', $user->id)->where('qa_id', $qa->id)->where('emotion', $emotion)->first();
@@ -72,16 +75,11 @@ class LikeController extends Controller
         }
         return response()->json(['message' => $message]);
     }
-    // public function FetchLikeInPost(Post $post){
-    //     $likes = Like::where('post_id',$post->id)->get();
-    //     return response()->json($likes);
-    // }
-    // public function FetchLikeInBlog(Blog $blog){
-    //     $likes = Like::where('blog_id',$blog->id)->get();
-    //     return response()->json($likes);
-    // }
-    // public function FetchLikeInQa(Qa $qa){
-    //     $likes = Like::where('qa_id',$qa->id)->get();
-    //     return response()->json($likes);
-    // }
+
+    //danh sách emotion
+    public function listEmotion()
+    {
+        $emotions = config('default.valid_emotions');
+        return response()->json(['like' => $emotions]);
+    }
 }
