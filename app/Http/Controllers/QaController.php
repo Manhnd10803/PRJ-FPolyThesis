@@ -10,6 +10,62 @@ use Illuminate\Support\Facades\DB;
 
 class QaController extends Controller
 {
+    public function ShowAllQa(Request $request){
+        DB::beginTransaction();
+        try {
+            $majorsId = $request->input('majors_id');
+            $hashtag = $request->input('hashtag');  
+            $query = Qa::query();
+    
+            if ($majorsId) {
+                $query->where('majors_id', $majorsId);
+            }
+    
+            if ($hashtag) {
+                $query->where('content', 'LIKE', '%' . $hashtag . '%');
+            }
+    
+            $qas = $query->latest()->get();
+    
+            $result = [];
+    
+            foreach ($qas as $qa) {
+                $likeCountsByEmotion = [];
+                $likeCountsByEmotion['total_likes'] = $qa->likes->count();
+    
+                $likers = $qa->likes->map(function ($like) {
+                    return [
+                        'user' => $like->user,
+                        'emotion' => $like->emotion,
+                    ];
+                });
+    
+                $emotions = $likers->pluck('emotion')->unique();
+    
+                foreach ($emotions as $emotion) {
+                    $likeCountsByEmotion[$emotion] = $likers->where('emotion', $emotion)->count();
+                }
+    
+                $commentCount = Comment::where('qa_id', $qa->id)->count();
+                $replyCount = Comment::where('qa_id', $qa->id)->where('parent_id', '>', 0)->count();
+                $totalCommentsAndReplies = $commentCount + $replyCount;
+    
+                $qaData = [
+                    'qa' => $qa,
+                    'like_counts_by_emotion' => $likeCountsByEmotion,
+                    'total_comments' => $totalCommentsAndReplies,
+                    'total_likes' => $likeCountsByEmotion['total_likes'],
+                ];
+                array_push($result, $qaData);
+            }
+    
+            DB::commit();
+            return response()->json($result, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()], 400);
+        }  
+    }
     public function ListQa(Request $request)
     {
         $hashtag = $request->input('hashtag');
@@ -106,66 +162,5 @@ public function DeleteQa(Qa $qa){
         DB::rollBack();
         return response()->json(['errors' => $e->getMessage()], 400);
     }
-}
- /**
-     * @OA\Get(
-     *     path="/api/quests/count-like/{qa}/like-info",
-     *     tags={"Q&A"},
-     *     summary="Lấy số lượng lượt thích của bài viết kèm info user",
-     *     description="Lấy số lượng lượt thích thông tin user và sắp xếp theo loại cảm xúc của một bài viết dựa trên ID của bài viết.",
-     *     @OA\Parameter(
-     *         name="qa",
-     *         in="path",
-     *         required=true,
-     *         description="ID của bài viết",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(response=200, description="Số lượng lượt thích của bài viết"),
-     *     @OA\Response(response=404, description="Bài viết không được tìm thấy")
-     * )
-     */
-    public function CountLikeInQa(Qa $qa){
-        DB::beginTransaction();
-        try{
-            // Đếm lượt thích của Qa
-            $likeCount = $qa->likes->count();
-            $likers = $qa->likes->map(function ($like) {
-                return [
-                    'user' => $like->user,
-                    'emotion' => $like->emotion,
-                ];
-            });
-            // Sắp xếp danh sách người đã like dựa trên biểu cảm
-            $likers = $likers->sortBy('emotion');
-            DB::commit();
-            return response()->json(['like_count' => $likeCount, 'likers' => $likers->values()->all(),]);
-        }catch(\Exception $e){
-            DB::rollBack();
-            return response()->json(['errors' => $e->getMessage()], 400);
-        }
-    }
-      /**
-     * @OA\Get(
-     *     path="/api/quests/count-cmt/{qa}",
-     *     tags={"Q&A"},
-     *     summary="Lấy số lượng bình luận và trả lời của bài viết",
-     *     description="Lấy số lượng bình luận và trả lời của một bài viết dựa trên ID của bài viết.",
-     *     @OA\Parameter(
-     *         name="qa",
-     *         in="path",
-     *         required=true,
-     *         description="ID của bài viết",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(response=200, description="Số lượng bình luận và trả lời của bài viết"),
-     *     @OA\Response(response=404, description="Bài viết không được tìm thấy")
-     * )
-     */
-
-     public function CountCommentInQa(Qa $qa){
-        $commentCount = Comment::where('qa_id', $qa->id)->count();
-        $replyCount = Comment::where('qa_id', $qa->id)->where('parent_id', '>', 0)->count();
-        $totalCommentsAndReplies = $commentCount + $replyCount;
-        return response()->json(['total' => $totalCommentsAndReplies], 200);
-     }
+}   
 }
