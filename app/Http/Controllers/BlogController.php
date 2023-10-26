@@ -33,33 +33,58 @@ class BlogController extends Controller
             foreach ($blogs as $blog) {
                 $likeCountsByEmotion = [];
                 $likeCountsByEmotion['total_likes'] = $blog->likes->count();
-    
+                 // Lấy danh sách người đã like bài viết và thông tin của họ
                 $likers = $blog->likes->map(function ($like) {
                     return [
                         'user' => $like->user,
                         'emotion' => $like->emotion,
                     ];
                 });
-    
+                // Tính số lượt thích cho mỗi biểu cảm (emotion)
                 $emotions = $likers->pluck('emotion')->unique();
-    
                 foreach ($emotions as $emotion) {
                     $likeCountsByEmotion[$emotion] = $likers->where('emotion', $emotion)->count();
                 }
-    
+                // Tính số lượt bình luận cho bài viết
                 $commentCount = Comment::where('blog_id', $blog->id)->count();
                 $replyCount = Comment::where('blog_id', $blog->id)->where('parent_id', '>', 0)->count();
                 $totalCommentsAndReplies = $commentCount + $replyCount;
+                
+                $comments  =Comment::where('blog_id', $blog->id)->get();
+                $commentsData = [];
+                foreach ($comments as $comment) {
+                    // Lấy thông tin người comment
+                    $commentUser = $comment->user;
+                    // Lấy danh sách các reply cho comment
+                    $replies = Comment::where('blog_id', $blog->id)
+                        ->where('parent_id', $comment->id)
+                        ->get();
+                    $repliesData = [];
     
+                    foreach ($replies as $reply) {
+                        // Lấy thông tin người reply
+                        $replyUser = $reply->user;
+                        $repliesData[] = [
+                            'reply' => $reply,
+                            'user' => $replyUser,
+                        ];
+                    }
+                    $commentsData[] = [
+                        'comment' => $comment,
+                        'user' => $commentUser,
+                        'replies' => $repliesData,
+                    ];
+                }
                 $blogData = [
                     'blog' => $blog,
                     'like_counts_by_emotion' => $likeCountsByEmotion,
                     'total_comments' => $totalCommentsAndReplies,
                     'total_likes' => $likeCountsByEmotion['total_likes'],
+                    'like' => $likers,
+                    'comment' => $commentsData,
                 ];
                 array_push($result, $blogData);
             }
-    
             DB::commit();
             return response()->json($result, 200);
         } catch (\Exception $e) {

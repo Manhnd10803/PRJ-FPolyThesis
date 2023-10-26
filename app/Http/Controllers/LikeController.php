@@ -12,76 +12,35 @@ use Illuminate\Support\Facades\Auth;
 
 class LikeController extends Controller
 {
-    public function LikePost(Request $request, Post $post, $emotion){
+    public function LikeItem(Request $request, $model, $item, $emotion) {
         $user = Auth::user();
         $validEmotions = config('app.valid_emotions');
-        if (!in_array($emotion, $validEmotions)){
+        if (!in_array($emotion, $validEmotions)) {
             return response()->json(['error' => 'Invalid emotion type'], 400);
-        }
-        $existingLike = Like::where('user_id', $user->id)->where('post_id', $post->id)->where('emotion', $emotion)->first();
+        } 
+        // Xác định tên của model (Post, Blog, hoặc Qa)
+        $modelName = strtolower(class_basename($model));
+        // Kiểm tra xem người dùng đã có cảm xúc cho mục này chưa
+        $existingLike = Like::where('user_id', $user->id)->where($modelName . '_id', $item->id)->first();
         if ($existingLike) {
-            $existingLike->delete();
-            $message = 'Unliked successfully';
+            // Nếu đã tồn tại và cảm xúc trùng khớp với cảm xúc hiện tại, xóa cảm xúc
+            if ($existingLike->emotion === $emotion) {
+                $existingLike->delete();
+                $message = 'Emotion removed successfully';
+            } else {
+                // Nếu đã tồn tại, nhưng cảm xúc không trùng khớp, cập nhật lại cảm xúc
+                $existingLike->update(['emotion' => $emotion]);
+                $message = 'Emotion updated successfully';
+            }
         } else {
+            // Nếu chưa tồn tại, tạo mới cảm xúc
             Like::create([
                 'user_id' => $user->id,
-                'post_id' => $post->id,
+                $modelName . '_id' => $item->id,
                 'emotion' => $emotion,
             ]);
-            $message = 'Liked successfully';
+            $message = 'Emotion added successfully';
         }
         return response()->json(['message' => $message]);
-    }
-    public function LikeBlog(Request $request, Blog $blog, $emotion){
-        $user = Auth::user();
-        $validEmotions = config('app.valid_emotions');
-        if (!in_array($emotion, $validEmotions)){
-            return response()->json(['error' => 'Invalid emotion type'], 400);
-        }
-        $existingLike = Like::where('user_id', $user->id)->where('blog_id', $blog->id)->where('emotion', $emotion)->first();
-        if ($existingLike) {
-            $existingLike->delete();
-            $message = 'Unliked successfully';
-        } else {
-            Like::create([
-                'user_id' => $user->id,
-                'blog_id' => $blog->id,
-                'emotion' => $emotion,
-            ]);
-            $message = 'Liked successfully';
-        }
-        return response()->json(['message' => $message]);
-    }
-    public function LikeQa(Request $request, Qa $qa, $emotion){
-        $user = Auth::user();
-        $validEmotions = config('app.valid_emotions');
-        if (!in_array($emotion, $validEmotions)){
-            return response()->json(['error' => 'Invalid emotion type'], 400);
-        }
-        $existingLike = Like::where('user_id', $user->id)->where('qa_id', $qa->id)->where('emotion', $emotion)->first();
-        if ($existingLike) {
-            $existingLike->delete();
-            $message = 'Unliked successfully';
-        } else {
-            Like::create([
-                'user_id' => $user->id,
-                'qa_id' => $qa->id,
-                'emotion' => $emotion,
-            ]);
-            $message = 'Liked successfully';
-        }
-        return response()->json(['message' => $message]);
-    }
-    // public function FetchLikeInPost(Post $post){
-    //     $likes = Like::where('post_id',$post->id)->get();
-    //     return response()->json($likes);
-    // }
-    // public function FetchLikeInBlog(Blog $blog){
-    //     $likes = Like::where('blog_id',$blog->id)->get();
-    //     return response()->json($likes);
-    // }
-    // public function FetchLikeInQa(Qa $qa){
-    //     $likes = Like::where('qa_id',$qa->id)->get();
-    //     return response()->json($likes);
-    // }
+    } 
 }
