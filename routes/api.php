@@ -80,7 +80,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/list',[QaController::class,'ListQa'])->name('qa.list');
     });
     
-    Route::post('like/{model}/{id}/{emotion}', [LikeController::class,'LikeItem']);
+    Route::post('/like/{model}/{id}/{emotion}', [LikeController::class,'LikeItem']);
     Route::post('comment/{type}/{id}',[CommentController::class,'AddComment']);
   
     //friend --relationship
