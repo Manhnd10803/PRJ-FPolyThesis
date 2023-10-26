@@ -73,7 +73,7 @@ Route::middleware('auth:api')->group(function () {
     });
     //qa
     Route::prefix('quests')->group(function(){
-        Route::get('/', [PostsController::class,'ShowAllQa'])->name('qa.show');
+        Route::get('/', [QaController::class,'ShowAllQa'])->name('qa.show');
         Route::post('/', [QaController::class, 'CreateQa'])->name('qa.create');
         Route::put('/{qa}', [QaController::class, 'UpdateQa'])->name('qa.update');
         Route::delete('/{qa}', [QaController::class, 'DeleteqQ'])->name('qa.delete');
