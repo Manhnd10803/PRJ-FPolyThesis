@@ -7,11 +7,19 @@ use App\Models\Emotion;
 use App\Models\Like;
 use App\Models\Post;
 use App\Models\Qa;
-use GuzzleHttp\Psr7\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LikeController extends Controller
 {
+    public function store(Request $request) {
+        $data = $request->all();
+    
+        $like = new Like($data);
+        $like->save();
+    
+        return response()->json(['message' => 'Bình luận đã được đăng thành công'], 200);
+    }
     public function LikePost(Request $request, Post $post, $emotion){
         $user = Auth::user();
         $validEmotions = ['like', 'love', 'haha', 'wow', 'sad', 'angry'];

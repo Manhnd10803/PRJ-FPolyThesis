@@ -21,7 +21,7 @@ export const ApiConstants = {
   BLOG_DETAIL: `/blogs`,
 
   // comments
-  POST_COMMENT: ``,
+  POST_COMMENT: `/comment`,
 
   // admin
 

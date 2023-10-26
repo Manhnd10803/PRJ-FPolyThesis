@@ -12,6 +12,14 @@ use Illuminate\Support\Facades\DB;
 
 class CommentController extends Controller
 {
+    public function store(Request $request) {
+        $data = $request->all();
+    
+        $comment = new Comment($data);
+        $comment->save();
+    
+        return response()->json(['message' => 'Bình luận đã được đăng thành công'], 200);
+    }
     public function AddCommentToPost(Request $request, Post $post) {
         DB::beginTransaction();
         if (Auth::check()) {
@@ -52,14 +60,6 @@ class CommentController extends Controller
             return response()->json(['error' => 'You must be logged in to comment'], 401);
         }
     }
-    public function store(Request $request) {
-        $data = $request->all();
-    
-        $comment = new Comment($data);
-        $comment->save();
-    
-        return response()->json(['message' => 'Bình luận đã được đăng thành công'], 200);
-    }
     public function AddCommentToQa(Request $request, Qa $qa) {
         DB::beginTransaction();
         if (Auth::check()) {
@@ -67,10 +67,10 @@ class CommentController extends Controller
             $content = $request->input('content');
             $parent_id = $request->input('parent_id'); 
             $comment = new Comment([
-                'user_id' => $user->id,
+                 'user_id' => $user->id,
                 'qa_id' => $qa->id,
                 'content' => $content,
-                'parent_id' => $parent_id, 
+                'parent_id' => $parent_id,
             ]);
             $comment->save();
             DB::commit();

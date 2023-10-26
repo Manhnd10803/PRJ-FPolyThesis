@@ -1,5 +1,6 @@
 export interface IBlogs {
   id: number;
+  user_id: string;
   status: number;
   title: string;
   content: string;
@@ -16,7 +17,15 @@ export interface IBlogs {
 }
 export interface CommentType {
   id: number;
+  user: {
+    avatar: string;
+    username: string;
+    major: {
+      majors_name: string;
+    };
+  };
   user_id: number;
+  reply_to: string;
   content: string;
   parent_id: number;
   post_id: number;

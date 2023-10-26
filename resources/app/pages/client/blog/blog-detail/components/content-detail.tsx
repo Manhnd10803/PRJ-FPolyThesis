@@ -2,7 +2,6 @@ import { Col, Image } from 'react-bootstrap';
 import { Card } from '@/components/custom';
 import { formatDateFromCreatedAt } from '../../components/format-date';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
 export const ContentBlogDetail = ({ data }: any) => {
   const [isContentExpanded, setContentExpanded] = useState(false);
 
@@ -37,15 +36,12 @@ export const ContentBlogDetail = ({ data }: any) => {
                   <i className="material-symbols-outlined pe-2 md-18 text-primary">share</i>share
                 </div>
               </div>
-              <p>
-                {isContentExpanded ? data?.content : data?.content.slice(0, 200)}{' '}
-                {/* Hiển thị toàn bộ nội dung hoặc chỉ 200 ký tự ban đầu */}
-              </p>
+              <p>{isContentExpanded ? data?.content : data?.content.slice(0, 200)}</p>
               {data?.content.length > 200 && (
-                <Link className="d-flex align-items-center" to="#" onClick={toggleContent}>
+                <div className="d-flex align-items-center text-primary" onClick={toggleContent} role="button">
                   {isContentExpanded ? 'Read Less' : 'Read More'}
                   <i className="material-symbols-outlined md-14 filled">arrow_forward_ios</i>
-                </Link>
+                </div>
               )}
             </div>
           </Card.Body>

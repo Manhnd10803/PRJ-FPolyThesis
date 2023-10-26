@@ -2,26 +2,32 @@ export const formatDateFromCreatedAt = (created_at: any) => {
   const createdAtDate = new Date(created_at);
   const currentDate = new Date();
 
-  // Tính số mili giây giữa hai ngày
   const timeDifference = currentDate - createdAtDate;
+  const seconds = Math.floor(timeDifference / 1000); // Tính số giây
 
-  const minutes = Math.floor(timeDifference / (1000 * 60)); // Tính số phút
-  const days = Math.floor(minutes / (60 * 24)); // Tính số ngày
-  const weeks = Math.floor(days / 7); // Tính số tuần
-  const remainingDays = days % 7; // Số ngày còn lại sau khi tính số tuần
-  const remainingMinutes = minutes % 60; // Số phút còn lại sau khi tính số giờ
-
-  let result = '';
-
-  if (weeks > 0) {
-    result += `${weeks} tuần `;
+  if (seconds < 60) {
+    return `${seconds} giây trước`;
+  } else if (seconds < 3600) {
+    const minutes = Math.floor(seconds / 60);
+    return `${minutes} phút trước`;
+  } else if (seconds < 86400) {
+    const hours = Math.floor(seconds / 3600);
+    return `${hours} giờ trước`;
+  } else if (seconds < 604800) {
+    const days = Math.floor(seconds / 86400);
+    return `${days} ngày trước`;
+  } else {
+    const weeks = Math.floor(seconds / 604800); // 7 ngày = 1 tuần
+    if (weeks < 4) {
+      return `${weeks} tuần trước`;
+    } else {
+      const months = Math.floor(weeks / 4);
+      if (months < 12) {
+        return `${months} tháng trước`;
+      } else {
+        const years = Math.floor(months / 12);
+        return `${years} năm trước`;
+      }
+    }
   }
-  if (remainingDays > 0) {
-    result += `${remainingDays} ngày `;
-  }
-  if (remainingMinutes > 0) {
-    result += `${remainingMinutes} phút`;
-  }
-
-  return result.trim(); // Loại bỏ khoảng trắng ở đầu và cuối chuỗi
 };

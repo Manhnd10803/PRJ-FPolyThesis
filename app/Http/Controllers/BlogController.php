@@ -23,11 +23,11 @@ class BlogController extends Controller
     public function GetBlogDetails($id)
     {
         $blog = Blog::with(['comments.user.major', 'likes'])->find($id);
-    if (!$blog) {
-        return response()->json(['message' => 'Không tìm thấy blog'], 404);
-    }
-
-    return response()->json($blog, 200);
+        if (!$blog) {
+            return response()->json(['message' => 'Không tìm thấy blog'], 404);
+        }
+        
+        return response()->json($blog, 200);
 }
        /**
      * @OA\Post(
