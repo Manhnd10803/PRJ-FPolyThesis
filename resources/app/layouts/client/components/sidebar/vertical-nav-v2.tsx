@@ -76,6 +76,11 @@ const NAVBAR_SOCIAL_CONFIGS = [
     icon: <i className="icon material-symbols-outlined">notifications</i>,
     pathname: '/notification',
   },
+  {
+    title: 'Slate Editor',
+    icon: <i className="icon material-symbols-outlined">edit</i>,
+    pathname: '/editor',
+  },
 ];
 
 // ========== Component =========== //

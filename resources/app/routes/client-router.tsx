@@ -9,6 +9,7 @@ import { NotificationPage } from '@/pages/client/notification';
 import { ProfilePage } from '@/pages/client/profile';
 import { QuestionAndAnswerPage } from '@/pages/client/question-and-answer';
 import { DetailQuestionPage } from '@/pages/client/question-and-answer/components/detail-question';
+import { SlateEditorPage } from '@/pages/client/slate-editor';
 
 export const ClientRouter = [
   {
@@ -54,5 +55,9 @@ export const ClientRouter = [
   {
     path: '/notification',
     element: <NotificationPage />,
+  },
+  {
+    path: '/editor',
+    element: <SlateEditorPage />,
   },
 ];
