@@ -1,15 +1,12 @@
 import { Row, Col, Container, Card, Breadcrumb } from 'react-bootstrap';
 import { DataGrid, GridColDef, GridToolbar, GridActionsCellItem } from '@mui/x-data-grid';
 import FindInPageIcon from '@mui/icons-material/FindInPage';
-import RestoreIcon from '@mui/icons-material/SettingsBackupRestore';
 import React, { useState } from 'react';
 import { AdminService } from '@/apis/services/admin.service';
-import { Box, Button, Modal } from '@mui/material';
+import { Box, Modal } from '@mui/material';
 import parse from 'html-react-parser';
-import toast from 'react-hot-toast';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { IBlogsAdmin } from '@/models/blog';
-import SendIcon from '@mui/icons-material/Send';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -31,7 +28,7 @@ type detailBlogType = {
   content: string;
 };
 
-export const BlogPending = () => {
+export const BlogList = () => {
   const [open, setOpen] = React.useState(false);
   const [detailBlog, setDetailBlog] = useState<detailBlogType>({
     id: 0,
@@ -103,29 +100,11 @@ export const BlogPending = () => {
       headerAlign: 'center',
     },
   ];
-  const getBlogPending = async (): Promise<IBlogsAdmin> => {
-    const { data } = await AdminService.BlogPending();
+  const getBlogList = async (): Promise<IBlogsAdmin> => {
+    const { data } = await AdminService.BlogList();
     return data;
   };
-  const { data, isLoading } = useQuery<IBlogsAdmin>({ queryKey: ['blogs'], queryFn: getBlogPending });
-  const queryClient = useQueryClient();
-  const handleApprove = async (id: number) => {
-    const { data } = await AdminService.BlogApprove(id);
-    if (data.message === 'Duyệt thành công') {
-      setOpen(false);
-      await queryClient.invalidateQueries(['blogs']);
-      toast.success('Đã duyệt bài viết');
-    }
-  };
-
-  const handleReject = async (id: number) => {
-    const { data } = await AdminService.BlogReject(id);
-    if (data.message === 'Từ chối thành công') {
-      setOpen(false);
-      await queryClient.invalidateQueries(['blogs']);
-      toast.success('Đã từ chối bài viết');
-    }
-  };
+  const { data, isLoading } = useQuery<IBlogsAdmin>({ queryKey: ['blogs'], queryFn: getBlogList });
 
   return (
     <>
@@ -135,14 +114,14 @@ export const BlogPending = () => {
             <Col sm="12">
               <Card className="position-relative inner-page-bg bg-primary" style={{ height: '150px' }}>
                 <div className="inner-page-title">
-                  <h3 className="text-white">List Blog Pending</h3>
+                  <h3 className="text-white">List Blog</h3>
                   <p className="text-white">
                     <Breadcrumb bsPrefix="breadcrumb bg-primary">
                       <Breadcrumb.Item active className="text-white">
                         Admin
                       </Breadcrumb.Item>
                       <Breadcrumb.Item active className="text-white">
-                        Blog Pending
+                        Blog List
                       </Breadcrumb.Item>
                     </Breadcrumb>
                   </p>
@@ -175,25 +154,6 @@ export const BlogPending = () => {
               {detailBlog.title}
             </h2>
             <p id="child-modal-description">{parse(detailBlog.content)}</p>
-            <div className="d-flex align-items-center justify-content-end gap-1">
-              <Button
-                variant="contained"
-                className="d-flex align-items-center"
-                style={{ backgroundColor: 'red' }}
-                onClick={() => handleReject(detailBlog.id)}
-                endIcon={<RestoreIcon />}
-              >
-                Reject Blog
-              </Button>
-              <Button
-                variant="contained"
-                className="d-flex align-items-center"
-                onClick={() => handleApprove(detailBlog.id)}
-                endIcon={<SendIcon />}
-              >
-                Approve Blog
-              </Button>
-            </div>
           </Box>
         </Modal>
         ,

@@ -14,9 +14,7 @@ const getLocalAccessToken = () => {
 };
 
 const refreshToken = () => {
-  return httpRequest.post<ILoginResponse>(ApiConstants.REFRESH, {
-    refreshToken: getLocalRefreshToken(),
-  });
+  return httpRequest.post<ILoginResponse>(ApiConstants.REFRESH);
 };
 
 const updateLocalAccessToken = (token: string) => {

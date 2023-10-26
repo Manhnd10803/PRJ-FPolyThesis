@@ -1,3 +1,4 @@
+import { BlogList } from '@/pages/admin/blog';
 import { BlogPending } from '@/pages/admin/blog-pending';
 import { Dashboard } from '@/pages/admin/dashboard';
 import { PostList } from '@/pages/admin/post';
@@ -23,5 +24,9 @@ export const AdminRouter = [
   {
     path: 'blogs-pending',
     element: <BlogPending />,
+  },
+  {
+    path: 'blogs',
+    element: <BlogList />,
   },
 ];

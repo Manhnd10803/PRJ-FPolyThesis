@@ -1,5 +1,5 @@
 export interface IBlogsAdmin {
-  id: string;
+  id: number;
   status: number;
   title: string;
   content: string;

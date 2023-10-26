@@ -77,6 +77,62 @@ export const VerticalNavbar = React.memo(() => {
             </ul>
           </Accordion.Collapse>
         </Accordion.Item>
+        <Accordion.Item
+          as="li"
+          eventKey="blogs-menu"
+          bsPrefix={`nav-item ${active === 'blogs' ? 'active' : ''} `}
+          onClick={() => setActive('blogs')}
+        >
+          <CustomToggle eventKey="blogs-menu" onClick={activeKey => setActiveMenu(activeKey)}>
+            <OverlayTrigger placement="right" overlay={<Tooltip>Blog</Tooltip>}>
+              <i className="icon material-symbols-outlined">feed</i>
+            </OverlayTrigger>
+            <span className="item-name">Blog</span>
+            <i className="right-icon material-symbols-outlined">chevron_right</i>
+          </CustomToggle>
+
+          <Accordion.Collapse eventKey="blogs-menu">
+            <ul className="sub-nav">
+              <Nav.Item as="li">
+                <Link className={`${location.pathname === '/admin/blogs' ? 'active' : ''} nav-link`} to="/admin/blogs">
+                  <i className="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="10" viewBox="0 0 24 24" fill="currentColor">
+                      <g>
+                        <circle cx="12" cy="12" r="8" fill="currentColor"></circle>
+                      </g>
+                    </svg>
+                  </i>
+                  <OverlayTrigger placement="right" overlay={<Tooltip>Blog List</Tooltip>}>
+                    <i className="sidenav-mini-icon"> P </i>
+                  </OverlayTrigger>
+                  <span className="item-name"> Blog List </span>
+                </Link>
+              </Nav.Item>
+            </ul>
+          </Accordion.Collapse>
+          <Accordion.Collapse eventKey="blogs-menu">
+            <ul className="sub-nav">
+              <Nav.Item as="li">
+                <Link
+                  className={`${location.pathname === '/admin/blogs-pending' ? 'active' : ''} nav-link`}
+                  to="/admin/blogs-pending"
+                >
+                  <i className="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="10" viewBox="0 0 24 24" fill="currentColor">
+                      <g>
+                        <circle cx="12" cy="12" r="8" fill="currentColor"></circle>
+                      </g>
+                    </svg>
+                  </i>
+                  <OverlayTrigger placement="right" overlay={<Tooltip>Blogs Pending</Tooltip>}>
+                    <i className="sidenav-mini-icon"> P </i>
+                  </OverlayTrigger>
+                  <span className="item-name"> Blogs Pending </span>
+                </Link>
+              </Nav.Item>
+            </ul>
+          </Accordion.Collapse>
+        </Accordion.Item>
       </Accordion>
     </>
   );
