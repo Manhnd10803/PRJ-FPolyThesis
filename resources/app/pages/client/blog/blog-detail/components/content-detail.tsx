@@ -1,8 +1,24 @@
-import { Col, Image } from 'react-bootstrap';
+import { Button, ButtonGroup, Col } from 'react-bootstrap';
 import { Card } from '@/components/custom';
 import { Link } from 'react-router-dom';
-
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import ThumbDownOffAltOutlinedIcon from '@mui/icons-material/ThumbDownOffAltOutlined';
+import { useState } from 'react';
 export const ContentBlogDetail = () => {
+  const [liked, setLiked] = useState(false);
+  const [showUnlike, setShowUnlike] = useState(false);
+
+  const handleLikeClick = () => {
+    setLiked(!liked);
+    setShowUnlike(false);
+  };
+
+  const handleUnlikeClick = () => {
+    setLiked(false);
+    setShowUnlike(!showUnlike);
+  };
   return (
     <>
       <Col lg="12">
@@ -14,10 +30,30 @@ export const ContentBlogDetail = () => {
                 <div className="date date  d-flex align-items-center">
                   <i className="material-symbols-outlined pe-2 md-18 text-primary">calendar_month</i>4 phút trước
                 </div>
-                <div className="like date me-4 d-flex align-items-center">
-                  <i className="material-symbols-outlined pe-2 md-18 text-primary">thumb_up_alt</i>
-                  20 like
-                </div>
+                <ButtonGroup aria-label="Basic example">
+                  <Button className="d-flex align-items-center gap-2 " variant="light" onClick={handleLikeClick}>
+                    {liked ? (
+                      <>
+                        <ThumbUpIcon className="text-primary" sx={{ fontSize: 20 }} />
+                      </>
+                    ) : (
+                      <>
+                        <ThumbUpOutlinedIcon className="text-primary" sx={{ fontSize: 20 }} />
+                      </>
+                    )}
+                  </Button>
+                  <Button className="d-flex align-items-center" variant="light" onClick={handleUnlikeClick}>
+                    {showUnlike ? (
+                      <>
+                        <ThumbDownIcon className="text-primary" sx={{ fontSize: 20 }} />
+                      </>
+                    ) : (
+                      <>
+                        <ThumbDownOffAltOutlinedIcon className="text-primary" sx={{ fontSize: 20 }} />
+                      </>
+                    )}
+                  </Button>
+                </ButtonGroup>
                 <div className="comments date  d-flex align-items-center">
                   <i className="material-symbols-outlined pe-2 md-18 text-primary">mode_comment</i>3 comments
                 </div>

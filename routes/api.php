@@ -65,7 +65,6 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/{post}', [PostsController::class, 'DeletePost'])->name('post.delete');
     });
     //blog
-    
     Route::prefix('blogs')->group(function () {
         Route::get('/', [BlogController::class, 'ShowAllBlogs'])->name('blog.show');
         Route::post('/', [BlogController::class, 'CreateBlog'])->name('blog.create');
