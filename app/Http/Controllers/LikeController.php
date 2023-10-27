@@ -7,7 +7,7 @@ use App\Models\Emotion;
 use App\Models\Like;
 use App\Models\Post;
 use App\Models\Qa;
-use GuzzleHttp\Psr7\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LikeController extends Controller

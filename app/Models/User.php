@@ -48,6 +48,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(PrivateMessage::class, 'sender_id');
     }
+
     public function blogs()
     {
         return $this->hasMany(Blog::class, 'user_id');

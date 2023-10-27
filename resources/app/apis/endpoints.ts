@@ -23,6 +23,7 @@ export const ApiConstants = {
   MAJORS: `/majors`,
 
   // admin
+
   USERS_ADMIN: `/admin/users`,
 
   // Add more endpoints as needed
