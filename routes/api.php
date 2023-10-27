@@ -68,14 +68,8 @@ Route::middleware('auth:api')->group(function () {
     Route::put('/quests/{qa}', [QaController::class, 'UpdateQa'])->name('qa.update');
     Route::delete('/quests/{qa}', [QaController::class, 'DeleteqQ'])->name('qa.delete');
     //Like --post
-    Route::get('/like/{post}', [LikeController::class, 'FetchLikeInPost'])->name('post.like');
-    Route::post('/like/{post}', [LikeController::class, 'LikePost'])->name('like.post');
-    //Like --blog
-    Route::get('/like/{blog}', [LikeController::class, 'FetchLikeInBlog'])->name('blog.like');
-    Route::post('/like/{blog}', [LikeController::class, 'LikeBlog'])->name('like.blog');
-    //Like --Q&a
-    Route::get('/like/{qa}', [LikeController::class, 'FetchLikeInQa'])->name('qa.like');
-    Route::post('/like/{qa}', [LikeController::class, 'LikeQa'])->name('like.qa');
+    Route::post('/like/{model}/{id}/{emotion}', [LikeController::class,'LikeItem']); 
+    
     //Comment --post
     Route::get('/comment/{post}', [CommentController::class, 'FetchCommentInPost'])->name('post.show');
     Route::post('/comment/{post}', [CommentController::class, 'AddCommentToPost'])->name('post.comment');

@@ -8,6 +8,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { ContentBlogDetail } from './components/content-detail';
 import { CommentService } from '@/apis/services/comment.service';
 import { TokenService } from '@/apis/services/token.service';
+import { LikeService } from '@/apis/services/like.service';
 
 export const BlogDetailPage = () => {
   const location = useLocation();
@@ -21,6 +22,28 @@ export const BlogDetailPage = () => {
   const commentsQueryKey = ['comments', id];
   const { data, isLoading } = useQuery<IBlogs>(commentsQueryKey, { queryFn: fetchBlogs });
 
+  const user = TokenService.getUser();
+
+  // Like
+  const postLikeMutation = useMutation(LikeService.postLike);
+
+  const postLike = async (emotion: any) => {
+    try {
+      const formData = {
+        user_id: user.user.id,
+        emotion: emotion,
+        blog_id: data?.id,
+      };
+      const response = await postLikeMutation.mutateAsync(formData);
+      console.log('Post liked successfully', response);
+      // You can update the local data or refetch it as needed
+      queryClient.invalidateQueries(commentsQueryKey); // Invalidate the cache to refresh data
+    } catch (error) {
+      console.error('Error liking the post', error);
+    }
+  };
+
+  // Comments
   const postCommentMutation = useMutation(CommentService.postComment, {
     onSettled: () => {
       queryClient.invalidateQueries(commentsQueryKey); // Chỉnh sửa tên query nếu cần
@@ -28,7 +51,6 @@ export const BlogDetailPage = () => {
   });
 
   const postComment = async (commentText: any, parent_id: number, reply_to: string) => {
-    const user = TokenService.getUser();
     try {
       const formData = {
         user_id: user.user.id,
@@ -37,7 +59,6 @@ export const BlogDetailPage = () => {
         content: commentText,
         blog_id: data?.id,
       };
-
       const response = await postCommentMutation.mutateAsync(formData);
       console.log('Bình luận đã được đăng thành công', response);
       return response;
@@ -46,6 +67,7 @@ export const BlogDetailPage = () => {
       throw error;
     }
   };
+
   return (
     <>
       <div id="content-page" className="content-page">
@@ -55,7 +77,7 @@ export const BlogDetailPage = () => {
               <p>Loading...</p>
             ) : (
               <>
-                <ContentBlogDetail data={data} />
+                <ContentBlogDetail data={data} postLike={postLike} />
                 <FormComment postComment={postComment} />
                 <Comments data={data?.comments} postComment={postComment} />
               </>

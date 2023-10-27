@@ -23,6 +23,8 @@ export const ApiConstants = {
   // comments
   POST_COMMENT: `/comment`,
 
+  // likes
+  POST_LIKE: `/like`,
   // admin
 
   USERS_ADMIN: `/admin/users`,
