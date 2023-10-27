@@ -67,6 +67,7 @@ Route::middleware('auth:api')->group(function () {
     //blog
     Route::prefix('blogs')->group(function () {
         Route::get('/', [BlogController::class, 'ShowAllBlogs'])->name('blog.show');
+        Route::get('/', [BlogController::class,'ShowAllBlogs'])->name('blog.show');
         Route::post('/', [BlogController::class, 'CreateBlog'])->name('blog.create');
         Route::put('/{blog}', [BlogController::class, 'UpdateBlog'])->name('blog.update');
         Route::delete('/{blog}', [BlogController::class, 'DeleteBlog'])->name('blog.delete');
@@ -80,20 +81,17 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/{qa}', [QaController::class, 'DeleteqQ'])->name('qa.delete');
         Route::get('/list', [QaController::class, 'ListQa'])->name('qa.list');
     });
-
-    //Like
-    Route::prefix('like')->group(function () {
-        Route::post('/{model}/{id}/{emotion}', [LikeController::class, 'LikeItem']);
-        Route::get('/', [LikeController::class, 'listEmotion']);
+    Route::prefix('like')->group(function(){
+        // Dành cho qa & post(all cảm xúc)
+        Route::post('/{model}/{id}/{emotion}', [LikeController::class,'LikeItem']);
+        // Dành riêng cho blog (like , dislike)
+        Route::post('/{item}/{action}',[LikeController::class,'LikeItemBlog']);
     });
-    Route::prefix('comment')->group(function () {
-        Route::post('/{type}/{id}', [CommentController::class, 'AddComment']);
-        Route::get('/{type}/{id}', [CommentController::class, 'allCommentsLevel1']);
-        Route::get('/{type}/{id}/{commentParent}', [CommentController::class, 'allSubordinateComments']);
-        Route::put('/{comment}', [CommentController::class, 'editComment']);
-        Route::delete('/{comment}', [CommentController::class, 'deleteComment']);
-    });
+   
 
+    Route::post('comment/{type}/{id}',[CommentController::class,'AddComment']);
+    
+  
     //friend --relationship
     Route::post('/send-request/{recipient}', [FriendController::class, 'SendFriendRequest'])->name('friend.send');
     Route::post('/comfirm-request/{sender}', [FriendController::class, 'ConfirmFriendRequest'])->name('friend.confirm');

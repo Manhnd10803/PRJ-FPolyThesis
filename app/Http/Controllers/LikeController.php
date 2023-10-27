@@ -1,12 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Models\Blog;
-use App\Models\Emotion;
 use App\Models\Like;
-use App\Models\Post;
-use App\Models\Qa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -43,6 +38,40 @@ class LikeController extends Controller
             $message = 'Emotion added successfully';
         }
         return response()->json(['message' => $message]);
+    } 
+    public function LikeItemBlog(Request $request, $item, $action) {
+        $user = Auth::user();
+        $validEmotions = config('default.valid_emotions');
+        
+        if (!in_array($action, $validEmotions)) {
+            return response()->json(['error' => 'Invalid emotion type'], 400);
+        }
+        
+        $existingReaction = Like::where('user_id', $user->id)->where('blog_id', $item)->first();
+        
+        if ($existingReaction) {
+            // Nếu đã có phản ứng trước đó
+            if ($existingReaction->emotion === $action) {
+                // Nếu cảm xúc hiện tại là giống với hành động người dùng, xóa cảm xúc
+                $existingReaction->delete();
+                $message = 'Removed reaction successfully';
+            } else {
+                // Nếu cảm xúc hiện tại khác với hành động người dùng, cập nhật thành cảm xúc mới
+                $existingReaction->emotion = $action;
+                $existingReaction->save();
+                $message = 'Updated reaction successfully';
+            }
+        } else {
+            // Nếu không có phản ứng trước đó, tạo phản ứng mới
+            $like = new Like([
+                'user_id' => $user->id,
+                'blog_id' => $item,
+                'emotion' => $action,
+            ]);
+            $like->save();
+            $message = 'Added ' . $action . ' successfully';
+        } 
+        return response()->json(['message' => $message ]);
     }
     /**
      * @OA\Get(
