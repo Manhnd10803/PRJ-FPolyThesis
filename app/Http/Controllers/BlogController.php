@@ -230,4 +230,23 @@ class BlogController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
+
+    public function detailBlog(Blog $blog)
+    {
+        $blog->major;
+        $emotions = $blog->likes->pluck('emotion')->unique();
+        foreach ($emotions as $emotion) {
+            $countsByEmotion[$emotion] = $blog->likes->where('emotion', $emotion)->count();
+        }
+        $blog->user;
+        $comments = Comment::where('blog_id', $blog->id)->where('parent_id', 0)->get();
+        foreach ($comments as $comment) {
+            $comment->user;
+            $comment->replies;
+            foreach ($comment->replies as $reply) {
+                $reply->user;
+            }
+        }
+        return response()->json(['blog' => $blog, 'emotion' => $countsByEmotion, 'comments' => $comments]);
+    }
 }
