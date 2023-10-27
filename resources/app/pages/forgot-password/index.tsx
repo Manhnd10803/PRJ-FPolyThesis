@@ -9,7 +9,7 @@ export const ForgotPasswordPage = () => {
   const navigate = useNavigate();
 
   const {
-    register,
+    register: forgotPassword,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
@@ -43,7 +43,7 @@ export const ForgotPasswordPage = () => {
           <Form.Group>
             <Form.Label>Email address</Form.Label>
             <Form.Control
-              {...register('email')}
+              {...forgotPassword('email')}
               name="email"
               type="email"
               className="mb-0"

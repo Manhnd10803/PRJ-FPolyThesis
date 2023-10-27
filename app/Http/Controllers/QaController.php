@@ -11,8 +11,31 @@ use Illuminate\Support\Facades\DB;
 
 class QaController extends Controller
 {
-    public function ShowAllQa(Request $request)
-    {
+
+    /**
+     * @OA\Get(
+     *     path="/api/quests/list-all-qanda",
+     *     tags={"Q&A"},
+     *     summary="Danh sách tất cả câu hỏi",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Danh sách câu hỏi",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 @OA\Property(property="user_id", type="integer"),
+     *                 @OA\Property(property="title", type="string", description="Tiêu đề câu hỏi"),
+     *                 @OA\Property(property="content", type="string", description="Nội dung câu hỏi"),
+     *                 @OA\Property(property="majors_id", type="integer", description="ID của chuyên ngành liên quan đến câu hỏi"),
+     *                 @OA\Property(property="hashtag", type="string", description="HashTag liên quan đến câu hỏi câu hỏi"),
+     *                 @OA\Property(property="views", type="integer", description="Số lượng lượt xem câu hỏi"),
+     *             ),
+     *         ),
+     *     ),
+     * )
+     */
+
+    public function ShowAllQa(Request $request){
         DB::beginTransaction();
         try {
             $majorsId = $request->input('majors_id');
@@ -71,6 +94,7 @@ class QaController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
+
     public function ListQa(Request $request)
     {
         $hashtag = $request->input('hashtag');
@@ -86,17 +110,38 @@ class QaController extends Controller
         return response()->json($qa, 200);
     }
 
-    public function CreateQa(Request $request)
-    {
+    /**
+     * @OA\Post(
+     *     path="/api/quests",
+     *     tags={"Q&A"},
+     *     summary="Tạo câu hỏi mới",
+     *     description="Tạo một câu hỏi mới với tiêu đề, nội dung, chuyên ngành liên quan và hashtag.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"title", "content", "majors_id", "hashtag"},
+     *             @OA\Property(property="title", type="string", description="Tiêu đề của câu hỏi", maxLength=255),
+     *             @OA\Property(property="content", type="string", description="Nội dung của câu hỏi"),
+     *             @OA\Property(property="majors_id", type="integer", description="ID của chuyên ngành liên quan đến câu hỏi"),
+     *             @OA\Property(property="hashtag", type="string", description="Hashtag của câu hỏi", maxLength=255)
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Câu hỏi đã được tạo thành công"),
+     *     @OA\Response(response=400, description="Lỗi khi tạo câu hỏi")
+     * )
+     */
+    
+    public function CreateQa(Request $request){
         DB::beginTransaction();
-        try {
-            $data = $request->all();
-            $qa = new Qa([
-                'user_id' => Auth::id(),
-                'title' => $data['title'],
-                'content' => $data['content'],
-                'majors_id' => $data['majors_id'],
-            ]);
+        try{
+            $data = $request->all();  
+        $qa = new Qa([
+            // 'user_id' => Auth::id(),
+            'user_id' => Auth::id(),
+            'title' => $data['title'],
+            'content' => $data['content'],
+            'majors_id' => $data['majors_id'],
+        ]);
             if (isset($data['hashtag']) && !empty($data['hashtag'])) {
                 // Tách chuỗi thành mảng các từ (dùng khoảng trắng để tách)
                 $words = preg_split('/\s+/', $data['hashtag']);
@@ -111,16 +156,44 @@ class QaController extends Controller
                 $hashtags = array_slice($hashtags, 0, 5);
                 $qa->hashtag = implode(',', $hashtags);
             }
-            $qa->save();
-            DB::commit();
-            return response()->json($qa, 200);
-        } catch (\Exception $e) {
+        $qa->save();
+        DB::commit();
+        return response()->json($qa, 200);
+        }catch(\Exception $e){
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
-    public function UpdateQa(Request $request, Qa $qa)
-    {
+  
+    /**
+     * @OA\Put(
+     *     path="/api/quests/{qa}",
+     *     tags={"Q&A"},
+     *     summary="Cập nhật thông tin của câu hỏi",
+     *     description="Cập nhật thông tin của một câu hỏi đã tồn tại",
+     *     @OA\Parameter(
+     *         name="qa",
+     *         in="path",
+     *         required=true,
+     *         description="ID của câu hỏi cần cập nhật",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"title", "content", "majors_id", "hashtag"},
+     *             @OA\Property(property="title", type="string", description="Tiêu đề của câu hỏi", maxLength=255),
+     *             @OA\Property(property="content", type="string", description="Nội dung của câu hỏi"),
+     *             @OA\Property(property="majors_id", type="integer", description="ID của chuyên ngành liên quan đến câu hỏi"),
+     *             @OA\Property(property="hashtag", type="string", description="Hashtag của câu hỏi", maxLength=255)
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Câu hỏi đã được cập nhật thành công"),
+     *     @OA\Response(response=400, description="Lỗi xử lý")
+     * )
+     */
+
+    public function UpdateQa(Request $request, Qa $qa) {
         DB::beginTransaction();
         try {
             $data = $request->all();
@@ -150,19 +223,19 @@ class QaController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
-    public function DeleteQa(Qa $qa)
-    {
+
+    public function DeleteQa(Qa $qa){
         DB::beginTransaction();
         try {
-            if (Auth::check() && Auth::user()->id === $qa->user_id) {
-                Comment::where('qa_id', $qa->id)->delete();
-                Like::where('qa_id', $qa->id)->delete();
-                $qa->likes()->delete();
-                $qa->comments()->delete();
-                $qa->delete();
-                DB::commit();
-                return response()->json(['message' => 'Bài Q&a đã bị xóa thành công.'], 200);
-            } else {
+            if(Auth::check() && Auth::user()->id === $qa->user_id){
+            Comment::where('qa_id', $qa->id)->delete();
+            Like::where('qa_id',$qa->id)->delete();
+            $qa->likes()->delete();
+            $qa->comments()->delete();
+            $qa->delete();
+            DB::commit();
+            return response()->json(['message' => 'Bài Q&a đã bị xóa thành công.'], 200);
+            }else{
                 DB::rollBack();
                 return response()->json(['message' => 'Bạn không có quyền này']);
             }
@@ -170,5 +243,5 @@ class QaController extends Controller
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()], 400);
         }
-    }
+    }   
 }

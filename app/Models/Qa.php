@@ -8,8 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Qa extends Model
 {
     use HasFactory;
+    protected $table = 'questison_and_answers';
     protected $fillable = [
-    'title','content','majors_id','hashtag','views'
+        'user_id',
+        'title',
+        'content',
+        'majors_id',
+        'hashtag',
+        'views'
     ];
     public function likes()
 {

@@ -9,7 +9,7 @@ import { TresetPasswordSchema, resetPasswordSchema } from '@/validation/zod/auth
 export const ResetPasswordPage = () => {
   const navigate = useNavigate();
   const {
-    register,
+    register: resetPassword,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
@@ -43,7 +43,7 @@ export const ResetPasswordPage = () => {
           <Form.Group>
             <Form.Label>Mã xác nhận</Form.Label>
             <Form.Control
-              {...register('verification_code')}
+              {...resetPassword('verification_code')}
               name="verification_code"
               type="text"
               className="mb-0"
@@ -57,7 +57,7 @@ export const ResetPasswordPage = () => {
           <Form.Group>
             <Form.Label>Mật khẩu mới</Form.Label>
             <Form.Control
-              {...register('password')}
+              {...resetPassword('password')}
               name="password"
               type="password"
               className="mb-0"

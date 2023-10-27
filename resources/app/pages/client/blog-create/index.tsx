@@ -11,6 +11,8 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { MajorService } from '@/apis/services/major.service';
 import { IMajors } from '@/models/major';
+import { QandAService } from '@/apis/services/qanda.service';
+import { TQandACreateSchema } from '@/validation/zod/qanda';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -41,11 +43,12 @@ export const CreateBlogPage = () => {
   });
 
   const { mutate, isLoading } = useMutation({
-    mutationFn: (body: TBlogCreateSchema) => {
-      return BlogService.CreateBlog(body);
+    mutationFn: (body: TQandACreateSchema) => {
+      return QandAService.createQandA(body);
     },
   });
-  const onSubmit = (data: TBlogCreateSchema) => {
+
+  const onSubmit = (data: TQandACreateSchema) => {
     if (!isLoading) {
       mutate(data, {
         onError: error => {
