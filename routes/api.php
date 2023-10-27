@@ -70,6 +70,7 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/', [BlogController::class, 'CreateBlog'])->name('blog.create');
         Route::put('/{blog}', [BlogController::class, 'UpdateBlog'])->name('blog.update');
         Route::delete('/{blog}', [BlogController::class, 'DeleteBlog'])->name('blog.delete');
+        Route::get('/{blog}', [BlogController::class, 'detailBlog']);
     });
     //qa
     Route::prefix('quests')->group(function () {
