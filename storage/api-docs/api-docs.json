@@ -1405,7 +1405,10 @@
                 "operationId": "7a54460d4ecf667e040735f379b2a58f",
                 "responses": {
                     "200": {
-                        "description": "Danh sách các bài viết"
+                        "description": "Câu hỏi đã được cập nhật thành công"
+                    },
+                    "400": {
+                        "description": "Lỗi xử lý"
                     }
                 }
             }

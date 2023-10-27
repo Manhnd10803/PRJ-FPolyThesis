@@ -42,9 +42,10 @@ export const CreateBlogPage = () => {
 
   const { mutate, isLoading } = useMutation({
     mutationFn: (body: TBlogCreateSchema) => {
-      return BlogService.CreateBlog(body);
+      return BlogService.createBlog(body);
     },
   });
+
   const onSubmit = (data: TBlogCreateSchema) => {
     if (!isLoading) {
       mutate(data, {
