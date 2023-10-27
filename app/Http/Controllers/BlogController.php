@@ -230,7 +230,7 @@ class BlogController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
-
+  
     public function detailBlog(Blog $blog)
     {
         $blog->major;
@@ -250,3 +250,4 @@ class BlogController extends Controller
         return response()->json(['blog' => $blog, 'emotion' => $countsByEmotion, 'comments' => $comments]);
     }
 }
+

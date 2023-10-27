@@ -17,12 +17,14 @@ export const ApiConstants = {
   POSTS: `/posts`,
 
   // blog
+  SHOW_BLOGS: `/blogs`,
   CREATE_BLOG: `/blogs`,
 
   // major
   MAJORS: `/majors`,
 
   // admin
+
   USERS_ADMIN: `/admin/users`,
 
   // Add more endpoints as needed

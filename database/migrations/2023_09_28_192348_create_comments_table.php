@@ -15,10 +15,11 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->text('content');
-            $table->unsignedBigInteger('parent_id');
-            $table->unsignedBigInteger('post_id')->default(null);
-            $table->unsignedBigInteger('blog_id')->default(null);
-            $table->unsignedBigInteger('qa_id')->default(null);
+            $table->unsignedBigInteger('parent_id')->nullable();
+            $table->unsignedBigInteger('post_id')->nullable();
+            $table->unsignedBigInteger('blog_id')->nullable();
+            $table->unsignedBigInteger('qa_id')->nullable();
+            $table->string('reply_to')->nullable();
             $table->timestamps();
         });
     }

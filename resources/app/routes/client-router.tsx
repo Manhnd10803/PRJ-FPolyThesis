@@ -1,5 +1,6 @@
 import { BlogPage } from '@/pages/client/blog';
 import { CreateBlogPage } from '@/pages/client/blog-create';
+import { BlogDetailPage } from '@/pages/client/blog/blog-detail';
 import { ChatPage } from '@/pages/client/chat';
 import { FriendListPage } from '@/pages/client/friend-list';
 import { FriendRequestPage } from '@/pages/client/friend-request';
@@ -30,6 +31,10 @@ export const ClientRouter = [
   {
     path: '/blog-create',
     element: <CreateBlogPage />,
+  },
+  {
+    path: '/blog-detail/:id',
+    element: <BlogDetailPage />,
   },
   {
     path: '/chat',

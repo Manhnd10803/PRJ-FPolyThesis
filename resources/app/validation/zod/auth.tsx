@@ -33,6 +33,7 @@ export const resetPasswordSchema = z.object({
       message: 'Mật khẩu phải chứa ít nhất một chữ cái và một số',
     }),
 });
+export const CommentTextSchema = z.string().min(1);
 
 export type TSignUpSchema = z.infer<typeof signUpSchema>;
 export type TSignInSchema = z.infer<typeof signInSchema>;
