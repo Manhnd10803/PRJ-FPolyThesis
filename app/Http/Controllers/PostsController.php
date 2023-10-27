@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class PostsController extends Controller
 {
-   /**
+    /**
      * @OA\Get(
      *     path="/api/posts/profile",
      *     tags={"Posts"},
@@ -42,70 +42,72 @@ class PostsController extends Controller
      *     }
      * )
      */
-     public function ShowPostProfile(){
+    public function ShowPostProfile()
+    {
         DB::beginTransaction();
         try {
-        $posts = Post::where('user_id', Auth::id()) 
-            ->orWhere(function ($query) {
-                $query->where('status', '<>', 1); 
-            })->orderBy('created_at', 'DESC')->get();
-        $result = [];
-        foreach ($posts as $post) {
-            // Tính toán số lượt like cho bài viết
-            $likeCount = $post->likes->count();
-            // Tính toán số lượng comment cho bài viết
-            $commentCount = Comment::where('post_id', $post->id)->count();
-            // Tính toán số lượng reply cho mỗi bình luận
-            $comments = Comment::where('post_id', $post->id)->get();
-            $replyCount = 0;
-            foreach ($comments as $comment) {
-                $replyCount += Comment::where('post_id', $post->id)->where('parent_id', $comment->id)->count();
-            }
-            // Lấy thông tin về người like
-            $likers = $post->likes->map(function ($like) {
-                return [
-                    'user' => $like->user,
-                    'emotion' => $like->emotion,
-                ];
-            });
-            // Lấy thông tin về người comment và reply
-            $commentData = [];
-            foreach ($comments as $comment) {
-                $commentUser = $comment->user;
-                $replies = Comment::where('post_id', $post->id)->where('parent_id', $comment->id)->get();
-                $replyData = [];
-                foreach ($replies as $reply) {
-                    $replyUser = $reply->user;
-                    $replyData[] = [
-                        'reply' => $reply,
-                        'user' => $replyUser,
+            $posts = Post::where('user_id', Auth::id())
+                ->orWhere(function ($query) {
+                    $query->where('status', '<>', 1);
+                })->orderBy('created_at', 'DESC')->get();
+            $result = [];
+            foreach ($posts as $post) {
+                // Tính toán số lượt like cho bài viết
+                $likeCount = $post->likes->count();
+                // Tính toán số lượng comment cho bài viết
+                $commentCount = Comment::where('post_id', $post->id)->count();
+                // Tính toán số lượng reply cho mỗi bình luận
+                $comments = Comment::where('post_id', $post->id)->get();
+                $replyCount = 0;
+                foreach ($comments as $comment) {
+                    $replyCount += Comment::where('post_id', $post->id)->where('parent_id', $comment->id)->count();
+                }
+                // Lấy thông tin về người like
+                $likers = $post->likes->map(function ($like) {
+                    return [
+                        'user' => $like->user,
+                        'emotion' => $like->emotion,
+                    ];
+                });
+                // Lấy thông tin về người comment và reply
+                $commentData = [];
+                foreach ($comments as $comment) {
+                    $commentUser = $comment->user;
+                    $replies = Comment::where('post_id', $post->id)->where('parent_id', $comment->id)->get();
+                    $replyData = [];
+                    foreach ($replies as $reply) {
+                        $replyUser = $reply->user;
+                        $replyData[] = [
+                            'reply' => $reply,
+                            'user' => $replyUser,
+                        ];
+                    }
+                    $commentData[] = [
+                        'comment' => $comment,
+                        'user' => $commentUser,
+                        'replies' => $replyData,
                     ];
                 }
-                $commentData[] = [
-                    'comment' => $comment,
-                    'user' => $commentUser,
-                    'replies' => $replyData,
+                // Tạo một mảng chứa thông tin về bài viết và tất cả thông tin liên quan
+                $postData = [
+                    'post' => $post,
+                    'like_count' => $likeCount,
+                    'comment_count' => $commentCount,
+                    'reply_count' => $replyCount,
+                    'likers' => $likers,
+                    'comments' => $commentData,
                 ];
+                array_push($result, $postData);
             }
-            // Tạo một mảng chứa thông tin về bài viết và tất cả thông tin liên quan
-            $postData = [
-                'post' => $post,
-                'like_count' => $likeCount,
-                'comment_count' => $commentCount,
-                'reply_count' => $replyCount,
-                'likers' => $likers,
-                'comments' => $commentData,
-            ];
-            array_push($result, $postData);
+            DB::commit();
+            return response()->json($result);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()], 400);
         }
-        DB::commit();
-        return response()->json($result);
-    }catch(\Exception $e){
-        DB::rollBack();
-        return response()->json(['errors' => $e->getMessage()], 400);
     }
-    }
-    public function ShowAllPosts() {
+    public function ShowAllPosts()
+    {
         DB::beginTransaction();
         try {
             // Lấy thông tin người đăng bài và thông tin bài viết (lọc theo bạn bè)
@@ -130,44 +132,21 @@ class PostsController extends Controller
                 foreach ($emotions as $emotion) {
                     $likeCountsByEmotion[$emotion] = $likers->where('emotion', $emotion)->count();
                 }
-                // Tính số lượt bình luận cho bài viết
-                $commentCount = Comment::where('post_id', $post->id)->count();
-                $replyCount = Comment::where('post_id', $post->id)->where('parent_id', '>', 0)->count();
-                $totalCommentsAndReplies = $commentCount + $replyCount;
-                // Lấy danh sách các comment cho bài viết
-                $comments = Comment::where('post_id', $post->id)->get();
-                $commentsData = [];
-                foreach ($comments as $comment) {
-                    // Lấy thông tin người comment
-                    $commentUser = $comment->user;
-                    // Lấy danh sách các reply cho comment
-                    $replies = Comment::where('post_id', $post->id)
-                        ->where('parent_id', $comment->id)
-                        ->get();
-                    $repliesData = [];
-    
-                    foreach ($replies as $reply) {
-                        // Lấy thông tin người reply
-                        $replyUser = $reply->user;
-                        $repliesData[] = [
-                            'reply' => $reply,
-                            'user' => $replyUser,
-                        ];
-                    }
-                    $commentsData[] = [
-                        'comment' => $comment,
-                        'user' => $commentUser,
-                        'replies' => $repliesData,
-                    ];
+                // Tổng số bình luận + 3 bình luận demo
+                $totalComment = Comment::where('post_id', $post->id)->count();
+                $commentDemos = Comment::where('post_id', $post->id)->where('parent_id', 0)->limit(3)->get();
+                foreach ($commentDemos as $commentDemo) {
+                    $commentDemo->user;
+                    //số lượng reply
+                    $commentDemo->reply = Comment::where('post_id', $post->id)->where('parent_id', $commentDemo->id)->count();
                 }
                 // Tạo một mảng chứa thông tin về bài viết và các lượt thích, bình luận của nó
                 $postData = [
                     'post' => $post,
                     'like_counts_by_emotion' => $likeCountsByEmotion,
-                    'total_comments' => $totalCommentsAndReplies,
-                    'total_likes' => $likeCountsByEmotion['total_likes'],
-                    'comments' => $commentsData,
                     'like' => $likers,
+                    'total_comments' => $totalComment,
+                    'comments' => $commentDemos,
                 ];
                 array_push($result, $postData);
             }
@@ -178,8 +157,8 @@ class PostsController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
-    
-    
+
+
     /**
      * @OA\Post(
      *     path="/api/posts",
@@ -247,7 +226,7 @@ class PostsController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
-    
+
     /**
      * @OA\Put(
      *     path="/api/posts/{post}",
@@ -277,33 +256,34 @@ class PostsController extends Controller
      * )
      */
 
-    public function UpdatePost(Request $request, Post $post){
-    DB::beginTransaction();
-    try {
-        $imagePath = $post->images;  
-        if ($request->hasFile('images')) {
-            $images = $request->file('images');   
-            if (count($images) > 5) {
-                DB::rollBack();
-                return response()->json(['error' => 'Không thể tải lên quá 5 hình ảnh.'], 400);
-            }
-            if ($imagePath) {
-                $imagePath = storage_path('app/public') . '/' . $imagePath;
-                if (file_exists($imagePath)) {
-                    unlink($imagePath);
-                }
-            }  
-            $newImagePaths = [];
-            foreach ($images as $image) {
-                if (!$image->isValid() || !in_array($image->getClientOriginalExtension(), ['jpg', 'jpeg', 'png'])) {
+    public function UpdatePost(Request $request, Post $post)
+    {
+        DB::beginTransaction();
+        try {
+            $imagePath = $post->images;
+            if ($request->hasFile('images')) {
+                $images = $request->file('images');
+                if (count($images) > 5) {
                     DB::rollBack();
-                    return response()->json(['error' => 'Tệp tin không hợp lệ. Chỉ chấp nhận tệp tin JPEG, JPG hoặc PNG.'], 400);
-                }  
-                $imagePath = time() . '_' . uniqid() . '.' . $image->extension();
-                $image->move(storage_path('app/public'), $imagePath);
-                $newImagePaths[] = $imagePath;
+                    return response()->json(['error' => 'Không thể tải lên quá 5 hình ảnh.'], 400);
+                }
+                if ($imagePath) {
+                    $imagePath = storage_path('app/public') . '/' . $imagePath;
+                    if (file_exists($imagePath)) {
+                        unlink($imagePath);
+                    }
+                }
+                $newImagePaths = [];
+                foreach ($images as $image) {
+                    if (!$image->isValid() || !in_array($image->getClientOriginalExtension(), ['jpg', 'jpeg', 'png'])) {
+                        DB::rollBack();
+                        return response()->json(['error' => 'Tệp tin không hợp lệ. Chỉ chấp nhận tệp tin JPEG, JPG hoặc PNG.'], 400);
+                    }
+                    $imagePath = time() . '_' . uniqid() . '.' . $image->extension();
+                    $image->move(storage_path('app/public'), $imagePath);
+                    $newImagePaths[] = $imagePath;
+                }
             }
-        }
         $content = $request->input('content', $post->content);
         $status = $request->input('status', $post->status);
         $feeling = $request->input('feeling', $post->feeling);  
@@ -327,7 +307,6 @@ class PostsController extends Controller
         DB::rollBack();
         return response()->json(['errors' => $e->getMessage()], 400);
     }
-}
 
     /**
      * @OA\Delete(
@@ -349,18 +328,19 @@ class PostsController extends Controller
      * )
      */
 
-    public function DeletePost(Post $post){
+    public function DeletePost(Post $post)
+    {
         DB::beginTransaction();
         try {
-            if(Auth::check() && Auth::user()->id === $post->user_id){
-            Comment::where('post_id', $post->id)->delete();
-            Like::where('post_id',$post->id)->delete();
-            $post->likes()->delete();
-            $post->comments()->delete();
-            $post->delete();
-            DB::commit();
-            return response()->json(['message' => 'Bài viết đã bị xóa thành công.'], 200);
-            }else{
+            if (Auth::check() && Auth::user()->id === $post->user_id) {
+                Comment::where('post_id', $post->id)->delete();
+                Like::where('post_id', $post->id)->delete();
+                $post->likes()->delete();
+                $post->comments()->delete();
+                $post->delete();
+                DB::commit();
+                return response()->json(['message' => 'Bài viết đã bị xóa thành công.'], 200);
+            } else {
                 DB::rollBack();
                 return response()->json(['message' => 'Bạn không có quyền này']);
             }
@@ -369,9 +349,9 @@ class PostsController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
-     //Admin Posts
-     
-     /**
+    //Admin Posts
+
+    /**
      * @OA\Get(
      *     path="/api/list-posts",
      *     tags={"Admin Posts"},
@@ -380,7 +360,7 @@ class PostsController extends Controller
      *     @OA\Response(response=200, description="Danh sách các bài viết")
      * )
      */
-     public function index()
+    public function index()
     {
         $posts = Post::all();
         return response()->json(['posts' => $posts], 200);
@@ -410,6 +390,5 @@ class PostsController extends Controller
         }
 
         return response()->json(['post' => $post], 200);
-    }    
-
+    }
 }

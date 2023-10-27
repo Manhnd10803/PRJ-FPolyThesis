@@ -120,13 +120,13 @@
                 }
             }
         },
-        "/api/majors": {
+        "/api/admin/majors": {
             "get": {
                 "tags": [
                     "Admin Majors"
                 ],
                 "summary": "Get the list of majors",
-                "operationId": "4a26156a663b5dcc402bd75540fde5c8",
+                "operationId": "14f68a15c7306763efb4c9b5a8b53331",
                 "responses": {
                     "200": {
                         "description": "Successful operation"
@@ -138,7 +138,7 @@
                     "Admin Majors"
                 ],
                 "summary": "Create a new major",
-                "operationId": "10a805bd1d80e9bc577bf47242e56f61",
+                "operationId": "e50daa507eec02debf8bb92efff43418",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -194,13 +194,13 @@
                 }
             }
         },
-        "/api/majors/{major}": {
+        "/api/admin/majors/{major}": {
             "get": {
                 "tags": [
                     "Admin Majors"
                 ],
                 "summary": "Get details of a major",
-                "operationId": "bf156f6fe598e88f4b2d15a115797611",
+                "operationId": "e83154923b2a66e396525f8b3a63f17d",
                 "parameters": [
                     {
                         "name": "major",
@@ -239,7 +239,7 @@
                     "Admin Majors"
                 ],
                 "summary": "Update a major",
-                "operationId": "553f6e0a22e4850f7c94013b2e997bdd",
+                "operationId": "8adbc97b1856e78ba16dcec4b8e4f4d3",
                 "parameters": [
                     {
                         "name": "major",
@@ -326,7 +326,7 @@
                     "Admin Majors"
                 ],
                 "summary": "Delete a major",
-                "operationId": "fb45b738cf6fb709ec6344ea5dbd9791",
+                "operationId": "9348df370d1f1e60c178a6596bcb5e28",
                 "parameters": [
                     {
                         "name": "major",
@@ -1094,6 +1094,45 @@
                 }
             }
         },
+        "/api/emotions": {
+            "get": {
+                "tags": [
+                    "Emotions"
+                ],
+                "summary": "Danh sách các loại cảm xúc (emotions)",
+                "description": "Lấy danh sách các loại cảm xúc (emotions) được hỗ trợ.",
+                "operationId": "ca985483b9db447a8f3af2534dfa2d59",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách các loại cảm xúc",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "emotions": {
+                                            "description": "Danh sách các loại cảm xúc được hỗ trợ",
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "like",
+                                                    "love",
+                                                    "haha",
+                                                    "wow",
+                                                    "sad",
+                                                    "angry"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/posts/profile": {
             "get": {
                 "tags": [
@@ -1150,74 +1189,6 @@
                                 }
                             }
                         }
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
-        "/api/posts/newfeed": {
-            "get": {
-                "tags": [
-                    "Posts"
-                ],
-                "summary": "Lấy tất cả bài viết của người dùng và bạn bè",
-                "description": "Lấy danh sách tất cả bài viết của người dùng đã đăng nhập và các bài viết của bạn bè của họ.",
-                "operationId": "3c9a4fa5ea605cabe2f46da00b5f1329",
-                "responses": {
-                    "200": {
-                        "description": "Danh sách bài viết đã lấy thành công",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "properties": {
-                                            "id": {
-                                                "type": "integer"
-                                            },
-                                            "user_id": {
-                                                "type": "integer"
-                                            },
-                                            "content": {
-                                                "type": "string"
-                                            },
-                                            "feeling": {
-                                                "type": "string",
-                                                "nullable": true
-                                            },
-                                            "image": {
-                                                "type": "object",
-                                                "nullable": true
-                                            },
-                                            "hashtag": {
-                                                "type": "string",
-                                                "nullable": true
-                                            },
-                                            "status": {
-                                                "type": "integer"
-                                            },
-                                            "views": {
-                                                "type": "integer"
-                                            },
-                                            "created_at": {
-                                                "type": "string"
-                                            },
-                                            "updated_at": {
-                                                "type": "string"
-                                            }
-                                        },
-                                        "type": "object"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Không xác thực"
                     }
                 },
                 "security": [
@@ -1417,64 +1388,6 @@
                     },
                     "401": {
                         "description": "Bạn không có quyền xóa bài viết"
-                    },
-                    "404": {
-                        "description": "Bài viết không được tìm thấy"
-                    }
-                }
-            }
-        },
-        "/api/posts/count-like/{post}": {
-            "get": {
-                "tags": [
-                    "Posts"
-                ],
-                "summary": "Lấy số lượng lượt thích của bài viết",
-                "description": "Lấy số lượng lượt thích của một bài viết dựa trên ID của bài viết.",
-                "operationId": "05b94ef7a3751e97778ef17747d6b7e2",
-                "parameters": [
-                    {
-                        "name": "post",
-                        "in": "path",
-                        "description": "ID của bài viết",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Số lượng lượt thích của bài viết"
-                    },
-                    "404": {
-                        "description": "Bài viết không được tìm thấy"
-                    }
-                }
-            }
-        },
-        "/api/posts/count-cmt/{post}": {
-            "get": {
-                "tags": [
-                    "Posts"
-                ],
-                "summary": "Lấy số lượng bình luận và trả lời của bài viết",
-                "description": "Lấy số lượng bình luận và trả lời của một bài viết dựa trên ID của bài viết.",
-                "operationId": "773f9cd3c9f5d7f5b820a3e452b86286",
-                "parameters": [
-                    {
-                        "name": "post",
-                        "in": "path",
-                        "description": "ID của bài viết",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Số lượng bình luận và trả lời của bài viết"
                     },
                     "404": {
                         "description": "Bài viết không được tìm thấy"
