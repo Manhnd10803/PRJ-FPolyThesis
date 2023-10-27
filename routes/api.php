@@ -64,7 +64,7 @@ Route::middleware('auth:api')->group(function () {
     });
 
     //major
-    Route::get('majors', [MajorController::class, 'list_majors']);
+    // Route::get('majors', [MajorController::class, 'list_majors']);
 
     //post
     Route::prefix('posts')->group(function () {
