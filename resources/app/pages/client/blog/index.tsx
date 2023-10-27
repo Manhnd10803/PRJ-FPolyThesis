@@ -1,8 +1,18 @@
 import { Container, Col } from 'react-bootstrap';
 import { ListCard } from './components/list-card';
 import { Link } from 'react-router-dom';
+import { BlogService } from '@/apis/services/blog.service';
+import { useQuery } from '@tanstack/react-query';
 
 export const BlogPage = () => {
+  const fetchBlogs = async () => {
+    const { data } = await BlogService.showAllBlog();
+    const blogData = data;
+    return blogData;
+  };
+  const { data } = useQuery(['blogs'], () => fetchBlogs());
+  console.log(data);
+
   return (
     <>
       <div id="content-page" className="content-page">
@@ -21,7 +31,7 @@ export const BlogPage = () => {
               </Link>
             </div>
           </Col>
-          <ListCard />
+          <ListCard data={data} />
         </Container>
       </div>
     </>

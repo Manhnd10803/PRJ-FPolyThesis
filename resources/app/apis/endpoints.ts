@@ -17,6 +17,7 @@ export const ApiConstants = {
   POSTS: `/posts`,
 
   // blog
+  SHOW_BLOGS: `/blogs`,
   CREATE_BLOG: `/blogs`,
 
   // major
