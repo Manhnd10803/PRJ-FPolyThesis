@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->string('emotion');
-            $table->unsignedBigInteger('post_id')->default(null);
-            $table->unsignedBigInteger('blog_id')->default(null);
-            $table->unsignedBigInteger('qa_id')->default(null);
+            $table->unsignedBigInteger('post_id')->nullable();
+            $table->unsignedBigInteger('blog_id')->nullable();
+            $table->unsignedBigInteger('qa_id')->nullable();
             $table->timestamps();
             $table->unique(['user_id', 'post_id']);
         });

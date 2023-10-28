@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('questison_and_answers', function (Blueprint $table) {
-            $table->id();
+        Schema::create('question_and_answers', function (Blueprint $table) {
+            $table->id();     
             $table->string('title');
             $table->text('content');
+            $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('majors_id');
             $table->string('hashtag')->nullable();
             $table->integer('views')->default(0);
