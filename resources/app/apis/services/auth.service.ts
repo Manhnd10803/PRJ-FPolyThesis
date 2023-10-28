@@ -16,13 +16,12 @@ type RegisterResponseType = {
 };
 type ForgotPasswordResponseType = {
   // Define the properties of the response data
-  id: number;
-  name: string;
+  email: string;
 };
 type ResetPasswordResponseType = {
   // Define the properties of the response data
-  id: number;
-  name: string;
+  verification_code: number;
+  password: string;
 };
 type VerifyEmailRegisterResponseType = {
   // Define the properties of the response data

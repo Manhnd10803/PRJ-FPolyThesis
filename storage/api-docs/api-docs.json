@@ -1133,6 +1133,41 @@
                 }
             }
         },
+        "/api/majors": {
+            "get": {
+                "tags": [
+                    "Majors"
+                ],
+                "summary": "Danh sách tất cả chuyển ngành",
+                "operationId": "63f2d819fc23ec8a89bd259fcc7b7ad5",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách chuyên ngành",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "majors_name": {
+                                                "type": "string"
+                                            },
+                                            "majors_code": {
+                                                "type": "string"
+                                            },
+                                            "description": {
+                                                "type": "string"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/posts/profile": {
             "get": {
                 "tags": [
@@ -1406,6 +1441,174 @@
                 "responses": {
                     "200": {
                         "description": "Danh sách các bài viết"
+                    }
+                }
+            }
+        },
+        "/api/quests/list-all-qanda": {
+            "get": {
+                "tags": [
+                    "Q&A"
+                ],
+                "summary": "Danh sách tất cả câu hỏi",
+                "operationId": "6f5616a458d9d04eee71c34e0b8b3938",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách câu hỏi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "user_id": {
+                                                "type": "integer"
+                                            },
+                                            "title": {
+                                                "description": "Tiêu đề câu hỏi",
+                                                "type": "string"
+                                            },
+                                            "content": {
+                                                "description": "Nội dung câu hỏi",
+                                                "type": "string"
+                                            },
+                                            "majors_id": {
+                                                "description": "ID của chuyên ngành liên quan đến câu hỏi",
+                                                "type": "integer"
+                                            },
+                                            "hashtag": {
+                                                "description": "HashTag liên quan đến câu hỏi câu hỏi",
+                                                "type": "string"
+                                            },
+                                            "views": {
+                                                "description": "Số lượng lượt xem câu hỏi",
+                                                "type": "integer"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/quests": {
+            "post": {
+                "tags": [
+                    "Q&A"
+                ],
+                "summary": "Tạo câu hỏi mới",
+                "description": "Tạo một câu hỏi mới với tiêu đề, nội dung, chuyên ngành liên quan và hashtag.",
+                "operationId": "f38d1be5470bf3cedbc04b60f975020b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "content",
+                                    "majors_id",
+                                    "hashtag"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "description": "Tiêu đề của câu hỏi",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "content": {
+                                        "description": "Nội dung của câu hỏi",
+                                        "type": "string"
+                                    },
+                                    "majors_id": {
+                                        "description": "ID của chuyên ngành liên quan đến câu hỏi",
+                                        "type": "integer"
+                                    },
+                                    "hashtag": {
+                                        "description": "Hashtag của câu hỏi",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Câu hỏi đã được tạo thành công"
+                    },
+                    "400": {
+                        "description": "Lỗi khi tạo câu hỏi"
+                    }
+                }
+            }
+        },
+        "/api/quests/{qa}": {
+            "put": {
+                "tags": [
+                    "Q&A"
+                ],
+                "summary": "Cập nhật thông tin của câu hỏi",
+                "description": "Cập nhật thông tin của một câu hỏi đã tồn tại",
+                "operationId": "0f3aa64bf9f8d9253b19f58588dd5430",
+                "parameters": [
+                    {
+                        "name": "qa",
+                        "in": "path",
+                        "description": "ID của câu hỏi cần cập nhật",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "content",
+                                    "majors_id",
+                                    "hashtag"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "description": "Tiêu đề của câu hỏi",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "content": {
+                                        "description": "Nội dung của câu hỏi",
+                                        "type": "string"
+                                    },
+                                    "majors_id": {
+                                        "description": "ID của chuyên ngành liên quan đến câu hỏi",
+                                        "type": "integer"
+                                    },
+                                    "hashtag": {
+                                        "description": "Hashtag của câu hỏi",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Câu hỏi đã được cập nhật thành công"
+                    },
+                    "400": {
+                        "description": "Lỗi xử lý"
                     }
                 }
             }

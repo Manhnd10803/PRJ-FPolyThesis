@@ -26,6 +26,16 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+Route::get('majors',[MajorController::class,'list_majors']);
+
+//qa
+Route::prefix('quests')->group(function(){
+    Route::get('/list-all-qanda', [QaController::class,'ShowAllQa'])->name('qa.show');
+    Route::post('/', [QaController::class, 'CreateQa'])->name('qa.create');
+    Route::put('/{qa}', [QaController::class, 'UpdateQa'])->name('qa.update');
+    Route::delete('/{qa}', [QaController::class, 'DeleteqQ'])->name('qa.delete');
+    // Route::get('/list',[QaController::class,'ListQa'])->name('qa.list');
+});
 
 //auth
 Route::prefix('auth')->group(function () {
@@ -54,7 +64,7 @@ Route::middleware('auth:api')->group(function () {
     });
 
     //major
-    Route::get('majors', [MajorController::class, 'list_majors']);
+    // Route::get('majors', [MajorController::class, 'list_majors']);
 
     //post
     Route::prefix('posts')->group(function () {

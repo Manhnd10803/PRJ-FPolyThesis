@@ -1,43 +1,101 @@
 import { CustomToggle } from '@/components/custom';
 import { Row, Col, Container, Form, Dropdown } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import EditableTextArea from './form-textarea';
+import toast from 'react-hot-toast';
+import { QandACreateSchema, TQandACreateSchema } from '@/validation/zod/qanda';
+import { IMajors } from '@/models/major';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { MajorService } from '@/apis/services/major.service';
+import { QandAService } from '@/apis/services/qanda.service';
 
 const imageUrl = 'https://picsum.photos/20';
 
 export const CreateAsk = () => {
+  const navigate = useNavigate();
+
+  const { data } = useQuery({
+    queryKey: ['majors'],
+    queryFn: () => MajorService.getMajors(),
+  });
+
+  const majors = data?.data;
+
+  const {
+    register: createAsk,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<TQandACreateSchema>({
+    resolver: zodResolver(QandACreateSchema),
+  });
+
+  const { mutate, isLoading } = useMutation({
+    mutationFn: (body: TQandACreateSchema) => {
+      return QandAService.createQandA(body);
+    },
+  });
+  const onSubmit = (data: TQandACreateSchema) => {
+    if (!isLoading) {
+      mutate(data, {
+        onError: error => {
+          console.log(error);
+        },
+        onSuccess: () => {
+          toast.success('Câu hỏi đã được tạo thành công');
+          navigate('/');
+        },
+      });
+    }
+  };
+
   return (
     <>
       <div className="d-flex align-items-center">
-        {/* ============== FORM ============== */}
-        <form className="post-text ms-3 w-100 " data-bs-toggle="modal" data-bs-target="#post-modal">
+        {/* ============== FORM ADD QUESTION ============== */}
+        <Form
+          onSubmit={handleSubmit(onSubmit)}
+          encType="multipart/form-data"
+          className="post-text ms-3 w-100 "
+          data-bs-toggle="modal"
+          data-bs-target="#post-modal"
+        >
           <Row className="form-group">
             <Form.Label column sm="2" htmlFor="to" className="col-form-label">
               Title
             </Form.Label>
             <Col sm="12">
-              <Form.Control type="text" name="title" id="title" placeholder="Write your question titles..." />
+              <Form.Control
+                {...createAsk('title')}
+                type="text"
+                id="title"
+                placeholder="Viết tóm tắt câu hỏi của bạn..."
+              />
             </Col>
+            <p className="text-danger">{errors?.title?.message}</p>
           </Row>
 
           <Row className="form-group">
             <Form.Label column sm="2" htmlFor="exampleFormControlSelect1">
               Majors
             </Form.Label>
-            <Col sm={12}>
-              <select className="form-select" id="exampleFormControlSelect1">
-                <option>What is your majors ?</option>
-                <option>Website Design</option>
-                <option>Software Application</option>
-                <option>Software Development</option>
-                <option>Mobile Programming</option>
-                <option>Game Programming</option>
-                <option>Data Rocessing</option>
-              </select>
+            <Col sm="12">
+              <Form.Select
+                {...createAsk('majors_id')}
+                aria-label="Default select example"
+                className="form-select"
+                id="exampleFormControlSelect1"
+              >
+                <option value="0">Chọn chuyên ngành</option>
+                {majors?.map((item: IMajors) => <option value={item.id}>{item.majors_name}</option>)}
+              </Form.Select>
             </Col>
+
+            <p className="text-danger">{errors?.majors_id?.message}</p>
           </Row>
 
-          {/* <Row className="form-group">
+          <Row className="form-group">
             <Form.Label column sm="2" htmlFor="to" className="col-form-label">
               Content
             </Form.Label>
@@ -45,14 +103,17 @@ export const CreateAsk = () => {
               <Form.Control
                 as="textarea"
                 className="textarea"
-                name="content"
+                id="content"
+                {...createAsk('content')}
                 rows={5}
                 placeholder="Let us know the problem you are having..."
               />
             </Col>
-          </Row> */}
 
-          <EditableTextArea />
+            <p className="text-danger">{errors?.content?.message}</p>
+          </Row>
+
+          {/* <EditableTextArea /> */}
 
           <Row className="form-group">
             <Form.Label column sm="2" htmlFor="to" className="col-form-label">
@@ -61,11 +122,13 @@ export const CreateAsk = () => {
             <Col sm="12">
               <Form.Control
                 type="text"
-                id="to"
-                name="hashtag"
+                id="hashtag"
+                {...createAsk('hashtag')}
                 placeholder="Add up to 5 tags to describe what your question is about. Start typing to see suggestions..."
               />
             </Col>
+
+            <p className="text-danger">{errors?.hashtag?.message}</p>
           </Row>
           <hr />
           <div className="other-option">
@@ -108,7 +171,7 @@ export const CreateAsk = () => {
           <button type="submit" className="btn btn-primary d-block w-100 mt-3">
             Post Questions
           </button>
-        </form>
+        </Form>
       </div>
       {/* <hr /> */}
       <ul className="d-flex flex-wrap align-items-center list-inline m-0 p-0">
@@ -138,6 +201,7 @@ export const CreateAsk = () => {
           </div>
         </li> */}
       </ul>
+
       {/* <hr />
       <div className="other-option">
         <div className="d-flex align-items-center justify-content-between">
