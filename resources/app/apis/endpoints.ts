@@ -13,6 +13,9 @@ export const ApiConstants = {
   // user
   USER: `/users`,
 
+  // question and answer
+  CREATEASK: '/quests',
+
   // post
   POSTS: `/posts`,
 

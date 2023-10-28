@@ -58,7 +58,7 @@ export const LoginPage = () => {
             </Form.Group>
             <Form.Group className="form-group">
               <Form.Label>Password</Form.Label>
-              <Link to="/forgot-password" className="float-end">
+              <Link to="/get-forgot-password" className="float-end">
                 Forgot password?
               </Link>
               <Form.Control
