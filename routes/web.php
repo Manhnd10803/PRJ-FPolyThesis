@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 // Route dành cho trang quản trị
 Route::group(['prefix' => 'admin'], function () {
     Route::get('/dashboard', function () {
-        return view('admin.app');
+        return view('admin.dashboard');
     });
 });
 
