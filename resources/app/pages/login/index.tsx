@@ -1,4 +1,4 @@
-import { Col, Form, Button } from 'react-bootstrap';
+import { Col, Form, Button, Spinner } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -58,7 +58,7 @@ export const LoginPage = () => {
             </Form.Group>
             <Form.Group className="form-group">
               <Form.Label>Password</Form.Label>
-              <Link to="/forgot-password" className="float-end">
+              <Link to="/get-forgot-password" className="float-end">
                 Forgot password?
               </Link>
               <Form.Control
@@ -76,13 +76,21 @@ export const LoginPage = () => {
                 <Form.Check.Input type="checkbox" className="me-2" id="customCheck11" />
                 <Form.Check.Label>Remember Me</Form.Check.Label>
               </Form.Check>
+
               <Button
                 disabled={isSubmitting}
                 type="submit"
-                className="disabled:bg-gray-500"
+                className="disabled:bg-gray-500 d-flex align-items-center justify-content-center gap-1"
                 variant="primary"
                 style={{ width: '100%' }}
               >
+                {isSubmitting ? (
+                  <>
+                    <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                  </>
+                ) : (
+                  ''
+                )}
                 Sign in
               </Button>
             </div>

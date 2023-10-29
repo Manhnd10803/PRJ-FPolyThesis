@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminBlogController;
-use App\Http\Controllers\Admin\AdminEmotionController;
 use App\Http\Controllers\Admin\AdminMajorController;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\AuthController;
@@ -9,6 +8,7 @@ use App\Http\Controllers\BlogController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\MajorController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\QaController;
 use App\Http\Controllers\PrivateMessagesController;
@@ -28,6 +28,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 //auth
+// Route::get('/quests/{qa}', [QaController::class, 'detailQandA'])->name('qa.detail');
+
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('user.register');
     Route::get('/google-auth', [AuthController::class, 'googleAuth'])->name('user.googleAuth');
@@ -38,6 +40,7 @@ Route::prefix('auth')->group(function () {
     Route::post('/post-reset-password', [AuthController::class, 'resetPassword'])->name('user.resetPassword');
 });
 
+
 Route::middleware('auth:api')->group(function () {
     //route has been authenticated
     Route::post('/auth/logout', [AuthController::class, 'logout'])->name('user.logout');
@@ -46,68 +49,66 @@ Route::middleware('auth:api')->group(function () {
         return 'ok';
     });
     //chat
-    Route::prefix('messages')->group(function(){
+    Route::prefix('messages')->group(function () {
         Route::get('/', [PrivateMessagesController::class, 'ShowAllMessage'])->name('message.show');
         Route::post('/', [PrivateMessagesController::class, 'SendMessages'])->name('message.create');
         Route::put('/{privateMessage}', [PrivateMessagesController::class, 'UpdateMessage'])->name('message.update');
         Route::delete('/{privateMessage}', [PrivateMessagesController::class, 'DeleteMessage'])->name('message.delete');
     });
-    
+
+    //major
+    Route::get('majors', [MajorController::class, 'list_majors']);
+
     //post
     Route::prefix('posts')->group(function () {
-    Route::get('/profile', [PostsController::class, 'ShowPostProfile'])->name('profile.show');
-    Route::post('/', [PostsController::class, 'CreatePost'])->name('post.create');
-    Route::put('/{post}', [PostsController::class, 'UpdatePost'])->name('post.update');
-    Route::delete('/{post}', [PostsController::class, 'DeletePost'])->name('post.delete');
-    Route::get('/count-like/{post}', [PostsController::class, 'CountLikeInPost'])->name('like.count');
-    Route::get('/count-cmt/{post}', [PostsController::class, 'CountCommentInPost'])->name('comment.count');
-    Route::get('/newfeed',[PostsController::class,'ShowAllPosts'])->name('post.all');
+        Route::get('/newfeed', [PostsController::class, 'ShowAllPosts'])->name('post.show');
+        Route::get('/profile', [PostsController::class, 'ShowPostProfile'])->name('profile.show');
+        Route::post('/', [PostsController::class, 'CreatePost'])->name('post.create');
+        Route::put('/{post}', [PostsController::class, 'UpdatePost'])->name('post.update');
+        Route::delete('/{post}', [PostsController::class, 'DeletePost'])->name('post.delete');
     });
     //blog
     Route::prefix('blogs')->group(function () {
+        Route::get('/', [BlogController::class, 'ShowAllBlogs'])->name('blog.show');
         Route::post('/', [BlogController::class, 'CreateBlog'])->name('blog.create');
         Route::put('/{blog}', [BlogController::class, 'UpdateBlog'])->name('blog.update');
         Route::delete('/{blog}', [BlogController::class, 'DeleteBlog'])->name('blog.delete');
+        Route::get('/{blog}', [BlogController::class, 'detailBlog']);
     });
-    //qa
-    Route::prefix('quests')->group(function(){
-        Route::post('/', [QaController::class, 'CreateQa'])->name('qa.create');
-        Route::put('/{qa}', [QaController::class, 'UpdateQa'])->name('qa.update');
-        Route::delete('/{qa}', [QaController::class, 'DeleteqQ'])->name('qa.delete');
-        Route::get('/list',[QaController::class,'ListQa'])->name('qa.list');
-    });
-   
+    //Emotion
     Route::prefix('like')->group(function () {
-        //Like --post
-        Route::get('/{post}', [LikeController::class, 'FetchLikeInPost'])->name('post.like');
-        Route::post('/{post}', [LikeController::class, 'LikePost'])->name('like.post');
-        //Like --blog
-        Route::get('/{blog}', [LikeController::class, 'FetchLikeInBlog'])->name('blog.like');
-        Route::post('/{blog}', [LikeController::class, 'LikeBlog'])->name('like.blog');
-        //Like --Q&a
-        Route::get('/{qa}', [LikeController::class, 'FetchLikeInQa'])->name('qa.like');
-        Route::post('/{qa}', [LikeController::class, 'LikeQa'])->name('like.qa');
-        
+        // Dành cho qa & post(all cảm xúc)
+        Route::post('/{model}/{id}/{emotion}', [LikeController::class, 'LikeItem']);
+        Route::get('/', [LikeController::class, 'listEmotion']);
+        // Dành riêng cho blog (like , dislike)
+        Route::post('/{item}/{action}', [LikeController::class, 'LikeItemBlog']);
     });
+    //Comment
     Route::prefix('comment')->group(function () {
-    //Comment --post
-    Route::get('/{post}', [CommentController::class, 'FetchCommentInPost'])->name('post.show');
-    Route::post('/{post}', [CommentController::class, 'AddCommentToPost'])->name('post.comment');
-    //Comment --blog
-    Route::get('/{blog}', [CommentController::class, 'FetchCommentInBlog'])->name('blog.show');
-    Route::post('/{blog}', [CommentController::class, 'AddCommentToBlog'])->name('blog.comment');
-    //Comment --Q&a
-    Route::get('/{qa}', [CommentController::class, 'FetchCommentInQa'])->name('qa.show');
-    Route::post('/{qa}', [CommentController::class, 'AddCommentToQa'])->name('qa.comment');
+        Route::post('/{type}/{id}', [CommentController::class, 'AddComment']);
+        Route::get('/{type}/{id}', [CommentController::class, 'allCommentsLevel1']);
+        Route::get('/{type}/{id}/{commentParent}', [CommentController::class, 'allSubordinateComments']);
+        Route::put('/{comment}', [CommentController::class, 'editComment']);
+        Route::delete('/{comment}', [CommentController::class, 'deleteComment']);
     });
-  
+
+    Route::get('majors', [MajorController::class, 'list_majors']);
+
+    //qa
+    Route::prefix('quests')->group(function () {
+        Route::get('/', [QaController::class, 'ShowAllQa'])->name('qa.showAll');
+        Route::post('/', [QaController::class, 'CreateQa'])->name('qa.create');
+        Route::get('/{qa}', [QaController::class, 'detailQandA'])->name('qa.detail');
+//     Route::put('/{qa}', [QaController::class, 'UpdateQa'])->name('qa.update');
+//     Route::delete('/{qa}', [QaController::class, 'DeleteqQ'])->name('qa.delete');
+//     Route::get('/list', [QaController::class, 'ListQa'])->name('qa.list');
+    });
+
     //friend --relationship
     Route::post('/send-request/{recipient}', [FriendController::class, 'SendFriendRequest'])->name('friend.send');
     Route::post('/comfirm-request/{sender}', [FriendController::class, 'ConfirmFriendRequest'])->name('friend.confirm');
     Route::put('/update-relation/{friend}', [FriendController::class, 'UpdateFriendshipType'])->name('friend.update');
     Route::get('/friend', [FriendController::class, 'FetchAllFriend'])->name('friend.list');
-
-
     Route::group(['prefix' => 'admin', 'middleware' => 'scope:admin'], function () {
         //User Management
         Route::prefix('users')->group(function () {
@@ -132,12 +133,6 @@ Route::middleware('auth:api')->group(function () {
             Route::post('/', [AdminMajorController::class, 'store'])->name('admin.majors.store');
             Route::put('/{major}', [AdminMajorController::class, 'update'])->name('admin.majors.update');
             Route::delete('/{major}', [AdminMajorController::class, 'destroy'])->name('admin.majors.destroy');
-        });
-        //Emotion Admin
-        Route::prefix('emotions')->group(function () {
-            Route::post('/', [AdminEmotionController::class, 'addEmotion'])->name('admin.emotion.add');
-            Route::put('/{oldEmotion}', [AdminEmotionController::class, 'updateEmotion'])->name('admin.emotion.update');
-            Route::delete('/{emotionToDelete}', [AdminEmotionController::class, 'deleteEmotion'])->name('admin.emotion.delete');
         });
     });
 });

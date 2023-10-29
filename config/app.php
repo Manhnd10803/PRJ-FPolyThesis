@@ -190,5 +190,4 @@ return [
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
         'L5Swagger' => L5Swagger\L5SwaggerFacade::class,
     ])->toArray(),
-
 ];

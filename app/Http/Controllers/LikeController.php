@@ -2,86 +2,188 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Blog;
-use App\Models\Emotion;
 use App\Models\Like;
-use App\Models\Post;
-use App\Models\Qa;
-use GuzzleHttp\Psr7\Request;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LikeController extends Controller
 {
-    public function LikePost(Request $request, Post $post, $emotion){
+    /**
+ * @OA\Post(
+ *     path="/api/like/{model}/{item}/{emotion}",
+ *     summary="Thích hoặc bỏ thích một mục",
+ *     description="Thích hoặc bỏ thích một mục (Post, Blog, hoặc Qa) với một cảm xúc cụ thể.",
+ *     operationId="likeItem",
+ *     tags={"Likes"},
+ *     @OA\Parameter(
+ *         name="model",
+ *         in="path",
+ *         description="Loại mục (post, qa)",
+ *         required=true,
+ *         @OA\Schema(type="string", enum={"post","qa"})
+ *     ),
+ *     @OA\Parameter(
+ *         name="item",
+ *         in="path",
+ *         description="ID của mục",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Parameter(
+ *         name="emotion",
+ *         in="path",
+ *         description="Loại cảm xúc (emotion)",
+ *         required=true,
+ *         @OA\Schema(type="string", enum={"like", "love", "haha", "wow","sad","angry"})
+ *     ),
+ *     @OA\Response(
+ *         response="200",
+ *         description="Cảm xúc được cập nhật thành công",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response="400",
+ *         description="Lỗi",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="error", type="string")
+ *         )
+ *     )
+ * )
+ */
+
+    public function LikeItem(Request $request, $model, $item, $emotion)
+    {
         $user = Auth::user();
-        $validEmotions = ['like', 'love', 'haha', 'wow', 'sad', 'angry'];
-        if (!in_array($emotion, $validEmotions)){
+        $validEmotions = config('default.valid_emotions');
+        if (!in_array($emotion, $validEmotions)) {
             return response()->json(['error' => 'Invalid emotion type'], 400);
         }
-        $existingLike = Like::where('user_id', $user->id)->where('post_id', $post->id)->where('emotion', $emotion)->first();
+        // Xác định tên của model (Post hoặc Qa)
+        $modelName = strtolower(class_basename($model));
+        // Kiểm tra xem người dùng đã có cảm xúc cho mục này chưa
+        $existingLike = Like::where('user_id', $user->id)->where($modelName . '_id', $item)->first();
         if ($existingLike) {
-            $existingLike->delete();
-            $message = 'Unliked successfully';
+            // Nếu đã tồn tại và cảm xúc trùng khớp với cảm xúc hiện tại, xóa cảm xúc
+            if ($existingLike->emotion === $emotion) {
+                $existingLike->delete();
+                $message = 'Emotion removed successfully';
+            } else {
+                // Nếu đã tồn tại, nhưng cảm xúc không trùng khớp, cập nhật lại cảm xúc
+                $existingLike->update(['emotion' => $emotion]);
+                $message = 'Emotion updated successfully';
+            }
         } else {
+            // Nếu chưa tồn tại, tạo mới cảm xúc
             Like::create([
                 'user_id' => $user->id,
-                'post_id' => $post->id,
+                $modelName . '_id' => $item,
                 'emotion' => $emotion,
             ]);
-            $message = 'Liked successfully';
+            $message = 'Emotion added successfully';
         }
         return response()->json(['message' => $message]);
     }
-    public function LikeBlog(Request $request, Blog $blog, $emotion){
+    /**
+ * @OA\Post(
+ *     path="/api/like/blog/{item}/{action}",
+ *     summary="Thích hoặc bỏ thích bài blog",
+ *     description="Thích hoặc bỏ thích một bài blog với một cảm xúc cụ thể.",
+ *     operationId="likeItemBlog",
+ *     tags={"Likes"},
+ *     @OA\Parameter(
+ *         name="item",
+ *         in="path",
+ *         description="ID của bài blog",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Parameter(
+ *         name="action",
+ *         in="path",
+ *         description="Loại cảm xúc (emotion)",
+ *         required=true,
+ *         @OA\Schema(type="string", enum={"like", "dislike"})
+ *     ),
+ *     @OA\Response(
+ *         response="200",
+ *         description="Cảm xúc được cập nhật thành công",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response="400",
+ *         description="Lỗi",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="error", type="string")
+ *         )
+ *     )
+ * )
+ */
+    public function LikeItemBlog(Request $request, $item, $action)
+    {
         $user = Auth::user();
-        $validEmotions = ['like', 'love', 'haha', 'wow', 'sad', 'angry'];
-        if (!in_array($emotion, $validEmotions)){
+        $validEmotions = config('default.valid_emotions');
+
+        if (!in_array($action, $validEmotions)) {
             return response()->json(['error' => 'Invalid emotion type'], 400);
         }
-        $existingLike = Like::where('user_id', $user->id)->where('blog_id', $blog->id)->where('emotion', $emotion)->first();
-        if ($existingLike) {
-            $existingLike->delete();
-            $message = 'Unliked successfully';
+
+        $existingReaction = Like::where('user_id', $user->id)->where('blog_id', $item)->first();
+
+        if ($existingReaction) {
+            // Nếu đã có phản ứng trước đó
+            if ($existingReaction->emotion === $action) {
+                // Nếu cảm xúc hiện tại là giống với hành động người dùng, xóa cảm xúc
+                $existingReaction->delete();
+                $message = 'Removed reaction successfully';
+            } else {
+                // Nếu cảm xúc hiện tại khác với hành động người dùng, cập nhật thành cảm xúc mới
+                $existingReaction->emotion = $action;
+                $existingReaction->save();
+                $message = 'Updated reaction successfully';
+            }
         } else {
-            Like::create([
+            // Nếu không có phản ứng trước đó, tạo phản ứng mới
+            $like = new Like([
                 'user_id' => $user->id,
-                'blog_id' => $blog->id,
-                'emotion' => $emotion,
+                'blog_id' => $item,
+                'emotion' => $action,
             ]);
-            $message = 'Liked successfully';
+            $like->save();
+            $message = 'Added ' . $action . ' successfully';
         }
         return response()->json(['message' => $message]);
     }
-    public function LikeQa(Request $request, Qa $qa, $emotion){
-        $user = Auth::user();
-        $validEmotions = ['like', 'love', 'haha', 'wow', 'sad', 'angry'];
-        if (!in_array($emotion, $validEmotions)){
-            return response()->json(['error' => 'Invalid emotion type'], 400);
-        }
-        $existingLike = Like::where('user_id', $user->id)->where('qa_id', $qa->id)->where('emotion', $emotion)->first();
-        if ($existingLike) {
-            $existingLike->delete();
-            $message = 'Unliked successfully';
-        } else {
-            Like::create([
-                'user_id' => $user->id,
-                'qa_id' => $qa->id,
-                'emotion' => $emotion,
-            ]);
-            $message = 'Liked successfully';
-        }
-        return response()->json(['message' => $message]);
-    }
-    public function FetchLikeInPost(Post $post){
-        $likes = Like::where('post_id',$post->id)->get();
-        return response()->json($likes);
-    }
-    public function FetchLikeInBlog(Blog $blog){
-        $likes = Like::where('blog_id',$blog->id)->get();
-        return response()->json($likes);
-    }
-    public function FetchLikeInQa(Qa $qa){
-        $likes = Like::where('qa_id',$qa->id)->get();
-        return response()->json($likes);
+    /**
+     * @OA\Get(
+     *     path="/api/like",
+     *     tags={"Emotions"},
+     *     summary="Danh sách các loại cảm xúc (emotions) dành cho post và qa",
+     *     description="Lấy danh sách các loại cảm xúc (emotions) được hỗ trợ.",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Danh sách các loại cảm xúc",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="emotions",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="string",
+     *                     enum={"like", "love", "haha", "wow", "sad", "angry"}
+     *                 ),
+     *                 description="Danh sách các loại cảm xúc được hỗ trợ"
+     *             )
+     *         )
+     *     )
+     * )
+     */
+    public function listEmotion()
+    {
+        $emotions = config('default.valid_emotions');
+        return response()->json(['emotions' => $emotions]);
     }
 }

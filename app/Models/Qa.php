@@ -8,15 +8,28 @@ use Illuminate\Database\Eloquent\Model;
 class Qa extends Model
 {
     use HasFactory;
+    protected $table = 'questison_and_answers';
     protected $fillable = [
-    'title','content','majors_id','hashtag','views'
+        'user_id',
+        'title',
+        'content',
+        'majors_id',
+        'hashtag',
+        'views'
+
     ];
     public function likes()
-{
-    return $this->hasMany(Like::class);
-}
+    {
+        return $this->hasMany(Like::class);
+    }
+  
     public function comments()
-{   
-    return $this->hasMany(Comment::class);
-}
+    {   
+        return $this->hasMany(Comment::class);
+    }
+  
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

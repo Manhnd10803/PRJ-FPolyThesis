@@ -32,4 +32,5 @@ return [
             'favourite' => 2,
         ]
     ],
+    'valid_emotions' => ['dislike','like', 'love', 'haha', 'wow', 'sad', 'angry'],
 ];

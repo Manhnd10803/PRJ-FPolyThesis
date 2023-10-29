@@ -8,15 +8,34 @@ export const ApiConstants = {
   LOGOUT: `/auth/logout`,
   VERIFY_EMAIL_REGISTER: `/auth/verify`,
 
-  REFRESH: `/auth/refresh`,
+  REFRESH: `/auth/refresh-token`,
 
   // user
   USER: `/users`,
 
+  // question and answer
+  CREATEASK: '/quests',
+  ALL_QANDA: '/quests',
+  // LIST_QANDA: '/quests/lista',
+  DETAIL_QANDA: '/quests',
+
   // post
   POSTS: `/posts`,
 
+  // blog
+  SHOW_BLOGS: `/blogs`,
+  SHOW_BLOG_DETAIL: `/blogs`,
+  CREATE_BLOG: `/blogs`,
+
+  // major
+  MAJORS: `/majors`,
+
+  // Comment
+  CREATE_COMMENT: `/comment`,
+  DELETE_COMMENT: `/comment`,
+  EDIT_COMMENT: `/comment`,
   // admin
+
   USERS_ADMIN: `/admin/users`,
 
   // Add more endpoints as needed
