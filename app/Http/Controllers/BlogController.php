@@ -11,6 +11,101 @@ use Illuminate\Support\Facades\DB;
 
 class BlogController extends Controller
 {
+   /**
+ * @OA\Get(
+ *     path="/api/blogs",
+ *     summary="Lấy danh sách các bài viết",
+ *     description="Lấy danh sách các bài viết tùy biến dữ liệu dựa trên majors_id và hashtag (mặc định không có tùy biến đổ tất cả dữ liệu ra).",
+ *     operationId="getBlogs",
+ *     tags={"Blogs"},
+ *     @OA\Parameter(
+ *         name="majors_id",
+ *         in="query",
+ *         description="ID của ngành học (nếu có)",
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Parameter(
+ *         name="hashtag",
+ *         in="query",
+ *         description="Hashtag (nếu có)",
+ *         @OA\Schema(type="string")
+ *     ),
+ *     @OA\Response(
+ *         response="200",
+ *         description="Danh sách bài viết",
+ *         @OA\JsonContent(
+ *             type="array",
+ *             @OA\Items(
+ *                 @OA\Property(property="blog", type="object",
+ *                     @OA\Property(property="id", type="integer"),
+ *                     @OA\Property(property="status", type="integer", description="trạng thái bài blog"),
+ *                     @OA\Property(property="user_id", type="integer", description="người đăng blog"),
+ *                     @OA\Property(property="title", type="string", description="tiêu đề bài blog"),
+ *                     @OA\Property(property="content", type="text", description="nội dung bài blog"),
+ *                     @OA\Property(property="thumbnail", type="string", description="ảnh  bài blog"),
+ *                     @OA\Property(property="majors_id", type="integer", description="id của chuyên ngành liên quan đến blog"),
+ *                     @OA\Property(property="hashtag", type="string", description="hashtag liên quan đến blog"),
+ *                     @OA\Property(property="views", type="integer", description="Số lượt xem bài blog"),
+ *                     @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
+ *                     @OA\Property(property="updated_at", type="string", format="date-time", nullable=true),
+ *                     @OA\Property(property="likes", type="array",
+ *                         @OA\Items(
+ *                             @OA\Property(property="id", type="integer"),
+ *                             @OA\Property(property="user_id", type="integer"),
+ *                             @OA\Property(property="emotion", type="string"),
+ *                             @OA\Property(property="post_id", type="integer"),
+ *                             @OA\Property(property="blog_id", type="integer"),
+ *                             @OA\Property(property="qa_id", type="integer"),
+ *                             @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
+ *                             @OA\Property(property="updated_at", type="string", format="date-time", nullable=true),
+ *                             @OA\Property(property="user", type="object",
+ *                                 @OA\Property(property="id", type="integer"),
+ *                                 @OA\Property(property="username", type="string"),
+ *                                 @OA\Property(property="first_name", type="string", nullable=true),
+ *                                 @OA\Property(property="last_name", type="string", nullable=true),
+ *                             ),
+ *                         ),
+ *                     ),
+ *                     @OA\Property(property="like_counts_by_emotion", type="object",
+ *                         @OA\Property(property="total_likes", type="integer", description="Tổng số lượt thích"),
+ *                         @OA\Property(property="emotion1", type="integer", description="Số lượt thích với emotion1"),
+ *                         @OA\Property(property="emotion2", type="integer", description="Số lượt thích với emotion2"),
+ *                     ),
+ *                     @OA\Property(property="total_comments", type="integer", description="Tổng số bình luận"),
+ *                     @OA\Property(property="comments", type="array",
+ *                         @OA\Items(
+ *                             @OA\Property(property="id", type="integer"),
+ *                             @OA\Property(property="user_id", type="integer"),
+ *                             @OA\Property(property="content", type="string", description="Nội dung bình luận"),
+ *                             @OA\Property(property="parent_id", type="integer"),
+ *                             @OA\Property(property="post_id", type="integer"),
+ *                             @OA\Property(property="blog_id", type="integer"),
+ *                             @OA\Property(property="qa_id", type="integer"),
+ *                             @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
+ *                             @OA\Property(property="updated_at", type="string", format="date-time", nullable=true),
+ *                             @OA\Property(property="reply", type="integer", description="Số lượng reply"),
+ *                             @OA\Property(property="user", type="object",
+ *                                 @OA\Property(property="id", type="integer"),
+ *                                 @OA\Property(property="username", type="string"),
+ *                                 @OA\Property(property="first_name", type="string", nullable=true),
+ *                                 @OA\Property(property="last_name", type="string", nullable=true),
+ *                             ),
+ *                         ),
+ *                     ),
+ *                 ),
+ *             ),
+ *         ),
+ *     ),
+ *     @OA\Response(
+ *         response="400",
+ *         description="Lỗi",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="errors", type="string")
+ *         ),
+ *     ),
+ * )
+ */
+
     public function ShowAllBlogs(Request $request)
     {
         DB::beginTransaction();

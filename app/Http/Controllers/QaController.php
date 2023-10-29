@@ -27,7 +27,7 @@ class QaController extends Controller
      *                     @OA\Property(property="title", type="string", description="Tiêu đề câu hỏi"),
      *                     @OA\Property(property="content", type="string", description="Nội dung câu hỏi"),
      *                     @OA\Property(property="majors_id", type="integer", description="ID của chuyên ngành liên quan đến câu hỏi"),
-     *                     @OA\Property(property="hashtag", type="string", description="HashTag liên quan đến câu hỏi câu hỏi"),
+     *                     @OA\Property(property="hashtag", type="string", description="HashTag liên quan đến câu hỏi"),
      *                     @OA\Property(property="views", type="integer", description="Số lượt xem câu hỏi"),
      *                     @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
      *                     @OA\Property(property="updated_at", type="string", format="date-time", nullable=true),
