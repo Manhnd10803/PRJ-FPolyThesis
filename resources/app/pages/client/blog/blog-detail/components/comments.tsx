@@ -1,13 +1,17 @@
+import { TokenService } from '@/apis/services/token.service';
 import { Card } from '@/components/custom';
 import { useState } from 'react';
-import { Row, Col, Image, Button, Form, Dropdown } from 'react-bootstrap';
+import { Row, Col, Image, Button, Form, Dropdown, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-export const Comments = ({ data, postComment }: any) => {
+export const Comments = ({ data, postComment, deleteComment }: any) => {
   const [replyFormsVisible, setReplyFormsVisible] = useState({});
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [content, setContent] = useState('');
-
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const userId = TokenService.getUser();
   // Name :
   function combineNames(data: any) {
     if (data.first_name && data.last_name) {
@@ -32,7 +36,6 @@ export const Comments = ({ data, postComment }: any) => {
     setContent(text);
     setIsButtonDisabled(text.trim() === '');
   };
-
   const handleCommentSubmit = async (e: any, parent_id: number, reply_to: string) => {
     e.preventDefault();
     try {
@@ -43,6 +46,14 @@ export const Comments = ({ data, postComment }: any) => {
       setIsButtonDisabled(true);
     } catch (error) {
       console.error('Lỗi kiểm tra Zod: ', error);
+    }
+  };
+  const handleDeleteComment = async (commentId: any) => {
+    try {
+      await deleteComment(commentId);
+      handleClose();
+    } catch (error) {
+      throw error;
     }
   };
 
@@ -57,9 +68,9 @@ export const Comments = ({ data, postComment }: any) => {
           </Card.Header>
           <Card.Body>
             {data &&
-              data.map((comment: any) => {
+              data.map((comment: any, index) => {
                 return (
-                  <Row key={comment?.id}>
+                  <Row key={index}>
                     <Col lg="12">
                       <Card className="card-block card-stretch card-height blog">
                         <Card.Body>
@@ -88,12 +99,35 @@ export const Comments = ({ data, postComment }: any) => {
                                   </Dropdown.Toggle>
                                 </Link>
                                 <Dropdown.Menu className="dropdown-menu-right">
-                                  <Dropdown.Item to="#">
-                                    <i className="ri-delete-bin-6-fill me-2"></i>Delete
-                                  </Dropdown.Item>
-                                  <Dropdown.Item to="#">
-                                    <i className="ri-pencil-fill me-2"></i>Edit
-                                  </Dropdown.Item>
+                                  {userId.user.id === comment?.user?.id ? (
+                                    <>
+                                      <Dropdown.Item onClick={handleShow} className="d-flex align-items-center">
+                                        <span className="material-symbols-outlined me-2">delete</span>
+                                        Xóa bình luận này
+                                      </Dropdown.Item>
+                                      <Modal size="sm" show={show} onHide={handleClose}>
+                                        <Modal.Header closeButton>
+                                          <Modal.Title>Modal heading</Modal.Title>
+                                        </Modal.Header>
+                                        <Modal.Body>Bạn có chắc chắn muốn xóa bình luận này?</Modal.Body>
+                                        <Modal.Footer>
+                                          <Button variant="secondary" onClick={handleClose}>
+                                            Hủy bỏ
+                                          </Button>
+                                          <Button variant="primary" onClick={() => handleDeleteComment(comment?.id)}>
+                                            Đồng ý
+                                          </Button>
+                                        </Modal.Footer>
+                                      </Modal>
+                                      <Dropdown.Item to="#" className="d-flex align-items-center">
+                                        <span className="material-symbols-outlined me-2">edit</span>Chỉnh sửa
+                                      </Dropdown.Item>
+                                    </>
+                                  ) : (
+                                    <Dropdown.Item to="#">
+                                      <i className="ri-pencil-fill me-2"></i>Báo cáo
+                                    </Dropdown.Item>
+                                  )}
                                 </Dropdown.Menu>
                               </Dropdown>
                             </div>
@@ -149,19 +183,47 @@ export const Comments = ({ data, postComment }: any) => {
                           <Col lg="12" key={reply?.id} className="ps-0 ps-md-5">
                             <Card className="card-block card-stretch card-height blog">
                               <Card.Body>
-                                <div className="d-flex align-items-center">
-                                  <div className="user-image mb-3">
-                                    <Image
-                                      className="avatar-80 rounded"
-                                      src={reply?.user?.avatar}
-                                      alt="#"
-                                      data-original-title=""
-                                      title=""
-                                    />
+                                <div className="d-flex justify-content-between">
+                                  <div className="d-flex align-items-center">
+                                    <div className="user-image mb-3">
+                                      <Image
+                                        className="avatar-80 rounded"
+                                        src={reply?.user?.avatar}
+                                        alt="#"
+                                        data-original-title=""
+                                        title=""
+                                      />
+                                    </div>
+                                    <div className="ms-3">
+                                      <h5>{reply?.user ? combineNames(reply?.user) : 'Chưa cập nhật'}</h5>
+                                      <p>@{reply?.user?.username}</p>
+                                    </div>
                                   </div>
-                                  <div className="ms-3">
-                                    <h5>{reply?.user ? combineNames(reply?.user) : 'Chưa cập nhật'}</h5>
-                                    <p>@{reply?.user?.username}</p>
+
+                                  <div className="card-header-toolbar d-flex">
+                                    <Dropdown>
+                                      <Link to="#">
+                                        <Dropdown.Toggle as="span" className="material-symbols-outlined">
+                                          more_horiz
+                                        </Dropdown.Toggle>
+                                      </Link>
+                                      <Dropdown.Menu className="dropdown-menu-right">
+                                        {userId.user.id === reply?.user?.id ? (
+                                          <>
+                                            <Dropdown.Item to="#">
+                                              <i className="ri-delete-bin-6-fill me-2"></i>Xóa
+                                            </Dropdown.Item>
+                                            <Dropdown.Item to="#">
+                                              <i className="ri-pencil-fill me-2"></i>Chỉnh sửa
+                                            </Dropdown.Item>
+                                          </>
+                                        ) : (
+                                          <Dropdown.Item to="#">
+                                            <i className="ri-pencil-fill me-2"></i>Báo cáo
+                                          </Dropdown.Item>
+                                        )}
+                                      </Dropdown.Menu>
+                                    </Dropdown>
                                   </div>
                                 </div>
                                 <div className="blog-description">

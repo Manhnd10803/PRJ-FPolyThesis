@@ -42,6 +42,21 @@ export const BlogDetailPage = () => {
       throw error;
     }
   };
+  // Delete Comment
+  const deleteCommentMutation = useMutation(CommentService.deleteComment, {
+    onSettled: () => {
+      queryClient.invalidateQueries(BlogsQueryKey);
+    },
+  });
+
+  const deleteComment = async (commentId: any) => {
+    try {
+      await deleteCommentMutation.mutateAsync(commentId);
+    } catch (error) {
+      console.error('Lỗi khi xóa bình luận', error);
+    }
+  };
+
   return (
     <>
       <div id="content-page" className="content-page">
@@ -56,7 +71,7 @@ export const BlogDetailPage = () => {
                 <ContentBlogDetail data={data} commentRef={commentRef} />
                 <FormComment postComment={postComment} />
                 <div ref={commentRef}>
-                  <Comments data={data?.comments} postComment={postComment} />
+                  <Comments data={data?.comments} postComment={postComment} deleteComment={deleteComment} />
                 </div>
               </>
             )}

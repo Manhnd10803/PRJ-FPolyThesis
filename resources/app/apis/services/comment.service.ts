@@ -11,5 +11,8 @@ type CommentResponseType = {
 const createComment = <T>(data: T) => {
   return httpRequest.post<CommentResponseType>(`${ApiConstants.CREAT_COMMENT}/blog/${data.blog_id}`, data);
 };
+const deleteComment = <T>(id: T) => {
+  return httpRequest.delete<CommentResponseType>(`${ApiConstants.DELETE_COMMENT}/${id}`);
+};
 
-export const CommentService = { createComment };
+export const CommentService = { createComment, deleteComment };
