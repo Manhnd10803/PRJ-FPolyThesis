@@ -8,6 +8,51 @@ use Illuminate\Support\Facades\Auth;
 
 class LikeController extends Controller
 {
+    /**
+ * @OA\Post(
+ *     path="/api/like/{model}/{item}/{emotion}",
+ *     summary="Thích hoặc bỏ thích một mục",
+ *     description="Thích hoặc bỏ thích một mục (Post, Blog, hoặc Qa) với một cảm xúc cụ thể.",
+ *     operationId="likeItem",
+ *     tags={"Likes"},
+ *     @OA\Parameter(
+ *         name="model",
+ *         in="path",
+ *         description="Loại mục (post, qa)",
+ *         required=true,
+ *         @OA\Schema(type="string", enum={"post","qa"})
+ *     ),
+ *     @OA\Parameter(
+ *         name="item",
+ *         in="path",
+ *         description="ID của mục",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Parameter(
+ *         name="emotion",
+ *         in="path",
+ *         description="Loại cảm xúc (emotion)",
+ *         required=true,
+ *         @OA\Schema(type="string", enum={"like", "love", "haha", "wow","sad","angry"})
+ *     ),
+ *     @OA\Response(
+ *         response="200",
+ *         description="Cảm xúc được cập nhật thành công",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response="400",
+ *         description="Lỗi",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="error", type="string")
+ *         )
+ *     )
+ * )
+ */
+
     public function LikeItem(Request $request, $model, $item, $emotion)
     {
         $user = Auth::user();
@@ -15,7 +60,7 @@ class LikeController extends Controller
         if (!in_array($emotion, $validEmotions)) {
             return response()->json(['error' => 'Invalid emotion type'], 400);
         }
-        // Xác định tên của model (Post, Blog, hoặc Qa)
+        // Xác định tên của model (Post hoặc Qa)
         $modelName = strtolower(class_basename($model));
         // Kiểm tra xem người dùng đã có cảm xúc cho mục này chưa
         $existingLike = Like::where('user_id', $user->id)->where($modelName . '_id', $item)->first();
@@ -40,6 +85,43 @@ class LikeController extends Controller
         }
         return response()->json(['message' => $message]);
     }
+    /**
+ * @OA\Post(
+ *     path="/api/like/blog/{item}/{action}",
+ *     summary="Thích hoặc bỏ thích bài blog",
+ *     description="Thích hoặc bỏ thích một bài blog với một cảm xúc cụ thể.",
+ *     operationId="likeItemBlog",
+ *     tags={"Likes"},
+ *     @OA\Parameter(
+ *         name="item",
+ *         in="path",
+ *         description="ID của bài blog",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\Parameter(
+ *         name="action",
+ *         in="path",
+ *         description="Loại cảm xúc (emotion)",
+ *         required=true,
+ *         @OA\Schema(type="string", enum={"like", "dislike"})
+ *     ),
+ *     @OA\Response(
+ *         response="200",
+ *         description="Cảm xúc được cập nhật thành công",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response="400",
+ *         description="Lỗi",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="error", type="string")
+ *         )
+ *     )
+ * )
+ */
     public function LikeItemBlog(Request $request, $item, $action)
     {
         $user = Auth::user();

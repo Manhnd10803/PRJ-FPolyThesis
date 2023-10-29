@@ -12,6 +12,51 @@ use Illuminate\Support\Facades\DB;
 
 class CommentController extends Controller
 {
+    /**
+ * @OA\Post(
+ *     path="/api/comments/{type}/{id}",
+ *     summary="Thêm bình luận",
+ *     description="Thêm một bình luận cho một mục loại 'post', 'blog', hoặc 'qa' có ID tương ứng.",
+ *     operationId="addComment",
+ *     tags={"Comments"},
+ *     @OA\Parameter(
+ *         name="type",
+ *         in="path",
+ *         description="Loại mục (post, blog, qa)",
+ *         required=true,
+ *         @OA\Schema(type="string", enum={"post", "blog", "qa"})
+ *     ),
+ *     @OA\Parameter(
+ *         name="id",
+ *         in="path",
+ *         description="ID của mục",
+ *         required=true,
+ *         @OA\Schema(type="integer")
+ *     ),
+ *     @OA\RequestBody(
+ *         required=true,
+ *         @OA\JsonContent(
+ *             @OA\Property(property="content", type="string", description="Nội dung bình luận", example="This is a comment."),
+ *             @OA\Property(property="parent_id", type="integer", description="ID của bình luận cha (nếu có)")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response="200",
+ *         description="Bình luận được thêm thành công",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="message", type="string", example="Comment added successfully")
+ *         )
+ *     ),
+ *     @OA\Response(
+ *         response="401",
+ *         description="Không được phép",
+ *         @OA\JsonContent(
+ *             @OA\Property(property="error", type="string")
+ *         )
+ *     ),
+ * )
+ */
+
     public function AddComment(Request $request, $type, $id)
     {
         DB::beginTransaction();
