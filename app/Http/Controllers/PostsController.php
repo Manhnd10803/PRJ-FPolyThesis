@@ -106,6 +106,33 @@ class PostsController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/posts/newfeed",
+     *     summary="Get user's newfeed posts",
+     *     description="Get user's newfeed posts including posts from friends, likes, comments, etc.",
+     *     operationId="getNewfeedPosts",
+     *     tags={"Posts"},
+     *     security={{ "passport": {} }},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Bad Request",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="errors", type="string")
+     *         )
+     *     )
+     * )
+     */
+
     public function ShowAllPosts()
     {
         DB::beginTransaction();

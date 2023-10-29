@@ -370,7 +370,52 @@ class QaController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
-
+    /**
+     * @OA\Delete(
+     *     path="/api/quests/{qa}",
+     *     summary="Delete Q&A by ID",
+     *     description="Delete a Q&A post by its ID.",
+     *     operationId="deleteQa",
+     *     tags={"Q&A"},
+     *     security={{ "passport": {} }},
+     *     @OA\Parameter(
+     *         name="qa",
+     *         in="path",
+     *         required=true,
+     *         description="ID of the Q&A post to delete",
+     *         @OA\Schema(type="integer", format="int64")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Q&A post deleted successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Bài Q&A đã bị xóa thành công.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Bad Request",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="errors", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized",
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Bạn không có quyền này")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Not Found",
+     *     )
+     * )
+     */
     public function DeleteQa(Qa $qa)
     {
         DB::beginTransaction();
