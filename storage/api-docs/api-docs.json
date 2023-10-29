@@ -2259,13 +2259,13 @@
                 }
             }
         },
-        "/api/quests/list-all-qanda": {
+        "/api/quests/lista": {
             "get": {
                 "tags": [
                     "Q&A"
                 ],
                 "summary": "Danh sách tất cả câu hỏi",
-                "operationId": "6f5616a458d9d04eee71c34e0b8b3938",
+                "operationId": "02e10bf5953c580a1870df677b50dbe5",
                 "responses": {
                     "200": {
                         "description": "Danh sách câu hỏi",
@@ -2462,61 +2462,36 @@
                 }
             }
         },
-        "/api/quests": {
-            "post": {
+        "/api/quests/{qa}": {
+            "get": {
                 "tags": [
                     "Q&A"
                 ],
-                "summary": "Tạo câu hỏi mới",
-                "description": "Tạo một câu hỏi mới với tiêu đề, nội dung, chuyên ngành liên quan và hashtag.",
-                "operationId": "f38d1be5470bf3cedbc04b60f975020b",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "title",
-                                    "content",
-                                    "majors_id",
-                                    "hashtag"
-                                ],
-                                "properties": {
-                                    "title": {
-                                        "description": "Tiêu đề của câu hỏi",
-                                        "type": "string",
-                                        "maxLength": 255
-                                    },
-                                    "content": {
-                                        "description": "Nội dung của câu hỏi",
-                                        "type": "string"
-                                    },
-                                    "majors_id": {
-                                        "description": "ID của chuyên ngành liên quan đến câu hỏi",
-                                        "type": "integer"
-                                    },
-                                    "hashtag": {
-                                        "description": "Hashtag của câu hỏi",
-                                        "type": "string",
-                                        "maxLength": 255
-                                    }
-                                },
-                                "type": "object"
+                "summary": "Lấy thông tin chi tiết của câu hỏi",
+                "operationId": "e678bf0972da9100ff373f03beba8a9d",
+                "parameters": [
+                    {
+                        "name": "qa",
+                        "in": "path",
+                        "description": "Lấy thông tin chi tiết của một câu hỏi qua id",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "500": {
+                        "description": "Lỗi xảy ra khi hiển thị chi tiết câu hỏi",
+                        "content": {
+                            "application/json": {
+                                "schema": {}
                             }
                         }
                     }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Câu hỏi đã được tạo thành công"
-                    },
-                    "400": {
-                        "description": "Lỗi khi tạo câu hỏi"
-                    }
                 }
-            }
-        },
-        "/api/quests/{qa}": {
+            },
             "put": {
                 "tags": [
                     "Q&A"
@@ -2577,6 +2552,60 @@
                     },
                     "400": {
                         "description": "Lỗi xử lý"
+                    }
+                }
+            }
+        },
+        "/api/quests": {
+            "post": {
+                "tags": [
+                    "Q&A"
+                ],
+                "summary": "Tạo câu hỏi mới",
+                "description": "Tạo một câu hỏi mới với tiêu đề, nội dung, chuyên ngành liên quan và hashtag.",
+                "operationId": "f38d1be5470bf3cedbc04b60f975020b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "content",
+                                    "majors_id",
+                                    "hashtag"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "description": "Tiêu đề của câu hỏi",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    },
+                                    "content": {
+                                        "description": "Nội dung của câu hỏi",
+                                        "type": "string"
+                                    },
+                                    "majors_id": {
+                                        "description": "ID của chuyên ngành liên quan đến câu hỏi",
+                                        "type": "integer"
+                                    },
+                                    "hashtag": {
+                                        "description": "Hashtag của câu hỏi",
+                                        "type": "string",
+                                        "maxLength": 255
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Câu hỏi đã được tạo thành công"
+                    },
+                    "400": {
+                        "description": "Lỗi khi tạo câu hỏi"
                     }
                 }
             }

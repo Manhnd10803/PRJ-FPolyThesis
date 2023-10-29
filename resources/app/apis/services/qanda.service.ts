@@ -10,4 +10,13 @@ const createQandA = <T>(data: T) => {
   });
 };
 
-export const QandAService = { createQandA };
+const getAllQandA = () => {
+  return httpRequest.get<IQandAs>(ApiConstants.ALL_QANDA);
+};
+
+const getDetailQandA = (qaId: number) => {
+  const url = `${ApiConstants.DETAIL_QANDA}/${qaId}`;
+  return httpRequest.get<IQandAs>(url);
+};
+
+export const QandAService = { createQandA, getAllQandA, getDetailQandA };

@@ -28,6 +28,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 //auth
+// Route::get('/quests/{qa}', [QaController::class, 'detailQandA'])->name('qa.detail');
+
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('user.register');
     Route::get('/google-auth', [AuthController::class, 'googleAuth'])->name('user.googleAuth');
@@ -37,6 +39,7 @@ Route::prefix('auth')->group(function () {
     Route::post('/post-forgot-password', [AuthController::class, 'forgotPassword'])->name('user.forgotPassword');
     Route::post('/post-reset-password', [AuthController::class, 'resetPassword'])->name('user.resetPassword');
 });
+
 
 Route::middleware('auth:api')->group(function () {
     //route has been authenticated
@@ -53,6 +56,9 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/{privateMessage}', [PrivateMessagesController::class, 'DeleteMessage'])->name('message.delete');
     });
 
+    //major
+    Route::get('majors', [MajorController::class, 'list_majors']);
+
     //post
     Route::prefix('posts')->group(function () {
         Route::get('/newfeed', [PostsController::class, 'ShowAllPosts'])->name('post.show');
@@ -63,7 +69,6 @@ Route::middleware('auth:api')->group(function () {
     });
     //blog
     Route::prefix('blogs')->group(function () {
-        Route::get('/', [BlogController::class, 'ShowAllBlogs'])->name('blog.show');
         Route::get('/', [BlogController::class, 'ShowAllBlogs'])->name('blog.show');
         Route::post('/', [BlogController::class, 'CreateBlog'])->name('blog.create');
         Route::put('/{blog}', [BlogController::class, 'UpdateBlog'])->name('blog.update');
@@ -91,11 +96,12 @@ Route::middleware('auth:api')->group(function () {
 
     //qa
     Route::prefix('quests')->group(function () {
-        Route::get('/list-all-qanda', [QaController::class, 'ShowAllQa'])->name('qa.show');
+        Route::get('/', [QaController::class, 'ShowAllQa'])->name('qa.showAll');
         Route::post('/', [QaController::class, 'CreateQa'])->name('qa.create');
-        Route::put('/{qa}', [QaController::class, 'UpdateQa'])->name('qa.update');
-        Route::delete('/{qa}', [QaController::class, 'DeleteqQ'])->name('qa.delete');
-        // Route::get('/list',[QaController::class,'ListQa'])->name('qa.list');
+        Route::get('/{qa}', [QaController::class, 'detailQandA'])->name('qa.detail');
+//     Route::put('/{qa}', [QaController::class, 'UpdateQa'])->name('qa.update');
+//     Route::delete('/{qa}', [QaController::class, 'DeleteqQ'])->name('qa.delete');
+//     Route::get('/list', [QaController::class, 'ListQa'])->name('qa.list');
     });
 
     //friend --relationship
