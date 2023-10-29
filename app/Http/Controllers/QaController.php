@@ -143,6 +143,104 @@ class QaController extends Controller
         }
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/quests/lista",
+     *     tags={"Q&A"},
+     *     summary="Danh sách tất cả câu hỏi",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Danh sách câu hỏi",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 @OA\Property(property="user_id", type="integer"),
+     *                 @OA\Property(property="title", type="string", description="Tiêu đề câu hỏi"),
+     *                 @OA\Property(property="content", type="string", description="Nội dung câu hỏi"),
+     *                 @OA\Property(property="majors_id", type="integer", description="ID của chuyên ngành liên quan đến câu hỏi"),
+     *                 @OA\Property(property="hashtag", type="string", description="HashTag liên quan đến câu hỏi câu hỏi"),
+     *                 @OA\Property(property="views", type="integer", description="Số lượng lượt xem câu hỏi"),
+     *             ),
+     *         ),
+     *     ),
+     * )
+     */
+
+
+    public function listA() {
+        $qa = Qa::all();
+        return response()->json($qa);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/quests/{qa}",
+     *     summary="Lấy thông tin chi tiết của câu hỏi",
+     *     tags={"Q&A"},
+     *     @OA\Parameter(
+     *         name="qa",
+     *         in="path",
+     *         description="Lấy thông tin chi tiết của một câu hỏi qua id",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer",
+     *             format="int64"
+     *         )
+     *     ),
+     *    @OA\Response(response=500, description="Lỗi xảy ra khi hiển thị chi tiết câu hỏi", @OA\JsonContent())
+     * )
+     */
+
+    public function detailQandA($id)
+    {
+        DB::beginTransaction();
+        try {
+            $qa = Qa::find($id);
+
+            if (!$qa) {
+                // Xử lý trường hợp không tìm thấy bài đăng
+                return response()->json(['error' => 'Câu hỏi không tồn tại'], 404);
+            }
+
+            $likeCountsByEmotion = [];
+            $likeCountsByEmotion['total_likes'] = $qa->likes->count();
+
+            $likers = $qa->likes->map(function ($like) {
+                return [
+                    'user' => $like->user,
+                    'emotion' => $like->emotion,
+                ];
+            });
+
+            $emotions = $likers->pluck('emotion')->unique();
+
+            foreach ($emotions as $emotion) {
+                $likeCountsByEmotion[$emotion] = $likers->where('emotion', $emotion)->count();
+            }
+
+            // Tổng số bình luận + 3 bình luận demo
+            $totalComment = Comment::where('qa_id', $qa->id)->count();
+            $commentDemos = Comment::where('qa_id', $qa->id)->where('parent_id', 0)->limit(3)->get();
+            foreach ($commentDemos as $commentDemo) {
+                $commentDemo->user;
+                // Số lượng reply
+                $commentDemo->reply = Comment::where('qa_id', $qa->id)->where('parent_id', $commentDemo->id)->count();
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'qa' => $qa,
+                'like_counts_by_emotion' => $likeCountsByEmotion,
+                'total_comments' => $totalComment,
+                'comments' => $commentDemos,
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()], 400);
+        }
+    }
+
     public function ListQa(Request $request)
     {
         $hashtag = $request->input('hashtag');
@@ -182,33 +280,32 @@ class QaController extends Controller
     public function CreateQa(Request $request)
     {
         DB::beginTransaction();
-        try {
-            $data = $request->all();
+        try{
+            $data = $request->all();  
             $qa = new Qa([
-                // 'user_id' => Auth::id(),
                 'user_id' => Auth::id(),
                 'title' => $data['title'],
                 'content' => $data['content'],
                 'majors_id' => $data['majors_id'],
             ]);
-            if (isset($data['hashtag']) && !empty($data['hashtag'])) {
-                // Tách chuỗi thành mảng các từ (dùng khoảng trắng để tách)
-                $words = preg_split('/\s+/', $data['hashtag']);
-                $hashtags = [];
-                // Lọc các từ có dấu '#' ở đầu
-                foreach ($words as $word) {
-                    if (strpos($word, '#') === 0) {
-                        $hashtags[] = $word;
+                if (isset($data['hashtag']) && !empty($data['hashtag'])) {
+                    // Tách chuỗi thành mảng các từ (dùng khoảng trắng để tách)
+                    $words = preg_split('/\s+/', $data['hashtag']);
+                    $hashtags = [];
+                    // Lọc các từ có dấu '#' ở đầu
+                    foreach ($words as $word) {
+                        if (strpos($word, '#') === 0) {
+                            $hashtags[] = $word;
+                        }
                     }
+                    // Giới hạn số lượng hashtag tối đa là 5
+                    $hashtags = array_slice($hashtags, 0, 5);
+                    $qa->hashtag = implode(',', $hashtags);
                 }
-                // Giới hạn số lượng hashtag tối đa là 5
-                $hashtags = array_slice($hashtags, 0, 5);
-                $qa->hashtag = implode(',', $hashtags);
-            }
             $qa->save();
             DB::commit();
             return response()->json($qa, 200);
-        } catch (\Exception $e) {
+        }catch(\Exception $e){
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()], 400);
         }

@@ -21,7 +21,7 @@ export const ClientRouter = [
     element: <QuestionAndAnswerPage />,
   },
   {
-    path: '/detail-question',
+    path: '/quest/:id',
     element: <DetailQuestionPage />,
   },
   {

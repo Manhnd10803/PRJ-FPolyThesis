@@ -3,8 +3,18 @@ import { Link, useLocation } from 'react-router-dom';
 import { ListQandAPage } from './components/list-qanda';
 import { useState } from 'react';
 import { TabsAskQuestion } from './components/tab-ask-question';
+import { QandAService } from '@/apis/services/qanda.service';
+import { useQuery } from '@tanstack/react-query';
 
 export const QuestionAndAnswerPage = () => {
+  const fetchQandAs = async () => {
+    const { data } = await QandAService.getAllQandA();
+    const qAndAsData = data;
+    return qAndAsData;
+  };
+  const { data } = useQuery(['qa'], () => fetchQandAs());
+  console.log(data);
+
   const [showModal, setShowModal] = useState(false);
   const handleClose = () => setShowModal(false);
   const handleShow = () => setShowModal(true);
@@ -44,7 +54,7 @@ export const QuestionAndAnswerPage = () => {
             </Col>
 
             {/* Danh sách câu hỏi */}
-            <ListQandAPage />
+            <ListQandAPage data={data} />
           </Row>
 
           {/*============== Modal Create Ask Question =============*/}
