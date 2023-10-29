@@ -5,6 +5,9 @@ import { ApiConstants } from '../endpoints';
 const showAllBlog = () => {
   return httpRequest.get(ApiConstants.SHOW_BLOGS);
 };
+const showDetailBlog = <T>(id: T) => {
+  return httpRequest.get(`${ApiConstants.SHOW_BLOG_DETAIL}/${id}`);
+};
 
 const createBlog = <T>(data: T) => {
   return httpRequest.post<IBlogs>(ApiConstants.CREATE_BLOG, data, {
@@ -14,4 +17,4 @@ const createBlog = <T>(data: T) => {
   });
 };
 
-export const BlogService = { createBlog, showAllBlog };
+export const BlogService = { createBlog, showAllBlog, showDetailBlog };

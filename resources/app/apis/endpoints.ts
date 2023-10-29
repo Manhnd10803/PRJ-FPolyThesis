@@ -24,11 +24,16 @@ export const ApiConstants = {
 
   // blog
   SHOW_BLOGS: `/blogs`,
+  SHOW_BLOG_DETAIL: `/blogs`,
   CREATE_BLOG: `/blogs`,
 
   // major
   MAJORS: `/majors`,
 
+  // Comment
+  CREATE_COMMENT: `/comment`,
+  DELETE_COMMENT: `/comment`,
+  EDIT_COMMENT: `/comment`,
   // admin
 
   USERS_ADMIN: `/admin/users`,

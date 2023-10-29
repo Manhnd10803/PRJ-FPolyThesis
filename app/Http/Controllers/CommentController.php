@@ -64,6 +64,7 @@ class CommentController extends Controller
             $user = Auth::user();
             $content = $request->input('content');
             $parent_id = $request->input('parent_id');
+            $reply_to = $request->input('reply_to');
             // Xác định model tương ứng với loại mục
             $model = null;
             switch ($type) {
@@ -89,6 +90,7 @@ class CommentController extends Controller
                 "{$type}_id" => $id,
                 'content' => $content,
                 'parent_id' => $parent_id,
+                'reply_to'=> $reply_to
             ]);
             $comment->save();
             DB::commit();

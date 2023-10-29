@@ -31,3 +31,11 @@ export const formatDateFromCreatedAt = (created_at: any) => {
     }
   }
 };
+export const formatDMYCreatedAt = (created_at: string): string => {
+  const date = new Date(created_at); // Chuyển chuỗi thành đối tượng Date
+  const day = date.getDate().toString().padStart(2, '0'); // Lấy ngày, thêm số 0 ở đầu nếu cần
+  const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Lấy tháng, thêm số 0 ở đầu nếu cần
+  const year = date.getFullYear();
+
+  return `${day}/${month}/${year}`;
+};

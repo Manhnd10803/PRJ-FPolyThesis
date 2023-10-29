@@ -12,10 +12,10 @@ export const ListCard = ({ data }: any) => {
     WebkitLineClamp: 4,
     WebkitBoxOrient: 'vertical',
   };
-  console.log(data);
 
+  // Handle blog detail
   const handleDetailsClick = (id: number) => {
-    navigate(`/blog-detail/${id}`, { state: { id: id } });
+    navigate(`/blog-detail/${id}`);
     console.log(`View details of user with ID ${id}`);
   };
   return (
