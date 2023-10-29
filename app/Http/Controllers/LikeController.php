@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Like;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,17 +39,18 @@ class LikeController extends Controller
             $message = 'Emotion added successfully';
         }
         return response()->json(['message' => $message]);
-    } 
-    public function LikeItemBlog(Request $request, $item, $action) {
+    }
+    public function LikeItemBlog(Request $request, $item, $action)
+    {
         $user = Auth::user();
         $validEmotions = config('default.valid_emotions');
-        
+
         if (!in_array($action, $validEmotions)) {
             return response()->json(['error' => 'Invalid emotion type'], 400);
         }
-        
+
         $existingReaction = Like::where('user_id', $user->id)->where('blog_id', $item)->first();
-        
+
         if ($existingReaction) {
             // Nếu đã có phản ứng trước đó
             if ($existingReaction->emotion === $action) {
@@ -70,14 +72,14 @@ class LikeController extends Controller
             ]);
             $like->save();
             $message = 'Added ' . $action . ' successfully';
-        } 
-        return response()->json(['message' => $message ]);
+        }
+        return response()->json(['message' => $message]);
     }
     /**
      * @OA\Get(
-     *     path="/api/emotions",
+     *     path="/api/like",
      *     tags={"Emotions"},
-     *     summary="Danh sách các loại cảm xúc (emotions)",
+     *     summary="Danh sách các loại cảm xúc (emotions) dành cho post và qa",
      *     description="Lấy danh sách các loại cảm xúc (emotions) được hỗ trợ.",
      *     @OA\Response(
      *         response=200,
