@@ -476,7 +476,13 @@ class BlogController extends Controller
     public function detailBlog(Blog $blog)
     {
         $blog->major;
-        $emotions = $blog->likes->pluck('emotion')->unique();
+        $blogLikes = $blog->likes;
+        if ($blogLikes->isEmpty()) {
+            $emotions = [];
+        } else {
+            $emotions = $blogLikes->pluck('emotion')->unique();
+        }
+        $countsByEmotion = [];
         foreach ($emotions as $emotion) {
             $countsByEmotion[$emotion] = $blog->likes->where('emotion', $emotion)->count();
         }
