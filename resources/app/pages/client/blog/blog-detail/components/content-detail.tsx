@@ -20,7 +20,8 @@ export const ContentBlogDetail = ({ data, commentRef }: any) => {
     setLiked(!liked);
     setShowUnlike(false);
   };
-  const handleUnlikeClick = () => {
+
+  const handleDislikeClick = () => {
     setLiked(false);
     setShowUnlike(!showUnlike);
   };
@@ -80,9 +81,8 @@ export const ContentBlogDetail = ({ data, commentRef }: any) => {
                   <Button
                     className="d-flex align-items-center"
                     variant="light"
-                    onClick={handleUnlikeClick}
+                    onClick={handleDislikeClick}
                     data-bs-placement="bottom"
-                    title="Tôi không thích bài blog này"
                   >
                     {showUnlike ? (
                       <>
@@ -95,7 +95,7 @@ export const ContentBlogDetail = ({ data, commentRef }: any) => {
                     )}
                   </Button>
                 </ButtonGroup>
-                <OverlayTrigger placement="bottom" overlay={<Tooltip>Di chuyển tới comments</Tooltip>}>
+                <OverlayTrigger placement="bottom" overlay={<Tooltip>Di chuyển tới bình luận</Tooltip>}>
                   <Link to={'#'} className="d-flex align-items-center cursor-pointer" onClick={scrollToComment}>
                     <i className="material-symbols-outlined pe-2 md-18 text-primary">mode_comment</i>
                     {data?.total_comments} comments

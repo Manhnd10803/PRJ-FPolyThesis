@@ -31,8 +31,9 @@ export const ApiConstants = {
   MAJORS: `/majors`,
 
   // Comment
-  CREAT_COMMENT: `/comment`,
+  CREATE_COMMENT: `/comment`,
   DELETE_COMMENT: `/comment`,
+  EDIT_COMMENT: `/comment`,
   // admin
 
   USERS_ADMIN: `/admin/users`,

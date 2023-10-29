@@ -1,4 +1,4 @@
-import { Col, Form, Button } from 'react-bootstrap';
+import { Col, Form, Button, Spinner } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 // import { RegisterSchema } from '@/validation';
 import { AuthService } from '@/apis/services/auth.service';
@@ -72,7 +72,20 @@ export const RegisterPage = () => {
             {errors.password && <div className="error-message text-danger">{errors.password.message}</div>}
           </Form.Group>
           <div className="d-inline-block w-100">
-            <Button type="submit" className="btn-primary w-100 mb-3" disabled={isSubmitting}>
+            <Button
+              disabled={isSubmitting}
+              type="submit"
+              className="disabled:bg-gray-500 d-flex align-items-center justify-content-center gap-1"
+              variant="primary"
+              style={{ width: '100%' }}
+            >
+              {isSubmitting ? (
+                <>
+                  <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                </>
+              ) : (
+                ''
+              )}
               Sign up
             </Button>
 

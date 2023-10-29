@@ -56,6 +56,26 @@ export const BlogDetailPage = () => {
       console.error('Lỗi khi xóa bình luận', error);
     }
   };
+  // Edit Comment
+  const editCommentMutation = useMutation(CommentService.editComment, {
+    onSettled: () => {
+      queryClient.invalidateQueries(BlogsQueryKey);
+    },
+  });
+  const putComment = async (content: string, commentId: any) => {
+    console.log(content);
+    try {
+      const formData = {
+        id: commentId,
+        content: content,
+      };
+      const response = await editCommentMutation.mutateAsync(formData);
+      console.log('Bình luận đã được cập nhật thành công', response);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
 
   return (
     <>
@@ -71,7 +91,12 @@ export const BlogDetailPage = () => {
                 <ContentBlogDetail data={data} commentRef={commentRef} />
                 <FormComment postComment={postComment} />
                 <div ref={commentRef}>
-                  <Comments data={data?.comments} postComment={postComment} deleteComment={deleteComment} />
+                  <Comments
+                    data={data?.comments}
+                    postComment={postComment}
+                    deleteComment={deleteComment}
+                    putComment={putComment}
+                  />
                 </div>
               </>
             )}
