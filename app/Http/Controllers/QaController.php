@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\DB;
 
 class QaController extends Controller
 {
-
     /**
      * @OA\Get(
      *     path="/api/quests/list-all-qanda",
@@ -23,19 +22,68 @@ class QaController extends Controller
      *         @OA\JsonContent(
      *             type="array",
      *             @OA\Items(
-     *                 @OA\Property(property="user_id", type="integer"),
-     *                 @OA\Property(property="title", type="string", description="Tiêu đề câu hỏi"),
-     *                 @OA\Property(property="content", type="string", description="Nội dung câu hỏi"),
-     *                 @OA\Property(property="majors_id", type="integer", description="ID của chuyên ngành liên quan đến câu hỏi"),
-     *                 @OA\Property(property="hashtag", type="string", description="HashTag liên quan đến câu hỏi câu hỏi"),
-     *                 @OA\Property(property="views", type="integer", description="Số lượng lượt xem câu hỏi"),
+     *                 @OA\Property(property="qa", type="object",
+     *                     @OA\Property(property="id", type="integer"),
+     *                     @OA\Property(property="title", type="string", description="Tiêu đề câu hỏi"),
+     *                     @OA\Property(property="content", type="string", description="Nội dung câu hỏi"),
+     *                     @OA\Property(property="majors_id", type="integer", description="ID của chuyên ngành liên quan đến câu hỏi"),
+     *                     @OA\Property(property="hashtag", type="string", description="HashTag liên quan đến câu hỏi câu hỏi"),
+     *                     @OA\Property(property="views", type="integer", description="Số lượt xem câu hỏi"),
+     *                     @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
+     *                     @OA\Property(property="updated_at", type="string", format="date-time", nullable=true),
+     *                     @OA\Property(property="likes", type="array",
+     *                         @OA\Items(
+     *                             @OA\Property(property="id", type="integer"),
+     *                             @OA\Property(property="user_id", type="integer"),
+     *                             @OA\Property(property="emotion", type="string"),
+     *                             @OA\Property(property="post_id", type="integer"),
+     *                             @OA\Property(property="blog_id", type="integer"),
+     *                             @OA\Property(property="qa_id", type="integer"),
+     *                             @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
+     *                             @OA\Property(property="updated_at", type="string", format="date-time", nullable=true),
+     *                             @OA\Property(property="user", type="object",
+     *                                 @OA\Property(property="id", type="integer"),
+     *                                 @OA\Property(property="username", type="string"),
+     *                                 @OA\Property(property="first_name", type="string", nullable=true),
+     *                                 @OA\Property(property="last_name", type="string", nullable=true),
+     *                             ),
+     *                         ),
+     *                     ),
+     *                 ),
+     *                 @OA\Property(property="like_counts_by_emotion", type="object",
+     *                     @OA\Property(property="total_likes", type="integer", description="Tổng số lượt thích"),
+     *                     @OA\Property(property="emotion1", type="integer", description="Số lượt thích với emotion1"),
+     *                     @OA\Property(property="emotion2", type="integer", description="Số lượt thích với emotion2"),
+     *                 ),
+     *                 @OA\Property(property="total_comments", type="integer", description="Tổng số bình luận"),
+     *                 @OA\Property(property="comments", type="array",
+     *                     @OA\Items(
+     *                         @OA\Property(property="id", type="integer"),
+     *                         @OA\Property(property="user_id", type="integer"),
+     *                         @OA\Property(property="content", type="string", description="Nội dung bình luận"),
+     *                         @OA\Property(property="parent_id", type="integer"),
+     *                         @OA\Property(property="post_id", type="integer"),
+     *                         @OA\Property(property="blog_id", type="integer"),
+     *                         @OA\Property(property="qa_id", type="integer"),
+     *                         @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
+     *                         @OA\Property(property="updated_at", type="string", format="date-time", nullable=true),
+     *                         @OA\Property(property="reply", type="integer", description="Số lượng reply"),
+     *                         @OA\Property(property="user", type="object",
+     *                             @OA\Property(property="id", type="integer"),
+     *                             @OA\Property(property="username", type="string"),
+     *                             @OA\Property(property="first_name", type="string", nullable=true),
+     *                             @OA\Property(property="last_name", type="string", nullable=true),
+     *                         ),
+     *                     ),
+     *                 ),
      *             ),
      *         ),
      *     ),
      * )
      */
+    public function ShowAllQa(Request $request)
+    {
 
-    public function ShowAllQa(Request $request){
         DB::beginTransaction();
         try {
             $majorsId = $request->input('majors_id');
@@ -130,18 +178,19 @@ class QaController extends Controller
      *     @OA\Response(response=400, description="Lỗi khi tạo câu hỏi")
      * )
      */
-    
-    public function CreateQa(Request $request){
+
+    public function CreateQa(Request $request)
+    {
         DB::beginTransaction();
-        try{
-            $data = $request->all();  
-        $qa = new Qa([
-            // 'user_id' => Auth::id(),
-            'user_id' => Auth::id(),
-            'title' => $data['title'],
-            'content' => $data['content'],
-            'majors_id' => $data['majors_id'],
-        ]);
+        try {
+            $data = $request->all();
+            $qa = new Qa([
+                // 'user_id' => Auth::id(),
+                'user_id' => Auth::id(),
+                'title' => $data['title'],
+                'content' => $data['content'],
+                'majors_id' => $data['majors_id'],
+            ]);
             if (isset($data['hashtag']) && !empty($data['hashtag'])) {
                 // Tách chuỗi thành mảng các từ (dùng khoảng trắng để tách)
                 $words = preg_split('/\s+/', $data['hashtag']);
@@ -156,15 +205,15 @@ class QaController extends Controller
                 $hashtags = array_slice($hashtags, 0, 5);
                 $qa->hashtag = implode(',', $hashtags);
             }
-        $qa->save();
-        DB::commit();
-        return response()->json($qa, 200);
-        }catch(\Exception $e){
+            $qa->save();
+            DB::commit();
+            return response()->json($qa, 200);
+        } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
-  
+
     /**
      * @OA\Put(
      *     path="/api/quests/{qa}",
@@ -193,7 +242,8 @@ class QaController extends Controller
      * )
      */
 
-    public function UpdateQa(Request $request, Qa $qa) {
+    public function UpdateQa(Request $request, Qa $qa)
+    {
         DB::beginTransaction();
         try {
             $data = $request->all();
@@ -224,18 +274,19 @@ class QaController extends Controller
         }
     }
 
-    public function DeleteQa(Qa $qa){
+    public function DeleteQa(Qa $qa)
+    {
         DB::beginTransaction();
         try {
-            if(Auth::check() && Auth::user()->id === $qa->user_id){
-            Comment::where('qa_id', $qa->id)->delete();
-            Like::where('qa_id',$qa->id)->delete();
-            $qa->likes()->delete();
-            $qa->comments()->delete();
-            $qa->delete();
-            DB::commit();
-            return response()->json(['message' => 'Bài Q&a đã bị xóa thành công.'], 200);
-            }else{
+            if (Auth::check() && Auth::user()->id === $qa->user_id) {
+                Comment::where('qa_id', $qa->id)->delete();
+                Like::where('qa_id', $qa->id)->delete();
+                $qa->likes()->delete();
+                $qa->comments()->delete();
+                $qa->delete();
+                DB::commit();
+                return response()->json(['message' => 'Bài Q&a đã bị xóa thành công.'], 200);
+            } else {
                 DB::rollBack();
                 return response()->json(['message' => 'Bạn không có quyền này']);
             }
@@ -243,5 +294,5 @@ class QaController extends Controller
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()], 400);
         }
-    }   
+    }
 }

@@ -26,16 +26,6 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-Route::get('majors',[MajorController::class,'list_majors']);
-
-//qa
-Route::prefix('quests')->group(function(){
-    Route::get('/list-all-qanda', [QaController::class,'ShowAllQa'])->name('qa.show');
-    Route::post('/', [QaController::class, 'CreateQa'])->name('qa.create');
-    Route::put('/{qa}', [QaController::class, 'UpdateQa'])->name('qa.update');
-    Route::delete('/{qa}', [QaController::class, 'DeleteqQ'])->name('qa.delete');
-    // Route::get('/list',[QaController::class,'ListQa'])->name('qa.list');
-});
 
 //auth
 Route::prefix('auth')->group(function () {
@@ -63,9 +53,6 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/{privateMessage}', [PrivateMessagesController::class, 'DeleteMessage'])->name('message.delete');
     });
 
-    //major
-    // Route::get('majors', [MajorController::class, 'list_majors']);
-
     //post
     Route::prefix('posts')->group(function () {
         Route::get('/newfeed', [PostsController::class, 'ShowAllPosts'])->name('post.show');
@@ -77,38 +64,45 @@ Route::middleware('auth:api')->group(function () {
     //blog
     Route::prefix('blogs')->group(function () {
         Route::get('/', [BlogController::class, 'ShowAllBlogs'])->name('blog.show');
-        Route::get('/', [BlogController::class,'ShowAllBlogs'])->name('blog.show');
+        Route::get('/', [BlogController::class, 'ShowAllBlogs'])->name('blog.show');
         Route::post('/', [BlogController::class, 'CreateBlog'])->name('blog.create');
         Route::put('/{blog}', [BlogController::class, 'UpdateBlog'])->name('blog.update');
         Route::delete('/{blog}', [BlogController::class, 'DeleteBlog'])->name('blog.delete');
         Route::get('/{blog}', [BlogController::class, 'detailBlog']);
     });
+    //Emotion
+    Route::prefix('like')->group(function () {
+        // Dành cho qa & post(all cảm xúc)
+        Route::post('/{model}/{id}/{emotion}', [LikeController::class, 'LikeItem']);
+        Route::get('/', [LikeController::class, 'listEmotion']);
+        // Dành riêng cho blog (like , dislike)
+        Route::post('/{item}/{action}', [LikeController::class, 'LikeItemBlog']);
+    });
+    //Comment
+    Route::prefix('comment')->group(function () {
+        Route::post('/{type}/{id}', [CommentController::class, 'AddComment']);
+        Route::get('/{type}/{id}', [CommentController::class, 'allCommentsLevel1']);
+        Route::get('/{type}/{id}/{commentParent}', [CommentController::class, 'allSubordinateComments']);
+        Route::put('/{comment}', [CommentController::class, 'editComment']);
+        Route::delete('/{comment}', [CommentController::class, 'deleteComment']);
+    });
+
+    Route::get('majors', [MajorController::class, 'list_majors']);
+
     //qa
     Route::prefix('quests')->group(function () {
-        Route::get('/', [QaController::class, 'ShowAllQa'])->name('qa.show');
+        Route::get('/list-all-qanda', [QaController::class, 'ShowAllQa'])->name('qa.show');
         Route::post('/', [QaController::class, 'CreateQa'])->name('qa.create');
         Route::put('/{qa}', [QaController::class, 'UpdateQa'])->name('qa.update');
         Route::delete('/{qa}', [QaController::class, 'DeleteqQ'])->name('qa.delete');
-        Route::get('/list', [QaController::class, 'ListQa'])->name('qa.list');
+        // Route::get('/list',[QaController::class,'ListQa'])->name('qa.list');
     });
-    Route::prefix('like')->group(function(){
-        // Dành cho qa & post(all cảm xúc)
-        Route::post('/{model}/{id}/{emotion}', [LikeController::class,'LikeItem']);
-        // Dành riêng cho blog (like , dislike)
-        Route::post('/{item}/{action}',[LikeController::class,'LikeItemBlog']);
-    });
-   
 
-    Route::post('comment/{type}/{id}',[CommentController::class,'AddComment']);
-    
-  
     //friend --relationship
     Route::post('/send-request/{recipient}', [FriendController::class, 'SendFriendRequest'])->name('friend.send');
     Route::post('/comfirm-request/{sender}', [FriendController::class, 'ConfirmFriendRequest'])->name('friend.confirm');
     Route::put('/update-relation/{friend}', [FriendController::class, 'UpdateFriendshipType'])->name('friend.update');
     Route::get('/friend', [FriendController::class, 'FetchAllFriend'])->name('friend.list');
-
-
     Route::group(['prefix' => 'admin', 'middleware' => 'scope:admin'], function () {
         //User Management
         Route::prefix('users')->group(function () {

@@ -230,7 +230,154 @@ class BlogController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
-  
+    /**
+     * @OA\Get(
+     *     path="/api/blogs/{blog}",
+     *     tags={"Blogs"},
+     *     summary="Xem chi tiết blog",
+     *     description="Xem chi tiết về một bài blog cụ thể",
+     *     @OA\Parameter(
+     *         name="blog",
+     *         in="path",
+     *         required=true,
+     *         description="ID của bài blog",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Thành công. Trả về thông tin chi tiết về blog, số lượng cảm xúc và bình luận.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="blog", type="object",
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="status", type="integer"),
+     *                 @OA\Property(property="user_id", type="integer"),
+     *                 @OA\Property(property="title", type="string"),
+     *                 @OA\Property(property="content", type="string"),
+     *                 @OA\Property(property="thumbnail", type="string"),
+     *                 @OA\Property(property="majors_id", type="integer"),
+     *                 @OA\Property(property="hashtag", type="string"),
+     *                 @OA\Property(property="views", type="integer"),
+     *                 @OA\Property(property="created_at", type="string", format="date-time"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time"),
+     *                 @OA\Property(property="major", type="object",
+     *                     @OA\Property(property="id", type="integer"),
+     *                     @OA\Property(property="majors_name", type="string"),
+     *                     @OA\Property(property="majors_code", type="string"),
+     *                     @OA\Property(property="description", type="string"),
+     *                     @OA\Property(property="created_at", type="string", format="date-time"),
+     *                     @OA\Property(property="updated_at", type="string", format="date-time")
+     *                 ),
+     *                 @OA\Property(property="likes", type="array",
+     *                     @OA\Items(
+     *                         @OA\Property(property="id", type="integer"),
+     *                         @OA\Property(property="user_id", type="integer"),
+     *                         @OA\Property(property="emotion", type="string"),
+     *                         @OA\Property(property="post_id", type="integer"),
+     *                         @OA\Property(property="blog_id", type="integer"),
+     *                         @OA\Property(property="qa_id", type="integer"),
+     *                         @OA\Property(property="created_at", type="string", format="date-time"),
+     *                         @OA\Property(property="updated_at", type="string", format="date-time")
+     *                     )
+     *                 ),
+     *                 @OA\Property(property="user", type="object",
+     *                     @OA\Property(property="id", type="integer"),
+     *                     @OA\Property(property="username", type="string"),
+     *                     @OA\Property(property="first_name", type="string"),
+     *                     @OA\Property(property="last_name", type="string"),
+     *                     @OA\Property(property="group_id", type="integer"),
+     *                     @OA\Property(property="email", type="string"),
+     *                     @OA\Property(property="birthday", type="string"),
+     *                     @OA\Property(property="avatar", type="string"),
+     *                     @OA\Property(property="phone", type="string"),
+     *                     @OA\Property(property="address", type="string"),
+     *                     @OA\Property(property="biography", type="string"),
+     *                     @OA\Property(property="gender", type="string"),
+     *                     @OA\Property(property="status", type="integer"),
+     *                     @OA\Property(property="major_id", type="integer"),
+     *                     @OA\Property(property="permissions", type="string"),
+     *                     @OA\Property(property="verification_code", type="string"),
+     *                     @OA\Property(property="created_at", type="string", format="date-time"),
+     *                     @OA\Property(property="updated_at", type="string", format="date-time")
+     *                 )
+     *             ),
+     *             @OA\Property(property="emotion", type="object",
+     *                 @OA\Property(property="like", type="integer"),
+     *                 @OA\Property(property="dislike", type="integer")
+     *             ),
+     *             @OA\Property(property="comments", type="array",
+     *                 @OA\Items(
+     *                     @OA\Property(property="id", type="integer"),
+     *                     @OA\Property(property="user_id", type="integer"),
+     *                     @OA\Property(property="content", type="string"),
+     *                     @OA\Property(property="parent_id", type="integer"),
+     *                     @OA\Property(property="post_id", type="integer"),
+     *                     @OA\Property(property="blog_id", type="integer"),
+     *                     @OA\Property(property="qa_id", type="integer"),
+     *                     @OA\Property(property="created_at", type="string", format="date-time"),
+     *                     @OA\Property(property="updated_at", type="string", format="date-time"),
+     *                     @OA\Property(property="user", type="object",
+     *                         @OA\Property(property="id", type="integer"),
+     *                         @OA\Property(property="username", type="string"),
+     *                         @OA\Property(property="first_name", type="string"),
+     *                         @OA\Property(property="last_name", type="string"),
+     *                         @OA\Property(property="group_id", type="integer"),
+     *                         @OA\Property(property="email", type="string"),
+     *                         @OA\Property(property="birthday", type="string"),
+     *                         @OA\Property(property="avatar", type="string"),
+     *                         @OA\Property(property="phone", type="string"),
+     *                         @OA\Property(property="address", type="string"),
+     *                         @OA\Property(property="biography", type="string"),
+     *                         @OA\Property(property="gender", type="string"),
+     *                         @OA\Property(property="status", type="integer"),
+     *                         @OA\Property(property="major_id", type="integer"),
+     *                         @OA\Property(property="permissions", type="string"),
+     *                         @OA\Property(property="verification_code", type="string"),
+     *                         @OA\Property(property="created_at", type="string", format="date-time"),
+     *                         @OA\Property(property="updated_at", type="string", format="date-time")
+     *                     ),
+     *                     @OA\Property(property="replies", type="array",
+     *                         @OA\Items(
+     *                             @OA\Property(property="id", type="integer"),
+     *                             @OA\Property(property="user_id", type="integer"),
+     *                             @OA\Property(property="content", type="string"),
+     *                             @OA\Property(property="parent_id", type="integer"),
+     *                             @OA\Property(property="post_id", type="integer"),
+     *                             @OA\Property(property="blog_id", type="integer"),
+     *                             @OA\Property(property="qa_id", type="integer"),
+     *                             @OA\Property(property="created_at", type="string", format="date-time"),
+     *                             @OA\Property(property="updated_at", type="string", format="date-time"),
+     *                             @OA\Property(property="user", type="object",
+     *                                 @OA\Property(property="id", type="integer"),
+     *                                 @OA\Property(property="username", type="string"),
+     *                                 @OA\Property(property="first_name", type="string"),
+     *                                 @OA\Property(property="last_name", type="string"),
+     *                                 @OA\Property(property="group_id", type="integer"),
+     *                                 @OA\Property(property="email", type="string"),
+     *                                 @OA\Property(property="birthday", type="string"),
+     *                                 @OA\Property(property="avatar", type="string"),
+     *                                 @OA\Property(property="phone", type="string"),
+     *                                 @OA\Property(property="address", type="string"),
+     *                                 @OA\Property(property="biography", type="string"),
+     *                                 @OA\Property(property="gender", type="string"),
+     *                                 @OA\Property(property="status", type="integer"),
+     *                                 @OA\Property(property="major_id", type="integer"),
+     *                                 @OA\Property(property="permissions", type="string"),
+     *                                 @OA\Property(property="verification_code", type="string"),
+     *                                 @OA\Property(property="created_at", type="string", format="date-time"),
+     *                                 @OA\Property(property="updated_at", type="string", format="date-time")
+     *                             )
+     *                         )
+     *                     )
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=404, description="Không tìm thấy blog."),
+     *     security={
+     *         {"passport": {}}
+     *     }
+     * )
+     */
     public function detailBlog(Blog $blog)
     {
         $blog->major;
@@ -250,4 +397,3 @@ class BlogController extends Controller
         return response()->json(['blog' => $blog, 'emotion' => $countsByEmotion, 'comments' => $comments]);
     }
 }
-
