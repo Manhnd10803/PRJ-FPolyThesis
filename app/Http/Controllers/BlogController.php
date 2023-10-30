@@ -128,7 +128,11 @@ class BlogController extends Controller
 
             foreach ($blogs as $blog) {
                 $likeCountsByEmotion = [];
-                $likeCountsByEmotion['total_likes'] = $blog->likes->count();
+                // số lượng emotion trừ dislike
+                $likeCountsByEmotion['total_likes'] = DB::table('likes')
+                ->where('blog_id', $blog->id)
+                ->whereNotIn('emotion', ['dislike'])
+                ->count();
                 // Lấy danh sách người đã like bài viết và thông tin của họ
                 $likers = $blog->likes->map(function ($like) {
                     return [
@@ -477,18 +481,27 @@ class BlogController extends Controller
     {
         $blog->major;
         $blogLikes = $blog->likes;
+    
+        $user = Auth::user(); // Lấy thông tin người dùng đăng nhập
+    
+        $userLike = $blogLikes->where('user_id', $user->id)->first(); // Tìm thông tin "like" của người dùng hiện tại
+    
         if ($blogLikes->isEmpty()) {
             $emotions = [];
         } else {
-            $emotions = $blogLikes->pluck('emotion')->unique();
+            $emotions = $blogLikes->pluck('emotion')->unique()->toArray();
         }
+    
         $countsByEmotion = [];
+    
         foreach ($emotions as $emotion) {
-            $countsByEmotion[$emotion] = $blog->likes->where('emotion', $emotion)->count();
+            $countsByEmotion[$emotion] = $blogLikes->where('emotion', $emotion)->count();
         }
+    
         $blog->user;
         $comments = Comment::where('blog_id', $blog->id)->where('parent_id', null)->get();
         $totalComments = 0;
+    
         foreach ($comments as $comment) {
             $comment->user;
             $comment->replies;
@@ -500,6 +513,17 @@ class BlogController extends Controller
                 $reply->user;
             }
         }
-        return response()->json(['blog' => $blog, 'emotion' => $countsByEmotion, 'comments' => $comments, 'total_comments' => $totalComments]);
+    
+        return response()->json([
+            'blog' => $blog,
+            'emotion' => $countsByEmotion,
+            'comments' => $comments,
+            'total_comments' => $totalComments,
+            'user_like' => $userLike // Thêm thông tin về việc người dùng đã "like" hay "dislike" bài viết hay chưa
+        ]);
     }
+    
+
+    
+    
 }
