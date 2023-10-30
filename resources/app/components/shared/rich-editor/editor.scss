@@ -16,9 +16,9 @@
   border-bottom-right-radius: 10px;
 }
 
-.editor-shell .editor-container.tree-view {
-  border-radius: 0;
-}
+// .editor-shell .editor-container.tree-view {
+//   border-radius: 0;
+// }
 
 .editor-shell .editor-container.plain-text {
   border-top-left-radius: 10px;
@@ -59,18 +59,18 @@ pre {
   max-height: 400px;
 }
 
-.tree-view-output {
-  display: block;
-  background: #222;
-  color: #fff;
-  padding: 0;
-  font-size: 12px;
-  margin: 1px auto 10px auto;
-  position: relative;
-  overflow: hidden;
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-}
+// .tree-view-output {
+//   display: block;
+//   background: #222;
+//   color: #fff;
+//   padding: 0;
+//   font-size: 12px;
+//   margin: 1px auto 10px auto;
+//   position: relative;
+//   overflow: hidden;
+//   border-bottom-left-radius: 10px;
+//   border-bottom-right-radius: 10px;
+// }
 
 pre::-webkit-scrollbar {
   background: transparent;
@@ -927,10 +927,10 @@ i.page-break,
   cursor: grabbing;
 }
 
-.editor-shell .editor-image .image-caption-container .tree-view-output {
-  margin: 0;
-  border-radius: 0;
-}
+// .editor-shell .editor-image .image-caption-container .tree-view-output {
+//   margin: 0;
+//   border-radius: 0;
+// }
 
 .editor-shell .editor-image .image-caption-container {
   display: block;
@@ -1071,10 +1071,10 @@ i.page-break,
   cursor: grabbing;
 }
 
-.editor-shell .inline-editor-image .image-caption-container .tree-view-output {
-  margin: 0;
-  border-radius: 0;
-}
+// .editor-shell .inline-editor-image .image-caption-container .tree-view-output {
+//   margin: 0;
+//   border-radius: 0;
+// }
 
 .editor-shell .inline-editor-image.position-full {
   margin: 1em 0 1em 0;
@@ -1591,18 +1591,6 @@ button.toolbar-item.active i {
   width: 12px;
   height: 12px;
   background-size: contain;
-}
-
-.excalidraw-button {
-  border: 0;
-  padding: 0;
-  margin: 0;
-  background-color: transparent;
-}
-
-.excalidraw-button.selected {
-  outline: 2px solid rgb(60, 132, 244);
-  user-select: none;
 }
 
 .github-corner:hover .octo-arm {

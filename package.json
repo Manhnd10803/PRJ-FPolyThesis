@@ -41,7 +41,6 @@
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
     "@hookform/resolvers": "^3.3.2",
-    "@excalidraw/excalidraw": "^0.15.3",
     "@lexical/clipboard": "0.12.2",
     "@lexical/code": "0.12.2",
     "@lexical/file": "0.12.2",
