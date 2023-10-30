@@ -2652,6 +2652,264 @@
                 }
             }
         },
+        "/api/send-request/{recipient}": {
+            "post": {
+                "tags": [
+                    "Friendship"
+                ],
+                "summary": "Gửi lời mời kết bạn",
+                "description": "Gửi một lời mời kết bạn đến một người dùng khác hoặc hủy lời mời nếu nó tồn tại và đang ở trạng thái 'pending'.",
+                "operationId": "a37d4ce58dfb983c1e0fd1a92a5cb8fc",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "recipient_id": {
+                                        "description": "ID của người dùng nhận lời mời kết bạn.",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Lời mời kết bạn đã được gửi hoặc hủy thành công."
+                    },
+                    "400": {
+                        "description": "Lỗi xảy ra khi gửi lời mời hoặc hủy."
+                    },
+                    "403": {
+                        "description": "Không thể gửi lời mời cho chính bạn."
+                    }
+                }
+            }
+        },
+        "/api/confirm-request/{sender}": {
+            "post": {
+                "tags": [
+                    "Friendship"
+                ],
+                "summary": "Chấp nhận lời mời kết bạn",
+                "description": "Chấp nhận một lời mời kết bạn từ một người dùng đã gửi lời mời.",
+                "operationId": "db4a8fab42e085445e2cec1ada8e2f9f",
+                "parameters": [
+                    {
+                        "name": "sender",
+                        "in": "path",
+                        "description": "ID của người gửi lời mời kết bạn.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lời mời đã được chấp nhận thành công.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Thông báo thành công.",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Lỗi xảy ra khi chấp nhận lời mời.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "description": "Thông báo lỗi.",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/delete-friend-request/{sender}": {
+            "delete": {
+                "tags": [
+                    "Friendship"
+                ],
+                "summary": "Hủy lời mời kết bạn",
+                "description": "Hủy lời mời kết bạn từ một người dùng khác hoặc từ chính bạn nếu nó tồn tại.",
+                "operationId": "dbf384927b6cdf8c917cb8b573efc8c3",
+                "parameters": [
+                    {
+                        "name": "sender",
+                        "in": "path",
+                        "description": "ID của người gửi lời mời kết bạn.",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lời mời đã được hủy thành công.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Thông báo thành công.",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Lỗi xảy ra khi hủy lời mời hoặc không tìm thấy lời mời để hủy.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "description": "Thông báo lỗi.",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/fetch-all-friends": {
+            "get": {
+                "tags": [
+                    "Friendship"
+                ],
+                "summary": "Lấy danh sách bạn bè",
+                "description": "Lấy danh sách tất cả bạn bè đã chấp nhận lời mời kết bạn của người dùng hiện tại.",
+                "operationId": "e1c66059f4544c0d0d362e2605223fe1",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách bạn bè đã chấp nhận lời mời kết bạn.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "description": "ID tài khoản người dùng",
+                                                "type": "integer",
+                                                "format": "int64"
+                                            },
+                                            "username": {
+                                                "description": "Tên đăng nhập",
+                                                "type": "string"
+                                            },
+                                            "first_name": {
+                                                "description": "Họ",
+                                                "type": "string"
+                                            },
+                                            "last_name": {
+                                                "description": "Tên",
+                                                "type": "string"
+                                            },
+                                            "group_id": {
+                                                "description": "ID nhóm",
+                                                "type": "integer",
+                                                "format": "int32"
+                                            },
+                                            "email": {
+                                                "description": "Địa chỉ email",
+                                                "type": "string",
+                                                "format": "email"
+                                            },
+                                            "birthday": {
+                                                "description": "Ngày sinh",
+                                                "type": "string"
+                                            },
+                                            "avatar": {
+                                                "description": "Link đến ảnh đại diện",
+                                                "type": "string"
+                                            },
+                                            "phone": {
+                                                "description": "Số điện thoại",
+                                                "type": "string"
+                                            },
+                                            "address": {
+                                                "description": "Địa chỉ",
+                                                "type": "string"
+                                            },
+                                            "biography": {
+                                                "description": "Tiểu sử",
+                                                "type": "string"
+                                            },
+                                            "gender": {
+                                                "description": "Giới tính",
+                                                "type": "string"
+                                            },
+                                            "status": {
+                                                "description": "Trạng thái",
+                                                "type": "integer",
+                                                "format": "int32"
+                                            },
+                                            "major_id": {
+                                                "description": "ID ngành học",
+                                                "type": "integer",
+                                                "format": "int32"
+                                            },
+                                            "permissions": {
+                                                "description": "Danh sách quyền",
+                                                "type": "array",
+                                                "items": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "verification_code": {
+                                                "description": "Mã xác minh",
+                                                "type": "string"
+                                            },
+                                            "created_at": {
+                                                "description": "Ngày tạo",
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "updated_at": {
+                                                "description": "Ngày cập nhật",
+                                                "type": "string",
+                                                "format": "date-time"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Không được phép truy cập."
+                    }
+                }
+            }
+        },
         "/api/like/{model}/{item}/{emotion}": {
             "post": {
                 "tags": [
