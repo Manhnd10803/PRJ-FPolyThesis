@@ -7,25 +7,40 @@ import ThumbDownOffAltOutlinedIcon from '@mui/icons-material/ThumbDownOffAltOutl
 import { useState } from 'react';
 import { formatDMYCreatedAt, formatDateFromCreatedAt } from '../../components/format-date';
 import { Link } from 'react-router-dom';
-export const ContentBlogDetail = ({ data, commentRef }: any) => {
-  const [liked, setLiked] = useState(false);
-  const [showUnlike, setShowUnlike] = useState(false);
+export const ContentBlogDetail = ({ data, commentRef, createLike }: any) => {
+  const [likeStatus, setLikeStatus] = useState(data?.user_like?.emotion || null);
   const [isContentExpanded, setContentExpanded] = useState(false);
   const toggleContent = () => {
     setContentExpanded(!isContentExpanded);
   };
 
-  // Like Unlike
-  const handleLikeClick = () => {
-    setLiked(!liked);
-    setShowUnlike(false);
+  const handleLikeClick = async () => {
+    try {
+      if (likeStatus !== 'like') {
+        await createLike('like');
+        setLikeStatus('like');
+      } else {
+        await createLike('like');
+        setLikeStatus(null);
+      }
+    } catch (error) {
+      throw error;
+    }
   };
 
-  const handleDislikeClick = () => {
-    setLiked(false);
-    setShowUnlike(!showUnlike);
+  const handleDislikeClick = async () => {
+    try {
+      if (likeStatus === 'dislike') {
+        await createLike('dislike');
+        setLikeStatus(null);
+      } else {
+        await createLike('dislike');
+        setLikeStatus('dislike');
+      }
+    } catch (error) {
+      throw error;
+    }
   };
-
   //comment
   const scrollToComment = () => {
     if (commentRef.current) {
@@ -63,19 +78,14 @@ export const ContentBlogDetail = ({ data, commentRef }: any) => {
                 </div>
                 <ButtonGroup aria-label="Basic example">
                   <Button className="d-flex align-items-center gap-2 " variant="light" onClick={handleLikeClick}>
-                    {liked ? (
-                      <>
-                        <ThumbUpIcon className="text-primary" sx={{ fontSize: 20 }} />
-                      </>
+                    {likeStatus === 'like' ? (
+                      <ThumbUpIcon className="text-primary" sx={{ fontSize: 20 }} />
                     ) : (
-                      <>
-                        <ThumbUpOutlinedIcon className="text-primary" sx={{ fontSize: 20 }} />
-                      </>
+                      <ThumbUpOutlinedIcon className="text-primary" sx={{ fontSize: 20 }} />
                     )}
                     <Badge bg="primary" className=" text-white ml-2">
-                      {' '}
-                      {data?.blog?.likes.length}{' '}
-                    </Badge>{' '}
+                      {data?.emotion?.like || '0'}
+                    </Badge>
                   </Button>
 
                   <Button
@@ -84,14 +94,10 @@ export const ContentBlogDetail = ({ data, commentRef }: any) => {
                     onClick={handleDislikeClick}
                     data-bs-placement="bottom"
                   >
-                    {showUnlike ? (
-                      <>
-                        <ThumbDownIcon className="text-primary" sx={{ fontSize: 20 }} />
-                      </>
+                    {likeStatus === 'dislike' ? (
+                      <ThumbDownIcon className="text-primary" sx={{ fontSize: 20 }} />
                     ) : (
-                      <>
-                        <ThumbDownOffAltOutlinedIcon className="text-primary" sx={{ fontSize: 20 }} />
-                      </>
+                      <ThumbDownOffAltOutlinedIcon className="text-primary" sx={{ fontSize: 20 }} />
                     )}
                   </Button>
                 </ButtonGroup>

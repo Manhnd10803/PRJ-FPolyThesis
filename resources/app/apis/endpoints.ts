@@ -34,6 +34,8 @@ export const ApiConstants = {
   CREATE_COMMENT: `/comment`,
   DELETE_COMMENT: `/comment`,
   EDIT_COMMENT: `/comment`,
+  // Like
+  CREATE_LIKE_BLOG: `/like/blog`,
   // admin
 
   USERS_ADMIN: `/admin/users`,
