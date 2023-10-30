@@ -214,6 +214,7 @@ class PostsController extends Controller
             $content = $request->input('content');
             $feeling = $request->input('feeling');
             $imagePaths = [];
+            $hashtagString = ''; // Mặc định hashtag là chuỗi trống
             if ($request->hasFile('images')) {
                 $images = $request->file('images');
                 if (count($images) > 5) {
@@ -228,6 +229,7 @@ class PostsController extends Controller
                     $imagePath = time() . '_' . uniqid() . '.' . $image->extension();
                     $image->move(storage_path('app/public'), $imagePath);
                     $imagePaths[] = $imagePath;
+                    
                 }
             }
             if (isset($content) && !empty($content)) {
@@ -242,9 +244,10 @@ class PostsController extends Controller
                 'user_id' => Auth::id(),
                 'content' => $content,
                 'feeling' => $feeling,
-                'images' => $imagePaths,
+                'image' => $imagePaths,
                 'hashtag' => $hashtagString,
             ]);
+            // dd($post);
             $post->save();
             DB::commit();
             return response()->json($post, 200);
@@ -325,7 +328,7 @@ class PostsController extends Controller
             $post->update([
                 'content' => $content,
                 'feeling' => $feeling,
-                'images' => $newImagePaths ? $newImagePaths : $imagePath,
+                'image' => $newImagePaths ? $newImagePaths : $imagePath,
                 'hashtag' => $hashtagString,
                 'status' => $status,
             ]);

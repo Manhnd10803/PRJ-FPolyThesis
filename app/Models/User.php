@@ -59,4 +59,9 @@ class User extends Authenticatable
             ->withPivot('status')
             ->wherePivot('status', 'accepted');
     }
+    public function posts()
+{
+    return $this->hasMany(Post::class);
+}
+
 }

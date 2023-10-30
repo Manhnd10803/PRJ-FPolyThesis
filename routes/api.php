@@ -62,10 +62,16 @@ Route::middleware('auth:api')->group(function () {
     //post
     Route::prefix('posts')->group(function () {
         Route::get('/newfeed', [PostsController::class, 'ShowAllPosts'])->name('post.show');
-        Route::get('/profile', [PostsController::class, 'ShowPostProfile'])->name('profile.show');
         Route::post('/', [PostsController::class, 'CreatePost'])->name('post.create');
         Route::put('/{post}', [PostsController::class, 'UpdatePost'])->name('post.update');
         Route::delete('/{post}', [PostsController::class, 'DeletePost'])->name('post.delete');
+    });
+    //Profile
+    Route::prefix('profile')->group(function(){
+        Route::get('/posts/{user}', [PostsController::class, 'ShowPostProfile'])->name('profile.show.post');
+        Route::get('/blogs', [PostsController::class, 'ShowBlogProfile'])->name('profile.show.blog');
+        Route::get('/quests', [PostsController::class, 'ShowQaProfile'])->name('profile.show.quest');
+        Route::get('/images', [PostsController::class, 'ShowImageProfile'])->name('profile.show.image');
     });
     //blog
     Route::prefix('blogs')->group(function () {
