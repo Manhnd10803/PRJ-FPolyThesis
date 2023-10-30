@@ -12,100 +12,6 @@ use Illuminate\Support\Facades\DB;
 
 class PostsController extends Controller
 {
-    /**
-     * @OA\Get(
-     *     path="/api/posts/profile",
-     *     tags={"Posts"},
-     *     summary="Lấy danh sách bài viết của người dùng hoặc các bài viết không được công bố",
-     *     description="Lấy danh sách bài viết của người dùng hiện tại hoặc các bài viết không được công bố (trạng thái khác 1)",
-     *     @OA\Response(
-     *         response=200,
-     *         description="Danh sách bài viết đã được lấy thành công",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 @OA\Property(property="id", type="integer"),
-     *                 @OA\Property(property="user_id", type="integer"),
-     *                 @OA\Property(property="content", type="string"),
-     *                 @OA\Property(property="feeling", type="string", nullable=true),
-     *                 @OA\Property(property="image", type="object", nullable=true),
-     *                 @OA\Property(property="hashtag", type="string", nullable=true),
-     *                 @OA\Property(property="status", type="integer"),
-     *                 @OA\Property(property="views", type="integer"),
-     *                 @OA\Property(property="created_at", type="string"),
-     *                 @OA\Property(property="updated_at", type="string")
-     *             )
-     *         )
-     *     ),
-     *     security={
-     *         {"bearerAuth": {}}
-     *     }
-     * )
-     */
-    public function ShowPostProfile()
-    {
-        DB::beginTransaction();
-        try {
-            $posts = Post::where('user_id', Auth::id())
-                ->orWhere(function ($query) {
-                    $query->where('status', '<>', 1);
-                })->orderBy('created_at', 'DESC')->get();
-            $result = [];
-            foreach ($posts as $post) {
-                // Tính toán số lượt like cho bài viết
-                $likeCount = $post->likes->count();
-                // Tính toán số lượng comment cho bài viết
-                $commentCount = Comment::where('post_id', $post->id)->count();
-                // Tính toán số lượng reply cho mỗi bình luận
-                $comments = Comment::where('post_id', $post->id)->get();
-                $replyCount = 0;
-                foreach ($comments as $comment) {
-                    $replyCount += Comment::where('post_id', $post->id)->where('parent_id', $comment->id)->count();
-                }
-                // Lấy thông tin về người like
-                $likers = $post->likes->map(function ($like) {
-                    return [
-                        'user' => $like->user,
-                        'emotion' => $like->emotion,
-                    ];
-                });
-                // Lấy thông tin về người comment và reply
-                $commentData = [];
-                foreach ($comments as $comment) {
-                    $commentUser = $comment->user;
-                    $replies = Comment::where('post_id', $post->id)->where('parent_id', $comment->id)->get();
-                    $replyData = [];
-                    foreach ($replies as $reply) {
-                        $replyUser = $reply->user;
-                        $replyData[] = [
-                            'reply' => $reply,
-                            'user' => $replyUser,
-                        ];
-                    }
-                    $commentData[] = [
-                        'comment' => $comment,
-                        'user' => $commentUser,
-                        'replies' => $replyData,
-                    ];
-                }
-                // Tạo một mảng chứa thông tin về bài viết và tất cả thông tin liên quan
-                $postData = [
-                    'post' => $post,
-                    'like_count' => $likeCount,
-                    'comment_count' => $commentCount,
-                    'reply_count' => $replyCount,
-                    'likers' => $likers,
-                    'comments' => $commentData,
-                ];
-                array_push($result, $postData);
-            }
-            DB::commit();
-            return response()->json($result);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['errors' => $e->getMessage()], 400);
-        }
-    }
     public function ShowAllPosts()
     {
         DB::beginTransaction();
@@ -187,6 +93,7 @@ class PostsController extends Controller
             $content = $request->input('content');
             $feeling = $request->input('feeling');
             $imagePaths = [];
+            $hashtagString = ''; // Mặc định hashtag là chuỗi trống
             if ($request->hasFile('images')) {
                 $images = $request->file('images');
                 if (count($images) > 5) {
@@ -201,6 +108,7 @@ class PostsController extends Controller
                     $imagePath = time() . '_' . uniqid() . '.' . $image->extension();
                     $image->move(storage_path('app/public'), $imagePath);
                     $imagePaths[] = $imagePath;
+                    
                 }
             }
             if (isset($content) && !empty($content)) {
@@ -215,9 +123,10 @@ class PostsController extends Controller
                 'user_id' => Auth::id(),
                 'content' => $content,
                 'feeling' => $feeling,
-                'images' => $imagePaths,
+                'image' => $imagePaths,
                 'hashtag' => $hashtagString,
             ]);
+            // dd($post);
             $post->save();
             DB::commit();
             return response()->json($post, 200);
@@ -298,7 +207,7 @@ class PostsController extends Controller
             $post->update([
                 'content' => $content,
                 'feeling' => $feeling,
-                'images' => $newImagePaths ? $newImagePaths : $imagePath,
+                'image' => $newImagePaths ? $newImagePaths : $imagePath,
                 'hashtag' => $hashtagString,
                 'status' => $status,
             ]);
