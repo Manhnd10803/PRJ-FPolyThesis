@@ -87,7 +87,7 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/{model}/{id}/{emotion}', [LikeController::class, 'LikeItem']);
         Route::get('/', [LikeController::class, 'listEmotion']);
         // Dành riêng cho blog (like , dislike)
-        Route::post('/{item}/{action}', [LikeController::class, 'LikeItemBlog']);
+        Route::post('/blog/{item}/{action}', [LikeController::class, 'LikeItemBlog']);
     });
     //Comment
     Route::prefix('comment')->group(function () {

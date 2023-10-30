@@ -7,6 +7,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { BlogService } from '@/apis/services/blog.service';
 import { useRef } from 'react';
 import { CommentService } from '@/apis/services/comment.service';
+import { LikeService } from '@/apis/services/like.service';
 
 export const BlogDetailPage = () => {
   const commentRef = useRef(null);
@@ -76,6 +77,26 @@ export const BlogDetailPage = () => {
       throw error;
     }
   };
+  // Create Like
+  const LikeBlogMutation = useMutation(LikeService.postLike, {
+    onSettled: () => {
+      queryClient.invalidateQueries(BlogsQueryKey);
+    },
+  });
+  const createLike = async (emotion: string) => {
+    console.log(emotion);
+    try {
+      const formData = {
+        blog_id: data?.blog?.id,
+        emotion: emotion,
+      };
+      const response = await LikeBlogMutation.mutateAsync(formData);
+      console.log('Like đã được cập nhật thành công', response);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
 
   return (
     <>
@@ -88,7 +109,7 @@ export const BlogDetailPage = () => {
               </Spinner>
             ) : (
               <>
-                <ContentBlogDetail data={data} commentRef={commentRef} />
+                <ContentBlogDetail data={data} commentRef={commentRef} createLike={createLike} />
                 <FormComment postComment={postComment} />
                 <div ref={commentRef}>
                   <Comments

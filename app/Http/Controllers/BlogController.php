@@ -474,32 +474,38 @@ class BlogController extends Controller
      * )
      */
     public function detailBlog(Blog $blog)
-    {
-        $blog->major;
-        $blogLikes = $blog->likes;
-        if ($blogLikes->isEmpty()) {
-            $emotions = [];
-        } else {
-            $emotions = $blogLikes->pluck('emotion')->unique();
-        }
-        $countsByEmotion = [];
-        foreach ($emotions as $emotion) {
-            $countsByEmotion[$emotion] = $blog->likes->where('emotion', $emotion)->count();
-        }
-        $blog->user;
-        $comments = Comment::where('blog_id', $blog->id)->where('parent_id', null)->get();
-        $totalComments = 0;
-        foreach ($comments as $comment) {
-            $comment->user;
-            $comment->replies;
-    
-            $totalComments++; // Tính bình luận gốc
-            $totalComments += count($comment->replies); // Tính số lượng câu trả lời
-    
-            foreach ($comment->replies as $reply) {
-                $reply->user;
-            }
-        }
-        return response()->json(['blog' => $blog, 'emotion' => $countsByEmotion, 'comments' => $comments, 'total_comments' => $totalComments]);
+{
+    $blog->major;
+    $blogLikes = $blog->likes;
+
+    if ($blogLikes->isEmpty()) {
+        $emotions = [];
+    } else {
+        $emotions = $blogLikes->pluck('emotion')->unique()->toArray();
     }
+
+    $countsByEmotion = [];
+
+    foreach ($emotions as $emotion) {
+            $countsByEmotion[$emotion] = $blogLikes->where('emotion', $emotion)->count();
+    }
+
+    $blog->user;
+    $comments = Comment::where('blog_id', $blog->id)->where('parent_id', null)->get();
+    $totalComments = 0;
+
+    foreach ($comments as $comment) {
+        $comment->user;
+        $comment->replies;
+
+        $totalComments++; // Tính bình luận gốc
+        $totalComments += count($comment->replies); // Tính số lượng câu trả lời
+
+        foreach ($comment->replies as $reply) {
+            $reply->user;
+        }
+    }
+
+    return response()->json(['blog' => $blog, 'emotion' => $countsByEmotion, 'comments' => $comments, 'total_comments' => $totalComments]);
+}
 }

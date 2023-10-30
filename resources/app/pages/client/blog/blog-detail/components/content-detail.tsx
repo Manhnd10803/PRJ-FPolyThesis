@@ -7,7 +7,7 @@ import ThumbDownOffAltOutlinedIcon from '@mui/icons-material/ThumbDownOffAltOutl
 import { useState } from 'react';
 import { formatDMYCreatedAt, formatDateFromCreatedAt } from '../../components/format-date';
 import { Link } from 'react-router-dom';
-export const ContentBlogDetail = ({ data, commentRef }: any) => {
+export const ContentBlogDetail = ({ data, commentRef, createLike }: any) => {
   const [liked, setLiked] = useState(false);
   const [showUnlike, setShowUnlike] = useState(false);
   const [isContentExpanded, setContentExpanded] = useState(false);
@@ -16,14 +16,24 @@ export const ContentBlogDetail = ({ data, commentRef }: any) => {
   };
 
   // Like Unlike
-  const handleLikeClick = () => {
-    setLiked(!liked);
-    setShowUnlike(false);
+  const handleLikeClick = async () => {
+    try {
+      await createLike('like');
+      setLiked(!liked);
+      setShowUnlike(false);
+    } catch (error) {
+      throw error;
+    }
   };
 
-  const handleDislikeClick = () => {
-    setLiked(false);
-    setShowUnlike(!showUnlike);
+  const handleDislikeClick = async () => {
+    try {
+      await createLike('dislike');
+      setLiked(false);
+      setShowUnlike(!showUnlike);
+    } catch (error) {
+      throw error;
+    }
   };
 
   //comment
@@ -73,9 +83,8 @@ export const ContentBlogDetail = ({ data, commentRef }: any) => {
                       </>
                     )}
                     <Badge bg="primary" className=" text-white ml-2">
-                      {' '}
-                      {data?.blog?.likes.length}{' '}
-                    </Badge>{' '}
+                      {data?.emotion?.like || '0'}
+                    </Badge>
                   </Button>
 
                   <Button
