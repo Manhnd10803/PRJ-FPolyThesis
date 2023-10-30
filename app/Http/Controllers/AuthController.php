@@ -193,6 +193,29 @@ class AuthController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
     }
+    /**
+     * @OA\Post(
+     *     path="/api/auth/refresh-token",
+     *     summary="Refresh user token",
+     *     description="Refreshes the access token for the authenticated user.",
+     *     operationId="refreshToken",
+     *     tags={"Authentication"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Token refreshed successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="access_token", type="string", example="new_access_token")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Bad request",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="errors", type="string", example="Error message")
+     *         )
+     *     )
+     * )
+     */
     public function refreshToken()
     {
         DB::beginTransaction();
@@ -312,6 +335,56 @@ class AuthController extends Controller
 
 
     // Forgot password
+
+    /**
+     * @OA\Post(
+     *     path="/api/auth/post-forgot-password",
+     *     summary="Forgot password",
+     *     description="Sends a verification code to the user's email for password reset.",
+     *     operationId="forgotPassword",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Email address for password reset",
+     *         @OA\JsonContent(
+     *             required={"email"},
+     *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Verification code sent successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Mã xác nhận đã được gửi đến mail của bạn. Kiểm tra ngay nhé!")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Not Found",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Email bạn nhập không đúng !")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Unprocessable Entity",
+     *         @OA\JsonContent(
+     *             @OA\Property(
+     *                 property="errors",
+     *                 type="object",
+     *                 example={"email": {"The email field is required."}}
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal Server Error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Có lỗi xảy ra trong quá trình xử lý. Vui lòng thử lại sau.")
+     *         )
+     *     )
+     * )
+     */
     public function forgotPassword(Request $request) {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email'
@@ -351,7 +424,38 @@ class AuthController extends Controller
             return response()->json(['message' => 'Có lỗi xảy ra trong quá trình xử lý. Vui lòng thử lại sau.'], 500);
         }
     }
-
+    /**
+     * @OA\Post(
+     *     path="/api/auth/post-reset-password",
+     *     summary="Reset user password",
+     *     description="Resets the user password using verification code.",
+     *     operationId="resetPassword",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Password reset details",
+     *         @OA\JsonContent(
+     *             required={"verification_code", "password"},
+     *             @OA\Property(property="verification_code", type="string", format="uuid", example="123456"),
+     *             @OA\Property(property="password", type="string", format="password", example="new_password"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Password reset successfully",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Mật khẩu đã được đặt lại thành công")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Mã xác nhận không chính xác")
+     *         )
+     *     )
+     * )
+     */
     public function resetPassword(Request $request)
     {
 
