@@ -12,6 +12,7 @@ use App\Http\Controllers\MajorController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\QaController;
 use App\Http\Controllers\PrivateMessagesController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -68,10 +69,11 @@ Route::middleware('auth:api')->group(function () {
     });
     //Profile
     Route::prefix('profile')->group(function(){
-        Route::get('/posts/{user}', [PostsController::class, 'ShowPostProfile'])->name('profile.show.post');
-        Route::get('/blogs', [PostsController::class, 'ShowBlogProfile'])->name('profile.show.blog');
-        Route::get('/quests', [PostsController::class, 'ShowQaProfile'])->name('profile.show.quest');
-        Route::get('/images', [PostsController::class, 'ShowImageProfile'])->name('profile.show.image');
+        Route::get('/{user}',[ProfileController::class,'Profile'])->name('profile.show.user');
+        Route::get('/posts/{user}', [ProfileController::class, 'ShowProfileWithFriendsAndImages'])->name('profile.show.post');
+        Route::get('/blogs', [ProfileController::class, 'ShowBlogProfile'])->name('profile.show.blog');
+        Route::get('/quests', [ProfileController::class, 'ShowQaProfile'])->name('profile.show.quest');
+        Route::post('/update-avatar',[ProfileController::class,'UpdateAvatarProfile'])->name('profile.update.image');
     });
     //blog
     Route::prefix('blogs')->group(function () {
