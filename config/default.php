@@ -27,9 +27,8 @@ return [
             'accepted' => 1,
         ],
         'friendship_type' => [
-            'request' => 0,
+            'follow' => 0,
             'friend' => 1,
-            'favourite' => 2,
         ]
     ],
     'valid_emotions' => ['dislike','like', 'love', 'haha', 'wow', 'sad', 'angry'],
