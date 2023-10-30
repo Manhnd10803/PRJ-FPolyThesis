@@ -207,7 +207,7 @@ class PostsController extends Controller
      * )
      */
 
-    public function CreatePost(PostRequest $request)
+    public function CreatePost(Request $request)
     {
         DB::beginTransaction();
         try {
@@ -215,7 +215,7 @@ class PostsController extends Controller
             $feeling = $request->input('feeling');
             $imagePaths = [];
             $hashtagString = ''; // Mặc định hashtag là chuỗi trống
-            if ($request->hasFile('images')) {
+            if (!is_null($request->images)) {
                 $images = $request->file('images');
                 if (count($images) > 5) {
                     DB::rollBack();
@@ -229,16 +229,15 @@ class PostsController extends Controller
                     $imagePath = time() . '_' . uniqid() . '.' . $image->extension();
                     $image->move(storage_path('app/public'), $imagePath);
                     $imagePaths[] = $imagePath;
-                    
                 }
             }
+            $imagePaths = json_encode($imagePaths);
             if (isset($content) && !empty($content)) {
                 // Tách chuỗi thành mảng các từ (dùng khoảng trắng để tách)
                 $hashtags = [];
                 preg_match_all("/(?<!\w)(#\w+)/", $content, $matches);
-                $hashtags = $matches[1];    
+                $hashtags = $matches[1];
                 $hashtagString = implode(' ', $hashtags);
-
             }
             $post = new Post([
                 'user_id' => Auth::id(),
@@ -290,17 +289,32 @@ class PostsController extends Controller
     {
         DB::beginTransaction();
         try {
-            $imagePath = $post->images;
-            if ($request->hasFile('images')) {
-                $images = $request->file('images');
+            $content = $request->input('content', $post->content);
+            $status = $request->input('status', $post->status);
+            $feeling = $request->input('feeling', $post->feeling);
+            if (isset($content) && !empty($content)) {
+                // Tách chuỗi thành mảng các từ (dùng khoảng trắng để tách)
+                $hashtags = [];
+                preg_match_all("/(?<!\w)(#\w+)/", $content, $matches);
+                $hashtags = $matches[1];
+                $hashtagString = implode(' ', $hashtags);
+            }
+            $imagePaths = $post->image;
+            if (!is_null($request->images)) {
+                $images = $request->images;
                 if (count($images) > 5) {
                     DB::rollBack();
                     return response()->json(['error' => 'Không thể tải lên quá 5 hình ảnh.'], 400);
                 }
-                if ($imagePath) {
-                    $imagePath = storage_path('app/public') . '/' . $imagePath;
-                    if (file_exists($imagePath)) {
-                        unlink($imagePath);
+                if ($imagePaths) {
+                    // Chuyển mảng đường dẫn ảnh cũ thành mảng
+                    $oldImagePaths = json_decode($imagePaths, true);
+                    // Xóa các tệp tin ảnh cũ
+                    foreach ($oldImagePaths as $oldImagePath) {
+                        $oldImagePath = storage_path('app/public') . '/' . $oldImagePath;
+                        if (file_exists($oldImagePath)) {
+                            unlink($oldImagePath);
+                        }
                     }
                 }
                 $newImagePaths = [];
@@ -313,22 +327,20 @@ class PostsController extends Controller
                     $image->move(storage_path('app/public'), $imagePath);
                     $newImagePaths[] = $imagePath;
                 }
-            }
-            
-            $content = $request->input('content', $post->content);
-            $status = $request->input('status', $post->status);
-            $feeling = $request->input('feeling', $post->feeling);
-            if (isset($content) && !empty($content)) {
-                // Tách chuỗi thành mảng các từ (dùng khoảng trắng để tách)
-                $hashtags = [];
-                preg_match_all("/(?<!\w)(#\w+)/", $content, $matches);
-                $hashtags = $matches[1];    
-                $hashtagString = implode(' ', $hashtags);
+                $newImagePaths = json_encode($newImagePaths);
+                $post->update([
+                    'content' => $content,
+                    'feeling' => $feeling,
+                    'image' => $newImagePaths,
+                    'hashtag' => $hashtagString,
+                    'status' => $status,
+                ]);
+                DB::commit();
+                return response()->json($post, 200);
             }
             $post->update([
                 'content' => $content,
                 'feeling' => $feeling,
-                'image' => $newImagePaths ? $newImagePaths : $imagePath,
                 'hashtag' => $hashtagString,
                 'status' => $status,
             ]);
