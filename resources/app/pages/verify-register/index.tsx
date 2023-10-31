@@ -52,13 +52,14 @@ export const VerifyRegisterPage = () => {
                 className="mb-0"
                 id="exampleInputCode"
                 placeholder="Enter code"
+                disabled={isSubmitting}
               />
               {errors.verification_code && (
                 <div className="error-message text-danger">{errors.verification_code.message}</div>
               )}
             </Form.Group>
             <div className="d-inline-block w-100">
-              <Button variant="primary" type="submit" className="float-right mt-3">
+              <Button variant="primary" type="submit" className="float-right mt-3" disabled={isSubmitting}>
                 Send
               </Button>
             </div>

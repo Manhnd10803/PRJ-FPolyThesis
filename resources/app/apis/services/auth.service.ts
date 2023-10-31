@@ -13,6 +13,7 @@ type RegisterResponseType = {
   username: string;
   email: string;
   password: string;
+  confirmPassword: string;
 };
 type ForgotPasswordResponseType = {
   // Define the properties of the response data

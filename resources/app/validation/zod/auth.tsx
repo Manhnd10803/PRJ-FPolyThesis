@@ -5,11 +5,17 @@ export const signInSchema = z.object({
   password: z.string().min(1, 'Password is required').min(8, 'Password must be at least 8 characters'),
 });
 
-export const signUpSchema = z.object({
-  username: z.string().min(1, 'Username is required'),
-  email: z.string().min(1, 'Email is required').email(),
-  password: z.string().min(1, 'Password is required').min(8, 'Password must be at least 8 characters'),
-});
+export const signUpSchema = z
+  .object({
+    username: z.string().min(1, 'Username is required'),
+    email: z.string().min(1, 'Email is required').email(),
+    password: z.string().min(1, 'Password is required').min(8, 'Password must be at least 8 characters'),
+    confirmPassword: z.string().min(1, 'Confirm Password is required'),
+  })
+  .refine(data => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ['confirmPassword'],
+  });
 export const verifyRegisterSchema = z.object({
   verification_code: z.string().min(1, 'Code is required'),
   email: z.string().nullable(),
