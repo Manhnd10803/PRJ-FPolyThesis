@@ -68,12 +68,12 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/{post}', [PostsController::class, 'DeletePost'])->name('post.delete');
     });
     //Profile
-    Route::prefix('profile')->group(function(){
-        Route::get('/{user}',[ProfileController::class,'Profile'])->name('profile.show.user');
+    Route::prefix('profile')->group(function () {
+        Route::get('/{user}', [ProfileController::class, 'Profile'])->name('profile.show.user');
         Route::get('/posts/{user}', [ProfileController::class, 'ShowProfileWithFriendsAndImages'])->name('profile.show.post');
         Route::get('/blogs', [ProfileController::class, 'ShowBlogProfile'])->name('profile.show.blog');
         Route::get('/quests', [ProfileController::class, 'ShowQaProfile'])->name('profile.show.quest');
-        Route::post('/update-avatar',[ProfileController::class,'UpdateAvatarProfile'])->name('profile.update.image');
+        Route::post('/update-avatar', [ProfileController::class, 'UpdateAvatarProfile'])->name('profile.update.image');
     });
     //blog
     Route::prefix('blogs')->group(function () {
@@ -107,17 +107,17 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/', [QaController::class, 'ShowAllQa'])->name('qa.showAll');
         Route::post('/', [QaController::class, 'CreateQa'])->name('qa.create');
         Route::get('/{qa}', [QaController::class, 'detailQandA'])->name('qa.detail');
-//     Route::put('/{qa}', [QaController::class, 'UpdateQa'])->name('qa.update');
-//     Route::delete('/{qa}', [QaController::class, 'DeleteQa'])->name('qa.delete');
-//     Route::get('/list', [QaController::class, 'ListQa'])->name('qa.list');
+        //     Route::put('/{qa}', [QaController::class, 'UpdateQa'])->name('qa.update');
+        //     Route::delete('/{qa}', [QaController::class, 'DeleteQa'])->name('qa.delete');
+        //     Route::get('/list', [QaController::class, 'ListQa'])->name('qa.list');
     });
 
     //friend --relationship
     Route::post('/send-request/{recipient}', [FriendController::class, 'SendFriendRequest'])->name('friend.send');
-    Route::post('/comfirm-request/{sender}', [FriendController::class, 'ConfirmFriendRequest'])->name('friend.confirm');
-    Route::delete('/delete-request/{sender}', [FriendController::class,'DeleteFriendRequest'])->name('friend.delete');
-    Route::get('/friend', [FriendController::class, 'FetchAllFriend'])->name('friend.list');
-    
+    Route::post('/confirm-request/{sender}', [FriendController::class, 'ConfirmFriendRequest'])->name('friend.confirm');
+    Route::delete('/delete-request/{sender}', [FriendController::class, 'DeleteFriendRequest'])->name('friend.delete');
+    Route::get('/friend-list', [FriendController::class, 'FetchAllFriend'])->name('friend.list');
+
     Route::group(['prefix' => 'admin', 'middleware' => 'scope:admin'], function () {
         //User Management
         Route::prefix('users')->group(function () {

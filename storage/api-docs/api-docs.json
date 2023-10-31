@@ -2798,17 +2798,16 @@
                 }
             }
         },
-        "/api/fetch-all-friends": {
+        "/api/friend-list": {
             "get": {
                 "tags": [
                     "Friendship"
                 ],
                 "summary": "Lấy danh sách bạn bè",
-                "description": "Lấy danh sách tất cả bạn bè đã chấp nhận lời mời kết bạn của người dùng hiện tại.",
-                "operationId": "e1c66059f4544c0d0d362e2605223fe1",
+                "operationId": "85fae6735bb2926b2e72966a68f4d390",
                 "responses": {
                     "200": {
-                        "description": "Danh sách bạn bè đã chấp nhận lời mời kết bạn.",
+                        "description": "Danh sách bạn bè",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -2816,75 +2815,20 @@
                                     "items": {
                                         "properties": {
                                             "id": {
-                                                "description": "ID tài khoản người dùng",
-                                                "type": "integer",
-                                                "format": "int64"
+                                                "type": "integer"
                                             },
-                                            "username": {
-                                                "description": "Tên đăng nhập",
-                                                "type": "string"
+                                            "user_id_1": {
+                                                "type": "integer"
                                             },
-                                            "first_name": {
-                                                "description": "Họ",
-                                                "type": "string"
-                                            },
-                                            "last_name": {
-                                                "description": "Tên",
-                                                "type": "string"
-                                            },
-                                            "group_id": {
-                                                "description": "ID nhóm",
-                                                "type": "integer",
-                                                "format": "int32"
-                                            },
-                                            "email": {
-                                                "description": "Địa chỉ email",
-                                                "type": "string",
-                                                "format": "email"
-                                            },
-                                            "birthday": {
-                                                "description": "Ngày sinh",
-                                                "type": "string"
-                                            },
-                                            "avatar": {
-                                                "description": "Link đến ảnh đại diện",
-                                                "type": "string"
-                                            },
-                                            "phone": {
-                                                "description": "Số điện thoại",
-                                                "type": "string"
-                                            },
-                                            "address": {
-                                                "description": "Địa chỉ",
-                                                "type": "string"
-                                            },
-                                            "biography": {
-                                                "description": "Tiểu sử",
-                                                "type": "string"
-                                            },
-                                            "gender": {
-                                                "description": "Giới tính",
-                                                "type": "string"
+                                            "user_id_2": {
+                                                "type": "integer"
                                             },
                                             "status": {
-                                                "description": "Trạng thái",
-                                                "type": "integer",
-                                                "format": "int32"
+                                                "description": "Trạng thái bạn bè",
+                                                "type": "integer"
                                             },
-                                            "major_id": {
-                                                "description": "ID ngành học",
-                                                "type": "integer",
-                                                "format": "int32"
-                                            },
-                                            "permissions": {
-                                                "description": "Danh sách quyền",
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "verification_code": {
-                                                "description": "Mã xác minh",
+                                            "friendship_type": {
+                                                "description": "Loại mối quan hệ bạn bè",
                                                 "type": "string"
                                             },
                                             "created_at": {
@@ -2896,6 +2840,68 @@
                                                 "description": "Ngày cập nhật",
                                                 "type": "string",
                                                 "format": "date-time"
+                                            },
+                                            "friend": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "username": {
+                                                        "description": "Tên người bạn",
+                                                        "type": "string"
+                                                    },
+                                                    "first_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "last_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "group_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "email": {
+                                                        "type": "string"
+                                                    },
+                                                    "birthday": {
+                                                        "type": "string"
+                                                    },
+                                                    "avatar": {
+                                                        "type": "string"
+                                                    },
+                                                    "phone": {
+                                                        "type": "string"
+                                                    },
+                                                    "address": {
+                                                        "type": "string"
+                                                    },
+                                                    "biography": {
+                                                        "type": "string"
+                                                    },
+                                                    "gender": {
+                                                        "type": "string"
+                                                    },
+                                                    "status": {
+                                                        "type": "integer"
+                                                    },
+                                                    "major_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "permissions": {
+                                                        "type": "string"
+                                                    },
+                                                    "verification_code": {
+                                                        "type": "string"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
                                             }
                                         },
                                         "type": "object"
@@ -2903,11 +2909,13 @@
                                 }
                             }
                         }
-                    },
-                    "401": {
-                        "description": "Không được phép truy cập."
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/like/{model}/{item}/{emotion}": {

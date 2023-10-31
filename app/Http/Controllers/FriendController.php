@@ -39,36 +39,37 @@ class FriendController extends Controller
      *     ),
      * )
      */
-    public function SendFriendRequest( User $recipient){
+    public function SendFriendRequest(User $recipient)
+    {
         DB::beginTransaction();
-        try{
+        try {
             $user1 = Auth::id();
             if ($user1 == $recipient->id) {
                 return response()->json(['error' => 'Không thể gửi lời mời cho chính bạn'], 403);
             }
-            $existingFriendship = Friend::where('user_id_1',$user1)->where('user_id_2',$recipient->id)->first();
+            $existingFriendship = Friend::where('user_id_1', $user1)->where('user_id_2', $recipient->id)->first();
             if ($existingFriendship) {
                 // Nếu lời mời đã tồn tại và đang ở trạng thái "pending", hủy lời mời
                 $status = config('default.friend.status.pending');
-                if ($existingFriendship->status === $status ) {
+                if ($existingFriendship->status === $status) {
                     $existingFriendship->delete();
                     DB::commit();
                     return response()->json(['message' => 'Đã hủy lời mời kết bạn'], 200);
-                } 
+                }
             } else {
                 // Nếu lời mời chưa tồn tại, tạo lời mời mới
-              $friend =  Friend::create([
+                $friend =  Friend::create([
                     'user_id_1' => $user1,
                     'user_id_2' => $recipient->id,
                     'status' => config('default.friend.status.pending'),
                     'friendship_type' =>  config('default.friend.friendship_type.follow')
                 ]);
                 DB::commit();
-                return response()->json(['message' => 'Đã gửi lời mời kết bạn','friend'=> $friend], 200);
+                return response()->json(['message' => 'Đã gửi lời mời kết bạn', 'friend' => $friend], 200);
             }
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['error' => $e->getMessage()],400);
+            return response()->json(['error' => $e->getMessage()], 400);
         }
     }
     /**
@@ -102,21 +103,21 @@ class FriendController extends Controller
      */
     public function ConfirmFriendRequest(User $sender)
     {
-    DB::beginTransaction();
-    try{
-        $user2 = Auth::id();
-         Friend::where('user_id_1',$sender->id)
-        ->where('user_id_2',$user2)
-        ->update([
-            'status' => config('default.friend.status.accepted'),
-            'friendship_type' => config('default.friend.friendship_type.friend'),
-        ]);
-        DB::commit();
-        return response()->json(['message' => 'Đã chấp nhận' ],200);
-    }catch(\Exception $e){
-        DB::rollBack();
-    return response()->json(['error' => $e->getMessage()],400);
-    }
+        DB::beginTransaction();
+        try {
+            $user2 = Auth::id();
+            Friend::where('user_id_1', $sender->id)
+                ->where('user_id_2', $user2)
+                ->update([
+                    'status' => config('default.friend.status.accepted'),
+                    'friendship_type' => config('default.friend.friendship_type.friend'),
+                ]);
+            DB::commit();
+            return response()->json(['message' => 'Đã chấp nhận'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
     }
     /**
      * @OA\Delete(
@@ -147,75 +148,89 @@ class FriendController extends Controller
      *     ),
      * )
      */
-    public function DeleteFriendRequest(User $sender){
-    DB::beginTransaction();
-    try{
-       $user2 = Auth::id();
-       $friendship = Friend::where(function ($query) use ($user2, $sender) {
-        $query->where('user_id_1', $user2)
-              ->where('user_id_2', $sender->id);
-    })->orWhere(function ($query) use ($user2, $sender) {
-        $query->where('user_id_1', $sender->id)
-              ->where('user_id_2', $user2);
-    })->first();
+    public function DeleteFriendRequest(User $sender)
+    {
+        DB::beginTransaction();
+        try {
+            $user2 = Auth::id();
+            $friendship = Friend::where(function ($query) use ($user2, $sender) {
+                $query->where('user_id_1', $user2)
+                    ->where('user_id_2', $sender->id);
+            })->orWhere(function ($query) use ($user2, $sender) {
+                $query->where('user_id_1', $sender->id)
+                    ->where('user_id_2', $user2);
+            })->first();
 
-    if ($friendship) {
-        $friendship->delete(); // Xóa lời mời kết bạn
-        DB::commit();
-        return response()->json(['message' => 'Đã hủy lời mời kết bạn'], 200);
-    } else {
-        DB::rollBack();
-        return response()->json(['message' => 'Không tìm thấy lời mời để hủy'], 400);
+            if ($friendship) {
+                $friendship->delete(); // Xóa lời mời kết bạn
+                DB::commit();
+                return response()->json(['message' => 'Đã hủy lời mời kết bạn'], 200);
+            } else {
+                DB::rollBack();
+                return response()->json(['message' => 'Không tìm thấy lời mời để hủy'], 400);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
     }
-    }catch(\Exception $e){
-        DB::rollBack();
-        return response()->json(['error' => $e->getMessage()],400);
-    }
-}
-   /**
- * @OA\Get(
- *     path="/api/fetch-all-friends",
- *     tags={"Friendship"},
- *     summary="Lấy danh sách bạn bè",
- *     description="Lấy danh sách tất cả bạn bè đã chấp nhận lời mời kết bạn của người dùng hiện tại.",
- *     @OA\Response(
- *         response=200,
- *         description="Danh sách bạn bè đã chấp nhận lời mời kết bạn.",
- *         @OA\JsonContent(
- *             type="array",
- *             @OA\Items(
- *                 @OA\Property(property="id", type="integer", format="int64", description="ID tài khoản người dùng"),
- *                 @OA\Property(property="username", type="string", description="Tên đăng nhập"),
- *                 @OA\Property(property="first_name", type="string", description="Họ"),
- *                 @OA\Property(property="last_name", type="string", description="Tên"),
- *                 @OA\Property(property="group_id", type="integer", format="int32", description="ID nhóm"),
- *                 @OA\Property(property="email", type="string", format="email", description="Địa chỉ email"),
- *                 @OA\Property(property="birthday", type="string", description="Ngày sinh"),
- *                 @OA\Property(property="avatar", type="string", description="Link đến ảnh đại diện"),
- *                 @OA\Property(property="phone", type="string", description="Số điện thoại"),
- *                 @OA\Property(property="address", type="string", description="Địa chỉ"),
- *                 @OA\Property(property="biography", type="string", description="Tiểu sử"),
- *                 @OA\Property(property="gender", type="string", description="Giới tính"),
- *                 @OA\Property(property="status", type="integer", format="int32", description="Trạng thái"),
- *                 @OA\Property(property="major_id", type="integer", format="int32", description="ID ngành học"),
- *                 @OA\Property(property="permissions", type="array", description="Danh sách quyền",
- *                     @OA\Items(type="string")
- *                 ),
- *                 @OA\Property(property="verification_code", type="string", description="Mã xác minh"),
- *                 @OA\Property(property="created_at", type="string", format="date-time", description="Ngày tạo"),
- *                 @OA\Property(property="updated_at", type="string", format="date-time", description="Ngày cập nhật")
- *             )
- *         ),
- *     ),
- *     @OA\Response(
- *         response=401,
- *         description="Không được phép truy cập.",
- *     ),
- * )
- */
-    public function FetchAllFriend(){
-        $status= config('default.friend.status.accepted');
-        $friends = Friend::where('user_id_1',Auth::id())->where('status',$status)->with('friend')->get();
+
+    /**
+     * @OA\Get(
+     *     path="/api/friend-list",
+     *     tags={"Friendship"},
+     *     summary="Lấy danh sách bạn bè",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Danh sách bạn bè",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="user_id_1", type="integer"),
+     *                 @OA\Property(property="user_id_2", type="integer"),
+     *                 @OA\Property(property="status", type="integer", description="Trạng thái bạn bè"),
+     *                 @OA\Property(property="friendship_type", type="string", description="Loại mối quan hệ bạn bè"),
+     *                 @OA\Property(property="created_at", type="string", format="date-time", description="Ngày tạo"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time", description="Ngày cập nhật"),
+     *                 @OA\Property(property="friend", type="object",
+     *                     @OA\Property(property="id", type="integer"),
+     *                     @OA\Property(property="username", type="string", description="Tên người bạn"),
+     *                     @OA\Property(property="first_name", type="string"),
+     *                     @OA\Property(property="last_name", type="string"),
+     *                     @OA\Property(property="group_id", type="integer"),
+     *                     @OA\Property(property="email", type="string"),
+     *                     @OA\Property(property="birthday", type="string"),
+     *                     @OA\Property(property="avatar", type="string"),
+     *                     @OA\Property(property="phone", type="string"),
+     *                     @OA\Property(property="address", type="string"),
+     *                     @OA\Property(property="biography", type="string"),
+     *                     @OA\Property(property="gender", type="string"),
+     *                     @OA\Property(property="status", type="integer"),
+     *                     @OA\Property(property="major_id", type="integer"),
+     *                     @OA\Property(property="permissions", type="string"),
+     *                     @OA\Property(property="verification_code", type="string"),
+     *                     @OA\Property(property="created_at", type="string", format="date-time"),
+     *                     @OA\Property(property="updated_at", type="string", format="date-time")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     security={{ "bearerAuth": {} }}
+     * )
+     */
+    public function FetchAllFriend()
+    {
+        $status = config('default.friend.status.accepted');
+        //TH người gửi là bản thân
+        $listFriend1 = Friend::where('user_id_1', Auth::id())->where('status', $status)->with('friend')->get();
+        //TH bản thân được nhận lời mời
+        $listFriend2 = Friend::where('user_id_2', Auth::id())->where('status', $status)->get();
+        foreach ($listFriend2 as $friend) {
+            $friend->friend = User::where('id', $friend->user_id_1)->first();
+        }
+        //Danh sách bạn bè 
+        $friends = $listFriend1->concat($listFriend2);
         return response()->json($friends);
     }
 }
