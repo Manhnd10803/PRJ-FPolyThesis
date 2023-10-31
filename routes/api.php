@@ -117,6 +117,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/confirm-request/{sender}', [FriendController::class, 'ConfirmFriendRequest'])->name('friend.confirm');
     Route::delete('/delete-request/{sender}', [FriendController::class, 'DeleteFriendRequest'])->name('friend.delete');
     Route::get('/friend-list', [FriendController::class, 'FetchAllFriend'])->name('friend.list');
+    Route::get('/friend-list-request', [FriendController::class, 'listFriendRequest']);
 
     Route::group(['prefix' => 'admin', 'middleware' => 'scope:admin'], function () {
         //User Management

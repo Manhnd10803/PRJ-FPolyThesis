@@ -2918,6 +2918,126 @@
                 ]
             }
         },
+        "/api/friend-list-request": {
+            "get": {
+                "tags": [
+                    "Friendship"
+                ],
+                "summary": "Lấy danh sách lời mời kết bạn",
+                "operationId": "0ec75ea32cf2e3e600a0d5a407603c1f",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách lời mời kết bạn",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer"
+                                            },
+                                            "user_id_1": {
+                                                "type": "integer"
+                                            },
+                                            "user_id_2": {
+                                                "type": "integer"
+                                            },
+                                            "status": {
+                                                "description": "Trạng thái bạn bè",
+                                                "type": "integer"
+                                            },
+                                            "friendship_type": {
+                                                "description": "Loại mối quan hệ bạn bè",
+                                                "type": "string"
+                                            },
+                                            "created_at": {
+                                                "description": "Ngày tạo",
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "updated_at": {
+                                                "description": "Ngày cập nhật",
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "friend": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "username": {
+                                                        "description": "Tên người bạn",
+                                                        "type": "string"
+                                                    },
+                                                    "first_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "last_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "group_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "email": {
+                                                        "type": "string"
+                                                    },
+                                                    "birthday": {
+                                                        "type": "string"
+                                                    },
+                                                    "avatar": {
+                                                        "type": "string"
+                                                    },
+                                                    "phone": {
+                                                        "type": "string"
+                                                    },
+                                                    "address": {
+                                                        "type": "string"
+                                                    },
+                                                    "biography": {
+                                                        "type": "string"
+                                                    },
+                                                    "gender": {
+                                                        "type": "string"
+                                                    },
+                                                    "status": {
+                                                        "type": "integer"
+                                                    },
+                                                    "major_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "permissions": {
+                                                        "type": "string"
+                                                    },
+                                                    "verification_code": {
+                                                        "type": "string"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/like/{model}/{item}/{emotion}": {
             "post": {
                 "tags": [

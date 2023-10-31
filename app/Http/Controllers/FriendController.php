@@ -233,4 +233,58 @@ class FriendController extends Controller
         $friends = $listFriend1->concat($listFriend2);
         return response()->json($friends);
     }
+
+    /**
+     * @OA\Get(
+     *     path="/api/friend-list-request",
+     *     tags={"Friendship"},
+     *     summary="Lấy danh sách lời mời kết bạn",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Danh sách lời mời kết bạn",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 @OA\Property(property="id", type="integer"),
+     *                 @OA\Property(property="user_id_1", type="integer"),
+     *                 @OA\Property(property="user_id_2", type="integer"),
+     *                 @OA\Property(property="status", type="integer", description="Trạng thái bạn bè"),
+     *                 @OA\Property(property="friendship_type", type="string", description="Loại mối quan hệ bạn bè"),
+     *                 @OA\Property(property="created_at", type="string", format="date-time", description="Ngày tạo"),
+     *                 @OA\Property(property="updated_at", type="string", format="date-time", description="Ngày cập nhật"),
+     *                 @OA\Property(property="friend", type="object",
+     *                     @OA\Property(property="id", type="integer"),
+     *                     @OA\Property(property="username", type="string", description="Tên người bạn"),
+     *                     @OA\Property(property="first_name", type="string"),
+     *                     @OA\Property(property="last_name", type="string"),
+     *                     @OA\Property(property="group_id", type="integer"),
+     *                     @OA\Property(property="email", type="string"),
+     *                     @OA\Property(property="birthday", type="string"),
+     *                     @OA\Property(property="avatar", type="string"),
+     *                     @OA\Property(property="phone", type="string"),
+     *                     @OA\Property(property="address", type="string"),
+     *                     @OA\Property(property="biography", type="string"),
+     *                     @OA\Property(property="gender", type="string"),
+     *                     @OA\Property(property="status", type="integer"),
+     *                     @OA\Property(property="major_id", type="integer"),
+     *                     @OA\Property(property="permissions", type="string"),
+     *                     @OA\Property(property="verification_code", type="string"),
+     *                     @OA\Property(property="created_at", type="string", format="date-time"),
+     *                     @OA\Property(property="updated_at", type="string", format="date-time")
+     *                 )
+     *             )
+     *         )
+     *     ),
+     *     security={{ "bearerAuth": {} }}
+     * )
+     */
+    public function listFriendRequest()
+    {
+        $status = config('default.friend.status.pending');
+        $friends = Friend::where('user_id_2', Auth::id())->where('status', $status)->get();
+        foreach ($friends as $friend) {
+            $friend->friend = User::where('id', $friend->user_id_1)->first();
+        }
+        return response()->json($friends);
+    }
 }
