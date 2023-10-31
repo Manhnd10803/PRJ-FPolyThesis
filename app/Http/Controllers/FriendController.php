@@ -120,7 +120,7 @@ class FriendController extends Controller
     }
     /**
      * @OA\Delete(
-     *     path="/api/delete-friend-request/{sender}",
+     *     path="/api/delete-request/{sender}",
      *     tags={"Friendship"},
      *     summary="Hủy lời mời kết bạn",
      *     description="Hủy lời mời kết bạn từ một người dùng khác hoặc từ chính bạn nếu nó tồn tại.",

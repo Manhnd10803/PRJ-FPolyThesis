@@ -2743,14 +2743,14 @@
                 }
             }
         },
-        "/api/delete-friend-request/{sender}": {
+        "/api/delete-request/{sender}": {
             "delete": {
                 "tags": [
                     "Friendship"
                 ],
                 "summary": "Hủy lời mời kết bạn",
                 "description": "Hủy lời mời kết bạn từ một người dùng khác hoặc từ chính bạn nếu nó tồn tại.",
-                "operationId": "dbf384927b6cdf8c917cb8b573efc8c3",
+                "operationId": "b25351b48f7710731e8d7a63206cdbdc",
                 "parameters": [
                     {
                         "name": "sender",
