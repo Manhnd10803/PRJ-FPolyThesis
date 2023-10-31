@@ -115,8 +115,9 @@ Route::middleware('auth:api')->group(function () {
     //friend --relationship
     Route::post('/send-request/{recipient}', [FriendController::class, 'SendFriendRequest'])->name('friend.send');
     Route::post('/comfirm-request/{sender}', [FriendController::class, 'ConfirmFriendRequest'])->name('friend.confirm');
-    Route::put('/update-relation/{friend}', [FriendController::class, 'UpdateFriendshipType'])->name('friend.update');
+    Route::delete('/delete-request/{sender}', [FriendController::class,'DeleteFriendRequest'])->name('friend.delete');
     Route::get('/friend', [FriendController::class, 'FetchAllFriend'])->name('friend.list');
+    
     Route::group(['prefix' => 'admin', 'middleware' => 'scope:admin'], function () {
         //User Management
         Route::prefix('users')->group(function () {
