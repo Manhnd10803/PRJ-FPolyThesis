@@ -26,11 +26,20 @@ export const RegisterPage = () => {
       reset();
     } catch (error: any) {
       if (error) {
-        const serverError = error.errors.email;
-        setError('email', {
-          type: 'server',
-          message: serverError,
-        });
+        const emailError = error.errors.email; // Adjust this according to your API response structure
+        if (emailError) {
+          setError('email', {
+            type: 'server',
+            message: emailError,
+          });
+        }
+        const usernameError = error.errors.username; // Adjust this according to your API response structure
+        if (usernameError) {
+          setError('username', {
+            type: 'server',
+            message: usernameError,
+          });
+        }
       }
     }
   };
@@ -52,12 +61,20 @@ export const RegisterPage = () => {
               className="mb-0"
               id="username"
               placeholder="Your Full Name"
+              disabled={isSubmitting}
             />
             {errors.username && <div className="error-message text-danger">{errors.username.message}</div>}
           </Form.Group>
           <Form.Group className="form-group">
             <Form.Label>Email address</Form.Label>
-            <Form.Control {...register('email')} type="email" className="mb-0" id="email" placeholder="Enter email" />
+            <Form.Control
+              {...register('email')}
+              type="email"
+              className="mb-0"
+              id="email"
+              placeholder="Enter email"
+              disabled={isSubmitting}
+            />
             {errors.email && <p className="text-danger">{`${errors.email.message}`}</p>}
           </Form.Group>
           <Form.Group className="form-group">
@@ -68,8 +85,23 @@ export const RegisterPage = () => {
               className="mb-0"
               id="password"
               placeholder="Password"
+              disabled={isSubmitting}
             />
             {errors.password && <div className="error-message text-danger">{errors.password.message}</div>}
+          </Form.Group>
+          <Form.Group className="form-group">
+            <Form.Label>Confirm Password</Form.Label>
+            <Form.Control
+              {...register('confirmPassword')}
+              type="password"
+              className="mb-0"
+              id="confirmPassword"
+              placeholder="Confirm Password"
+              disabled={isSubmitting}
+            />
+            {errors.confirmPassword && (
+              <div className="error-message text-danger">{errors.confirmPassword.message}</div>
+            )}
           </Form.Group>
           <div className="d-inline-block w-100">
             <Button
