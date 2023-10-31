@@ -2,7 +2,11 @@ import { Outlet } from 'react-router-dom';
 import { Header, RightSidebar, Footer, Sidebar } from './components';
 import { SettingOffCanvas } from '@/components/setting/setting-offcanvas';
 
-export const ClientLayout = () => {
+type ClientLayoutProps = {
+  hasRightSidebar?: boolean;
+};
+
+export const ClientLayout = ({ hasRightSidebar = true }: ClientLayoutProps) => {
   return (
     <>
       <Sidebar />
@@ -10,7 +14,7 @@ export const ClientLayout = () => {
       <div className="main-content">
         <Outlet />
       </div>
-      <RightSidebar />
+      {hasRightSidebar && <RightSidebar />}
       <Footer />
       <SettingOffCanvas />
     </>

@@ -31,6 +31,7 @@ export const ClientRouter = [
   {
     path: '/blog-create',
     element: <CreateBlogPage />,
+    noRightSidebar: true,
   },
   {
     path: '/blog-detail/:id',
@@ -39,6 +40,7 @@ export const ClientRouter = [
   {
     path: '/chat',
     element: <ChatPage />,
+    noRightSidebar: true,
   },
   {
     path: '/profile',
