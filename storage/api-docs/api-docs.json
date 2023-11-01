@@ -3038,6 +3038,68 @@
                 ]
             }
         },
+        "/api/unfriend/{friend}": {
+            "delete": {
+                "tags": [
+                    "Friendship"
+                ],
+                "summary": "Hủy kết bạn với người dùng khác",
+                "operationId": "7e838a616d6e54cf9687419bab07e316",
+                "parameters": [
+                    {
+                        "name": "friend",
+                        "in": "path",
+                        "description": "ID của người muốn hủy kết bạn",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Hủy kết bạn thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Thông báo hủy kết bạn thành công",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Không thể hủy kết bạn",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "description": "Thông báo không thành công",
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Lỗi xác thực"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/like/{model}/{item}/{emotion}": {
             "post": {
                 "tags": [

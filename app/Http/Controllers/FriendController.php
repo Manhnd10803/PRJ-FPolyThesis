@@ -287,4 +287,69 @@ class FriendController extends Controller
         }
         return response()->json($friends);
     }
+
+    /**
+     * @OA\Delete(
+     *     path="/api/unfriend/{friend}",
+     *     tags={"Friendship"},
+     *     summary="Hủy kết bạn với người dùng khác",
+     *     @OA\Parameter(
+     *         name="friend",
+     *         in="path",
+     *         required=true,
+     *         description="ID của người muốn hủy kết bạn",
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Hủy kết bạn thành công",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", description="Thông báo hủy kết bạn thành công")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Không thể hủy kết bạn",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", description="Thông báo không thành công")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Lỗi xác thực",
+     *     ),
+     *     security={{ "bearerAuth": {} }}
+     * )
+     */
+    public function unfriend($friend)
+    {
+        DB::beginTransaction();
+        try {
+            $self = Auth::id();
+            $friendship = Friend::where(function ($query) use ($self, $friend) {
+                $query->where('user_id_1', $self)
+                    ->where('user_id_2', $friend)
+                    ->where('status', 1);
+            })->orWhere(function ($query) use ($self, $friend) {
+                $query->where('user_id_1', $friend)
+                    ->where('user_id_2', $self)
+                    ->where('status', 1);
+            })->first();
+            if ($friendship) {
+                $friendship->delete(); // Xóa bạn bè
+                DB::commit();
+                return response()->json(['message' => 'Đã hủy bạn bè'], 200);
+            } else {
+                DB::rollBack();
+                return response()->json(['message' => 'Không thành công'], 400);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
 }
