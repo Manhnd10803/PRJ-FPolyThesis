@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Qa extends Model
 {
     use HasFactory;
-    protected $table = 'questison_and_answers';
+    protected $table = 'question_and_answers';
     protected $fillable = [
         'user_id',
         'title',
