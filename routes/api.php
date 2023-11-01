@@ -69,11 +69,7 @@ Route::middleware('auth:api')->group(function () {
     });
     //Profile
     Route::prefix('profile')->group(function () {
-        Route::get('/{user}', [ProfileController::class, 'Profile'])->name('profile.show.user');
-        Route::get('/posts/{user}', [ProfileController::class, 'ShowProfileWithFriendsAndImages'])->name('profile.show.post');
-        Route::get('/blogs', [ProfileController::class, 'ShowBlogProfile'])->name('profile.show.blog');
-        Route::get('/quests', [ProfileController::class, 'ShowQaProfile'])->name('profile.show.quest');
-        Route::post('/update-avatar', [ProfileController::class, 'UpdateAvatarProfile'])->name('profile.update.image');
+        Route::get('/{user}/{type}/{status?}', [ProfileController::class, 'Profile'])->name('profile.show.user')->where('status', 'pending|approved|reject');;
     });
     //blog
     Route::prefix('blogs')->group(function () {
