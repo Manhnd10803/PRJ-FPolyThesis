@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
-
+use Faker\Factory as Faker;
 class PostSeeder extends Seeder
 {
     /**
@@ -13,18 +14,22 @@ class PostSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($i = 0; $i < 10; $i++) {
-            DB::table('posts')->insert([
-                'user_id' => rand(1, 5),
-                'content' => 'Fake content for post #abcff' . $i,
-                'feeling' => 'Fake feeling for post ' . $i,
-                'image' => json_encode(['image_url' => 'URL_fake']),
-                'hashtag' => '#abcff',
-                'status' => rand(0, 1),
-                'views' => rand(0, 1000),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
+        $faker = Faker::create();
+
+        $users = User::all();
+
+        foreach ($users as $user) {
+            foreach (range(1, 10) as $index) {
+                Post::create([
+                    'user_id' => $user->id,
+                    'content' => $faker->paragraph,
+                    'feeling' => $faker->word,
+                    'image' => json_encode($faker->imageUrl()),
+                    'hashtag' => $faker->word,
+                    'status' => $faker->numberBetween(0, 1),
+                    'views' => $faker->numberBetween(0, 1000),
+                ]);
+            }
         }
     }
 }
