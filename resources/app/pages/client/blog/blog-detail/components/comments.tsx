@@ -136,7 +136,7 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
                                         <span className="material-symbols-outlined me-2">delete</span>
                                         Xóa bình luận này
                                       </Dropdown.Item>
-                                      <Modal size="sm" show={show} onHide={() => setShow(false)}>
+                                      <Modal centered size="sm" show={show} onHide={() => setShow(false)}>
                                         <Modal.Header closeButton>
                                           <Modal.Title>Modal heading</Modal.Title>
                                         </Modal.Header>
@@ -281,7 +281,7 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
                                               <span className="material-symbols-outlined me-2">delete</span>
                                               Xóa bình luận này
                                             </Dropdown.Item>
-                                            <Modal size="sm" show={show} onHide={() => setShow(false)}>
+                                            <Modal centered size="sm" show={show} onHide={() => setShow(false)}>
                                               <Modal.Header closeButton>
                                                 <Modal.Title>Modal heading</Modal.Title>
                                               </Modal.Header>
