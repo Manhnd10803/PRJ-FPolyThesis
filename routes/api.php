@@ -51,10 +51,10 @@ Route::middleware('auth:api')->group(function () {
     });
     //chat
     Route::prefix('messages')->group(function () {
-        Route::get('/', [PrivateMessagesController::class, 'ShowAllMessage'])->name('message.show');
-        Route::post('/', [PrivateMessagesController::class, 'SendMessages'])->name('message.create');
-        Route::put('/{privateMessage}', [PrivateMessagesController::class, 'UpdateMessage'])->name('message.update');
-        Route::delete('/{privateMessage}', [PrivateMessagesController::class, 'DeleteMessage'])->name('message.delete');
+        Route::get('/{user}', [PrivateMessagesController::class, 'ShowAllMessage'])->name('message.show')->where('user', '[0-9]+');
+        Route::post('/{user}', [PrivateMessagesController::class, 'SendMessages'])->name('message.create')->where('user', '[0-9]+');
+        Route::put('/{privateMessage}/{user}', [PrivateMessagesController::class, 'UpdateMessage'])->name('message.update');
+        Route::delete('/{privateMessage}/{user}', [PrivateMessagesController::class, 'DeleteMessage'])->name('message.delete');
     });
 
     //major

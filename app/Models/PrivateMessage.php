@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class PrivateMessage extends Model
 {
     use HasFactory;
+    protected $table = 'private_messages';
     protected $fillable = [
     'sender_id','receiver_id','content','status'
     ];
