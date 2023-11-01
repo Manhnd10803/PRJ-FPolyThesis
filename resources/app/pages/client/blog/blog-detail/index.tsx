@@ -21,7 +21,6 @@ export const BlogDetailPage = () => {
   };
   const BlogsQueryKey = ['blogs', id];
   const { data, isLoading } = useQuery(BlogsQueryKey, { queryFn: fetchDetailBlog });
-
   // Create Comment
   const createCommentMutation = useMutation(CommentService.createComment, {
     onSettled: () => {
@@ -49,7 +48,6 @@ export const BlogDetailPage = () => {
       queryClient.invalidateQueries(BlogsQueryKey);
     },
   });
-
   const deleteComment = async (commentId: any) => {
     try {
       await deleteCommentMutation.mutateAsync(commentId);
@@ -97,7 +95,6 @@ export const BlogDetailPage = () => {
       throw error;
     }
   };
-
   return (
     <>
       <div id="content-page" className="content-page">

@@ -9,6 +9,7 @@ import { ProfileService } from '@/apis/services/profile.service';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { MyListQa } from './question-and-answer';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
+import { FriendsMyUserPage } from './friends';
 // images
 const imageUrl = 'https://picsum.photos/20';
 
