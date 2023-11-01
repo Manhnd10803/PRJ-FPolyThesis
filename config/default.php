@@ -32,4 +32,11 @@ return [
         ]
     ],
     'valid_emotions' => ['dislike','like', 'love', 'haha', 'wow', 'sad', 'angry'],
+    'private_messages' =>[
+        'status'=>[
+            'sending' => 0,
+            'send' => 1,
+            'read' => 2,
+        ] 
+    ]
 ];

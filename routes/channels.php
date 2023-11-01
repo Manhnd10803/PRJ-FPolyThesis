@@ -16,7 +16,3 @@ use Illuminate\Support\Facades\Broadcast;
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
-Broadcast::channel('private-chat.{userId}', function ($user, $userId) {
-    // Điều kiện kiểm tra xem người dùng có quyền truy cập kênh này không
-    return (int) $user->id === (int) $userId;
-});
