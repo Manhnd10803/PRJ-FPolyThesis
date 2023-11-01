@@ -3,7 +3,7 @@ import httpRequest from '../axios-instance';
 import { ApiConstants } from '../endpoints';
 
 const createQandA = <T>(data: T) => {
-  return httpRequest.post<IQandAs>(ApiConstants.CREATEASK, data, {
+  return httpRequest.post<IQandAs>(ApiConstants.CREATE_QANDA, data, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -19,4 +19,24 @@ const getDetailQandA = (qaId: number) => {
   return httpRequest.get<IQandAs>(url);
 };
 
-export const QandAService = { createQandA, getAllQandA, getDetailQandA };
+const UpdateQandA = async <T>(qaId: number, data: T) => {
+  const url = `${ApiConstants.UPDATE_QANDA}/${qaId}`;
+  try {
+    const response = httpRequest.put<IQandAs>(url, data);
+    return response;
+  } catch (error) {
+    throw new Error('Lỗi khi cập nhật câu hỏi');
+  }
+};
+
+const deleteQandA = async (qaId: number) => {
+  const url = `${ApiConstants.DELETE_QANDA}/${qaId}`;
+  try {
+    const response = await httpRequest.delete(url);
+    return response;
+  } catch (error) {
+    throw new Error('Lỗi khi xóa câu hỏi');
+  }
+};
+
+export const QandAService = { createQandA, getAllQandA, getDetailQandA, UpdateQandA, deleteQandA };

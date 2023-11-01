@@ -47,6 +47,7 @@ export const ContentBlogDetail = ({ data, commentRef, createLike }: any) => {
       commentRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
+  console.log(data);
 
   return (
     <>

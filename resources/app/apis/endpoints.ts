@@ -14,10 +14,12 @@ export const ApiConstants = {
   USER: `/users`,
 
   // question and answer
-  CREATEASK: '/quests',
+  CREATE_QANDA: '/quests',
   ALL_QANDA: '/quests',
   // LIST_QANDA: '/quests/lista',
   DETAIL_QANDA: '/quests',
+  UPDATE_QANDA: '/quests',
+  DELETE_QANDA: '/quests',
 
   // post
   POSTS: `/posts`,
