@@ -19,6 +19,7 @@ export const ApiConstants = {
   // LIST_QANDA: '/quests/lista',
   LIST_QANDA_BY_MAJOR: '/quests/major',
   LIST_MY_QANDA: '/quests/my-quests',
+  LIST_MOST_CMT_QANDA: '/quests/most-commented',
   DETAIL_QANDA: '/quests',
   UPDATE_QANDA: '/quests',
   DELETE_QANDA: '/quests',
