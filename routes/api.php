@@ -30,7 +30,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('quests')->group(function () {
     // Route::get('/', [QaController::class, 'ShowAllQa'])->name('qa.showAll');
-    Route::get('/major/{major_id}', [QaController::class, 'ShowQaByMajor'])->name('qa.showAllByMajor');
+    // Route::get('/major/{major_id}', [QaController::class, 'ShowQaByMajor'])->name('qa.showAllByMajor');
+    // Route::get('/my-quests', [QaController::class, 'showMyQa'])->name('qa.showMyQa');
     // Route::post('/', [QaController::class, 'CreateQa'])->name('qa.create');
     // Route::get('/{qa}', [QaController::class, 'detailQandA'])->name('qa.detail');
     // Route::put('/{qa}', [QaController::class, 'UpdateQa'])->name('qa.update');
@@ -112,7 +113,8 @@ Route::middleware('auth:api')->group(function () {
     //qa
     Route::prefix('quests')->group(function () {
         Route::get('/', [QaController::class, 'ShowAllQa'])->name('qa.showAll');
-        // Route::get('/major/{major_id}', [QaController::class, 'ShowQaByMajor'])->name('qa.showAllByMajor');
+        Route::get('/major/{major_id}', [QaController::class, 'ShowQaByMajor'])->name('qa.showAllByMajor');
+        Route::get('/my-quests', [QaController::class, 'showMyQa'])->name('qa.showMyQa');
         Route::post('/', [QaController::class, 'CreateQa'])->name('qa.create');
         Route::get('/{qa}', [QaController::class, 'detailQandA'])->name('qa.detail');
         Route::put('/{qa}', [QaController::class, 'UpdateQa'])->name('qa.update');
