@@ -101,8 +101,8 @@ export const CommentsQandA = ({ qAndAData, postComment, deleteComment, putCommen
       <Col lg="12">
         <Card className="card-block card-stretch card-height blog user-comment">
           <Card.Header className="d-flex justify-content-between">
-            <div className="header-title">
-              <h4 className="card-title">User Comment</h4>
+            <div className="text-center mt-4">
+              <h4>Tất cả câu trả lời</h4>
             </div>
           </Card.Header>
           <Card.Body>

@@ -38,6 +38,7 @@ export const ApiConstants = {
   EDIT_COMMENT: `/comment`,
   // Like
   CREATE_LIKE_BLOG: `/like/blog`,
+  CREATE_LIKE_QANDA: `/like/qa`,
 
   // Friend
   SHOW_FRIEND_REQUEST: `/friend-list-request`,
