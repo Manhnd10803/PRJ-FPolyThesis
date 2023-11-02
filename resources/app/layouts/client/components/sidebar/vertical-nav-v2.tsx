@@ -29,7 +29,7 @@ const NAVBAR_SOCIAL_CONFIGS = [
   {
     title: 'Q & A',
     icon: <i className="icon material-symbols-outlined">quiz</i>,
-    pathname: '/question-and-answer',
+    pathname: '/quests',
   },
   {
     title: 'Blog',

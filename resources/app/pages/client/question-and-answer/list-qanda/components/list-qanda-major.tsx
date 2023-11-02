@@ -1,16 +1,22 @@
+import { MajorService } from '@/apis/services/major.service';
 import { QandAService } from '@/apis/services/qanda.service';
+import { IMajors } from '@/models/major';
 import { formatDateFromCreatedAt } from '@/pages/client/blog/components/format-date';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import { Badge, Row } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 
 const imageUrl = 'https://picsum.photos/20';
 
-export const ListNewQAndAs = ({ data }: any) => {
-  console.log(data);
-
-  const navigate = useNavigate();
+export const ListQAndAsByMajorId = ({ data, majorId }: any) => {
+  // console.log(majorId);
   // console.log(data);
 
+  const [filteredData, setFilteredData] = useState([]);
+  const [majorName, setMajorName] = useState('');
+
+  const navigate = useNavigate();
   const handleDetailsClick = (id: number) => {
     QandAService.getDetailQandA(id)
       .then(response => {
@@ -24,12 +30,35 @@ export const ListNewQAndAs = ({ data }: any) => {
       });
   };
 
+  const { data: majors } = useQuery({
+    queryKey: ['majors'],
+    queryFn: () => MajorService.getMajors(),
+  });
+  const listMajors = majors?.data;
+  console.log(listMajors);
+
+  useEffect(() => {
+    QandAService.getAllQandAByMajor(majorId)
+      .then(response => {
+        const filteredQAndA = response.data;
+        setFilteredData(filteredQAndA);
+
+        const selectedMajor = listMajors.find(item => item.id === majorId);
+        if (selectedMajor) {
+          setMajorName(selectedMajor.majors_name);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching filtered data:', error);
+      });
+  }, [majorId]);
+
   return (
     <>
       {/* List câu hỏi */}
-
-      {data &&
-        data.map((qandA, index) => (
+      <h4>Chuyên Ngành : {majorName}</h4>
+      {filteredData &&
+        filteredData.map((qandA, index) => (
           <div key={qandA.qa.id} className="borderbox1 mt-3 rounded d-flex rounded">
             <div className="user-img me-2">
               <img loading="lazy" src={imageUrl} alt="userimg" className="avatar-40 rounded-circle" />
