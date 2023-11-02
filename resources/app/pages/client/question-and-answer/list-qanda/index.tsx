@@ -158,7 +158,7 @@ export const ListQandAPage = ({ data }: any) => {
                   <Card>
                     <Card.Body>
                       {/* Danh sách câu hỏi của bạn */}
-                      <ListMyQAndAs />
+                      <ListMyQAndAs data={data} />
                     </Card.Body>
                   </Card>
                 </Tab.Pane>

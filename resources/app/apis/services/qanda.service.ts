@@ -19,6 +19,10 @@ const getAllQandAByMajor = (major_id: number) => {
   return httpRequest.get<IQandAs>(url);
 };
 
+const getAllMyQandA = () => {
+  return httpRequest.get<IQandAs>(ApiConstants.LIST_MY_QANDA);
+};
+
 const getDetailQandA = (qaId: number) => {
   const url = `${ApiConstants.DETAIL_QANDA}/${qaId}`;
   return httpRequest.get<IQandAs>(url);
@@ -44,4 +48,12 @@ const deleteQandA = async (qaId: number) => {
   }
 };
 
-export const QandAService = { createQandA, getAllQandA, getDetailQandA, UpdateQandA, deleteQandA, getAllQandAByMajor };
+export const QandAService = {
+  createQandA,
+  getAllQandA,
+  getDetailQandA,
+  UpdateQandA,
+  deleteQandA,
+  getAllQandAByMajor,
+  getAllMyQandA,
+};
