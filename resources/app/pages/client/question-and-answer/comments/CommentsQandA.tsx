@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { Card } from '@/components/custom';
 import { Row, Col, Image, Button, Form, Dropdown, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { TokenService } from '@/apis/services/token.service';
 import { formatDateFromCreatedAt } from '../components/format-date';
+import { StorageFunc } from '@/utilities/local-storage/storage-func';
 
 const imageUrl = 'https://picsum.photos/20';
 
@@ -15,7 +15,7 @@ export const CommentsQandA = ({ qAndAData, postComment, deleteComment, putCommen
   const [editCommentId, setEditCommentId] = useState(null);
   const [editedContent, setEditedContent] = useState('');
   // User ID
-  const userId = TokenService.getUser();
+  const userId = StorageFunc.getUserId();
   // Name :
   function combineNames(data: any) {
     if (qAndAData.first_name && qAndAData.last_name) {
@@ -131,7 +131,7 @@ export const CommentsQandA = ({ qAndAData, postComment, deleteComment, putCommen
                                   </Dropdown.Toggle>
                                 </Link>
                                 <Dropdown.Menu className="dropdown-menu-right">
-                                  {userId.user.id === comment?.user?.id ? (
+                                  {userId === comment?.user?.id ? (
                                     <>
                                       <Dropdown.Item
                                         onClick={() => setShow(true)}
@@ -276,7 +276,7 @@ export const CommentsQandA = ({ qAndAData, postComment, deleteComment, putCommen
                                         </Dropdown.Toggle>
                                       </Link>
                                       <Dropdown.Menu className="dropdown-menu-right">
-                                        {userId.user.id === reply?.user?.id ? (
+                                        {userId === reply?.user?.id ? (
                                           <>
                                             <Dropdown.Item
                                               onClick={() => setShow(true)}
