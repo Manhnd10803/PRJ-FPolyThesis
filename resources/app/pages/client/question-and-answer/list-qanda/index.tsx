@@ -1,4 +1,4 @@
-import { Row, Col, Nav, Tab, Badge, Button, ButtonGroup } from 'react-bootstrap';
+import { Row, Col, Nav, Tab, Badge, Button, ButtonGroup, Dropdown } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { Card } from '@/components/custom';
 import React, { useEffect, useState } from 'react';
@@ -10,24 +10,28 @@ import { ListBestCmtQAndAs } from './components/list-best-cmt-qanda';
 import { ListBestLikeQAndAs } from './components/list-best-like-qanda';
 import { ListNoAnswerQAndAs } from './components/list-no-answer-qanda';
 import { ListMyQAndAs } from './components/list-my-qanda';
+import { useQuery } from '@tanstack/react-query';
+import { MajorService } from '@/apis/services/major.service';
+import { ListQAndAsByMajorId } from './components/list-qanda-major';
 
 const imageUrl = 'https://picsum.photos/20';
 
 export const ListQandAPage = ({ data }: any) => {
-  const navigate = useNavigate();
-  // console.log(data);
+  // const navigate = useNavigate();
+  const [selectedMajorId, setSelectedMajorId] = useState(null);
 
-  const handleDetailsClick = (id: number) => {
-    QandAService.getDetailQandA(id)
-      .then(response => {
-        const detailData = response.data;
-        const idToPass = detailData.id;
-        console.log(`Thông tin chi tiết câu hỏi ID - ${id}`);
-        navigate(`/quests/${id}`);
-      })
-      .catch(error => {
-        console.error('Error fetching details:', error);
-      });
+  console.log(data);
+
+  const { data: majors } = useQuery({
+    queryKey: ['majors'],
+    queryFn: () => MajorService.getMajors(),
+  });
+  const listMajors = majors?.data;
+  console.log(listMajors);
+
+  const handleMajorSelect = majorId => {
+    console.log('Selected Major ID:', majorId);
+    setSelectedMajorId(majorId);
   };
 
   return (
@@ -48,7 +52,7 @@ export const ListQandAPage = ({ data }: any) => {
                         >
                           <Col sm={2} className=" p-0">
                             <Nav.Link eventKey="f1" role="button">
-                              Mới nhất
+                              Tất cả
                             </Nav.Link>
                           </Col>
                           <Col sm={2} className=" p-0">
@@ -74,6 +78,37 @@ export const ListQandAPage = ({ data }: any) => {
                             <Nav.Link eventKey="f5" role="button">
                               My Question
                             </Nav.Link>
+                          </Col>
+                          <Col sm={2} className="p-0">
+                            <button className=" btn">
+                              <div className="card-header-toolbar d-flex align-items-center">
+                                <Dropdown>
+                                  <Dropdown.Toggle as="div" className="lh-1">
+                                    {/* <span className="material-symbols-outlined">more_horiz</span> */}
+                                    <Nav.Link eventKey="f6" role="button">
+                                      Chuyên ngành
+                                    </Nav.Link>
+                                  </Dropdown.Toggle>
+                                  <Dropdown.Menu>
+                                    {listMajors?.map((item: IMajors) => (
+                                      <Dropdown.Item
+                                        href="#"
+                                        eventKey="f7"
+                                        role="button"
+                                        key={item.id}
+                                        onClick={() => handleMajorSelect(item.id)}
+                                      >
+                                        {item.majors_name}
+                                      </Dropdown.Item>
+                                    ))}
+
+                                    {/* <Dropdown.Item href="#" eventKey="f8" role="button">
+                                      Xóa câu hỏi
+                                    </Dropdown.Item> */}
+                                  </Dropdown.Menu>
+                                </Dropdown>
+                              </div>
+                            </button>
                           </Col>
                         </Nav>
                       </div>
@@ -124,6 +159,16 @@ export const ListQandAPage = ({ data }: any) => {
                     <Card.Body>
                       {/* Danh sách câu hỏi của bạn */}
                       <ListMyQAndAs />
+                    </Card.Body>
+                  </Card>
+                </Tab.Pane>
+
+                <Tab.Pane eventKey="f7" className="fade show" id="Abouts" role="tabpanel">
+                  <Card>
+                    <Card.Body>
+                      {/* Danh sách câu hỏi của bạn */}
+
+                      <ListQAndAsByMajorId data={data} majorId={selectedMajorId} />
                     </Card.Body>
                   </Card>
                 </Tab.Pane>
