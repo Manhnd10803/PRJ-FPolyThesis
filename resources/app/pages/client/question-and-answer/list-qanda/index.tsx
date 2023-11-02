@@ -139,7 +139,7 @@ export const ListQandAPage = ({ data }: any) => {
                   <Card>
                     <Card.Body>
                       {/* Danh sách câu hỏi chưa có câu trả lời */}
-                      <ListNoAnswerQAndAs />
+                      <ListNoAnswerQAndAs data={data} />
                     </Card.Body>
                   </Card>
                 </Tab.Pane>
