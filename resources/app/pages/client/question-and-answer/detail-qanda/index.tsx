@@ -15,13 +15,14 @@ const imageUrl = 'https://picsum.photos/20';
 
 export const DetailQandAPage = () => {
   const commentRef = useRef(null);
+  const [show, setShow] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { id } = useParams();
 
-  const [showModal, setShowModal] = useState(false);
-  const handleClose = () => setShowModal(false);
-  const handleShow = () => setShowModal(true);
+  // const [showModal, setShowModal] = useState(false);
+  // const handleClose = () => setShowModal(false);
+  // const handleShow = () => setShowModal(true);
 
   const [qAndAData, setQandAData] = useState(null);
   console.log(qAndAData);
@@ -87,7 +88,7 @@ export const DetailQandAPage = () => {
   };
 
   // Create Like
-  const LikeBlogMutation = useMutation(LikeService.postLikeQA, {
+  const LikeQandAMutation = useMutation(LikeService.postLikeQA, {
     onSettled: () => {
       queryClient.invalidateQueries(QandAsQueryKey);
     },
@@ -99,19 +100,13 @@ export const DetailQandAPage = () => {
         qa_id: qAndAData?.qa?.id,
         emotion: emotion,
       };
-      const response = await LikeBlogMutation.mutateAsync(formData);
+      const response = await LikeQandAMutation.mutateAsync(formData);
       console.log('Like đã được cập nhật thành công', response);
       return response;
     } catch (error) {
       throw error;
     }
   };
-
-  // const fetchDetailQandA = async () => {
-  //   const { qAndAData } = await QandAService.getDetailQandA(id);
-  //   return qAndAData;
-  // };
-  // const { qAndAData, isLoading } = useQuery(QandAsQueryKey, { queryFn: fetchDetailQandA });
 
   useEffect(() => {
     // Tải dữ liệu từ API khi trang được tạo ra
@@ -121,7 +116,7 @@ export const DetailQandAPage = () => {
         console.log(data);
         setQandAData(data);
         console.log(`Chi tiêt câu hỏi với ID ${id}`);
-        navigate(`/quest/${id}`);
+        navigate(`/quests/${id}`);
       })
       .catch(error => {
         console.error('Lỗi khi hiển thị thông tin câu hỏi:', error);
@@ -136,9 +131,16 @@ export const DetailQandAPage = () => {
     try {
       await QandAService.deleteQandA(id);
       toast.success('Xóa câu hỏi thành công');
-      navigate('/question-and-answer');
+      navigate('/quests');
     } catch (error) {
       console.error('Lỗi khi xóa câu hỏi:', error);
+    }
+  };
+  const handleEdit = () => {
+    try {
+      navigate(`/quests/update/${id}`);
+    } catch (error) {
+      console.error('Lỗi khi sửa câu hỏi:', error);
     }
   };
   // console.log(qAndAData?.qa?.user?.username);
@@ -173,12 +175,27 @@ export const DetailQandAPage = () => {
                                   <span className="material-symbols-outlined">more_horiz</span>
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu>
-                                  <Dropdown.Item href="#" onClick={handleShow}>
+                                  <Dropdown.Item href="#" onClick={handleEdit}>
                                     Sửa câu hỏi
                                   </Dropdown.Item>
-                                  <Dropdown.Item href="#" onClick={handleDelete}>
+                                  <Dropdown.Item href="#" onClick={() => setShow(true)}>
                                     Xóa câu hỏi
                                   </Dropdown.Item>
+
+                                  <Modal centered size="sm" show={show} onHide={() => setShow(false)}>
+                                    <Modal.Header closeButton>
+                                      <Modal.Title>Modal heading</Modal.Title>
+                                    </Modal.Header>
+                                    <Modal.Body>Bạn có chắc chắn muốn xóa bình luận này?</Modal.Body>
+                                    <Modal.Footer>
+                                      <Button variant="secondary" onClick={() => setShow(false)}>
+                                        Hủy bỏ
+                                      </Button>
+                                      <Button variant="primary" onClick={handleDelete}>
+                                        Đồng ý
+                                      </Button>
+                                    </Modal.Footer>
+                                  </Modal>
                                 </Dropdown.Menu>
                               </Dropdown>
                             </div>
@@ -202,10 +219,10 @@ export const DetailQandAPage = () => {
                                 </>
                               ) } */}
 
-                              <i className="material-symbols-outlined md-16"> thumb_up </i>
+                              {/* <i className="material-symbols-outlined md-16"> thumb_up </i>
                               <span className="mx-1">
                                 <small>0</small>
-                              </span>
+                              </span> */}
                             </div>
 
                             <div className="ms-auto d-flex align-items-center">
@@ -254,27 +271,8 @@ export const DetailQandAPage = () => {
                         </div>
 
                         {/* Icon like cmt */}
-                        <div className="text-center mt-4">
-                          <p>Tất cả câu trả lời</p>
-                        </div>
 
-                        {/* Cau tra loi */}
-                        {/* <ul className="post-comments p-2  card rounded">
-                          <li className="mb-2">
-                            <div className="d-flex justify-content-between">
-                              <div className="user-img">
-                                <img src={imageUrl} alt="userimg" className="avatar-40 me-3 rounded-circle img-fluid" />
-                              </div>
-                              <div className="w-100 text-margin">
-                                <div className="">
-                                  <h5 className="mb-0 d-inline-block me-1">Emma Labelle</h5>
-                                  <h6 className=" mb-0 d-inline-block">2 weeks ago</h6>
-                                </div>
-                                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. </p>
-                              </div>
-                            </div>
-                          </li>
-                        </ul> */}
+                        {/* Câu trả lời */}
 
                         <div ref={commentRef}>
                           <CommentsQandA
@@ -292,27 +290,6 @@ export const DetailQandAPage = () => {
               </ul>
             </Card.Body>
           </Card>
-
-          {/*============== MODAL CẬP NHẬT CÂU HỎI =============*/}
-          <Modal
-            centered
-            size="xl"
-            className="fade"
-            id="post-modal"
-            onHide={handleClose}
-            show={showModal}
-            style={{ paddingTop: '60px', paddingBottom: '30px' }}
-          >
-            <Modal.Header className="d-flex justify-content-between">
-              <Modal.Title id="post-modalLabel">Cập nhật thông tin câu hỏi</Modal.Title>
-              <Link to="#" className="lh-1" onClick={handleClose}>
-                <span className="material-symbols-outlined">close</span>
-              </Link>
-            </Modal.Header>
-            <Modal.Body>
-              <UpdateQandA qAndAData={qAndAData} />
-            </Modal.Body>
-          </Modal>
         </Container>
       </div>
     </>

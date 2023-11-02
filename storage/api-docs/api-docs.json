@@ -3188,14 +3188,80 @@
                 "tags": [
                     "Likes"
                 ],
-                "summary": "Thích hoặc bỏ thích bài blog",
-                "description": "Thích hoặc bỏ thích một bài blog với một cảm xúc cụ thể.",
+                "summary": "Thích hoặc bỏ thích câu hỏi",
+                "description": "Thích hoặc bỏ thích một câu hỏi với một cảm xúc cụ thể.",
                 "operationId": "likeItemBlog",
                 "parameters": [
                     {
                         "name": "item",
                         "in": "path",
-                        "description": "ID của bài blog",
+                        "description": "ID của câu hỏi",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "action",
+                        "in": "path",
+                        "description": "Loại cảm xúc (emotion)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "like",
+                                "dislike"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Cảm xúc được cập nhật thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Lỗi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/like/qa/{item}/{action}": {
+            "post": {
+                "tags": [
+                    "Likes"
+                ],
+                "summary": "Thích hoặc bỏ thích câu hỏi và câu trả lời",
+                "description": "Thích hoặc bỏ thích một câu hỏi hoặc câu trả lời với một cảm xúc cụ thể.",
+                "operationId": "likeItemQandA",
+                "parameters": [
+                    {
+                        "name": "item",
+                        "in": "path",
+                        "description": "ID của câu hỏi hoặc câu trả lời",
                         "required": true,
                         "schema": {
                             "type": "integer"

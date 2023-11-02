@@ -12,6 +12,7 @@ import { ProfilePage } from '@/pages/client/profile';
 import { QuestionAndAnswerPage } from '@/pages/client/question-and-answer';
 import { CreateQandA } from '@/pages/client/question-and-answer/create-qanda';
 import { DetailQandAPage } from '@/pages/client/question-and-answer/detail-qanda';
+import { UpdateQandA } from '@/pages/client/question-and-answer/update-qanda/update-form';
 
 export const ClientRouter = [
   {
@@ -19,15 +20,19 @@ export const ClientRouter = [
     element: <HomePage />,
   },
   {
-    path: '/question-and-answer',
+    path: '/quests',
     element: <QuestionAndAnswerPage />,
   },
   {
-    path: '/create-quest',
+    path: '/quests/create',
     element: <CreateQandA />,
   },
   {
-    path: '/quest/:id',
+    path: '/quests/update/:id',
+    element: <UpdateQandA />,
+  },
+  {
+    path: '/quests/:id',
     element: <DetailQandAPage />,
   },
   {

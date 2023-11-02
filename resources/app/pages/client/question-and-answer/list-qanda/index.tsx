@@ -23,7 +23,7 @@ export const ListQandAPage = ({ data }: any) => {
         const detailData = response.data;
         const idToPass = detailData.id;
         console.log(`Thông tin chi tiết câu hỏi ID - ${id}`);
-        navigate(`/quest/${id}`);
+        navigate(`/quests/${id}`);
       })
       .catch(error => {
         console.error('Error fetching details:', error);
