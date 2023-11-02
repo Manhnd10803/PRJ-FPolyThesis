@@ -1,18 +1,117 @@
 import { QandAService } from '@/apis/services/qanda.service';
-import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useRef, useState } from 'react';
 import { Container, Col, Row, Card, Button, Badge, Modal, Form, Dropdown } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { formatDateFromCreatedAt } from '../../blog/components/format-date';
-import { UpdateAsk } from './update-ask';
+import { MajorService } from '@/apis/services/major.service';
+import toast from 'react-hot-toast';
+import { UpdateQandA } from '../update-qanda';
+import { FormComment } from '../comments/form-cmt';
+import { CommentsQandA } from '../comments/CommentsQandA';
+import { CommentService } from '@/apis/services/comment.service';
+import { LikeService } from '@/apis/services/like.service';
 const imageUrl = 'https://picsum.photos/20';
 
-export const DetailQuestionPage = () => {
-  const location = useLocation();
-  const id = location.pathname.split('/').pop(); // Lấy ID từ URL
-  console.log(id);
+export const DetailQandAPage = () => {
+  const commentRef = useRef(null);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { id } = useParams();
+
+  const [showModal, setShowModal] = useState(false);
+  const handleClose = () => setShowModal(false);
+  const handleShow = () => setShowModal(true);
+
   const [qAndAData, setQandAData] = useState(null);
+  console.log(qAndAData);
+  const QandAsQueryKey = ['qa', id];
+
+  // Create CMT
+  const createCommentMutation = useMutation(CommentService.createCommentQA, {
+    onSettled: () => {
+      queryClient.invalidateQueries(QandAsQueryKey);
+    },
+  });
+
+  const postComment = async (content: any, parent_id: number, reply_to: string) => {
+    try {
+      const formData = {
+        parent_id: parent_id,
+        reply_to: reply_to,
+        content: content,
+        qa_id: qAndAData?.qa?.id,
+      };
+      const response = await createCommentMutation.mutateAsync(formData);
+      console.log('Bình luận đã được đăng thành công', response);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // Delete Comment
+  const deleteCommentMutation = useMutation(CommentService.deleteComment, {
+    onSettled: () => {
+      queryClient.invalidateQueries(QandAsQueryKey);
+    },
+  });
+
+  const deleteComment = async (commentId: any) => {
+    try {
+      await deleteCommentMutation.mutateAsync(commentId);
+    } catch (error) {
+      console.error('Lỗi khi xóa bình luận', error);
+    }
+  };
+
+  // Edit Comment
+  const editCommentMutation = useMutation(CommentService.editComment, {
+    onSettled: () => {
+      queryClient.invalidateQueries(QandAsQueryKey);
+    },
+  });
+  const putComment = async (content: string, commentId: any) => {
+    console.log(content);
+    try {
+      const formData = {
+        id: commentId,
+        content: content,
+      };
+      const response = await editCommentMutation.mutateAsync(formData);
+      console.log('Bình luận đã được cập nhật thành công', response);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // Create Like
+  const LikeBlogMutation = useMutation(LikeService.postLikeQA, {
+    onSettled: () => {
+      queryClient.invalidateQueries(QandAsQueryKey);
+    },
+  });
+  const createLike = async (emotion: string) => {
+    console.log(emotion);
+    try {
+      const formData = {
+        qa_id: qAndAData?.qa?.id,
+        emotion: emotion,
+      };
+      const response = await LikeBlogMutation.mutateAsync(formData);
+      console.log('Like đã được cập nhật thành công', response);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // const fetchDetailQandA = async () => {
+  //   const { qAndAData } = await QandAService.getDetailQandA(id);
+  //   return qAndAData;
+  // };
+  // const { qAndAData, isLoading } = useQuery(QandAsQueryKey, { queryFn: fetchDetailQandA });
 
   useEffect(() => {
     // Tải dữ liệu từ API khi trang được tạo ra
@@ -21,6 +120,8 @@ export const DetailQuestionPage = () => {
         const data = response.data;
         console.log(data);
         setQandAData(data);
+        console.log(`Chi tiêt câu hỏi với ID ${id}`);
+        navigate(`/quest/${id}`);
       })
       .catch(error => {
         console.error('Lỗi khi hiển thị thông tin câu hỏi:', error);
@@ -30,6 +131,17 @@ export const DetailQuestionPage = () => {
   if (!qAndAData) {
     return <div className="text-center">Loading...</div>;
   }
+
+  const handleDelete = async () => {
+    try {
+      await QandAService.deleteQandA(id);
+      toast.success('Xóa câu hỏi thành công');
+      navigate('/question-and-answer');
+    } catch (error) {
+      console.error('Lỗi khi xóa câu hỏi:', error);
+    }
+  };
+  // console.log(qAndAData?.qa?.user?.username);
 
   return (
     <>
@@ -47,12 +159,12 @@ export const DetailQuestionPage = () => {
 
                       <div className="borderbox border rounded p-2">
                         <div className="d-flex align-items-center flex-wrap">
-                          <h5>User Name</h5>
+                          <h5>{qAndAData?.qa?.user?.username}</h5>
                           <span className="text-primary ms-1 d-flex align-items-center">
                             <i className="material-symbols-outlined me-2 text-primary md-16">check_circle</i>
                           </span>
                           <Link to="#" className="mb-0">
-                            Chuyên ngành {qAndAData.qa.majors_id}
+                            {qAndAData?.qa?.major?.majors_name}
                           </Link>
                           <button className=" btn">
                             <div className="card-header-toolbar d-flex align-items-center">
@@ -61,8 +173,12 @@ export const DetailQuestionPage = () => {
                                   <span className="material-symbols-outlined">more_horiz</span>
                                 </Dropdown.Toggle>
                                 <Dropdown.Menu>
-                                  <Dropdown.Item href="#">Sửa câu hỏi</Dropdown.Item>
-                                  <Dropdown.Item href="#">Xóa câu hỏi</Dropdown.Item>
+                                  <Dropdown.Item href="#" onClick={handleShow}>
+                                    Sửa câu hỏi
+                                  </Dropdown.Item>
+                                  <Dropdown.Item href="#" onClick={handleDelete}>
+                                    Xóa câu hỏi
+                                  </Dropdown.Item>
                                 </Dropdown.Menu>
                               </Dropdown>
                             </div>
@@ -70,16 +186,32 @@ export const DetailQuestionPage = () => {
 
                           <div className="ms-auto d-flex align-items-center">
                             <div className="ms-auto d-flex align-items-center">
+                              {/* { qAndAData.like_counts_by_emotion.total_likes > 0 ? (
+                                <>
+                                  <i className="material-symbols-outlined md-16"> thumb_up </i>
+                                  <span className="mx-1">
+                                    <small>{qAndAData.like_counts_by_emotion.total_likes}</small>
+                                  </span>
+                                </>
+                              ) : (
+                                <>
+                                  <i className="material-symbols-outlined md-16"> thumb_up </i>
+                                  <span className="mx-1">
+                                    <small>0</small>
+                                  </span>
+                                </>
+                              ) } */}
+
                               <i className="material-symbols-outlined md-16"> thumb_up </i>
                               <span className="mx-1">
-                                <small>111</small>
+                                <small>0</small>
                               </span>
                             </div>
 
                             <div className="ms-auto d-flex align-items-center">
                               <i className="material-symbols-outlined md-16"> chat_bubble_outline </i>
                               <span className="mx-1">
-                                <small>111</small>
+                                <small>{qAndAData.total_comments ? qAndAData.total_comments : '0'}</small>
                               </span>
                             </div>
 
@@ -90,9 +222,9 @@ export const DetailQuestionPage = () => {
                           </div>
                         </div>
 
-                        <h6>Tiêu đề {qAndAData.qa.title}</h6>
+                        <h3 style={{ fontWeight: '600', marginBottom: '15px' }}>{qAndAData.qa.title}</h3>
 
-                        <p>{qAndAData.qa.content}</p>
+                        <h4 style={{ marginBottom: '15px' }}>{qAndAData.qa.content}</h4>
                         <Row className="mt-2">
                           {/* IMAGE */}
                           {/* <Col lg="4" md="6" className="mt-1">
@@ -125,8 +257,9 @@ export const DetailQuestionPage = () => {
                         <div className="text-center mt-4">
                           <p>Tất cả câu trả lời</p>
                         </div>
+
                         {/* Cau tra loi */}
-                        <ul className="post-comments p-2  card rounded">
+                        {/* <ul className="post-comments p-2  card rounded">
                           <li className="mb-2">
                             <div className="d-flex justify-content-between">
                               <div className="user-img">
@@ -141,23 +274,17 @@ export const DetailQuestionPage = () => {
                               </div>
                             </div>
                           </li>
-                        </ul>
+                        </ul> */}
 
-                        <form className="d-flex align-items-center mt-3" action="#">
-                          {/* <input type="text" className="form-control rounded" placeholder="Write your comment" /> */}
-                          <Col sm="12">
-                            <Form.Control
-                              as="textarea"
-                              className="textarea"
-                              id="content"
-                              rows={5}
-                              placeholder="Let us know the problem you are having..."
-                            />
-                          </Col>
-                          <div className="comment-attagement d-flex align-items-center me-4">
-                            <span className="material-symbols-outlined md-18 me-1"> comment </span>
-                          </div>
-                        </form>
+                        <div ref={commentRef}>
+                          <CommentsQandA
+                            qAndAData={qAndAData?.comments}
+                            postComment={postComment}
+                            putComment={putComment}
+                            deleteComment={deleteComment}
+                          />
+                        </div>
+                        <FormComment postComment={postComment} />
                       </div>
                     </div>
                   </div>
@@ -166,26 +293,26 @@ export const DetailQuestionPage = () => {
             </Card.Body>
           </Card>
 
-          {/*============== Modal Update Ask Question =============*/}
-          {/* <Modal
+          {/*============== MODAL CẬP NHẬT CÂU HỎI =============*/}
+          <Modal
             centered
             size="xl"
             className="fade"
             id="post-modal"
-            onHide={}
-            show={}
+            onHide={handleClose}
+            show={showModal}
             style={{ paddingTop: '60px', paddingBottom: '30px' }}
           >
             <Modal.Header className="d-flex justify-content-between">
-              <Modal.Title id="post-modalLabel">Ask questions</Modal.Title>
-              <Link to="#" className="lh-1" onClick={}>
+              <Modal.Title id="post-modalLabel">Cập nhật thông tin câu hỏi</Modal.Title>
+              <Link to="#" className="lh-1" onClick={handleClose}>
                 <span className="material-symbols-outlined">close</span>
               </Link>
             </Modal.Header>
             <Modal.Body>
-              <UpdateAsk />
+              <UpdateQandA qAndAData={qAndAData} />
             </Modal.Body>
-          </Modal> */}
+          </Modal>
         </Container>
       </div>
     </>

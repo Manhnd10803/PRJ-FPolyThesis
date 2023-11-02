@@ -32,4 +32,8 @@ class Qa extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+    public function major()
+    {
+        return $this->belongsTo(Major::class, 'majors_id', 'id');
+    }
 }

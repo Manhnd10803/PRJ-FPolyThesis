@@ -3,7 +3,6 @@ import { Row, Col, Container, Form, Dropdown } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import EditableTextArea from './form-textarea';
 import toast from 'react-hot-toast';
 import { QandACreateSchema, TQandACreateSchema } from '@/validation/zod/qanda';
 import { IMajors } from '@/models/major';
@@ -14,7 +13,7 @@ import { useState } from 'react';
 
 const imageUrl = 'https://picsum.photos/20';
 
-export const UpdateAsk = () => {
+export const CreateQandA = () => {
   const navigate = useNavigate();
 
   const { data } = useQuery({
@@ -57,7 +56,7 @@ export const UpdateAsk = () => {
   return (
     <>
       <div className="d-flex align-items-center">
-        {/* ============== FORM ADD QUESTION ============== */}
+        {/* ============== FORM ĐẶT CÂU HỎI ============== */}
         <Form
           onSubmit={handleSubmit(onSubmit)}
           encType="multipart/form-data"
@@ -67,7 +66,7 @@ export const UpdateAsk = () => {
         >
           <Row className="form-group">
             <Form.Label column sm="2" htmlFor="to" className="col-form-label">
-              Title
+              Tiêu đề
             </Form.Label>
             <Col sm="12">
               <Form.Control
@@ -82,7 +81,7 @@ export const UpdateAsk = () => {
 
           <Row className="form-group">
             <Form.Label column sm="2" htmlFor="exampleFormControlSelect1">
-              Majors
+              Chuyên ngành
             </Form.Label>
             <Col sm="12">
               <Form.Select
@@ -91,7 +90,7 @@ export const UpdateAsk = () => {
                 className="form-select"
                 id="exampleFormControlSelect1"
               >
-                <option value="0">Chọn chuyên ngành</option>
+                <option value="0">Chọn chuyên ngành liên quan đến câu hỏi ...</option>
                 {majors?.map((item: IMajors) => <option value={item.id}>{item.majors_name}</option>)}
               </Form.Select>
             </Col>
@@ -101,7 +100,7 @@ export const UpdateAsk = () => {
 
           <Row className="form-group">
             <Form.Label column sm="2" htmlFor="to" className="col-form-label">
-              Content
+              Nội dung
             </Form.Label>
             <Col sm="12">
               <Form.Control
@@ -110,7 +109,7 @@ export const UpdateAsk = () => {
                 id="content"
                 {...createAsk('content')}
                 rows={5}
-                placeholder="Let us know the problem you are having..."
+                placeholder="Nhập chi tiết thông tin câu hỏi của bạn ..."
               />
             </Col>
 
@@ -121,14 +120,14 @@ export const UpdateAsk = () => {
 
           <Row className="form-group">
             <Form.Label column sm="2" htmlFor="to" className="col-form-label">
-              Tags
+              HashTags
             </Form.Label>
             <Col sm="12">
               <Form.Control
                 type="text"
                 id="hashtag"
                 {...createAsk('hashtag')}
-                placeholder="Add up to 5 tags to describe what your question is about. Start typing to see suggestions..."
+                placeholder="Thêm thẻ vào câu hỏi của bạn, tối đa 5 thẻ ..."
               />
             </Col>
 
@@ -137,75 +136,16 @@ export const UpdateAsk = () => {
           <hr />
           <div className="other-option">
             <div className="d-flex align-items-center justify-content-between">
-              <div className="d-flex align-items-center">
-                <div className="user-img me-3">
-                  <img src={imageUrl} alt="user1" className="avatar-60 rounded-circle img-fluid" />
-                </div>
-                <h6>Your Name</h6>
-              </div>
-              <div className="card-post-toolbar">
-                <Dropdown>
-                  <Dropdown.Toggle as={CustomToggle} role="button">
-                    <span className="btn btn-primary">Public</span>
-                  </Dropdown.Toggle>
-                  <Dropdown.Menu className=" m-0 p-0">
-                    <Dropdown.Item className=" p-3" href="#">
-                      <div className="d-flex align-items-top">
-                        <i className="ri-save-line h4"></i>
-                        <div className="data ms-2">
-                          <h6>Public</h6>
-                          <p className="mb-0">Everyone will know you.</p>
-                        </div>
-                      </div>
-                    </Dropdown.Item>
-                    <Dropdown.Item className="p-3" href="#">
-                      <div className="d-flex align-items-top">
-                        <i className="ri-close-circle-line h4"></i>
-                        <div className="data ms-2">
-                          <h6>Anonymous Question</h6>
-                          <p className="mb-0">Everyone will not know you.</p>
-                        </div>
-                      </div>
-                    </Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
-              </div>
+              <button type="submit" className="btn btn-primary d-block w-100 mt-3 me-2 mx-2">
+                Tạo câu hỏi
+              </button>
+              <button type="reset" className="btn btn-primary d-block w-50 mt-3 mx-2">
+                Hủy
+              </button>
             </div>
           </div>
-          <button type="submit" className="btn btn-primary d-block w-100 mt-3">
-            Đăng câu hỏi
-          </button>
         </Form>
       </div>
-
-      {/* <hr /> */}
-      <ul className="d-flex flex-wrap align-items-center list-inline m-0 p-0">
-        {/* <li className="col-md-6 mb-3">
-          <div className="bg-soft-primary rounded p-2 pointer me-3">
-            <Link to="#"></Link>
-            <img src={imageUrl} alt="icon" className="img-fluid" /> Photo
-          </div>
-        </li>
-        <li className="col-md-6 mb-3">
-          <div className="bg-soft-primary rounded p-2 pointer me-3">
-            <Link to="#"></Link>
-            <img src={imageUrl} alt="icon" className="img-fluid" /> What is your major ?
-          </div>
-        </li> */}
-
-        {/* <li className="col-md-6 mb-3">
-          <div className="bg-soft-primary rounded p-2 pointer me-3">
-            <Link to="#"></Link>
-            <img src={imageUrl} alt="icon" className="img-fluid" /> Feeling/Activity
-          </div>
-        </li>
-        <li className="col-md-6 mb-3">
-          <div className="bg-soft-primary rounded p-2 pointer me-3">
-            <Link to="#"></Link>
-            <img src={imageUrl} alt="icon" className="img-fluid" /> Check in
-          </div>
-        </li> */}
-      </ul>
     </>
   );
 };

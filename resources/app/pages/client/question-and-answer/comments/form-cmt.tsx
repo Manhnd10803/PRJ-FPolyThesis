@@ -36,10 +36,15 @@ export const FormComment = ({ postComment }: any) => {
     <>
       <Col lg="12">
         <Card className="card-block card-stretch card-height blog mb-0">
+          <Card.Header className="d-flex justify-content-between">
+            <div className="header-title">
+              <h4 className="card-title">Your Comment</h4>
+            </div>
+          </Card.Header>
           <Card.Body>
             <Form>
               <Form.Group className="form-group">
-                <Form.Label htmlFor="exampleFormControlTextarea1">Câu trả lời của bạn</Form.Label>
+                <Form.Label htmlFor="exampleFormControlTextarea1">Comment</Form.Label>
                 <Form.Control
                   as="textarea"
                   id="exampleFormControlTextarea1"
@@ -56,7 +61,7 @@ export const FormComment = ({ postComment }: any) => {
                   disabled={isButtonDisabled}
                   onClick={handleCommentCancel}
                 >
-                  Hủy
+                  Cancel
                 </Button>
 
                 <Button
@@ -65,7 +70,7 @@ export const FormComment = ({ postComment }: any) => {
                   onClick={handleCommentSubmit}
                   disabled={isButtonDisabled}
                 >
-                  Gửi <span className="material-symbols-outlined">send</span>
+                  Send <span className="material-symbols-outlined">send</span>
                 </Button>
               </div>
             </Form>

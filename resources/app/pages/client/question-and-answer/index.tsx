@@ -1,10 +1,10 @@
 import { Container, Col, Row, Card, Button, Nav, Modal } from 'react-bootstrap';
-import { Link, useLocation } from 'react-router-dom';
-import { ListQandAPage } from './components/list-qanda';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { TabsAskQuestion } from './components/tab-ask-question';
 import { QandAService } from '@/apis/services/qanda.service';
 import { useQuery } from '@tanstack/react-query';
+import { ListQandAPage } from './list-qanda';
+import { CreateQandA } from './create-qanda';
 
 export const QuestionAndAnswerPage = () => {
   const fetchQandAs = async () => {
@@ -12,6 +12,7 @@ export const QuestionAndAnswerPage = () => {
     const qAndAsData = data;
     return qAndAsData;
   };
+
   const { data } = useQuery(['qa'], () => fetchQandAs());
   console.log(data);
 
@@ -31,7 +32,12 @@ export const QuestionAndAnswerPage = () => {
                   style={{ height: '100px' }}
                 >
                   <div className=" d-flex align-items-center text-center profile-forum-items p-0 m-0 w-75">
-                    <h3 className="text-white">All Questions</h3>
+                    <h3
+                      className="text-white"
+                      style={{ fontWeight: 'bold', fontSize: '25px', color: 'blue', textTransform: 'uppercase' }}
+                    >
+                      TẤT CẢ CÁC CÂU HỎI
+                    </h3>
                   </div>
                   <Button
                     style={{
@@ -47,7 +53,7 @@ export const QuestionAndAnswerPage = () => {
                     }}
                     onClick={handleShow}
                   >
-                    Ask Question
+                    ĐẶT CÂU HỎI MỚI
                   </Button>
                 </div>
               </Card>
@@ -57,7 +63,7 @@ export const QuestionAndAnswerPage = () => {
             <ListQandAPage data={data} />
           </Row>
 
-          {/*============== Modal Create Ask Question =============*/}
+          {/*============== MODAL ĐẶT CÂU HỎI =============*/}
           <Modal
             centered
             size="xl"
@@ -68,13 +74,14 @@ export const QuestionAndAnswerPage = () => {
             style={{ paddingTop: '60px', paddingBottom: '30px' }}
           >
             <Modal.Header className="d-flex justify-content-between">
-              <Modal.Title id="post-modalLabel">Ask questions</Modal.Title>
+              <Modal.Title id="post-modalLabel">ĐẶT CÂU HỎI MỚI NGAY ! </Modal.Title>
               <Link to="#" className="lh-1" onClick={handleClose}>
                 <span className="material-symbols-outlined">close</span>
               </Link>
             </Modal.Header>
             <Modal.Body>
-              <TabsAskQuestion />
+              {/* FORM Đặt câu hỏi */}
+              <CreateQandA />
             </Modal.Body>
           </Modal>
         </Container>

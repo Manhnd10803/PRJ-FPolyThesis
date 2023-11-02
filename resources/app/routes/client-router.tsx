@@ -10,7 +10,8 @@ import { HomePage } from '@/pages/client/home';
 import { NotificationPage } from '@/pages/client/notification';
 import { ProfilePage } from '@/pages/client/profile';
 import { QuestionAndAnswerPage } from '@/pages/client/question-and-answer';
-import { DetailQuestionPage } from '@/pages/client/question-and-answer/components/detail-question';
+import { CreateQandA } from '@/pages/client/question-and-answer/create-qanda';
+import { DetailQandAPage } from '@/pages/client/question-and-answer/detail-qanda';
 
 export const ClientRouter = [
   {
@@ -22,8 +23,12 @@ export const ClientRouter = [
     element: <QuestionAndAnswerPage />,
   },
   {
+    path: '/create-quest',
+    element: <CreateQandA />,
+  },
+  {
     path: '/quest/:id',
-    element: <DetailQuestionPage />,
+    element: <DetailQandAPage />,
   },
   {
     path: '/blog',
