@@ -1,7 +1,7 @@
-import { TokenService } from '@/apis/services/token.service';
 import { Card } from '@/components/custom';
+import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { useState } from 'react';
-import { Row, Col, Image, Button, Form, Dropdown, Modal } from 'react-bootstrap';
+import { Button, Col, Dropdown, Form, Image, Modal, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { formatDateFromCreatedAt } from '../../components/format-date';
 
@@ -13,7 +13,7 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
   const [editCommentId, setEditCommentId] = useState(null);
   const [editedContent, setEditedContent] = useState('');
   // User ID
-  const userId = TokenService.getUser();
+  const userId = StorageFunc.getUserId();
   // Name :
   function combineNames(data: any) {
     if (data.first_name && data.last_name) {
@@ -127,7 +127,7 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
                                   </Dropdown.Toggle>
                                 </Link>
                                 <Dropdown.Menu className="dropdown-menu-right">
-                                  {userId.user.id === comment?.user?.id ? (
+                                  {userId === comment?.user?.id ? (
                                     <>
                                       <Dropdown.Item
                                         onClick={() => setShow(true)}
@@ -272,7 +272,7 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
                                         </Dropdown.Toggle>
                                       </Link>
                                       <Dropdown.Menu className="dropdown-menu-right">
-                                        {userId.user.id === reply?.user?.id ? (
+                                        {userId === reply?.user?.id ? (
                                           <>
                                             <Dropdown.Item
                                               onClick={() => setShow(true)}

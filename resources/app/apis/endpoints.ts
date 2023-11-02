@@ -8,7 +8,7 @@ export const ApiConstants = {
   LOGOUT: `/auth/logout`,
   VERIFY_EMAIL_REGISTER: `/auth/verify`,
 
-  REFRESH: `/auth/refresh-token`,
+  REFRESH_TOKEN: `/auth/refresh-token`,
 
   // user
   USER: `/users`,

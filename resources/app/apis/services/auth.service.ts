@@ -1,42 +1,28 @@
+import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import httpRequest from '../axios-instance';
 import { ApiConstants } from '../endpoints';
-import { TokenService } from './token.service';
-
-type LoginResponseType = {
-  // Define the properties of the response data
-  email: string;
-  password: string;
-};
-type RegisterResponseType = {
-  // Define the properties of the response data
-
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
-type ForgotPasswordResponseType = {
-  // Define the properties of the response data
-  email: string;
-};
-type ResetPasswordResponseType = {
-  // Define the properties of the response data
-  verification_code: number;
-  password: string;
-};
-type VerifyEmailRegisterResponseType = {
-  // Define the properties of the response data
-  verification_code: number;
-  email: string;
-};
+import {
+  ForgotPasswordResponseType,
+  LoginResponseType,
+  RefreshTokenResponseType,
+  RegisterResponseType,
+  ResetPasswordResponseType,
+  VerifyEmailRegisterResponseType,
+} from '@/models/auth';
 
 const Login = <T>(data: T) => {
   return httpRequest.post<LoginResponseType>(ApiConstants.LOGIN, data);
 };
 
+// Refresh token không cần gửi body data lên =))
+const RefreshToken = () => {
+  return httpRequest.post<RefreshTokenResponseType>(ApiConstants.REFRESH_TOKEN);
+};
+
 const Register = <T>(data: T) => {
   return httpRequest.post<RegisterResponseType>(ApiConstants.REGISTER, data);
 };
+
 const VerifyEmailRegister = <T>(data: T) => {
   return httpRequest.post<VerifyEmailRegisterResponseType>(ApiConstants.VERIFY_EMAIL_REGISTER, data);
 };
@@ -49,6 +35,7 @@ const ResetPassword = <T>(data: T) => {
   return httpRequest.post<ResetPasswordResponseType>(ApiConstants.RESET_PASSWORD, data);
 };
 
+// sau sua thanh service giong nhu tren, doan logic vut vao component
 const LoginWithGoogle = () => {
   fetch('http://localhost:8000/api/auth/google-auth')
     .then(response => {
@@ -62,7 +49,7 @@ const LoginWithGoogle = () => {
       console.log(response);
       // save token to local storage
       if (response.data.accessToken) {
-        TokenService.setUser(response.data);
+        StorageFunc.saveDataAfterLoginGoogle(response.data);
       }
     })
     .catch(error => {
@@ -70,4 +57,12 @@ const LoginWithGoogle = () => {
     });
 };
 
-export const AuthService = { Login, Register, LoginWithGoogle, ForgotPassword, ResetPassword, VerifyEmailRegister };
+export const AuthService = {
+  Login,
+  Register,
+  LoginWithGoogle,
+  ForgotPassword,
+  ResetPassword,
+  VerifyEmailRegister,
+  RefreshToken,
+};
