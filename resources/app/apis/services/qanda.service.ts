@@ -23,6 +23,14 @@ const getAllMyQandA = () => {
   return httpRequest.get<IQandAs>(ApiConstants.LIST_MY_QANDA);
 };
 
+const getMostCommentQandA = () => {
+  return httpRequest.get<IQandAs>(ApiConstants.LIST_MOST_CMT_QANDA);
+};
+
+const getUnAnswerQandA = () => {
+  return httpRequest.get<IQandAs>(ApiConstants.LIST_UNANSWER_QANDA);
+};
+
 const getDetailQandA = (qaId: number) => {
   const url = `${ApiConstants.DETAIL_QANDA}/${qaId}`;
   return httpRequest.get<IQandAs>(url);
@@ -56,4 +64,6 @@ export const QandAService = {
   deleteQandA,
   getAllQandAByMajor,
   getAllMyQandA,
+  getMostCommentQandA,
+  getUnAnswerQandA,
 };

@@ -3,8 +3,12 @@ import { CommentTextSchema } from '@/validation';
 import { useState } from 'react';
 
 import { Col, Button, Form } from 'react-bootstrap';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export const FormComment = ({ postComment }: any) => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  // console.log(id);
   const [content, setContent] = useState('');
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
@@ -21,6 +25,7 @@ export const FormComment = ({ postComment }: any) => {
         await postComment(content);
         setContent('');
         setIsButtonDisabled(true);
+        navigate(`/quests/${id}`);
       } else {
         console.error('Lỗi: commentText không được xác định.');
       }
