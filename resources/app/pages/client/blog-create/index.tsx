@@ -54,7 +54,7 @@ export const CreateBlogPage = () => {
         },
         onSuccess: () => {
           toast.success('Tạo blog thành công');
-          navigate('/');
+          navigate('/blog');
         },
       });
     }
