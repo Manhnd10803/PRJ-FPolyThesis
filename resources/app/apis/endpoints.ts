@@ -8,7 +8,7 @@ export const ApiConstants = {
   LOGOUT: `/auth/logout`,
   VERIFY_EMAIL_REGISTER: `/auth/verify`,
 
-  REFRESH: `/auth/refresh-token`,
+  REFRESH_TOKEN: `/auth/refresh-token`,
 
   // user
   USER: `/users`,
@@ -48,6 +48,10 @@ export const ApiConstants = {
   SHOW_FRIEND_REQUEST: `/friend-list-request`,
   CONFIRM_FRIEND_REQUEST: `/confirm-request`,
   DELETE_FRIEND_REQUEST: `/delete-request`,
+
+  // profile
+  PROFILE: `/profile`,
+  DETAIL_USER_PROFILE: `/profile`,
   // admin
 
   USERS_ADMIN: `/admin/users`,

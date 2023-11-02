@@ -70,6 +70,10 @@ class User extends Authenticatable
     public function messagesReceived() {
         return $this->hasMany(PrivateMessage::class, 'receiver_id');
     }
-    
+
+    public function major()
+    {
+        return $this->belongsTo(Major::class);
+    }
 
 }

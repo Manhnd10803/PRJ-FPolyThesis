@@ -69,7 +69,8 @@ Route::middleware('auth:api')->group(function () {
     });
     //Profile
     Route::prefix('profile')->group(function () {
-        Route::get('/{user}/{type}/{status?}', [ProfileController::class, 'Profile'])->name('profile.show.user')->where('status', 'pending|approved|reject');;
+        Route::get('/{user}/{type}/{status?}', [ProfileController::class, 'Profile'])->name('profile.show.user')->where('status', 'pending|approved|reject');
+        Route::get('/{user}', [ProfileController::class, 'DetailProfileUser'])->name('profile.show.detail_user');
     });
     //blog
     Route::prefix('blogs')->group(function () {
