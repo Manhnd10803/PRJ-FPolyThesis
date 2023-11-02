@@ -60,8 +60,13 @@ class User extends Authenticatable
             ->wherePivot('status', 'accepted');
     }
     public function posts()
-{
-    return $this->hasMany(Post::class);
-}
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    public function major()
+    {
+        return $this->belongsTo(Major::class);
+    }
 
 }

@@ -43,32 +43,32 @@ httpRequest.interceptors.response.use(
     const originalRequest = error.config;
 
     // If config does not exist or the retry option is not set, reject
-    if (originalRequest.url !== ApiConstants.LOGIN && error.response) {
-      // Access Token was expired
-      if (error.response.status === 401 && !originalRequest._retry) {
-        originalRequest._retry = true;
+    // if (originalRequest.url !== ApiConstants.LOGIN && error.response) {
+    //   // Access Token was expired
+    //   if (error.response.status === 401 && !originalRequest._retry) {
+    //     originalRequest._retry = true;
 
-        try {
-          const rs = await httpRequest.post<ILoginResponse>(ApiConstants.REFRESH, {
-            refreshToken: TokenService.getLocalRefreshToken(),
-          });
+    //     try {
+    //       const rs = await httpRequest.post<ILoginResponse>(ApiConstants.REFRESH, {
+    //         refreshToken: TokenService.getLocalRefreshToken(),
+    //       });
 
-          const { access_token } = rs.data;
-          TokenService.updateLocalAccessToken(access_token);
+    //       const { access_token } = rs.data;
+    //       TokenService.updateLocalAccessToken(access_token);
 
-          return httpRequest(originalRequest);
-        } catch (_error) {
-          return Promise.reject(_error);
-        }
-      }
-    }
+    //       return httpRequest(originalRequest);
+    //     } catch (_error) {
+    //       return Promise.reject(_error);
+    //     }
+    //   }
+    // }
 
     switch (error.response?.status) {
       case 400:
         return Promise.reject(error.response.data);
       case 401:
         TokenService.removeUser();
-        window.location.reload();
+        window.location.href = '/login';
         return Promise.reject(error.response.data);
       case 403:
         // do something

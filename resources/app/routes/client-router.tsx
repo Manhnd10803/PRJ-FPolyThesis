@@ -48,6 +48,10 @@ export const ClientRouter = [
     element: <ProfilePage />,
   },
   {
+    path: '/profile/:id',
+    element: <ProfilePage />,
+  },
+  {
     path: '/friend-list',
     element: <FriendListPage />,
   },

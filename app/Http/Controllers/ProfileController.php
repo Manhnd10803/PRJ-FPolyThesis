@@ -9,24 +9,44 @@ use App\Models\Qa;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use PhpParser\Node\Expr\FuncCall;
 
 class ProfileController extends Controller
 {
+
+    public function DetailProfileUser(User $user) {
+        DB::beginTransaction();
+        try{
+            // $user = Auth::user();
+            $countposts = $user->posts->count();
+            $countblogs  =$user->blogs->count();
+            $countfriends = $user->friends->count();
+            $major=$user->major;
+            $profileData = [
+                'user' =>[
+                    'username'=>$user->username,
+                    'avatar'=>$user->avatar,
+                    'major'=>$major->majors_name
+                ],
+                'total_post' => $countposts,
+                'total_blog' => $countblogs,
+                'total_friend' => $countfriends,
+            ];
+            DB::commit();
+            return response()->json($profileData);
+        }catch(\Exception $e){
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()],400);
+        }
+    }
+    
+
     public function Profile(User $user, $type, $status = null)
     {
         DB::beginTransaction();
         try {
             $loggedInUser = Auth::user();
             $result = [];
-                $countposts = $user->posts->count();
-                $countblogs = $user->blogs->count();
-                $countfriends = $user->friends->count();
-                $profileData = [
-                    'user' => $user,
-                    'total_post' => $countposts,
-                    'total_blog' => $countblogs,
-                    'total_friend' => $countfriends,
-                ];
             switch ($type) {
                 // Lấy post với friend và images
                 case 'post':
@@ -39,7 +59,6 @@ class ProfileController extends Controller
                         }
                     $posts = $postsQuery->paginate(10);
                     $images = [];
-                    $result = [];
                     foreach ($posts as $post) {
                         // Lấy danh sách ảnh của bài viết
                         $postImages = $post->images;
@@ -71,10 +90,13 @@ class ProfileController extends Controller
                             $commentDemo->reply = Comment::where('post_id', $post->id)->where('parent_id', $commentDemo->id)->count();
                         }
                         $postData = [
-                            'user' => $user,
+                            'user' => [
+                                'username'=>$user->username,
+                                'avatar'=>$user->avatar
+                            ],
                             'images' => $images,
                             'friends' => $friends,
-                            'posts' => $posts,
+                            'post' => $post,
                             'like_counts_by_emotion' => $likeCountsByEmotion,
                             'emotion_like_counts' => $emotionLikeCounts,
                             'total_comments' => $totalComment,
@@ -85,7 +107,7 @@ class ProfileController extends Controller
                     break;
                 // Load blog
                 case 'blog':
-                    $status = request('status');
+                    $status = request('status')??'approved';
                     $statuses = config('default.blog.status');
                     if (in_array($status, array_keys($statuses))) {
                         // Xử lý logic cho trường hợp 'blog' dựa trên trạng thái (pending , approved , reject)
@@ -117,7 +139,7 @@ class ProfileController extends Controller
                     break;
             }
             DB::commit();
-            return response()->json(['data' => $result , 'userdata'=>$profileData],200);
+            return response()->json(['data' => $result],200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 400);
