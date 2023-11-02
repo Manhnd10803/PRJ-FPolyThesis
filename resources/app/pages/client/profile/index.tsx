@@ -82,7 +82,7 @@ export const ProfilePage = () => {
       <div id="content-page" className="content-page">
         <Container>
           <Row>
-            <Header detailUser={detailUserProfile} isLoading={isUserLoading} />
+            <Header detailUser={detailUserProfile} isLoading={isUserLoading} friend_id={id} />
             <Tab.Container id="left-tabs-example" defaultActiveKey="first">
               <Navbar friend_id={id} />
               <Col sm={12}>

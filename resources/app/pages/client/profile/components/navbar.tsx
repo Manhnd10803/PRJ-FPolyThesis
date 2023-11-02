@@ -6,7 +6,6 @@ export const Navbar = ({ friend_id }) => {
     <>
       {!friend_id ? (
         <>
-          {' '}
           <Card className="p-0">
             <Card.Body className="p-0">
               <div className="user-tabing">
@@ -58,7 +57,6 @@ export const Navbar = ({ friend_id }) => {
         </>
       ) : (
         <>
-          {' '}
           <Card className="p-0">
             <Card.Body className="p-0">
               <div className="user-tabing">
