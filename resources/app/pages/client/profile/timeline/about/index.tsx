@@ -1,6 +1,7 @@
 import { Card } from 'react-bootstrap';
 
-export const About = () => {
+export const About = ({ aboutUser, isLoading }) => {
+  const { major } = aboutUser || '';
   return (
     <>
       <Card>
@@ -13,19 +14,13 @@ export const About = () => {
           <ul className="list-inline p-0 m-0">
             <li className="mb-2 d-flex align-items-center">
               <span className="material-symbols-outlined md-18">person</span>
-              <p className="mb-0 ms-2">Web Developer</p>
-            </li>
-            <li className="mb-2 d-flex align-items-center">
-              <span className="material-symbols-outlined md-18">gpp_good</span>
-              <p className="mb-0 ms-2">Success in slowing economic activity.</p>
-            </li>
-            <li className="mb-2 d-flex align-items-center">
-              <span className="material-symbols-outlined md-18">place</span>
-              <p className="mb-0 ms-2">USA</p>
-            </li>
-            <li className="d-flex align-items-center">
-              <span className="material-symbols-outlined md-18">favorite_border</span>
-              <p className="mb-0 ms-2">Single</p>
+              {isLoading ? (
+                <>...</>
+              ) : (
+                <>
+                  <p className="mb-0 ms-2">{major}</p>
+                </>
+              )}
             </li>
           </ul>
         </Card.Body>
