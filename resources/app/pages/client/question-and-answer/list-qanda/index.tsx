@@ -6,8 +6,7 @@ import { IMajors } from '@/models/major';
 import { formatDateFromCreatedAt } from '../../blog/components/format-date';
 import { QandAService } from '@/apis/services/qanda.service';
 import { ListNewQAndAs } from './components/list-new-qanda';
-import { ListBestCmtQAndAs } from './components/list-best-cmt-qanda';
-import { ListBestLikeQAndAs } from './components/list-best-like-qanda';
+import { ListMostsCmtQAndAs } from './components/list-best-cmt-qanda';
 import { ListNoAnswerQAndAs } from './components/list-no-answer-qanda';
 import { ListMyQAndAs } from './components/list-my-qanda';
 import { useQuery } from '@tanstack/react-query';
@@ -69,11 +68,11 @@ export const ListQandAPage = ({ data }: any) => {
                               Chưa trả lời
                             </Nav.Link>
                           </Col>
-                          <Col sm={2} className=" p-0">
+                          {/* <Col sm={2} className=" p-0">
                             <Nav.Link eventKey="f4" role="button">
                               Nhiều Like
                             </Nav.Link>
-                          </Col>
+                          </Col> */}
                           <Col sm={2} className=" p-0">
                             <Nav.Link eventKey="f5" role="button">
                               My Question
@@ -121,7 +120,7 @@ export const ListQandAPage = ({ data }: any) => {
                 <Tab.Pane eventKey="f1" className="fade show" id="Posts" role="tabpanel">
                   <Card>
                     <Card.Body>
-                      {/* Danh sách câu hỏi mới nhất */}
+                      {/* Danh sách câu hỏi mới nhất ( ALL CÂU HỎI ) */}
                       <ListNewQAndAs data={data} />
                     </Card.Body>
                   </Card>
@@ -131,7 +130,7 @@ export const ListQandAPage = ({ data }: any) => {
                   <Card>
                     <Card.Body>
                       {/* Danh sách câu hỏi hay nhất */}
-                      <ListBestCmtQAndAs />
+                      <ListMostsCmtQAndAs data={data} />
                     </Card.Body>
                   </Card>
                 </Tab.Pane>
@@ -149,7 +148,7 @@ export const ListQandAPage = ({ data }: any) => {
                   <Card>
                     <Card.Body>
                       {/* Danh sách câu hỏi nhiều like nhất */}
-                      <ListBestLikeQAndAs />
+                      {/* <ListBestLikeQAndAs /> */}
                     </Card.Body>
                   </Card>
                 </Tab.Pane>
