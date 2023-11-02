@@ -21,7 +21,6 @@ export const RegisterPage = () => {
   const onSubmit = async (dataForm: TSignUpSchema) => {
     try {
       const { data } = await AuthService.Register(dataForm);
-      console.log(data);
       navigate('/verify-register', { state: { email: data.email } });
       reset();
     } catch (error: any) {

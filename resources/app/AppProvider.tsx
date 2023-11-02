@@ -4,7 +4,14 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Provider as ReduxProvider } from 'react-redux';
 import { store } from './redux/store/store';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false, // Đặt false nếu không muốn refetch lại khi focus vào tab
+      retry: 1,
+    },
+  },
+});
 
 type AppProviderProps = {
   children: React.ReactNode;

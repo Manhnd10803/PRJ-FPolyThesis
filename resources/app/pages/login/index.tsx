@@ -1,10 +1,10 @@
-import { Col, Form, Button, Spinner } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { save } from '@/utilities/local-storage';
 import { AuthService } from '@/apis/services/auth.service';
+import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { TSignInSchema, signInSchema } from '@/validation';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button, Col, Form, Spinner } from 'react-bootstrap';
+import { useForm } from 'react-hook-form';
+import { Link, useNavigate } from 'react-router-dom';
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -21,7 +21,10 @@ export const LoginPage = () => {
   const onSubmit = async (dataForm: TSignInSchema) => {
     try {
       const { data } = await AuthService.Login(dataForm);
-      save(`user`, data);
+
+      //save data login to storage
+      StorageFunc.saveDataAfterLogin(data);
+
       reset();
       navigate('/');
     } catch (error: any) {

@@ -1,7 +1,8 @@
+import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import axios, { AxiosRequestConfig } from 'axios';
-import { ILoginResponse } from './types';
 import { ApiConstants } from './endpoints';
-import { TokenService } from './services/token.service';
+import { AuthService } from './services/auth.service';
+import toast from 'react-hot-toast';
 
 // Create an Axios instance
 const requestConfig: AxiosRequestConfig = {
@@ -18,8 +19,8 @@ const httpRequest = axios.create(requestConfig);
 
 httpRequest.interceptors.request.use(
   config => {
-    // Get token from local storage
-    const token = TokenService.getLocalAccessToken();
+    // Get token from local storage, gắn vào header request
+    const token = StorageFunc.getAccessToken();
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
@@ -40,21 +41,19 @@ httpRequest.interceptors.response.use(
     return response;
   },
   async error => {
+    toast.error('Có lỗi xảy ra, vui lòng thử lại sau!');
     const originalRequest = error.config;
 
-    // If config does not exist or the retry option is not set, reject
-    if (originalRequest.url !== ApiConstants.LOGIN && error.response) {
+    // If url là /login va /refresh , khong goi api refresh token
+    if (![ApiConstants.LOGIN, ApiConstants.REFRESH_TOKEN].includes(originalRequest.url) && error.response) {
       // Access Token was expired
       if (error.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
-
         try {
-          const rs = await httpRequest.post<ILoginResponse>(ApiConstants.REFRESH, {
-            refreshToken: TokenService.getLocalRefreshToken(),
-          });
+          const rs = await AuthService.RefreshToken();
 
-          const { access_token } = rs.data;
-          TokenService.updateLocalAccessToken(access_token);
+          const { accessToken } = rs.data;
+          StorageFunc.saveAccessToken(accessToken);
 
           return httpRequest(originalRequest);
         } catch (_error) {
@@ -65,20 +64,10 @@ httpRequest.interceptors.response.use(
 
     switch (error.response?.status) {
       case 400:
-        return Promise.reject(error.response.data);
       case 401:
-        TokenService.removeUser();
-        window.location.reload();
-        return Promise.reject(error.response.data);
       case 403:
-        // do something
-        return Promise.reject(error.response.data);
       case 404:
-        // do something
-        return Promise.reject(error.response.data);
       case 500:
-        // do something
-        return Promise.reject(error.response.data);
       default:
         // do something
         return Promise.reject(error.response.data);
