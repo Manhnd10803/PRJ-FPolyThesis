@@ -199,20 +199,12 @@ class BlogController extends Controller
             $content = $request->input('content');
             $majors_id  = $request->input('majors_id');
             $hashtag  = $request->input('hashtag');
-            if ($request->hasFile('thumbnail')) {
-                $thumbnail = $request->file('thumbnail');
-                if (!$thumbnail->isValid() || !in_array($thumbnail->getClientOriginalExtension(), ['jpg', 'jpeg', 'png'])) {
-                    DB::rollBack();
-                    return response()->json(['error' => 'Tệp tin không hợp lệ. Chỉ chấp nhận tệp tin JPEG, JPG hoặc PNG.'], 400);
-                }
-                $imagePath = time() . '_' . uniqid() . '.' . $thumbnail->extension();
-                $thumbnail->move(storage_path('app/public'), $imagePath);
-            }
+            $thumbnail = $request->input('thumbnail');
             $blog = new Blog([
                 'user_id' => Auth::id(),
                 'title' => $title,
                 'content' => $content,
-                'thumbnail' => $imagePath,
+                'thumbnail' => json_encode($thumbnail),
                 'majors_id' => $majors_id,
                 'hashtag' => $hashtag,
                 'status' => config('default.blog.status.pending'),
@@ -259,23 +251,15 @@ class BlogController extends Controller
     {
         DB::beginTransaction();
         try {
-            $title = $request->input('title');
-            $content = $request->input('content');
-            $majors_id = $request->input('majors_id');
-            $hashtag = $request->input('hashtag');
-            if ($request->hasFile('thumbnail')) {
-                $thumbnail = $request->file('thumbnail');
-                if (!$thumbnail->isValid() || !in_array($thumbnail->getClientOriginalExtension(), ['jpg', 'jpeg', 'png'])) {
-                    DB::rollBack();
-                    return response()->json(['error' => 'Tệp tin không hợp lệ. Chỉ chấp nhận tệp tin JPEG, JPG hoặc PNG.'], 400);
-                }
-                $imagePath = time() . '_' . uniqid() . '.' . $thumbnail->extension();
-                $thumbnail->move(storage_path('app/public'), $imagePath);
-            }
+            $title = $request->input('title'.$blog->title);
+            $content = $request->input('content'.$blog->content);
+            $majors_id = $request->input('majors_id'.$blog->majors_id);
+            $hashtag = $request->input('hashtag'.$blog->hashtag);
+            $thumbnail = $request->input('thumbnail'.$blog->thumbnail); 
             $blog->update([
                 'title' => $title,
                 'content' => $content,
-                'thumbnail' => $imagePath,
+                'thumbnail' => json_encode($thumbnail),
                 'majors_id' => $majors_id,
                 'hashtag' => $hashtag,
             ]);

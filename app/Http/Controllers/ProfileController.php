@@ -7,6 +7,7 @@ use App\Models\Comment;
 use App\Models\Post;
 use App\Models\Qa;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Expr\FuncCall;
@@ -144,5 +145,31 @@ class ProfileController extends Controller
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 400);
         }
+    }
+    public function UpdateAvatarForUser(Request $request){
+        $user = Auth::user();
+        $avatar =$request->input('avatar');
+        $user->avatar = $avatar;
+        $user->update();
+        $post = new Post([
+            'user_id'=> $user->id,
+            'content' => " ",
+            'image' => json_encode($avatar),
+        ]);
+        $post->save();
+        return response()->json(['data'=> [$user,$post], 'message'=> 'Thêm ảnh đại diện thành công'],200);
+    }
+    public function UpdateCoverPhotoForUser(Request $request){
+        $user = Auth::user();
+        $cover_photo =$request->input('cover_photo');
+        $user->cover_photo = $cover_photo;
+        $user->update();
+        $post = new Post([
+            'user_id'=> $user->id,
+            'content' => " ",
+            'image' => json_encode($cover_photo),
+        ]);
+        $post->save();
+        return response()->json(['data'=> [$user,$post], 'message'=> 'Thêm ảnh đại diện thành công'],200);
     }
 }
