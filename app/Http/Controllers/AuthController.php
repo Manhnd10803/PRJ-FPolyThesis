@@ -185,7 +185,7 @@ class AuthController extends Controller
                 $accessToken = $token->accessToken;
                 // Lấy thời gian hết hạn của token
                 $expiresAt = $token->token->expires_at;
-                return response()->json(['user' => $user, 'accessToken' => $accessToken, 'expiresAt' => $expiresAt], 200);
+                return response()->json(['user' => $user, 'accessToken' => $accessToken, 'expiresAt' => $expiresAt, 'token'=> $token], 200);
             } else {
                 return response()->json(['message' => 'Đăng nhập thất bại'], 400);
             }
@@ -193,53 +193,6 @@ class AuthController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
     }
-    /**
-     * @OA\Post(
-     *     path="/api/auth/refresh-token",
-     *     summary="Refresh user token",
-     *     description="Refreshes the access token for the authenticated user.",
-     *     operationId="refreshToken",
-     *     tags={"Authentication"},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Token refreshed successfully",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="access_token", type="string", example="new_access_token")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Bad request",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="errors", type="string", example="Error message")
-     *         )
-     *     )
-     * )
-     */
-    public function refreshToken()
-    {
-        DB::beginTransaction();
-        try {
-            $user = auth()->user();
-            $user->tokens->each(function ($token, $key) {
-                $token->delete();
-            });
-            // tạo lại token dựa trên user đã đăng nhập và role 
-            if ($user->group_id == config('default.user.groupID.superAdmin') || $user->group_id == config('default.user.groupID.admin')) {
-                // Token cho admin
-                $newToken = auth()->user()->createToken('authToken',['admin'])->accessToken;        
-                } else {
-                // Token cho user
-                $newToken = auth()->user()->createToken('authToken')->accessToken;
-                }
-            DB::commit();
-            return response()->json(['access_token' => $newToken], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['errors' => $e->getMessage()], 400);
-        }
-    }
-
     /**
      * @OA\Post(
      *     path="/api/auth/logout",
@@ -252,10 +205,12 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $user = Auth::user();
+        DB::table('oauth_refresh_tokens')->where('access_token_id', $user->token()->id)->update(['revoked' => true]);
         $user->tokens->each(function ($token) {
             $token->delete();
         });
-        return response()->json(['message' => 'Đăng xuất thành công'], 200);
+        
+        return response()->json(['message' => 'Đăng xuất thành công' ], 200);
     }
 
     /**
