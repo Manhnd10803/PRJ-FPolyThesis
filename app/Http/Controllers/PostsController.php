@@ -207,31 +207,14 @@ class PostsController extends Controller
      * )
      */
 
-    public function CreatePost(Request $request)
+     public function CreatePost(Request $request)
     {
         DB::beginTransaction();
         try {
             $content = $request->input('content');
             $feeling = $request->input('feeling');
-            $imagePaths = [];
             $hashtagString = ''; // Mặc định hashtag là chuỗi trống
-            if (!is_null($request->images)) {
-                $images = $request->file('images');
-                if (count($images) > 5) {
-                    DB::rollBack();
-                    return response()->json(['error' => 'Không thể tải lên quá 5 hình ảnh.'], 400);
-                }
-                foreach ($images as $image) {
-                    if (!$image->isValid() || !in_array($image->getClientOriginalExtension(), ['jpg', 'jpeg', 'png'])) {
-                        DB::rollBack();
-                        return response()->json(['error' => 'Tệp tin không hợp lệ. Chỉ chấp nhận tệp tin JPEG, JPG hoặc PNG.'], 400);
-                    }
-                    $imagePath = time() . '_' . uniqid() . '.' . $image->extension();
-                    $image->move(storage_path('app/public'), $imagePath);
-                    $imagePaths[] = $imagePath;
-                }
-            }
-            $imagePaths = json_encode($imagePaths);
+            $imagePaths = $request->input('image',[]);
             if (isset($content) && !empty($content)) {
                 // Tách chuỗi thành mảng các từ (dùng khoảng trắng để tách)
                 $hashtags = [];
@@ -243,7 +226,7 @@ class PostsController extends Controller
                 'user_id' => Auth::id(),
                 'content' => $content,
                 'feeling' => $feeling,
-                'image' => $imagePaths,
+                'image' => json_encode($imagePaths),
                 'hashtag' => $hashtagString,
             ]);
             // dd($post);
@@ -255,6 +238,7 @@ class PostsController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
+     
 
     /**
      * @OA\Put(
@@ -285,73 +269,36 @@ class PostsController extends Controller
      * )
      */
 
-    public function UpdatePost(Request $request, Post $post)
-    {
-        DB::beginTransaction();
-        try {
-            $content = $request->input('content', $post->content);
-            $status = $request->input('status', $post->status);
-            $feeling = $request->input('feeling', $post->feeling);
-            if (isset($content) && !empty($content)) {
-                // Tách chuỗi thành mảng các từ (dùng khoảng trắng để tách)
-                $hashtags = [];
-                preg_match_all("/(?<!\w)(#\w+)/", $content, $matches);
-                $hashtags = $matches[1];
-                $hashtagString = implode(' ', $hashtags);
-            }
-            $imagePaths = $post->image;
-            if (!is_null($request->images)) {
-                $images = $request->images;
-                if (count($images) > 5) {
-                    DB::rollBack();
-                    return response()->json(['error' => 'Không thể tải lên quá 5 hình ảnh.'], 400);
-                }
-                if ($imagePaths) {
-                    // Chuyển mảng đường dẫn ảnh cũ thành mảng
-                    $oldImagePaths = json_decode($imagePaths, true);
-                    // Xóa các tệp tin ảnh cũ
-                    foreach ($oldImagePaths as $oldImagePath) {
-                        $oldImagePath = storage_path('app/public') . '/' . $oldImagePath;
-                        if (file_exists($oldImagePath)) {
-                            unlink($oldImagePath);
-                        }
-                    }
-                }
-                $newImagePaths = [];
-                foreach ($images as $image) {
-                    if (!$image->isValid() || !in_array($image->getClientOriginalExtension(), ['jpg', 'jpeg', 'png'])) {
-                        DB::rollBack();
-                        return response()->json(['error' => 'Tệp tin không hợp lệ. Chỉ chấp nhận tệp tin JPEG, JPG hoặc PNG.'], 400);
-                    }
-                    $imagePath = time() . '_' . uniqid() . '.' . $image->extension();
-                    $image->move(storage_path('app/public'), $imagePath);
-                    $newImagePaths[] = $imagePath;
-                }
-                $newImagePaths = json_encode($newImagePaths);
-                $post->update([
-                    'content' => $content,
-                    'feeling' => $feeling,
-                    'image' => $newImagePaths,
-                    'hashtag' => $hashtagString,
-                    'status' => $status,
-                ]);
-                DB::commit();
-                return response()->json($post, 200);
-            }
-            $post->update([
-                'content' => $content,
-                'feeling' => $feeling,
-                'hashtag' => $hashtagString,
-                'status' => $status,
-            ]);
-            DB::commit();
-            return response()->json($post, 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['errors' => $e->getMessage()], 400);
-        }
-    }
-
+     public function UpdatePost(Request $request, Post $post)
+     {
+         DB::beginTransaction();
+         try {
+             $content = $request->input('content', $post->content);
+             $feeling = $request->input('feeling', $post->feeling);
+             $hashtagString = '';
+             $imagePaths = $request->input('image', $post->image);
+             if (isset($content) && !empty($content)) {
+                 // Tách chuỗi thành mảng các từ (dùng khoảng trắng để tách)
+                 $hashtags = [];
+                 preg_match_all("/(?<!\w)(#\w+)/", $content, $matches);
+                 $hashtags = $matches[1];
+                 $hashtagString = implode(' ', $hashtags);
+             }
+             // Cập nhật thông tin bài đăng
+             $post->update([
+                 'content' => $content,
+                 'feeling' => $feeling,
+                 'image' => json_encode($imagePaths),
+                 'hashtag' => $hashtagString,
+             ]);
+             DB::commit();
+             return response()->json($post, 200);
+         } catch (\Exception $e) {
+             DB::rollBack();
+             return response()->json(['errors' => $e->getMessage()], 400);
+         }
+     }
+     
     /**
      * @OA\Delete(
      *     path="/api/posts/{post}",
