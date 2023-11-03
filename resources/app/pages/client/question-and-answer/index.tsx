@@ -1,10 +1,8 @@
-import { Container, Col, Row, Card, Button, Nav, Modal } from 'react-bootstrap';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { Container, Col, Row, Card } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { QandAService } from '@/apis/services/qanda.service';
 import { useQuery } from '@tanstack/react-query';
 import { ListQandAPage } from './list-qanda';
-import { CreateQandA } from './create-qanda';
 
 export const QuestionAndAnswerPage = () => {
   const fetchQandAs = async () => {
@@ -15,10 +13,6 @@ export const QuestionAndAnswerPage = () => {
 
   const { data } = useQuery(['qa'], () => fetchQandAs());
   console.log(data);
-
-  const [showModal, setShowModal] = useState(false);
-  const handleClose = () => setShowModal(false);
-  const handleShow = () => setShowModal(true);
 
   return (
     <>
@@ -39,22 +33,16 @@ export const QuestionAndAnswerPage = () => {
                       TẤT CẢ CÁC CÂU HỎI
                     </h3>
                   </div>
-                  <Button
+
+                  <Link
+                    to="/quests/create"
                     style={{
-                      display: 'inline-block',
-                      padding: '6px 12px',
-                      textDecoration: 'none',
-                      color: '#DD300E',
-                      backgroundColor: 'white',
-                      border: '1px solid #DD300E',
-                      borderRadius: '4px',
-                      margin: '0.5rem',
                       fontWeight: '600',
                     }}
-                    onClick={handleShow}
+                    className="bg-white px-3 py-2 d-flex align-items-center rounded-2 d-block"
                   >
                     ĐẶT CÂU HỎI MỚI
-                  </Button>
+                  </Link>
                 </div>
               </Card>
             </Col>
@@ -62,28 +50,6 @@ export const QuestionAndAnswerPage = () => {
             {/* Danh sách câu hỏi */}
             <ListQandAPage data={data} />
           </Row>
-
-          {/*============== MODAL ĐẶT CÂU HỎI =============*/}
-          <Modal
-            centered
-            size="xl"
-            className="fade"
-            id="post-modal"
-            onHide={handleClose}
-            show={showModal}
-            style={{ paddingTop: '60px', paddingBottom: '30px' }}
-          >
-            <Modal.Header className="d-flex justify-content-between">
-              <Modal.Title id="post-modalLabel">ĐẶT CÂU HỎI MỚI NGAY ! </Modal.Title>
-              <Link to="#" className="lh-1" onClick={handleClose}>
-                <span className="material-symbols-outlined">close</span>
-              </Link>
-            </Modal.Header>
-            <Modal.Body>
-              {/* FORM Đặt câu hỏi */}
-              <CreateQandA />
-            </Modal.Body>
-          </Modal>
         </Container>
       </div>
     </>

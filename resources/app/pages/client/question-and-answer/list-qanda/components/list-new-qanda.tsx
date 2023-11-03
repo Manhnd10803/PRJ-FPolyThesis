@@ -17,7 +17,7 @@ export const ListNewQAndAs = ({ data }: any) => {
         const detailData = response.data;
         const idToPass = detailData.id;
         console.log(`Thông tin chi tiết câu hỏi ID - ${id}`);
-        navigate(`/quest/${id}`);
+        navigate(`/quests/${id}`);
       })
       .catch(error => {
         console.error('Error fetching details:', error);
@@ -85,7 +85,7 @@ export const ListNewQAndAs = ({ data }: any) => {
               </div>
 
               <Link onClick={() => handleDetailsClick(qandA.qa.id)} className="h3">
-                {qandA.qa.title.substring(0, 150)} ...
+                {qandA.qa.title.substring(0, 110)} ...
               </Link>
 
               <Row className="mt-2">

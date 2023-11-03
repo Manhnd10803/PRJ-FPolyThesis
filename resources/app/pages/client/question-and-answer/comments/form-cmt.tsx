@@ -3,8 +3,12 @@ import { CommentTextSchema } from '@/validation';
 import { useState } from 'react';
 
 import { Col, Button, Form } from 'react-bootstrap';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export const FormComment = ({ postComment }: any) => {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  // console.log(id);
   const [content, setContent] = useState('');
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
@@ -21,6 +25,7 @@ export const FormComment = ({ postComment }: any) => {
         await postComment(content);
         setContent('');
         setIsButtonDisabled(true);
+        navigate(`/quests/${id}`);
       } else {
         console.error('Lỗi: commentText không được xác định.');
       }
@@ -38,13 +43,13 @@ export const FormComment = ({ postComment }: any) => {
         <Card className="card-block card-stretch card-height blog mb-0">
           <Card.Header className="d-flex justify-content-between">
             <div className="header-title">
-              <h4 className="card-title">Your Comment</h4>
+              <h4 className="card-title">Trả lời ngay</h4>
             </div>
           </Card.Header>
           <Card.Body>
             <Form>
               <Form.Group className="form-group">
-                <Form.Label htmlFor="exampleFormControlTextarea1">Comment</Form.Label>
+                <Form.Label htmlFor="exampleFormControlTextarea1">Tạo câu trả lời của bạn</Form.Label>
                 <Form.Control
                   as="textarea"
                   id="exampleFormControlTextarea1"
@@ -61,7 +66,7 @@ export const FormComment = ({ postComment }: any) => {
                   disabled={isButtonDisabled}
                   onClick={handleCommentCancel}
                 >
-                  Cancel
+                  Hủy
                 </Button>
 
                 <Button
@@ -70,7 +75,7 @@ export const FormComment = ({ postComment }: any) => {
                   onClick={handleCommentSubmit}
                   disabled={isButtonDisabled}
                 >
-                  Send <span className="material-symbols-outlined">send</span>
+                  Gửi <span className="material-symbols-outlined">send</span>
                 </Button>
               </div>
             </Form>

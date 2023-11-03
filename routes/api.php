@@ -28,8 +28,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+
 //auth
-// Route::get('/quests/{qa}', [QaController::class, 'detailQandA'])->name('qa.detail');
 
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('user.register');
@@ -102,11 +102,15 @@ Route::middleware('auth:api')->group(function () {
     //qa
     Route::prefix('quests')->group(function () {
         Route::get('/', [QaController::class, 'ShowAllQa'])->name('qa.showAll');
+        Route::get('/major/{major_id}', [QaController::class, 'ShowQaByMajor'])->name('qa.showAllByMajor');
+        Route::get('/my-quests', [QaController::class, 'showMyQa'])->name('qa.showMyQa');
+        Route::get('/most-commented', [QaController::class, 'showMostCommentedQa'])->name('qa.showMostCommentedQa');
+        Route::get('/unanswer', [QaController::class, 'showUnAnswerdQa'])->name('qa.showUnAnswerdQa');
         Route::post('/', [QaController::class, 'CreateQa'])->name('qa.create');
         Route::get('/{qa}', [QaController::class, 'detailQandA'])->name('qa.detail');
-        //     Route::put('/{qa}', [QaController::class, 'UpdateQa'])->name('qa.update');
-        //     Route::delete('/{qa}', [QaController::class, 'DeleteQa'])->name('qa.delete');
-        //     Route::get('/list', [QaController::class, 'ListQa'])->name('qa.list');
+        Route::put('/{qa}', [QaController::class, 'UpdateQa'])->name('qa.update');
+        Route::delete('/{qa}', [QaController::class, 'DeleteQa'])->name('qa.delete');
+        //Route::get('/list', [QaController::class, 'ListQa'])->name('qa.list');
     });
 
     //friend --relationship

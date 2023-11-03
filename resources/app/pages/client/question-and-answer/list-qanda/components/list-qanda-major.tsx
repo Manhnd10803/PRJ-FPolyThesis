@@ -1,5 +1,6 @@
 import { MajorService } from '@/apis/services/major.service';
 import { QandAService } from '@/apis/services/qanda.service';
+import { IMajors } from '@/models/major';
 import { formatDateFromCreatedAt } from '@/pages/client/blog/components/format-date';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
@@ -8,11 +9,12 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const imageUrl = 'https://picsum.photos/20';
 
-export const ListMyQAndAs = ({ data }: any) => {
+export const ListQAndAsByMajorId = ({ data, majorId }: any) => {
   // console.log(majorId);
-  console.log(data);
+  // console.log(data);
 
   const [filteredData, setFilteredData] = useState([]);
+  const [majorName, setMajorName] = useState('');
 
   const navigate = useNavigate();
   const handleDetailsClick = (id: number) => {
@@ -28,22 +30,33 @@ export const ListMyQAndAs = ({ data }: any) => {
       });
   };
 
+  const { data: majors } = useQuery({
+    queryKey: ['majors'],
+    queryFn: () => MajorService.getMajors(),
+  });
+  const listMajors = majors?.data;
+  console.log(listMajors);
+
   useEffect(() => {
-    QandAService.getAllMyQandA()
+    QandAService.getAllQandAByMajor(majorId)
       .then(response => {
         const filteredQAndA = response.data;
         setFilteredData(filteredQAndA);
-        console.log(filteredQAndA);
+
+        const selectedMajor = listMajors.find(item => item.id === majorId);
+        if (selectedMajor) {
+          setMajorName(selectedMajor.majors_name);
+        }
       })
       .catch(error => {
         console.error('Error fetching filtered data:', error);
       });
-  }, [filteredData]);
+  }, [majorId]);
 
   return (
     <>
       {/* List câu hỏi */}
-      <h4>Tất cả câu hỏi của bạn</h4>
+      <h4>Chuyên Ngành : {majorName}</h4>
       {filteredData &&
         filteredData.map((qandA, index) => (
           <div key={qandA.qa.id} className="borderbox1 mt-3 rounded d-flex rounded">

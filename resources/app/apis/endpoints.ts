@@ -17,6 +17,10 @@ export const ApiConstants = {
   CREATE_QANDA: '/quests',
   ALL_QANDA: '/quests',
   // LIST_QANDA: '/quests/lista',
+  LIST_QANDA_BY_MAJOR: '/quests/major',
+  LIST_MY_QANDA: '/quests/my-quests',
+  LIST_MOST_CMT_QANDA: '/quests/most-commented',
+  LIST_UNANSWER_QANDA: '/quests/unanswer',
   DETAIL_QANDA: '/quests',
   UPDATE_QANDA: '/quests',
   DELETE_QANDA: '/quests',
@@ -38,6 +42,7 @@ export const ApiConstants = {
   EDIT_COMMENT: `/comment`,
   // Like
   CREATE_LIKE_BLOG: `/like/blog`,
+  CREATE_LIKE_QANDA: `/like/qa`,
 
   // Friend
   SHOW_FRIEND_REQUEST: `/friend-list-request`,
