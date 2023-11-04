@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\Admin\AdminBlogController;
 use App\Http\Controllers\Admin\AdminMajorController;
@@ -9,11 +10,13 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MajorController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PostsController;
 use App\Http\Controllers\QaController;
 use App\Http\Controllers\PrivateMessagesController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
 
 
@@ -40,7 +43,7 @@ Route::prefix('auth')->group(function () {
     Route::post('/post-forgot-password', [AuthController::class, 'forgotPassword'])->name('user.forgotPassword');
     Route::post('/post-reset-password', [AuthController::class, 'resetPassword'])->name('user.resetPassword');
 });
-Route::post('/oauth/token', [AccessTokenController::class,'issueToken']);
+Route::post('/oauth/token', [AccessTokenController::class, 'issueToken']);
 
 Route::middleware('auth:api')->group(function () {
     //route has been authenticated
@@ -70,8 +73,8 @@ Route::middleware('auth:api')->group(function () {
     Route::prefix('profile')->group(function () {
         Route::get('/{user}/{type}/{status?}', [ProfileController::class, 'Profile'])->name('profile.show.user')->where('status', 'pending|approved|reject');
         Route::get('/{user}', [ProfileController::class, 'DetailProfileUser'])->name('profile.show.detail_user');
-        Route::post('/update-avatar',[ProfileController::class,'UpdateAvatarForUser'])->name('profile.update.avatar');
-        Route::post('/update-cover-photo',[ProfileController::class,'UpdateCoverPhotoForUser'])->name('profile.update.cover_photo');
+        Route::post('/update-avatar', [ProfileController::class, 'UpdateAvatarForUser'])->name('profile.update.avatar');
+        Route::post('/update-cover-photo', [ProfileController::class, 'UpdateCoverPhotoForUser'])->name('profile.update.cover_photo');
     });
     //blog
     Route::prefix('blogs')->group(function () {
@@ -83,11 +86,9 @@ Route::middleware('auth:api')->group(function () {
     });
     //Emotion
     Route::prefix('like')->group(function () {
-        // Dành cho qa & post(all cảm xúc)
+        // Dành cho qa, post, blog
         Route::post('/{model}/{id}/{emotion}', [LikeController::class, 'LikeItem']);
         Route::get('/', [LikeController::class, 'listEmotion']);
-        // Dành riêng cho blog (like , dislike)
-        Route::post('/blog/{item}/{action}', [LikeController::class, 'LikeItemBlog']);
     });
     //Comment
     Route::prefix('comment')->group(function () {
@@ -121,6 +122,11 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/friend-list', [FriendController::class, 'FetchAllFriend'])->name('friend.list');
     Route::get('/friend-list-request', [FriendController::class, 'listFriendRequest']);
     Route::delete('/unfriend/{friend}', [FriendController::class, 'unfriend']);
+
+    //notification
+    Route::get('/notifications', [NotificationController::class, 'listNotification']);
+    Route::get('/see-notification/{notification}', [NotificationController::class, 'seeNotification']);
+    Route::delete('/notification/{notification}', [NotificationController::class, 'deleteNotification']);
 
     Route::group(['prefix' => 'admin', 'middleware' => 'scope:admin'], function () {
         //User Management

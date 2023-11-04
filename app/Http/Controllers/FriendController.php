@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Friend;
+use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -64,6 +65,16 @@ class FriendController extends Controller
                     'status' => config('default.friend.status.pending'),
                     'friendship_type' =>  config('default.friend.friendship_type.follow')
                 ]);
+                //Thông báo
+                $content = Auth::user()->username . ' đã gửi cho bạn lời mời kết bạn.';
+                Notification::create([
+                    'sender' => Auth::id(),
+                    'recipient' => $recipient->id,
+                    'content' => $content,
+                    'notification_type' => config('default.notification.notification_type.friend'),
+                    'status' => config('default.notification.status.not_seen'),
+                    'objet_id' => Auth::id(),
+                ]);
                 DB::commit();
                 return response()->json(['message' => 'Đã gửi lời mời kết bạn', 'friend' => $friend], 200);
             }
@@ -112,6 +123,15 @@ class FriendController extends Controller
                     'status' => config('default.friend.status.accepted'),
                     'friendship_type' => config('default.friend.friendship_type.friend'),
                 ]);
+            $content = Auth::user()->username . ' đã đồng ý lời mời kết bạn.';
+            Notification::create([
+                'sender' => Auth::id(),
+                'recipient' => $sender->id,
+                'content' => $content,
+                'notification_type' => config('default.notification.notification_type.friend'),
+                'status' => config('default.notification.status.not_seen'),
+                'objet_id' => Auth::id(),
+            ]);
             DB::commit();
             return response()->json(['message' => 'Đã chấp nhận'], 200);
         } catch (\Exception $e) {
