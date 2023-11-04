@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Blog;
 use App\Models\Comment;
+use App\Models\Notification;
 use App\Models\Post;
 use App\Models\Qa;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -13,49 +16,49 @@ use Illuminate\Support\Facades\DB;
 class CommentController extends Controller
 {
     /**
- * @OA\Post(
- *     path="/api/comments/{type}/{id}",
- *     summary="Thêm bình luận",
- *     description="Thêm một bình luận cho một mục loại 'post', 'blog', hoặc 'qa' có ID tương ứng.",
- *     operationId="addComment",
- *     tags={"Comments"},
- *     @OA\Parameter(
- *         name="type",
- *         in="path",
- *         description="Loại mục (post, blog, qa)",
- *         required=true,
- *         @OA\Schema(type="string", enum={"post", "blog", "qa"})
- *     ),
- *     @OA\Parameter(
- *         name="id",
- *         in="path",
- *         description="ID của mục",
- *         required=true,
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\RequestBody(
- *         required=true,
- *         @OA\JsonContent(
- *             @OA\Property(property="content", type="string", description="Nội dung bình luận", example="This is a comment."),
- *             @OA\Property(property="parent_id", type="integer", description="ID của bình luận cha (nếu có)")
- *         )
- *     ),
- *     @OA\Response(
- *         response="200",
- *         description="Bình luận được thêm thành công",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string", example="Comment added successfully")
- *         )
- *     ),
- *     @OA\Response(
- *         response="401",
- *         description="Không được phép",
- *         @OA\JsonContent(
- *             @OA\Property(property="error", type="string")
- *         )
- *     ),
- * )
- */
+     * @OA\Post(
+     *     path="/api/comments/{type}/{id}",
+     *     summary="Thêm bình luận",
+     *     description="Thêm một bình luận cho một mục loại 'post', 'blog', hoặc 'qa' có ID tương ứng.",
+     *     operationId="addComment",
+     *     tags={"Comments"},
+     *     @OA\Parameter(
+     *         name="type",
+     *         in="path",
+     *         description="Loại mục (post, blog, qa)",
+     *         required=true,
+     *         @OA\Schema(type="string", enum={"post", "blog", "qa"})
+     *     ),
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID của mục",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="content", type="string", description="Nội dung bình luận", example="This is a comment."),
+     *             @OA\Property(property="parent_id", type="integer", description="ID của bình luận cha (nếu có)")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Bình luận được thêm thành công",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Comment added successfully")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="401",
+     *         description="Không được phép",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string")
+     *         )
+     *     ),
+     * )
+     */
 
     public function AddComment(Request $request, $type, $id)
     {
@@ -90,9 +93,173 @@ class CommentController extends Controller
                 "{$type}_id" => $id,
                 'content' => $content,
                 'parent_id' => $parent_id,
-                'reply_to'=> $reply_to
+                'reply_to' => $reply_to
             ]);
             $comment->save();
+            //thông báo
+            //2TH
+            //TH1 - thông báo là bình luận trực tiếp
+            //TH2 - thông báo là phản hồi bình luận
+            //Khi phản hồi -> người nhận thông báo là người được phản hồi & chủ của bài đăng không nhận thông báo
+            //bình luận 
+            if (!$reply_to) {
+                $participants = [];
+                switch ($type) {
+                    case 'post':
+                        $model = Post::find($id);
+                        $notificationType = config('default.notification.notification_type.comment_post');
+                        $message = Auth::user()->username . ' đã bình luận về ' . $type . ' của bạn.';
+                        $participants[] = Auth::id();
+                        break;
+                    case 'blog':
+                        $model = Blog::find($id);
+                        $notificationType = config('default.notification.notification_type.comment_blog');
+                        $message = Auth::user()->username . ' đã bình luận về ' . $type . ' của bạn.';
+                        $participants[] = Auth::id();
+                        break;
+                    case 'qa':
+                        $model = Qa::find($id);
+                        $notificationType = config('default.notification.notification_type.comment_qa');
+                        $message = Auth::user()->username . ' đã bình luận về ' . $type . ' của bạn.';
+                        $participants[] = Auth::id();
+                        break;
+                    default:
+                        break;
+                }
+                // Số lượng người đã bình luận trước
+                $comments = $model->comments()->where('comments.user_id', '!=', Auth::id())->where('parent_id', null)->orderByDesc('id')->get();
+                // Kiểm tra xem người đã comment đã được đếm trước đó chưa
+                foreach ($comments as $comment) {
+                    if (!in_array($comment->user_id, $participants)) {
+                        $participants[] = $comment->user_id;
+                    }
+                }
+                //2TH
+                //TH1 thông báo chưa tồn tại -> thông báo mới
+                //TH2 thông báo đã tồn tại -> cập nhật nội dung (số lượng người bình luận và thời gian)
+                //Trong TH2 khi người bình luận trước đó xóa bình luận -> số lượng người bình luận sẽ được tính lại khi có người bình luận mới
+                $notification = Notification::where('notification_type', $notificationType)->where('objet_id', $id)->orderByDesc('id')->first();
+                if (count($participants) > 1) {
+                    //Cập nhật nội dung thông báo
+                    $latestComment = User::find(array_shift($participants));
+                    $remainingCommentsCount = count($participants);
+                    $message = $latestComment->username . ' và ' . $remainingCommentsCount . ' người khác đã bình luận về ' . $type . ' của bạn.';
+                    if (!is_null($notification)) {
+                        $notification->update([
+                            'content' => $message,
+                            'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
+                        ]);
+                    } else {
+                        //Tạo mới thông báo
+                        Notification::create([
+                            'sender' => Auth::id(),
+                            'recipient' => $model->user_id,
+                            'content' => $message,
+                            'notification_type' => $notificationType,
+                            'status' => config('default.notification.status.not_seen'),
+                            'objet_id' => $id,
+                        ]);
+                    }
+                } else {
+                    //Update thời gian thông báo
+                    if (!is_null($notification)) {
+                        $notification->update([
+                            'content' => $message,
+                            'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
+                        ]);
+                    } else {
+                        //Tạo mới thông báo
+                        Notification::create([
+                            'sender' => Auth::id(),
+                            'recipient' => $model->user_id,
+                            'content' => $message,
+                            'notification_type' => $notificationType,
+                            'status' => config('default.notification.status.not_seen'),
+                            'objet_id' => $id,
+                        ]);
+                    }
+                }
+            } else {
+                //rep bình luận
+                //người được rep
+                $responsePerson = User::where('username', $reply_to)->first();
+                $participants = [];
+                switch ($type) {
+                    case 'post':
+                        $model = Post::find($id);
+                        $notificationType = config('default.notification.notification_type.reply_post');
+                        $message = Auth::user()->username . ' đã phản hồi về bình luận ' . $type . ' của bạn.';
+                        $participants[] = Auth::id();
+                        break;
+                    case 'blog':
+                        $model = Blog::find($id);
+                        $notificationType = config('default.notification.notification_type.reply_blog');
+                        $message = Auth::user()->username . ' đã phản hồi về bình luận ' . $type . ' của bạn.';
+                        $participants[] = Auth::id();
+                        break;
+                    case 'qa':
+                        $model = Qa::find($id);
+                        $notificationType = config('default.notification.notification_type.reply_qa');
+                        $message = Auth::user()->username . ' đã phản hồi về bình luận ' . $type . ' của bạn.';
+                        $participants[] = Auth::id();
+                        break;
+                    default:
+                        break;
+                }
+                // Số lượng người đã bình luận trước
+                $comments = $model->comments()->where('comments.user_id', '!=', Auth::id())->where('parent_id', $parent_id)->where('reply_to', $reply_to)->orderByDesc('id')->get();
+                // Kiểm tra xem người đã comment đã được đếm trước đó chưa
+                foreach ($comments as $comment) {
+                    if (!in_array($comment->user_id, $participants)) {
+                        $participants[] = $comment->user_id;
+                    }
+                }
+                //2TH
+                //TH1 thông báo chưa tồn tại -> thông báo mới
+                //TH2 thông báo đã tồn tại -> cập nhật nội dung (số lượng người bình luận và thời gian)
+                //Trong TH2 khi người bình luận trước đó xóa bình luận -> số lượng người bình luận sẽ được tính lại khi có người bình luận mới
+                $notification = Notification::where('notification_type', $notificationType)->where('objet_id', $id)->where('recipient', $responsePerson->id)->orderByDesc('id')->first();
+                if (count($participants) > 1) {
+                    //Cập nhật nội dung thông báo
+                    $latestComment = User::find(array_shift($participants));
+                    $remainingCommentsCount = count($participants);
+                    $message = $latestComment->username . ' và ' . $remainingCommentsCount . ' người khác đã phản hồi về bình luận ' . $type . ' của bạn.';
+                    if (!is_null($notification)) {
+                        $notification->update([
+                            'content' => $message,
+                            'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
+                        ]);
+                    } else {
+                        //Tạo mới thông báo
+                        Notification::create([
+                            'sender' => Auth::id(),
+                            'recipient' => $responsePerson->id,
+                            'content' => $message,
+                            'notification_type' => $notificationType,
+                            'status' => config('default.notification.status.not_seen'),
+                            'objet_id' => $id,
+                        ]);
+                    }
+                } else {
+                    //Update thời gian thông báo
+                    if (!is_null($notification)) {
+                        $notification->update([
+                            'content' => $message,
+                            'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
+                        ]);
+                    } else {
+                        //Tạo mới thông báo
+                        Notification::create([
+                            'sender' => Auth::id(),
+                            'recipient' => $responsePerson->id,
+                            'content' => $message,
+                            'notification_type' => $notificationType,
+                            'status' => config('default.notification.status.not_seen'),
+                            'objet_id' => $id,
+                        ]);
+                    }
+                }
+            }
             DB::commit();
             return response()->json(['message' => 'Comment added successfully'], 200);
         } else {

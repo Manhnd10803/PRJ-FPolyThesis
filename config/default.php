@@ -31,12 +31,30 @@ return [
             'friend' => 1,
         ]
     ],
-    'valid_emotions' => ['dislike','like', 'love', 'haha', 'wow', 'sad', 'angry'],
-    'private_messages' =>[
-        'status'=>[
+    'valid_emotions' => ['dislike', 'like', 'love', 'haha', 'wow', 'sad', 'angry'],
+    'private_messages' => [
+        'status' => [
             'sending' => 0,
             'send' => 1,
             'read' => 2,
-        ] 
+        ]
+    ],
+    'notification' => [
+        'notification_type' => [
+            'friend' => 1,
+            'like_post' => 2,
+            'like_blog' => 3,
+            'like_qa' => 4,
+            'comment_post' => 5,
+            'comment_blog' => 6,
+            'comment_qa' => 7,
+            'reply_post' => 8,
+            'reply_blog' => 9,
+            'reply_qa' => 10,
+        ],
+        'status' => [
+            'not_seen' => 0,
+            'seen' => 1,
+        ]
     ]
 ];

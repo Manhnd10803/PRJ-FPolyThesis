@@ -161,7 +161,7 @@ class PostsController extends Controller
                 }
                 // Tổng số bình luận + 3 bình luận demo
                 $totalComment = Comment::where('post_id', $post->id)->count();
-                $commentDemos = Comment::where('post_id', $post->id)->where('parent_id', 0)->limit(3)->get();
+                $commentDemos = Comment::where('post_id', $post->id)->where('parent_id', null)->limit(3)->get();
                 foreach ($commentDemos as $commentDemo) {
                     $commentDemo->user;
                     //số lượng reply
@@ -207,14 +207,14 @@ class PostsController extends Controller
      * )
      */
 
-     public function CreatePost(Request $request)
+    public function CreatePost(Request $request)
     {
         DB::beginTransaction();
         try {
             $content = $request->input('content');
             $feeling = $request->input('feeling');
             $hashtagString = ''; // Mặc định hashtag là chuỗi trống
-            $imagePaths = $request->input('image',[]);
+            $imagePaths = $request->input('image', []);
             if (isset($content) && !empty($content)) {
                 // Tách chuỗi thành mảng các từ (dùng khoảng trắng để tách)
                 $hashtags = [];
@@ -238,7 +238,7 @@ class PostsController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
-     
+
 
     /**
      * @OA\Put(
@@ -269,36 +269,36 @@ class PostsController extends Controller
      * )
      */
 
-     public function UpdatePost(Request $request, Post $post)
-     {
-         DB::beginTransaction();
-         try {
-             $content = $request->input('content', $post->content);
-             $feeling = $request->input('feeling', $post->feeling);
-             $hashtagString = '';
-             $imagePaths = $request->input('image', $post->image);
-             if (isset($content) && !empty($content)) {
-                 // Tách chuỗi thành mảng các từ (dùng khoảng trắng để tách)
-                 $hashtags = [];
-                 preg_match_all("/(?<!\w)(#\w+)/", $content, $matches);
-                 $hashtags = $matches[1];
-                 $hashtagString = implode(' ', $hashtags);
-             }
-             // Cập nhật thông tin bài đăng
-             $post->update([
-                 'content' => $content,
-                 'feeling' => $feeling,
-                 'image' => json_encode($imagePaths),
-                 'hashtag' => $hashtagString,
-             ]);
-             DB::commit();
-             return response()->json($post, 200);
-         } catch (\Exception $e) {
-             DB::rollBack();
-             return response()->json(['errors' => $e->getMessage()], 400);
-         }
-     }
-     
+    public function UpdatePost(Request $request, Post $post)
+    {
+        DB::beginTransaction();
+        try {
+            $content = $request->input('content', $post->content);
+            $feeling = $request->input('feeling', $post->feeling);
+            $hashtagString = '';
+            $imagePaths = $request->input('image', $post->image);
+            if (isset($content) && !empty($content)) {
+                // Tách chuỗi thành mảng các từ (dùng khoảng trắng để tách)
+                $hashtags = [];
+                preg_match_all("/(?<!\w)(#\w+)/", $content, $matches);
+                $hashtags = $matches[1];
+                $hashtagString = implode(' ', $hashtags);
+            }
+            // Cập nhật thông tin bài đăng
+            $post->update([
+                'content' => $content,
+                'feeling' => $feeling,
+                'image' => json_encode($imagePaths),
+                'hashtag' => $hashtagString,
+            ]);
+            DB::commit();
+            return response()->json($post, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()], 400);
+        }
+    }
+
     /**
      * @OA\Delete(
      *     path="/api/posts/{post}",

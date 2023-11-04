@@ -2,56 +2,62 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Blog;
 use App\Models\Like;
+use App\Models\Notification;
+use App\Models\Post;
+use App\Models\Qa;
+use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class LikeController extends Controller
 {
     /**
- * @OA\Post(
- *     path="/api/like/{model}/{item}/{emotion}",
- *     summary="Thích hoặc bỏ thích một mục",
- *     description="Thích hoặc bỏ thích một mục (Post, Blog, hoặc Qa) với một cảm xúc cụ thể.",
- *     operationId="likeItem",
- *     tags={"Likes"},
- *     @OA\Parameter(
- *         name="model",
- *         in="path",
- *         description="Loại mục (post, qa)",
- *         required=true,
- *         @OA\Schema(type="string", enum={"post","qa"})
- *     ),
- *     @OA\Parameter(
- *         name="item",
- *         in="path",
- *         description="ID của mục",
- *         required=true,
- *         @OA\Schema(type="integer")
- *     ),
- *     @OA\Parameter(
- *         name="emotion",
- *         in="path",
- *         description="Loại cảm xúc (emotion)",
- *         required=true,
- *         @OA\Schema(type="string", enum={"like", "love", "haha", "wow","sad","angry"})
- *     ),
- *     @OA\Response(
- *         response="200",
- *         description="Cảm xúc được cập nhật thành công",
- *         @OA\JsonContent(
- *             @OA\Property(property="message", type="string")
- *         )
- *     ),
- *     @OA\Response(
- *         response="400",
- *         description="Lỗi",
- *         @OA\JsonContent(
- *             @OA\Property(property="error", type="string")
- *         )
- *     )
- * )
- */
+     * @OA\Post(
+     *     path="/api/like/{model}/{item}/{emotion}",
+     *     summary="Thích hoặc bỏ thích một mục",
+     *     description="Thích hoặc bỏ thích một mục (Post, Blog, hoặc Qa) với một cảm xúc cụ thể.",
+     *     operationId="likeItem",
+     *     tags={"Likes"},
+     *     @OA\Parameter(
+     *         name="model",
+     *         in="path",
+     *         description="Loại mục (post, qa)",
+     *         required=true,
+     *         @OA\Schema(type="string", enum={"post","qa"})
+     *     ),
+     *     @OA\Parameter(
+     *         name="item",
+     *         in="path",
+     *         description="ID của mục",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Parameter(
+     *         name="emotion",
+     *         in="path",
+     *         description="Loại cảm xúc (emotion)",
+     *         required=true,
+     *         @OA\Schema(type="string", enum={"like", "love", "haha", "wow","sad","angry"})
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Cảm xúc được cập nhật thành công",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response="400",
+     *         description="Lỗi",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="error", type="string")
+     *         )
+     *     )
+     * )
+     */
 
     public function LikeItem(Request $request, $model, $item, $emotion)
     {
@@ -81,6 +87,77 @@ class LikeController extends Controller
                 $modelName . '_id' => $item,
                 'emotion' => $emotion,
             ]);
+            //thông báo
+            $participants = [];
+            switch ($modelName) {
+                case 'post':
+                    $model = Post::find($item);
+                    $notificationType = config('default.notification.notification_type.like_post');
+                    $message = Auth::user()->username . ' đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
+                    $participants[] = Auth::id();
+                    break;
+                case 'blog':
+                    $model = Blog::find($item);
+                    $notificationType = config('default.notification.notification_type.like_blog');
+                    $message = Auth::user()->username . ' đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
+                    $participants[] = Auth::id();
+                    break;
+                case 'qa':
+                    $model = Qa::find($item);
+                    $notificationType = config('default.notification.notification_type.like_qa');
+                    $message = Auth::user()->username . ' đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
+                    $participants[] = Auth::id();
+                    break;
+                default:
+                    break;
+            }
+            // Những người đã bày tỏ cảm xúc trước
+            $likes = $model->likes()->where('likes.user_id', '!=', Auth::id())->orderByDesc('id')->get();
+            foreach ($likes as $like) {
+                $participants[] = $like->user_id;
+            }
+            $notification = Notification::where('notification_type', $notificationType)->where('objet_id', $item)->orderByDesc('id')->first();
+            if (count($participants) > 1) {
+                //Cập nhật nội dung thông báo
+                $latestLiker = User::find(array_shift($participants));
+                $remainingLikesCount = count($participants);
+                $message = $latestLiker->username . ' và ' . $remainingLikesCount . ' người khác đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
+                if (!is_null($notification)) {
+                    //Update thời gian thông báo
+                    $notification->update([
+                        'content' => $message,
+                        'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
+                    ]);
+                } else {
+                    //Tạo mới thông báo
+                    Notification::create([
+                        'sender' => Auth::id(),
+                        'recipient' => $model->user_id,
+                        'content' => $message,
+                        'notification_type' => $notificationType,
+                        'status' => config('default.notification.status.not_seen'),
+                        'objet_id' => $item,
+                    ]);
+                }
+            } else {
+                if (!is_null($notification)) {
+                    //Update thời gian thông báo
+                    $notification->update([
+                        'content' => $message,
+                        'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
+                    ]);
+                } else {
+                    //Tạo mới thông báo
+                    Notification::create([
+                        'sender' => Auth::id(),
+                        'recipient' => $model->user_id,
+                        'content' => $message,
+                        'notification_type' => $notificationType,
+                        'status' => config('default.notification.status.not_seen'),
+                        'objet_id' => $item,
+                    ]);
+                }
+            }
             $message = 'Emotion added successfully';
         }
         return response()->json(['message' => $message]);

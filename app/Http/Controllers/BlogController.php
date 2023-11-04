@@ -147,7 +147,7 @@ class BlogController extends Controller
                 }
                 // Tổng số bình luận + 3 bình luận demo
                 $totalComment = Comment::where('blog_id', $blog->id)->count();
-                $commentDemos = Comment::where('blog_id', $blog->id)->where('parent_id', 0)->limit(3)->get();
+                $commentDemos = Comment::where('blog_id', $blog->id)->where('parent_id', null)->limit(3)->get();
                 foreach ($commentDemos as $commentDemo) {
                     $commentDemo->user;
                     //số lượng reply
