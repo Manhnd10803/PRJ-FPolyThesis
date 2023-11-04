@@ -1,11 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Events\PrivateMessageSent;
 use App\Models\PrivateMessage;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\DB;
 
 class PrivateMessagesController extends Controller
@@ -128,6 +128,8 @@ class PrivateMessagesController extends Controller
             ]);
             $message->save();
             DB::commit();
+            // 
+            broadcast(new PrivateMessageSent($message))->toOthers();
             return response()->json(['message' => 'Tin nhắn đã được gửi','data' => $message], 200); 
         }catch(\Exception $e){
             DB::rollBack();
