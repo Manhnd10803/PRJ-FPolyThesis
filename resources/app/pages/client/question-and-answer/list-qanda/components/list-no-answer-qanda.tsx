@@ -62,26 +62,26 @@ export const ListNoAnswerQAndAs = ({ data }: any) => {
 
                 <div className="ms-auto d-flex align-items-center">
                   <div className="ms-auto d-flex align-items-center">
-                    {/* { qAndAData.like_counts_by_emotion.total_likes > 0 ? (
+                    {qandA.like_counts_by_emotion.total_likes > 0 ? (
                       <>
                         <i className="material-symbols-outlined md-16"> thumb_up </i>
                         <span className="mx-1">
-                          <small>{qAndAData.like_counts_by_emotion.total_likes}</small>
+                          <small>{qandA.like_counts_by_emotion.total_likes}</small>
                         </span>
                       </>
                     ) : (
                       <>
                         <i className="material-symbols-outlined md-16"> thumb_up </i>
-                          <span className="mx-1">
-                            <small>0</small>
-                          </span>
+                        <span className="mx-1">
+                          <small>0</small>
+                        </span>
                       </>
-                    ) } */}
+                    )}
 
-                    <i className="material-symbols-outlined md-16"> thumb_up </i>
+                    {/* <i className="material-symbols-outlined md-16"> thumb_up </i>
                     <span className="mx-1">
                       <small>0</small>
-                    </span>
+                    </span> */}
                   </div>
 
                   <div className="ms-auto d-flex align-items-center">

@@ -1,3 +1,4 @@
+import { PrivacySettingPage } from '@/pages/client/account/privacy-setting';
 import { BlogPage } from '@/pages/client/blog';
 import { CreateBlogPage } from '@/pages/client/blog-create';
 import { BlogDetailPage } from '@/pages/client/blog/blog-detail';
@@ -90,5 +91,9 @@ export const ClientRouter = [
   {
     path: '/upload',
     element: <ExampleUploadPage />,
+  },
+  {
+    path: '/account/user-privacy-setting',
+    element: <PrivacySettingPage />,
   },
 ];

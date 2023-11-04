@@ -2,6 +2,7 @@ import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import httpRequest from '../axios-instance';
 import { ApiConstants } from '../endpoints';
 import {
+  ConfirmPasswordResponseType,
   ForgotPasswordResponseType,
   GetUserDetailResponseType,
   LoginResponseType,
@@ -58,8 +59,16 @@ const ForgotPassword = <T>(data: T) => {
   return httpRequest.post<ForgotPasswordResponseType>(ApiConstants.FORGOT_PASSWORD, data);
 };
 
+const ConfirmPassword = <T>(data: T) => {
+  return httpRequest.post<ConfirmPasswordResponseType>(ApiConstants.CONFIRM_PASSWORD, data);
+};
+
 const ResetPassword = <T>(data: T) => {
   return httpRequest.post<ResetPasswordResponseType>(ApiConstants.RESET_PASSWORD, data);
+};
+
+const ResetNewPassword = <T>(data: T) => {
+  return httpRequest.post<ResetPasswordResponseType>(ApiConstants.RESET_NEW_PASSWORD, data);
 };
 
 // sau sua thanh service giong nhu tren, doan logic vut vao component
@@ -89,7 +98,9 @@ export const AuthService = {
   Register,
   LoginWithGoogle,
   ForgotPassword,
+  ConfirmPassword,
   ResetPassword,
+  ResetNewPassword,
   VerifyEmailRegister,
   RefreshToken,
   AutoRefreshToken,

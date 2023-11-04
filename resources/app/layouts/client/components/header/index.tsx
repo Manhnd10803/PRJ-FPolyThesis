@@ -950,7 +950,7 @@ export const Header = () => {
                       <div className="d-flex align-items-center iq-sub-card border-0">
                         <span className="material-symbols-outlined">lock</span>
                         <div className="ms-3">
-                          <Link to="/dashboard/app/user-privacy-setting" className="mb-0 h6">
+                          <Link to="/account/user-privacy-setting" className="mb-0 h6">
                             Privacy Settings
                           </Link>
                         </div>

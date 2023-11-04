@@ -395,12 +395,83 @@ class AuthController extends Controller
             return response()->json(['message' => 'Có lỗi xảy ra trong quá trình xử lý. Vui lòng thử lại sau.'], 500);
         }
     }
+
+    /**
+     * @OA\Post(
+     *     path="/api/auth/confirm-password",
+     *     summary="Xác minh email và mật khẩu người dùng",
+     *     description="Xác minh email và mật khẩu của người dùng đang đăng nhập.",
+     *     tags={"Authentication"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         description="Dữ liệu đăng nhập",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="email", type="string", format="email", example="user@example.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="password"),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Email và mật khẩu chính xác",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Email và mật khẩu chính xác"),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Email và mật khẩu không khớp hoặc lỗi đăng nhập",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Email và mật khẩu không khớp"),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Lỗi validation",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="errors", type="object", example={"email": {"The email field is required."}, "password": {"The password field is required."}}),
+     *         ),
+     *     ),
+     *     security={
+     *         {"bearerAuth": {}}
+     *     },
+     * )
+     */
+
+    public function confirmPassword(Request $request)
+    {
+        $user = Auth::user();
+
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|min:8',
+        ]);
+
+        if (!$validator->fails()) {
+            if ($user->email === $request->email && Hash::check($request->password, $user->password)) {
+                // Tạo mã xác nhận mới
+                $verificationCode = str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
+                // $checkUser->update(['verification_code' => $verificationCode]);
+                DB::table('users')->where('email', $request->email)->update(
+                    [
+                        'verification_code' => $verificationCode,
+                    ]
+                );
+                Mail::to($request->email)->send(new VerifyAccount($verificationCode));
+                return response()->json(['message' => 'Email và mật khẩu chính xác'], 200);
+            } else {
+                return response()->json(['message' => 'Email và mật khẩu không khớp'], 400);
+            }
+
+        } else {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+    }
+
     /**
      * @OA\Post(
      *     path="/api/auth/post-reset-password",
-     *     summary="Reset user password",
-     *     description="Resets the user password using verification code.",
-     *     operationId="resetPassword",
+     *     summary="Cập nhật mật khẩu",
+     *     description="Cập nhật lại mật khẩu với verification code.",
      *     tags={"Authentication"},
      *     @OA\RequestBody(
      *         required=true,

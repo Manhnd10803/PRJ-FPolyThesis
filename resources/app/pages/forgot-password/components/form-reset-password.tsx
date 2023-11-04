@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { AuthService } from '@/apis/services/auth.service';
 import { type } from 'os';
 import { TresetPasswordSchema, resetPasswordSchema } from '@/validation/zod/auth';
+import toast from 'react-hot-toast';
 
 export const ResetPasswordPage = () => {
   const navigate = useNavigate();
@@ -22,7 +23,8 @@ export const ResetPasswordPage = () => {
     try {
       const { data } = await AuthService.ResetPassword(dataForm);
       reset();
-      navigate('/');
+      toast.success('Đổi mật khẩu thành công');
+      navigate('/login');
     } catch (error: any) {
       if (error) {
         const serverError = error.message;

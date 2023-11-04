@@ -49,6 +49,9 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/get-user', [AuthController::class, 'getUser'])->name('user.getinfo');
     //route has been authenticated
     Route::post('/auth/logout', [AuthController::class, 'logout'])->name('user.logout');
+    Route::post('/auth/refresh-token', [AuthController::class, 'refreshToken'])->name('token.refresh');
+    Route::post('/auth/confirm-password',[AuthController::class,'confirmPassword'])->name('user.confirmPassword');
+    Route::post('/auth/reset-new-password', [AuthController::class, 'resetPassword'])->name('user.resetPassword');
     Route::get('/hello', function () {
         return Auth::user();
     });

@@ -19,4 +19,5 @@ const postLike = <T>(data: T) => {
 const postLikeQA = <T>(data: T) => {
   return httpRequest.post<LikeQandAResponseType>(`${ApiConstants.CREATE_LIKE_QANDA}/${data.qa_id}/${data.emotion}`);
 };
+
 export const LikeService = { postLike, postLikeQA };
