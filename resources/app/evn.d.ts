@@ -1,7 +1,24 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  // readonly VITE_EXAMPLE: string;
+  readonly VITE_EXAMPLE: string;
+  readonly VITE_APP_NAME: string;
+  readonly VITE_PUSHER_APP_KEY: string;
+  readonly VITE_PUSHER_HOST: string;
+  readonly VITE_PUSHER_PORT: string;
+  readonly VITE_PUSHER_SCHEME: string;
+  readonly VITE_PUSHER_APP_CLUSTER: string;
+
+  readonly VITE_ENDPOINT_URL: string;
+  readonly VITE_REQUEST_TIMEOUT: string;
+  readonly VITE_DEBOUNCE_TIME: string;
+
+  readonly VITE_CLOUDINARY_CLOUD_NAME: string;
+  readonly VITE_CLOUDINARY_API_KEY: string;
+  readonly VITE_CLOUDINARY_API_SECRET: string;
+  readonly VITE_CLOUDINARY_UPLOAD_PRESET: string;
+
+  //add more env variables here...
 }
 
 interface ImportMeta {
