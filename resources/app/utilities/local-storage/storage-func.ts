@@ -1,4 +1,4 @@
-import { LoginResponseType } from '@/models/auth';
+import { GetUserDetailResponseType, LoginResponseType } from '@/models/auth';
 import { storageKeys } from './storage-keys';
 import { load, remove, save } from '@/utilities/local-storage';
 import { IUser } from '@/models/user';
@@ -8,14 +8,16 @@ const saveDataAfterLoginGoogle = (data: LoginResponseType) => {
 };
 
 const saveDataAfterLogin = (data: LoginResponseType) => {
+  save(storageKeys.ACCESS_TOKEN, data.access_token);
+  save(storageKeys.REFRESH_TOKEN, data.refresh_token);
+};
+const saveUserDetailData = (data: GetUserDetailResponseType) => {
   save(storageKeys.USER, data.user);
-  save(storageKeys.USER_ID, data.user.id);
-  save(storageKeys.ACCESS_TOKEN, data.accessToken);
 };
 
-const saveAccessToken = (accessToken: string) => {
-  save(storageKeys.ACCESS_TOKEN, accessToken);
-};
+// const saveAccessToken = (accessToken: string) => {
+//   save(storageKeys.ACCESS_TOKEN, accessToken);
+// };
 
 const getUser = () => {
   return load<IUser>(storageKeys.USER);
@@ -39,10 +41,11 @@ const removeUser = () => {
 export const StorageFunc = {
   saveDataAfterLoginGoogle,
   saveDataAfterLogin,
-  saveAccessToken,
+  // saveAccessToken,
   getUser,
   getUserId,
   removeUser,
   getRefreshToken,
   getAccessToken,
+  saveUserDetailData,
 };

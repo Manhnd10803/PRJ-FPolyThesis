@@ -129,72 +129,6 @@ class AuthController extends Controller
     }
     /**
      * @OA\Post(
-     *     path="/api/auth/login",
-     *     tags={"Authentication"},
-     *     summary="Đăng nhập",
-     *     description="Đăng nhập vào hệ thống bằng địa chỉ email và mật khẩu.",
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             type="object",
-     *             required={"email", "password"},
-     *             @OA\Property(
-     *                 property="email",
-     *                 type="string",
-     *                 format="email",
-     *                 description="Địa chỉ email của người dùng"
-     *             ),
-     *             @OA\Property(
-     *                 property="password",
-     *                 type="string",
-     *                 minLength=8,
-     *                 description="Mật khẩu của người dùng"
-     *             )
-     *         )
-     *     ),
-     *     @OA\Response(response=200, description="Đăng nhập thành công"),
-     *     @OA\Response(response=400, description="Đăng nhập thất bại"),
-     *     @OA\Response(response=403, description="Tài khoản chưa được kích hoạt"),
-     *     @OA\Response(response=422, description="Dữ liệu không hợp lệ")
-     * )
-     */
-    public function login(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|string|min:8'
-        ]);
-        if (!$validator->fails()) {
-            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-                $user = Auth::user();
-                if ($user->status == config('default.user.status.lock')) {
-                    return response()->json(['message' => 'Tài khoản chưa được kích hoạt'], 403);
-                }
-                if ($user->status == config('default.user.status.suspend')) {
-                    return response()->json(['message' => 'Tài khoản đã bị khóa'], 403);
-                }
-                 // Tạo token
-                if ($user->group_id == config('default.user.groupID.superAdmin') || $user->group_id == config('default.user.groupID.admin')) {
-                // Token cho admin
-                    $token = $user->createToken('authToken', ['admin']);
-                } else {
-                // Token cho user
-                    $token = $user->createToken('authToken');
-                }
-                // Lấy access token
-                $accessToken = $token->accessToken;
-                // Lấy thời gian hết hạn của token
-                $expiresAt = $token->token->expires_at;
-                return response()->json(['user' => $user, 'accessToken' => $accessToken, 'expiresAt' => $expiresAt, 'token'=> $token], 200);
-            } else {
-                return response()->json(['message' => 'Đăng nhập thất bại'], 400);
-            }
-        } else {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-    }
-    /**
-     * @OA\Post(
      *     path="/api/auth/logout",
      *     tags={"Authentication"},
      *     summary="Đăng xuất",
@@ -426,6 +360,12 @@ class AuthController extends Controller
             return response()->json(['message' => 'Mật khẩu đã được đặt lại thành công'], 200);
         }
 
+    }
+
+    public function getUser(Request $request)
+    {
+        $user = $request->user();
+        return response()->json(['user' => $user ], 200);
     }
    
 }

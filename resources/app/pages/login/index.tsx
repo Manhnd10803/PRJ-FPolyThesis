@@ -4,6 +4,7 @@ import { TSignInSchema, signInSchema } from '@/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Col, Form, Spinner } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
 
 export const LoginPage = () => {
@@ -20,10 +21,25 @@ export const LoginPage = () => {
 
   const onSubmit = async (dataForm: TSignInSchema) => {
     try {
-      const { data } = await AuthService.Login(dataForm);
+      const bodyData = {
+        ...dataForm,
+        grant_type: import.meta.env.VITE_PASSPORT_PASSWORD_GRANT_TYPE_LOGIN,
+        client_id: import.meta.env.VITE_PASSPORT_PASSWORD_GRANT_CLIENT_ID,
+        client_secret: import.meta.env.VITE_PASSPORT_PASSWORD_GRANT_CLIENT_SECRET,
+      };
+      const { data } = await AuthService.Login(bodyData);
 
+      toast.success('Đăng nhập thành công');
       //save data login to storage
       StorageFunc.saveDataAfterLogin(data);
+
+      // get user detail and save to storage
+      const { data: userData } = await AuthService.GetUserDetail();
+
+      //auto refresh token before expired time
+      AuthService.AutoRefreshToken(data.expires_in);
+
+      StorageFunc.saveUserDetailData(userData);
 
       reset();
       navigate('/');
@@ -50,14 +66,14 @@ export const LoginPage = () => {
             <Form.Group className="form-group">
               <Form.Label>Email address</Form.Label>
               <Form.Control
-                {...login('email')}
+                {...login('username')}
                 type="text"
                 className="mb-0"
                 id="exampleInputEmail1"
                 placeholder="Enter email"
-                name="email"
+                name="username"
               />
-              {errors.email && <p className="text-danger">{`${errors.email.message}`}</p>}
+              {errors.username && <p className="text-danger">{`${errors.username.message}`}</p>}
             </Form.Group>
             <Form.Group className="form-group">
               <Form.Label>Password</Form.Label>
