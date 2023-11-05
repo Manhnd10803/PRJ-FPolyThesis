@@ -1,60 +1,61 @@
 export const ApiConstants = {
   // auth
-  LOGIN: `/auth/login`,
-  LOGIN_GOOGLE: `/auth/google-auth`,
-  REGISTER: `/auth/register`,
-  FORGOT_PASSWORD: '/auth/post-forgot-password',
-  RESET_PASSWORD: '/auth/post-reset-password',
-  LOGOUT: `/auth/logout`,
-  VERIFY_EMAIL_REGISTER: `/auth/verify`,
+  LOGIN: '/oauth/token',
+  REFRESH_TOKEN: '/oauth/token',
 
-  REFRESH_TOKEN: `/auth/refresh-token`,
+  LOGIN_GOOGLE: '/api/auth/google-auth',
+  REGISTER: '/api/auth/register',
+  FORGOT_PASSWORD: '/api/auth/post-forgot-password',
+  RESET_PASSWORD: '/api/auth/post-reset-password',
+  LOGOUT: '/api/auth/logout',
+  VERIFY_EMAIL_REGISTER: '/api/auth/verify',
 
   // user
-  USER: `/users`,
+  USER: '/api/users',
+  USER_DETAIL: '/api/get-user',
 
   // question and answer
-  CREATE_QANDA: '/quests',
-  ALL_QANDA: '/quests',
-  // LIST_QANDA: '/quests/lista',
-  LIST_QANDA_BY_MAJOR: '/quests/major',
-  LIST_MY_QANDA: '/quests/my-quests',
-  LIST_MOST_CMT_QANDA: '/quests/most-commented',
-  LIST_UNANSWER_QANDA: '/quests/unanswer',
-  DETAIL_QANDA: '/quests',
-  UPDATE_QANDA: '/quests',
-  DELETE_QANDA: '/quests',
+  CREATE_QANDA: '/api/quests',
+  ALL_QANDA: '/api/quests',
+  // LIST_QANDA: '/api/quests/lista',
+  LIST_QANDA_BY_MAJOR: '/api/quests/major',
+  LIST_MY_QANDA: '/api/quests/my-quests',
+  LIST_MOST_CMT_QANDA: '/api/quests/most-commented',
+  LIST_UNANSWER_QANDA: '/api/quests/unanswer',
+  DETAIL_QANDA: '/api/quests',
+  UPDATE_QANDA: '/api/quests',
+  DELETE_QANDA: '/api/quests',
 
   // post
-  POSTS: `/posts`,
+  POSTS: '/api/posts',
 
   // blog
-  SHOW_BLOGS: `/blogs`,
-  SHOW_BLOG_DETAIL: `/blogs`,
-  CREATE_BLOG: `/blogs`,
+  SHOW_BLOGS: '/api/blogs',
+  SHOW_BLOG_DETAIL: '/api/blogs',
+  CREATE_BLOG: '/api/blogs',
 
   // major
-  MAJORS: `/majors`,
+  MAJORS: '/api/majors',
 
   // Comment
-  CREATE_COMMENT: `/comment`,
-  DELETE_COMMENT: `/comment`,
-  EDIT_COMMENT: `/comment`,
+  CREATE_COMMENT: '/api/comment',
+  DELETE_COMMENT: '/api/comment',
+  EDIT_COMMENT: '/api/comment',
   // Like
-  CREATE_LIKE_BLOG: `/like/blog`,
-  CREATE_LIKE_QANDA: `/like/qa`,
+  CREATE_LIKE_BLOG: '/api/like/blog',
+  CREATE_LIKE_QANDA: '/api/like/qa',
 
   // Friend
-  SHOW_FRIEND_REQUEST: `/friend-list-request`,
-  CONFIRM_FRIEND_REQUEST: `/confirm-request`,
-  DELETE_FRIEND_REQUEST: `/delete-request`,
+  SHOW_FRIEND_REQUEST: '/api/friend-list-request',
+  CONFIRM_FRIEND_REQUEST: '/api/confirm-request',
+  DELETE_FRIEND_REQUEST: '/api/delete-request',
 
   // profile
-  PROFILE: `/profile`,
-  DETAIL_USER_PROFILE: `/profile`,
+  PROFILE: '/api/profile',
+  DETAIL_USER_PROFILE: '/api/profile',
   // admin
 
-  USERS_ADMIN: `/admin/users`,
+  USERS_ADMIN: '/api/admin/users',
 
   // Add more endpoints as needed
 } as const;

@@ -3,14 +3,22 @@
 
 import { IUser } from './user';
 
-export type LoginResponseType = {
+export type GetUserDetailResponseType = {
   user: IUser;
-  accessToken: string;
-  expiresAt: Date;
+};
+
+export type LoginResponseType = {
+  token_type: string;
+  expires_in: number;
+  access_token: string;
+  refresh_token: string;
 };
 
 export type RefreshTokenResponseType = {
-  accessToken: string;
+  token_type: string;
+  expires_in: number;
+  access_token: string;
+  refresh_token: string;
 };
 
 export type RegisterResponseType = {
