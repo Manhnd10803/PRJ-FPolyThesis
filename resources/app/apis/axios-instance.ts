@@ -61,7 +61,7 @@ httpRequest.interceptors.response.use(
     // }
 
     switch (error.response?.status) {
-      case 400:
+      // case 400:
       case 401:
         return window.location.replace('/login');
       case 403:

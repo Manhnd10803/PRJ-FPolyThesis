@@ -259,7 +259,7 @@ class BlogController extends Controller
             $blog->update([
                 'title' => $title,
                 'content' => $content,
-                'thumbnail' => json_encode($thumbnail),
+                'thumbnail' => $thumbnail,
                 'majors_id' => $majors_id,
                 'hashtag' => $hashtag,
             ]);
