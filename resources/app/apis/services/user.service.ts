@@ -1,11 +1,10 @@
-import httpRequest from '@/apis';
+import httpRequest from '../axios-instance';
+import { ApiConstants } from '../endpoints';
 
-const getPublicContent = () => {
-  return httpRequest.get('/test/all');
+const showInfoUser = () => {
+  return httpRequest.get(ApiConstants.SHOW_INFO_USER);
 };
-
-const UserService = {
-  getPublicContent,
+const editInfoUser = <T>(data: T) => {
+  return httpRequest.put(ApiConstants.EDIT_INFO_USER, data);
 };
-
-export default UserService;
+export const UserService = { showInfoUser, editInfoUser };

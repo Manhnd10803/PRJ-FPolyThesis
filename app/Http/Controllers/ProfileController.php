@@ -171,5 +171,44 @@ class ProfileController extends Controller
         ]);
         $post->save();
         return response()->json(['data'=> [$user,$post], 'message'=> 'Thêm ảnh đại diện thành công'],200);
+        
+    }
+    public function updateProfile(Request $request)
+{
+    DB::beginTransaction();
+    try {
+        $user = Auth::user();
+
+        // Retrieve input data
+        $inputData = $request->except('password');
+        
+        if ($request->input('avatar')) {
+           
+            $inputData['avatar'] = $request->input('avatar');
+        } else {
+            // Nếu không có tệp tin avatar mới, giữ nguyên giá trị avatar hiện có
+            $inputData['avatar'] = $user->avatar;
+        }
+        
+        $user->update($inputData);
+        DB::commit();
+        return response()->json($user, 200);
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return response()->json(['error' => $e->getMessage()], 400);
+    }
+}
+   
+    public function getInfoUser()
+    {
+        try {
+            $user = Auth::user();
+            if (!$user) {
+                return response()->json(['error' => 'User not authenticated'], 401);
+            }
+            return response()->json(['user' => $user], 200);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
     }
 }
