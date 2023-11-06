@@ -13,6 +13,7 @@ const saveDataAfterLogin = (data: LoginResponseType) => {
 };
 const saveUserDetailData = (data: GetUserDetailResponseType) => {
   save(storageKeys.USER, data.user);
+  save(storageKeys.USER_ID, data.user.id);
 };
 
 // const saveAccessToken = (accessToken: string) => {

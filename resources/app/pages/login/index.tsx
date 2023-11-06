@@ -35,7 +35,6 @@ export const LoginPage = () => {
 
       // get user detail and save to storage
       const { data: userData } = await AuthService.GetUserDetail();
-
       //auto refresh token before expired time
       AuthService.AutoRefreshToken(data.expires_in);
 
@@ -44,8 +43,14 @@ export const LoginPage = () => {
       reset();
       navigate('/');
     } catch (error: any) {
-      if (error) {
-        const serverError = error.message;
+      if (error.message == 'The user credentials were incorrect.') {
+        const serverError = 'Sai thông tin đăng nhập';
+        setError('password', {
+          type: 'server',
+          message: serverError,
+        });
+      } else if (error) {
+        const serverError = 'Lỗi server';
         setError('password', {
           type: 'server',
           message: serverError,
