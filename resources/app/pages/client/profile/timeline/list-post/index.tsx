@@ -8,7 +8,7 @@ export const ListPost = ({ listPost, isLoading }) => {
           <h3>Loading...</h3>
         </>
       ) : (
-        <>{listPost?.map((item, index) => <PostItem data={item} index={index} />)}</>
+        <>{listPost?.map((item, index) => <PostItem data={item} key={index} />)}</>
       )}
     </>
   );

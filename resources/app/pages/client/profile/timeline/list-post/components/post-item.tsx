@@ -11,10 +11,10 @@ import icon5 from '../../../../../../assets/images/icon/05.png';
 import icon6 from '../../../../../../assets/images/icon/06.png';
 import icon7 from '../../../../../../assets/images/icon/07.png';
 import { formatTimeFromCreatedAt } from '../../../components/format-time';
-export const PostItem = ({ data, index }) => {
+export const PostItem = ({ data }) => {
   return (
     <>
-      <Card key={index}>
+      <Card>
         <Card.Body>
           <div className="post-item">
             <div className="user-post-data pb-3">
