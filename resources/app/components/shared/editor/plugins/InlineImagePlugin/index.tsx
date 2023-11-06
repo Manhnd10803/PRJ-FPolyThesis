@@ -7,8 +7,6 @@
  */
 import type { Position } from '../../nodes/InlineImageNode';
 
-import '../../ui/Checkbox.css';
-
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $wrapNodeInElement, mergeRegister } from '@lexical/utils';
 import {
@@ -134,8 +132,17 @@ export function InsertInlineImageDialog({
         <option value="full">Full Width</option>
       </Select>
 
-      <div className="Input__wrapper">
-        <input id="caption" type="checkbox" checked={showCaption} onChange={handleShowCaptionChange} />
+      <div
+        className="Input__wrapper"
+        style={{ display: 'flex', flexDirection: 'row-reverse', gap: '40px', justifyContent: 'start' }}
+      >
+        <input
+          style={{ width: '20px', height: '20px' }}
+          id="caption"
+          type="checkbox"
+          checked={showCaption}
+          onChange={handleShowCaptionChange}
+        />
         <label htmlFor="caption">Show Caption</label>
       </div>
 

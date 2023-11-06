@@ -22,12 +22,7 @@ export const PostItem = ({ data, index }) => {
                 <div className="me-3">
                   {data?.user?.avatar !== null ? (
                     <>
-                      <img
-                        loading="lazy"
-                        className="rounded-circle  avatar-60"
-                        src={`storage/${data?.user?.avatar}`}
-                        alt=""
-                      />
+                      <img loading="lazy" className="rounded-circle  avatar-60" src={data?.user?.avatar} alt="" />
                     </>
                   ) : (
                     <img loading="lazy" className="rounded-circle  avatar-60" src={imageUrl} alt="" />
@@ -70,7 +65,7 @@ export const PostItem = ({ data, index }) => {
               {data?.post?.image !== null ? (
                 <>
                   <Link to="#">
-                    <img loading="lazy" src={`storage/${data?.post?.image}`} alt="post" className="img-fluid w-100" />
+                    <img loading="lazy" src={data?.post?.image} alt="post" className="img-fluid w-100" />
                   </Link>
                 </>
               ) : (

@@ -55,6 +55,7 @@ export const ProfilePage = () => {
   const queryClient = useQueryClient();
   const { id } = useParams();
   const localUserId = StorageFunc.getUserId();
+  const isUser = id == undefined || id == localUserId ? true : false;
   const getDetailProfile = async () => {
     const user_id = id || localUserId;
     const { data } = await ProfileService.getDetailProfile(user_id, type, status);
@@ -81,26 +82,18 @@ export const ProfilePage = () => {
       <div id="content-page" className="content-page">
         <Container>
           <Row>
-            <Header detailUser={detailUserProfile} isLoading={isUserLoading} friend_id={id} />
+            <Header detailUser={detailUserProfile} isLoading={isUserLoading} isUser={isUser} />
             <Tab.Container id="left-tabs-example" defaultActiveKey="first">
-              <Navbar friend_id={id} />
+              <Navbar isUser={isUser} />
               <Col sm={12}>
                 <Tab.Content>
                   <Tab.Pane eventKey="first">
-                    {isLoading ? (
-                      <>
-                        <h4>Loading...</h4>
-                      </>
-                    ) : (
-                      <>
-                        <Timeline
-                          about={detailUserProfile?.user}
-                          listPost={detailProfile?.data}
-                          isLoading={isLoading}
-                          friend_id={id}
-                        />
-                      </>
-                    )}
+                    <Timeline
+                      about={detailUserProfile?.user}
+                      listPost={detailProfile?.data}
+                      isLoading={isLoading}
+                      friend_id={id}
+                    />
                   </Tab.Pane>
                   <Tab.Pane eventKey="second">
                     <MyBlog listBlog={detailProfile?.data[0]?.blog?.data} isLoading={isLoading} />
@@ -328,19 +321,8 @@ export const ProfilePage = () => {
                     </Tab.Container>
                   </Tab.Pane>
                   <Tab.Pane eventKey="five">
-                    {isLoading ? (
-                      <>
-                        <h4>Loading...</h4>
-                      </>
-                    ) : (
-                      <>
-                        <MyListQa listQa={detailProfile?.data[0]?.qa?.data} isLoading={isLoading} />
-                      </>
-                    )}
+                    <MyListQa listQa={detailProfile?.data[0]?.qa?.data} isLoading={isLoading} />
                   </Tab.Pane>
-                  {/* <div className="col-sm-12 text-center">
-                  <img loading="lazy" src={imageUrl} alt="loader" style={{ height: '100px' }} />
-                </div> */}
                 </Tab.Content>
               </Col>
             </Tab.Container>

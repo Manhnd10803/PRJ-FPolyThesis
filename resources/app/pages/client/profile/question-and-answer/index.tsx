@@ -50,21 +50,19 @@ export const MyListQa = ({ listQa, isLoading }) => {
                       <>
                         <div className="d-flex justify-content-between">
                           <h4>Bài viết công khai</h4>
-                          <form>
-                            <div className="d-flex align-items-center">
+                          <div className="d-flex align-items-center">
+                            <div className="form-outline">
                               <input
-                                type="text"
-                                placeholder="Tìm kiếm..."
+                                type="search"
+                                id="form1"
+                                style={{ height: '35px' }}
+                                className="form-control"
                                 value={searchQueries.about1}
+                                placeholder="Tìm kiếm..."
                                 onChange={e => handleSearchInputChange('about1', e.target.value)}
                               />
-                              {searchQueries.about1 && (
-                                <button type="button" onClick={() => clearSearch('about1')} className="btn btn-link">
-                                  Xóa
-                                </button>
-                              )}
                             </div>
-                          </form>
+                          </div>
                         </div>
                         <hr />
                         {filteredBlogListAbout1 && filteredBlogListAbout1.length > 0 ? (
@@ -81,7 +79,7 @@ export const MyListQa = ({ listQa, isLoading }) => {
                                   </Link>
                                 </div>
                                 <div className="col-12">
-                                  <p className="mb-0">Sửa lần cuối: {formatTime(item.created_at)}</p>
+                                  <p className="mb-0">Sửa lần cuối: {formatTime(item.updated_at)}</p>
                                 </div>
                                 <hr />
                               </Row>

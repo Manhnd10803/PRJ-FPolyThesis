@@ -1,7 +1,5 @@
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import axios, { AxiosRequestConfig } from 'axios';
-import { ApiConstants } from './endpoints';
-import { AuthService } from './services/auth.service';
 import toast from 'react-hot-toast';
 
 // Create an Axios instance
