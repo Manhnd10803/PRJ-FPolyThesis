@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const imageUrl = 'https://picsum.photos/20';
 import backgroundImage from '../../../../assets/images/profile-bg1.jpg';
 
-export const Header = ({ detailUser, isLoading, friend_id }) => {
+export const Header = ({ detailUser, isLoading, isUser }) => {
   const { total_blog, total_post, total_friend, user } = detailUser || [];
   return (
     <>
@@ -43,12 +43,7 @@ export const Header = ({ detailUser, isLoading, friend_id }) => {
                   <div className="user-detail text-center mb-3">
                     <div className="profile-img">
                       {user?.avatar ? (
-                        <img
-                          loading="lazy"
-                          src={`storage/${user?.avatar}`}
-                          alt="profile-img1"
-                          className="avatar-130 img-fluid"
-                        />
+                        <img loading="lazy" src={user?.avatar} alt="profile-img1" className="avatar-130 img-fluid" />
                       ) : (
                         <img loading="lazy" src={imageUrl} alt="profile-img1" className="avatar-130 img-fluid" />
                       )}
@@ -97,7 +92,7 @@ export const Header = ({ detailUser, isLoading, friend_id }) => {
                     </>
                   )}
                 </div>
-                {friend_id ? (
+                {isUser == false ? (
                   <>
                     <div className="social-links">
                       <button className="btn btn-primary px-5">Kết bạn</button>

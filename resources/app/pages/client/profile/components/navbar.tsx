@@ -1,10 +1,10 @@
 import { Card, Dropdown, Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-export const Navbar = ({ friend_id }) => {
+export const Navbar = ({ isUser }) => {
   return (
     <>
-      {!friend_id ? (
+      {isUser ? (
         <>
           <Card className="p-0">
             <Card.Body className="p-0">
@@ -37,11 +37,13 @@ export const Navbar = ({ friend_id }) => {
                   <Nav.Item as="li" className="col-12 col-sm-1 p-0">
                     <div className="card-header-toolbar d-flex align-items-center justify-content-center">
                       <Dropdown>
-                        <Link to="#">
-                          <Dropdown.Toggle as="span" className="material-symbols-outlined">
-                            more_vert
-                          </Dropdown.Toggle>
-                        </Link>
+                        <Dropdown.Toggle
+                          as="span"
+                          className="material-symbols-outlined text-dark"
+                          style={{ cursor: 'pointer' }}
+                        >
+                          more_vert
+                        </Dropdown.Toggle>
                         <Dropdown.Menu className="dropdown-menu-right">
                           <Dropdown.Item href="#qa" eventKey="five">
                             <i className="ri-eye-fill me-2"></i>Question & Answer

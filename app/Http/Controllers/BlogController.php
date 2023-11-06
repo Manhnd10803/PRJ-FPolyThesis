@@ -204,7 +204,7 @@ class BlogController extends Controller
                 'user_id' => Auth::id(),
                 'title' => $title,
                 'content' => $content,
-                'thumbnail' => json_encode($thumbnail),
+                'thumbnail' => $thumbnail,
                 'majors_id' => $majors_id,
                 'hashtag' => $hashtag,
                 'status' => config('default.blog.status.pending'),

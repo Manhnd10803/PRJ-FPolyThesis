@@ -11,6 +11,8 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { MajorService } from '@/apis/services/major.service';
 import { IMajors } from '@/models/major';
+import { useState } from 'react';
+import { CloudiaryService } from '@/apis/services/cloudinary.service';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -25,6 +27,7 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 export const CreateBlogPage = () => {
+  const [files, setFiles] = useState<FileList | null>(null);
   const navigate = useNavigate();
 
   const { data } = useQuery({
@@ -46,9 +49,14 @@ export const CreateBlogPage = () => {
     },
   });
 
-  const onSubmit = (data: TBlogCreateSchema) => {
+  const onSubmit = async (data: TBlogCreateSchema) => {
+    const imageURL = await CloudiaryService.uploadImages(files, 'blog');
+    const newData = {
+      ...data,
+      thumbnail: imageURL[0],
+    };
     if (!isLoading) {
-      mutate(data, {
+      mutate(newData, {
         onError: error => {
           console.log(error);
         },
@@ -59,7 +67,12 @@ export const CreateBlogPage = () => {
       });
     }
   };
-
+  const handleChange = ({ currentTarget: { files } }: React.FormEvent<HTMLInputElement>) => {
+    console.log('preparing files to upload', files);
+    if (files && files.length) {
+      setFiles(files);
+    }
+  };
   return (
     <div id="content-page" className="content-page">
       <Container>
@@ -91,10 +104,16 @@ export const CreateBlogPage = () => {
                     <div>
                       <MuiButton component="label" variant="contained" startIcon={<CloudUploadIcon />}>
                         Tải lên tệp
-                        <VisuallyHiddenInput type="file" id="thumbnail" {...register('thumbnail')} />
+                        <VisuallyHiddenInput
+                          type="file"
+                          id="thumbnail"
+                          onChange={handleChange}
+                          multiple
+                          accept="image/png, image/jpg, image/jpeg"
+                          required
+                        />
                       </MuiButton>
                     </div>
-                    <span className="text-danger">{errors?.thumbnail?.message}</span>
                   </Form.Group>
                   <Form.Group className="form-group">
                     <Form.Label>Hashtag:</Form.Label>
