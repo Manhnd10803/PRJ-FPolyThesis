@@ -16,6 +16,7 @@ import { CreateQandA } from '@/pages/client/question-and-answer/create-qanda';
 import { DetailQandAPage } from '@/pages/client/question-and-answer/detail-qanda';
 import { UpdateQandA } from '@/pages/client/question-and-answer/update-qanda/update-form';
 import { ExampleUploadPage } from '@/pages/client/example-upload';
+import { ChatApp } from '@/pages/client/chat/test/test';
 
 export const ClientRouter = [
   {

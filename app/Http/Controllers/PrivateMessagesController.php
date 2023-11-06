@@ -115,13 +115,14 @@ class PrivateMessagesController extends Controller
         DB::beginTransaction();
         try{
             $senderID  = Auth::id();
-            $receiverId =$user->id;
+            $receiverId = $user->id;
             if($senderID == $receiverId){
                 return response()->json(['error'=> 'không thể gửi tin nhắn cho chính mình'],400);
             }
             $content = $request->input('content');
             $message = new PrivateMessage([
                 'sender_id' => $senderID,
+                // 'receiver_id' => 6,
                 'receiver_id' =>$receiverId ,
                 'content' => $content,
                 'status' => config('default.private_messages.status.send'),
@@ -129,8 +130,8 @@ class PrivateMessagesController extends Controller
             $message->save();
             DB::commit();
             // 
-            broadcast(new PrivateMessageSent($message))->toOthers();
-            return response()->json(['message' => 'Tin nhắn đã được gửi','data' => $message], 200); 
+            broadcast(new PrivateMessageSent($message->load('sender')))->toOthers();
+            return response()->json(['message' => 'Tin nhắn đã được gửi','data' => $message->load('sender')], 200); 
         }catch(\Exception $e){
             DB::rollBack();
             return response()->json(['message'=> $e->getMessage()],400);

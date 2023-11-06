@@ -137,6 +137,11 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/see-notification/{notification}', [NotificationController::class, 'seeNotification']);
     Route::delete('/notification/{notification}', [NotificationController::class, 'deleteNotification']);
 
+    // Chat
+    Route::get('/messages', [PrivateMessagesController::class, 'ShowAllMessage']);
+    Route::post('/messages', [PrivateMessagesController::class, 'SendMessages']);
+    Route::delete('/messages/{id}', [PrivateMessagesController::class, 'DeleteMessage']);
+
     Route::group(['prefix' => 'admin', 'middleware' => 'scope:admin'], function () {
         //User Management
         Route::prefix('users')->group(function () {

@@ -68,4 +68,7 @@ export const ApiConstants = {
   USERS_ADMIN: '/api/admin/users',
 
   // Add more endpoints as needed
+
+  SHOW_MESSAGES: '/messages',
+  SEND_MESSAGES: '/messages',
 } as const;

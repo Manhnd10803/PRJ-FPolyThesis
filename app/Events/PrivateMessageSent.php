@@ -14,6 +14,7 @@ class PrivateMessageSent implements ShouldBroadcast
 
     public function broadcastOn()
     {
-        return new PrivateChannel('user.'.$this->message->receiver_id);
+        return new PrivateChannel('user.'.$this->message['receiver_id']);
+        // return new PrivateChannel('one-one');
     }
 }
