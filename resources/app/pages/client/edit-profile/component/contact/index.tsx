@@ -1,24 +1,44 @@
 import { Button, Col, Form, Row } from 'react-bootstrap';
 
-export const Contact = ({ AccountShow }: any) => {
+export const Contact = ({ AccountShow, DataUser, update }: any) => {
   return (
     <>
       <div className="form-card text-left">
         <Row>
           <div className="col-12">
-            <h3 className="mb-4">Contact Information:</h3>
+            <h3 className="mb-4">Thông tin liên lạc:</h3>
           </div>
         </Row>
         <Row>
-          <Col md="12">
+          <Col md="6">
+            <Form.Group className="form-group">
+              <Form.Label>Email: *</Form.Label>
+              <Form.Control type="text" defaultValue={DataUser?.email || ''} disabled />
+            </Form.Group>
+          </Col>
+          <Col md="6">
             <Form.Group className="form-group">
               <Form.Label>Số điện thoại: *</Form.Label>
-              <Form.Control type="text" id="ccno" name="ccno" placeholder="Contact Number" />
+              <Form.Control
+                type="text"
+                id="ccno"
+                name="phone"
+                placeholder="Số điện thoại"
+                defaultValue={DataUser?.phone || ''}
+                {...update('phone')}
+              />
             </Form.Group>
           </Col>
           <Form.Group className="col-md-12 form-group mb-3 ">
-            <Form.Label>Address: *</Form.Label>
-            <Form.Control as="textarea" name="address" id="address" rows="5"></Form.Control>
+            <Form.Label>Địa chỉ: *</Form.Label>
+            <Form.Control
+              as="textarea"
+              name="address"
+              id="address"
+              rows="5"
+              defaultValue={DataUser?.address || ''}
+              {...update('address')}
+            ></Form.Control>
           </Form.Group>
         </Row>
       </div>

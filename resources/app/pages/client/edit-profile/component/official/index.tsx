@@ -1,12 +1,22 @@
-import { useState } from 'react';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import noImage from '@/assets/images/no-image.png';
-export const Official = ({ AccountShow }: any) => {
+import { useEffect, useState } from 'react';
+export const Official = ({ AccountShow, DataUser, update, handleChange }: any) => {
   const [image, setImage] = useState(noImage);
+  useEffect(() => {
+    if (DataUser.avatar) {
+      if (typeof DataUser.avatar === 'string') {
+        setImage(DataUser.avatar); // If it's a string (URL)
+      } else if (DataUser.avatar instanceof File) {
+        const imageUrl = URL.createObjectURL(DataUser.avatar);
+        setImage(imageUrl);
+      }
+    }
+  }, [DataUser.avatar]);
   const handleImageChange = (e: any) => {
     e.preventDefault();
-    const selectedImage = e.target.files[0]; // Select the first image
-    const imageUrl = selectedImage ? URL.createObjectURL(selectedImage) : noImage; // Use default image if no image selected
+    const selectedImage = e.target.files[0];
+    const imageUrl = selectedImage ? URL.createObjectURL(selectedImage) : noImage;
     setImage(imageUrl);
   };
   return (
@@ -30,17 +40,18 @@ export const Official = ({ AccountShow }: any) => {
               <Form.Control
                 type="file"
                 aria-label="file example"
+                name="avatar"
                 multiple
+                {...update('avatar')}
                 accept="image/png, image/jpg, image/jpeg"
                 onChange={handleImageChange}
-                required
               />
             </p>
           </Col>
         </Row>
       </div>
-      <Button name="next" className="float-end" value="Submit" onClick={() => AccountShow('Image')}>
-        Next
+      <Button name="next" className="float-end" type="submit">
+        Submit
       </Button>
       <Button
         variant="dark"

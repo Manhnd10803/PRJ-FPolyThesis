@@ -53,6 +53,10 @@ export const ApiConstants = {
   // profile
   PROFILE: '/api/profile',
   DETAIL_USER_PROFILE: '/api/profile',
+
+  //Info User
+  SHOW_INFO_USER: `api/user-info`,
+  EDIT_INFO_USER: `api/profile/update`,
   // admin
 
   USERS_ADMIN: '/api/admin/users',

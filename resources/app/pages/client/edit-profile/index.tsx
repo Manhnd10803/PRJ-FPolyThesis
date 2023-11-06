@@ -1,15 +1,105 @@
+import { z } from 'zod';
 import { Card } from '@/components/custom';
-import { useState } from 'react';
-import { Col, Container, Form, Image, Row } from 'react-bootstrap';
+import { useEffect, useState } from 'react';
+import { Col, Container, Form, Row, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-
 import { Personal } from './component/personal';
 import { Contact } from './component/contact';
 import { Official } from './component/official';
+import { TUserUpdateSchema, userUpdateSchema } from '@/validation/zod/user';
+import { MajorService } from '@/apis/services/major.service';
+import { useMutation } from '@tanstack/react-query';
+import { UserService } from '@/apis/services/user.service';
+import { Finish } from './component/finish';
+import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
+import { CloudiaryService } from '@/apis/services/cloudinary.service';
 export const EditProfilePage = () => {
   const [show, AccountShow] = useState('A');
-  const fieldsetStyle = {
-    height: '500px', // Set a fixed height for all fieldset elements (adjust as needed)
+  const [validationErrors, setValidationErrors] = useState({});
+  const [DataMajor, setDataMajor] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [DataUser, setUserData] = useState({});
+  const {
+    register: update,
+    formState: { errors },
+    handleSubmit,
+    setValue,
+    watch,
+  } = useForm<TUserUpdateSchema>();
+
+  const { mutate, isLoading } = useMutation({
+    mutationFn: ({ body }: { body: TUserUpdateSchema }) => {
+      return UserService.editInfoUser(body);
+    },
+  });
+  // Info user
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const { data: DataInfoUser } = await UserService.showInfoUser();
+        const { data: DataMajorUser } = await MajorService.getMajors();
+        if (DataMajorUser) {
+          setDataMajor(DataMajorUser);
+        }
+        if (DataInfoUser) {
+          setUserData(DataInfoUser.user);
+        }
+        setLoading(false);
+      } catch (error) {
+        throw error;
+      }
+    };
+    fetchUserData();
+    return () => {};
+  }, []);
+  // HandeValidate
+  const handleNextValidate = (page: any) => {
+    try {
+      const firstName = watch('first_name');
+      const lastName = watch('last_name');
+      const major = watch('major_id');
+      const validData = userUpdateSchema.parse({
+        first_name: firstName,
+        last_name: lastName,
+        major_id: major,
+      });
+      if (validData) {
+        AccountShow(page);
+        setValidationErrors({});
+      }
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const errorDetails = {};
+        error.errors.forEach(err => {
+          errorDetails[err.path[0]] = err.message;
+        });
+        setValidationErrors(errorDetails);
+      }
+    }
+  };
+
+  const onSubmit = async (data: TUserUpdateSchema) => {
+    const imageURL = await CloudiaryService.uploadImages(data.avatar, 'avatar');
+    const newData = {
+      ...data,
+      avatar: imageURL[0],
+    };
+    if (!isLoading) {
+      mutate(
+        { body: newData },
+        {
+          onError: error => {
+            console.log(data);
+            console.log(error);
+          },
+          onSuccess: () => {
+            AccountShow('Image');
+            toast.success('Cập nhật thành công');
+          },
+        },
+      );
+    }
   };
 
   return (
@@ -21,7 +111,7 @@ export const EditProfilePage = () => {
               <Card>
                 <Card.Header className="d-flex justify-content-between">
                   <div className="header-title">
-                    <h4 className="card-title">Vertical Wizard</h4>
+                    <h4 className="card-title">Thông tin</h4>
                   </div>
                 </Card.Header>
                 <Card.Body>
@@ -36,7 +126,7 @@ export const EditProfilePage = () => {
                         >
                           <Link to="#">
                             <i className="material-symbols-outlined bg-soft-primary text-primary">lock_open</i>
-                            <span>Personal</span>
+                            <span>Thông tin </span>
                           </Link>
                         </li>
                         <li
@@ -47,7 +137,7 @@ export const EditProfilePage = () => {
                         >
                           <Link to="#">
                             <i className="material-symbols-outlined bg-soft-danger text-danger">person</i>
-                            <span>Contact</span>
+                            <span>Liên lạc</span>
                           </Link>
                         </li>
                         <li
@@ -58,65 +148,52 @@ export const EditProfilePage = () => {
                         >
                           <Link to="#">
                             <i className="material-symbols-outlined bg-soft-success text-success">photo_camera</i>
-                            <span>Official</span>
+                            <span>Ảnh đại diện</span>
                           </Link>
                         </li>
                         <li id="payment" className={` ${show === 'Image' ? 'active done' : ''} step4`}>
                           <Link to="#">
                             <i className="material-symbols-outlined bg-soft-warning text-warning">done</i>
-                            <span>Finish</span>
+                            <span>Hoàn thành</span>
                           </Link>
                         </li>
                       </ul>
                     </Col>
                     <Col md="9">
-                      <Form id="form-wizard3" className="text-start">
-                        <fieldset style={fieldsetStyle} className={`${show === 'A' ? 'd-block' : 'd-none'}`}>
-                          <Personal AccountShow={AccountShow} />
-                        </fieldset>
-                        <fieldset style={fieldsetStyle} className={`${show === 'Account' ? 'd-block' : 'd-none'}`}>
-                          <Contact AccountShow={AccountShow} />
-                        </fieldset>
-                        <fieldset style={fieldsetStyle} className={`${show === 'Personal' ? 'd-block' : 'd-none'}`}>
-                          <Official AccountShow={AccountShow} />
-                        </fieldset>
-                        <fieldset style={fieldsetStyle} className={`${show === 'Image' ? 'd-block' : 'd-none'}`}>
-                          <div className="form-card">
-                            <Row>
-                              <div className="col-7">
-                                <h3 className="mb-4 text-left">Finish:</h3>
-                              </div>
-                              <div className="col-5">
-                                <h2 className="steps">Step 4 - 4</h2>
-                              </div>
-                            </Row>
-                            <br />
-                            <br />
-                            <h2 className="text-success text-center">
-                              <strong>SUCCESS !</strong>
-                            </h2>
-                            <br />
-                            <Row className="justify-content-center">
-                              <div className="col-3">
-                                <Image
-                                  src={
-                                    'https://images.unsplash.com/photo-1523287562758-66c7fc58967f?auto=format&fit=crop&q=60&w=600&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8c3VjY2Vzc3xlbnwwfHwwfHx8MA%3D%3D'
-                                  }
-                                  className="img-fluid"
-                                  alt="fit-image"
-                                />
-                              </div>
-                            </Row>
-                            <br />
-                            <br />
-                            <Row className="justify-content-center">
-                              <div className="col-7 text-center">
-                                <h5 className="purple-text text-center">You Have Successfully Signed Up</h5>
-                              </div>
-                            </Row>
-                          </div>
-                        </fieldset>
-                      </Form>
+                      {loading ? (
+                        <Spinner animation="border" variant="primary" role="status">
+                          <span className="visually-hidden">Loading...</span>
+                        </Spinner>
+                      ) : (
+                        <>
+                          <Form
+                            id="form-wizard3"
+                            className="text-start"
+                            onSubmit={handleSubmit(onSubmit)}
+                            encType="multipart/form-data"
+                          >
+                            <fieldset className={`${show === 'A' ? 'd-block' : 'd-none'}`}>
+                              <Personal
+                                AccountShow={AccountShow}
+                                DataUser={DataUser}
+                                update={update}
+                                handleNextValidate={handleNextValidate}
+                                validationErrors={validationErrors}
+                                DataMajor={DataMajor}
+                              />
+                            </fieldset>
+                            <fieldset className={`${show === 'Account' ? 'd-block' : 'd-none'}`}>
+                              <Contact AccountShow={AccountShow} DataUser={DataUser} update={update} />
+                            </fieldset>
+                            <fieldset className={`${show === 'Personal' ? 'd-block' : 'd-none'}`}>
+                              <Official AccountShow={AccountShow} DataUser={DataUser} update={update} />
+                            </fieldset>
+                            <fieldset className={`${show === 'Image' ? 'd-block' : 'd-none'}`}>
+                              <Finish />
+                            </fieldset>
+                          </Form>
+                        </>
+                      )}
                     </Col>
                   </Row>
                 </Card.Body>

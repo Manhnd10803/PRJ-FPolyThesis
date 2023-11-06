@@ -75,7 +75,11 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/{user}', [ProfileController::class, 'DetailProfileUser'])->name('profile.show.detail_user');
         Route::post('/update-avatar', [ProfileController::class, 'UpdateAvatarForUser'])->name('profile.update.avatar');
         Route::post('/update-cover-photo', [ProfileController::class, 'UpdateCoverPhotoForUser'])->name('profile.update.cover_photo');
+        Route::put('/update', [ProfileController::class, 'updateProfile'])
+        ->name('profile.update');
     });
+    //user
+    Route::get('/user-info', [ProfileController::class, 'getInfoUser']);
     //blog
     Route::prefix('blogs')->group(function () {
         Route::get('/', [BlogController::class, 'ShowAllBlogs'])->name('blog.show');
