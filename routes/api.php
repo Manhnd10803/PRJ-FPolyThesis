@@ -16,6 +16,7 @@ use App\Http\Controllers\QaController;
 use App\Http\Controllers\PrivateMessagesController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
 
@@ -38,18 +39,18 @@ Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('user.register');
     Route::get('/google-auth', [AuthController::class, 'googleAuth'])->name('user.googleAuth');
     Route::get('/google-callback', [AuthController::class, 'googleCallback'])->name('user.googleCallback');
+    Route::post('/login', [AuthController::class, 'login'])->name('user.login');
     Route::post('/verify', [AuthController::class, 'verify'])->name('user.verify');
     Route::post('/post-forgot-password', [AuthController::class, 'forgotPassword'])->name('user.forgotPassword');
     Route::post('/post-reset-password', [AuthController::class, 'resetPassword'])->name('user.resetPassword');
 });
-Route::post('/oauth/token', [AccessTokenController::class, 'issueToken']);
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/get-user', [AuthController::class, 'getUser'])->name('user.getinfo');
     //route has been authenticated
     Route::post('/auth/logout', [AuthController::class, 'logout'])->name('user.logout');
     Route::get('/hello', function () {
-        return 'ok';
+        return Auth::user();
     });
     //chat
     Route::prefix('messages')->group(function () {
@@ -76,7 +77,7 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/update-avatar', [ProfileController::class, 'UpdateAvatarForUser'])->name('profile.update.avatar');
         Route::post('/update-cover-photo', [ProfileController::class, 'UpdateCoverPhotoForUser'])->name('profile.update.cover_photo');
         Route::put('/update', [ProfileController::class, 'updateProfile'])
-        ->name('profile.update');
+            ->name('profile.update');
     });
     //user
     Route::get('/user-info', [ProfileController::class, 'getInfoUser']);
