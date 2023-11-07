@@ -318,7 +318,7 @@ export const ChatPage = () => {
                             <div className="chat-detail">
                               <div className="chat-message">
                                 <p>Absolutely!</p>
-                                <p>SocialV Dashboard is the responsive bootstrap 5 admin template.</p>
+                                <p>FpolyZone Dashboard is the responsive bootstrap 5 admin template.</p>
                               </div>
                             </div>
                           </div>
