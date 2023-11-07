@@ -58,7 +58,7 @@ export const ChatApp = () => {
       // Ngắt kết nối khi component bị hủy
       echo.disconnect();
     };
-  }, [echo]);
+  }, []);
 
   const handleSendMessage = e => {
     e.preventDefault();
@@ -68,7 +68,7 @@ export const ChatApp = () => {
       const receiver_id = 6;
 
       // Gửi tin nhắn đến Laravel thông qua broadcasting
-      MessagesService.sendMessages({ content: messageText }).then(response => {
+      MessagesService.sendMessages(6, { content: messageText }).then(response => {
         console.log('Sent message:', response.data);
       });
       // Gửi tin nhắn từ ứng dụng React

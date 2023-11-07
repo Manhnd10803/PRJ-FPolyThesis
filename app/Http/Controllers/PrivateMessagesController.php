@@ -10,6 +10,13 @@ use Illuminate\Support\Facades\DB;
 
 class PrivateMessagesController extends Controller
 {
+    public function ShowListUserChat(){
+        $user_id = Auth::id();
+        // truy vấn lấy thông tin receiver
+        $messages = PrivateMessage::where('receiver_id',$user_id)->get();
+        $listUserChat = User::whereIn('id',$messages->pluck('sender_id'))->get();
+        return response()->json($listUserChat);
+    }
     /**
  * @OA\Get(
  *     path="/api/messages/{user}",
@@ -61,7 +68,8 @@ class PrivateMessagesController extends Controller
         })->orWhere(function($query) use ($user1Id, $user2Id) {
             $query->where('sender_id', $user2Id)
                   ->where('receiver_id', $user1Id);
-        })->orderBy('created_at', 'asc')->get();
+        })->orderBy('created_at', 'asc')->with(['sender:id,avatar', 'receiver:id,avatar,username']) 
+        ->get();
         return response()->json($messages,200);
     }
     /**

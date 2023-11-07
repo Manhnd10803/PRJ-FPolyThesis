@@ -56,6 +56,7 @@ Route::middleware('auth:api')->group(function () {
     });
     //chat
     Route::prefix('messages')->group(function () {
+        Route::get('/listuserchat',[PrivateMessagesController::class,'ShowListUserChat']);
         Route::get('/{user}', [PrivateMessagesController::class, 'ShowAllMessage'])->name('message.show')->where('user', '[0-9]+');
         Route::post('/{user}', [PrivateMessagesController::class, 'SendMessages'])->name('message.create')->where('user', '[0-9]+');
         Route::put('/{privateMessage}/{user}', [PrivateMessagesController::class, 'UpdateMessage'])->name('message.update');
