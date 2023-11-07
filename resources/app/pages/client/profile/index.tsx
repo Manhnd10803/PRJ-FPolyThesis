@@ -76,8 +76,8 @@ export const ProfilePage = () => {
     return data;
   };
 
-  const queryKeyUesr = ['user'];
-  const { data: detailUserProfile, isLoading: isUserLoading } = useQuery(queryKeyUesr, getDetailUesrProfile);
+  const queryKeyUser = ['user'];
+  const { data: detailUserProfile, isLoading: isUserLoading } = useQuery(queryKeyUser, getDetailUesrProfile);
   return (
     <>
       <div id="content-page" className="content-page">
@@ -100,88 +100,7 @@ export const ProfilePage = () => {
                     <MyBlog listBlog={detailProfile?.data[0]?.blog?.data} isLoading={isLoading} />
                   </Tab.Pane>
                   <Tab.Pane eventKey="third">
-                    <Tab.Container id="left-tabs-example" defaultActiveKey="all-friends">
-                      <Card>
-                        <Card.Body>
-                          <h2>Friends</h2>
-                          <div className="friend-list-tab mt-2">
-                            <Nav
-                              variant="pills"
-                              className=" d-flex align-items-center justify-content-left friend-list-items p-0 mb-2"
-                            >
-                              <Nav.Item>
-                                <Nav.Link href="#pill-all-friends" eventKey="all-friends">
-                                  All Friends
-                                </Nav.Link>
-                              </Nav.Item>
-                              <Nav.Item>
-                                <Nav.Link href="#pill-recently-add" eventKey="recently-add">
-                                  Recently Added
-                                </Nav.Link>
-                              </Nav.Item>
-                              <Nav.Item>
-                                <Nav.Link href="#pill-closefriends" eventKey="closefriends">
-                                  Close friends
-                                </Nav.Link>
-                              </Nav.Item>
-                              <Nav.Item>
-                                <Nav.Link href="#pill-home" eventKey="home-town">
-                                  Home/Town
-                                </Nav.Link>
-                              </Nav.Item>
-                              <Nav.Item>
-                                <Nav.Link href="#pill-following" eventKey="following">
-                                  Following
-                                </Nav.Link>
-                              </Nav.Item>
-                            </Nav>
-                            <Tab.Content>
-                              <Tab.Pane eventKey="all-friends">
-                                <Card.Body className="p-0">
-                                  <Row>
-                                    <div className="col-md-6 col-lg-6 mb-3">
-                                      <div className="iq-friendlist-block">
-                                        <div className="d-flex align-items-center justify-content-between">
-                                          <div className="d-flex align-items-center">
-                                            <Link to="#">
-                                              <img
-                                                loading="lazy"
-                                                src={imageUrl}
-                                                alt="profile-img"
-                                                className="img-fluid"
-                                              />
-                                            </Link>
-                                            <div className="friend-info ms-3">
-                                              <h5>Petey Cruiser</h5>
-                                              <p className="mb-0">15 friends</p>
-                                            </div>
-                                          </div>
-                                          <div className="card-header-toolbar d-flex align-items-center">
-                                            <Dropdown>
-                                              <Dropdown.Toggle variant="secondary me-2 d-flex align-items-center">
-                                                <i className="material-symbols-outlined me-2">done</i>
-                                                Friend
-                                              </Dropdown.Toggle>
-                                              <Dropdown.Menu className="dropdown-menu-right">
-                                                <Dropdown.Item href="#">Get Notification</Dropdown.Item>
-                                                <Dropdown.Item href="#">Close Friend</Dropdown.Item>
-                                                <Dropdown.Item href="#">Unfollow</Dropdown.Item>
-                                                <Dropdown.Item href="#">Unfriend</Dropdown.Item>
-                                                <Dropdown.Item href="#">Block</Dropdown.Item>
-                                              </Dropdown.Menu>
-                                            </Dropdown>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </Row>
-                                </Card.Body>
-                              </Tab.Pane>
-                            </Tab.Content>
-                          </div>
-                        </Card.Body>
-                      </Card>
-                    </Tab.Container>
+                    <FriendsMyUserPage />
                   </Tab.Pane>
                   <Tab.Pane eventKey="forth">
                     <Tab.Container id="left-tabs-example" defaultActiveKey="p1">

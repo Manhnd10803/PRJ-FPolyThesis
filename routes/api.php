@@ -125,7 +125,9 @@ Route::middleware('auth:api')->group(function () {
     Route::delete('/delete-request/{sender}', [FriendController::class, 'DeleteFriendRequest'])->name('friend.delete');
     Route::get('/friend-list', [FriendController::class, 'FetchAllFriend'])->name('friend.list');
     Route::get('/friend-list-request', [FriendController::class, 'listFriendRequest']);
+    Route::get('/status-friend/{friend}', [FriendController::class, 'getFriendshipStatus']);
     Route::delete('/unfriend/{friend}', [FriendController::class, 'unfriend']);
+    
 
     //notification
     Route::get('/notifications', [NotificationController::class, 'listNotification']);

@@ -10,6 +10,12 @@ const showAllFriendMyUser = () => {
 const confirmFriendRequest = <T>(id: T) => {
   return httpRequest.post(`${ApiConstants.CONFIRM_FRIEND_REQUEST}/${id}`);
 };
+const unFriend = <T>(id: T) => {
+  return httpRequest.delete(`${ApiConstants.UN_FRIEND}/${id}`);
+};
+const statusFriend = <T>(id: T) => {
+  return httpRequest.get(`${ApiConstants.STATUS_FRIEND}/${id}`);
+};
 const addFriend = <T>(id: T) => {
   return httpRequest.post(`${ApiConstants.ADD_FRIEND}/${id}`);
 };
@@ -23,4 +29,6 @@ export const FriendService = {
   deleteFriendRequest,
   showAllFriendMyUser,
   addFriend,
+  statusFriend,
+  unFriend,
 };

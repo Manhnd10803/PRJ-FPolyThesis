@@ -10,12 +10,6 @@ import toast from 'react-hot-toast';
 export const FriendRequestPage = () => {
   const queryClient = useQueryClient();
   const [showDeleteRequest, setShowDeleteRequest] = useState(false);
-  const [showDeleteSuggest, setShowDeleteSuggest] = useState(false);
-
-  const handleDeleteSuggest = () => {
-    console.log('Đã xóa lời mời');
-    setShowDeleteSuggest(false);
-  };
 
   const fetchAllFriendRequest = async () => {
     const { data } = await FriendService.showAllFriendRequest();

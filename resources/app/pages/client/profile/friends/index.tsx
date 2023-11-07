@@ -15,11 +15,9 @@ export const FriendsMyUserPage = () => {
     return FriendRequestData;
   };
 
-  const FriendsMyUserQueryKey = ['friend'];
+  const FriendsMyUserQueryKey = ['friendmyuser'];
   const { data: friendsMyUser, isLoading } = useQuery(FriendsMyUserQueryKey, { queryFn: fetchAllFriendMyUser });
-  console.log(friendsMyUser);
-
-  const addFriendMutation = useMutation(FriendService.addFriend, {
+  const addFriendMutation = useMutation(FriendService.unFriend, {
     onSettled: () => {
       queryClient.invalidateQueries(FriendsMyUserQueryKey); // Chỉnh sửa tên query nếu cần
     },
@@ -81,21 +79,21 @@ export const FriendsMyUserPage = () => {
                       ) : (
                         <>
                           {friendsMyUser && friendsMyUser.length > 0 ? (
-                            friendsMyUser.map((friend: any) => (
-                              <div className="col-md-6 col-lg-6 mb-3" key={friend.id}>
+                            friendsMyUser.map((itemfriend: any) => (
+                              <div className="col-md-6 col-lg-6 mb-3" key={itemfriend.id}>
                                 <div className="iq-friendlist-block">
                                   <div className="d-flex align-items-center justify-content-between p-3">
                                     <div className="d-flex align-items-center gap-4">
                                       <Link to="#" style={{ width: '137px' }}>
                                         <img
                                           loading="lazy"
-                                          src={friend?.friend?.avatar}
+                                          src={itemfriend?.friend?.avatar}
                                           alt="profile-img"
                                           className="img-fluid rounded-1"
                                         />
                                       </Link>
                                       <div className="friend-info">
-                                        <h5>{friend?.friend?.username}</h5>
+                                        <h5>{itemfriend?.friend?.username}</h5>
                                         <p className="mb-0">15 friends</p>
                                       </div>
                                     </div>
@@ -106,8 +104,8 @@ export const FriendsMyUserPage = () => {
                                       <ModalRequest
                                         show={showDeleteFriend}
                                         onHide={() => setShowDeleteFriend(false)}
-                                        onConfirm={() => HandleAddFriend(friend?.friend?.id)}
-                                        title="Bạn muốn hủy kết bạn?"
+                                        onConfirm={() => HandleAddFriend(itemfriend?.friend?.id)}
+                                        title={`Bạn có chắc chắn muốn hủy kết bạn với ${itemfriend?.friend?.username}?`}
                                       />
                                     </div>
                                   </div>

@@ -25,6 +25,7 @@ class ProfileController extends Controller
             $major=$user->major;
             $profileData = [
                 'user' =>[
+                    'id'=>$user->id,
                     'username'=>$user->username,
                     'avatar'=>$user->avatar,
                     'major'=>$major->majors_name
