@@ -57,20 +57,26 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'username' => 'required|string|unique:users',
             'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:8'
+            'password' => 'required|string|min:8',
+            'major_id' => 'required',
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
         ]);
         DB::beginTransaction();
         try {
             if (!$validator->fails()) {
                 $groupId = strpos($request->email, '@fpt.edu.vn') ? config('default.user.groupID.student') : config('default.user.groupID.guest');
                 $codeVerify = str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
+                $username = explode('@', $request->email)[0];
                 DB::table('users')->insert(
                     [
-                        'username' => $request->username,
+                        'username' => $username,
                         'password' => Hash::make($request->password),
                         'email' => $request->email,
+                        'first_name' => $request->first_name,
+                        'last_name' => $request->last_name,
+                        'major_id' => $request->major_id,
                         'group_id' => $groupId,
                         'status' => config('default.user.status.lock'),
                         'verification_code' => $codeVerify,
@@ -78,7 +84,7 @@ class AuthController extends Controller
                 );
                 Mail::to($request->email)->send(new VerifyAccount($codeVerify));
                 DB::commit();
-                return response()->json(['email' => $request->email,'message' => 'Đăng ký thành công'], 201);
+                return response()->json(['email' => $request->email, 'message' => 'Đăng ký thành công'], 201);
             } else {
                 return response()->json(['errors' => $validator->errors()], 422);
             }
@@ -129,6 +135,75 @@ class AuthController extends Controller
     }
     /**
      * @OA\Post(
+     *     path="/api/auth/login",
+     *     tags={"Authentication"},
+     *     summary="Đăng nhập",
+     *     description="Đăng nhập vào hệ thống bằng địa chỉ email và mật khẩu.",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             required={"email", "password"},
+     *             @OA\Property(
+     *                 property="email",
+     *                 type="string",
+     *                 format="email",
+     *                 description="Địa chỉ email của người dùng"
+     *             ),
+     *             @OA\Property(
+     *                 property="password",
+     *                 type="string",
+     *                 minLength=8,
+     *                 description="Mật khẩu của người dùng"
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Đăng nhập thành công"),
+     *     @OA\Response(response=400, description="Đăng nhập thất bại"),
+     *     @OA\Response(response=403, description="Tài khoản chưa được kích hoạt"),
+     *     @OA\Response(response=422, description="Dữ liệu không hợp lệ")
+     * )
+     */
+    public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|string|min:8'
+        ]);
+        if (!$validator->fails()) {
+            if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+                $user = Auth::user();
+                if ($user->status == config('default.user.status.lock')) {
+                    return response()->json(['message' => 'Tài khoản chưa được kích hoạt'], 403);
+                }
+                if ($user->status == config('default.user.status.suspend')) {
+                    return response()->json(['message' => 'Tài khoản đã bị khóa'], 403);
+                }
+                $request = Request::create('oauth/token', 'POST', [
+                    'grant_type' => 'password',
+                    'client_id' => env('VITE_PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
+                    'client_secret' => env('VITE_PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
+                    'username' => $request->email,
+                    'password' => $request->password,
+                    'scope' => '',
+                ]);
+                $result = app()->handle($request);
+                $response = json_decode($result->getContent(), true);
+                return response()->json($response, 200);
+            } else {
+                $checkAccount = User::where('email', $request->email)->first();
+                if ($checkAccount) {
+                    return response()->json(['message' => 'Mật khẩu không đúng'], 400);
+                } else {
+                    return response()->json(['message' => 'Email không tồn tại'], 400);
+                }
+            }
+        } else {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+    }
+    /**
+     * @OA\Post(
      *     path="/api/auth/logout",
      *     tags={"Authentication"},
      *     summary="Đăng xuất",
@@ -143,8 +218,7 @@ class AuthController extends Controller
         $user->tokens->each(function ($token) {
             $token->delete();
         });
-        
-        return response()->json(['message' => 'Đăng xuất thành công' ], 200);
+        return response()->json(['message' => 'Đăng xuất thành công'], 200);
     }
 
     /**
@@ -185,17 +259,18 @@ class AuthController extends Controller
             if ($checkUser->status == config('default.user.status.suspend')) {
                 return response()->json(['message' => 'Tài khoản đã bị khóa'], 403);
             };
-            if ($checkUser->group_id == config('default.user.groupID.superAdmin') || $checkUser->group_id == config('default.user.groupID.admin')) {
-                //Token role admin
-                $token = $checkUser->createToken('authToken', ['admin'])->accessToken;
-            } else {
-                //Token role user
-                $token = $checkUser->createToken('authToken')->accessToken;
-            }
-            Auth()->login($checkUser);
-            return response()->json(['user' => $checkUser, 'accessToken' => $token], 200);
+            $request = Request::create('oauth/token', 'POST', [
+                'grant_type' => 'socialite',
+                'client_id' => env('VITE_PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
+                'client_secret' => env('VITE_PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
+                'username' => $user->email,
+                'password' => $checkUser->password,
+                'scope' => '',
+            ]);
+            $result = app()->handle($request);
+            $response = json_decode($result->getContent(), true);
+            return response()->json($response, 200);
         } else {
-            // dd($user);
             //đăng ký
             DB::beginTransaction();
             try {
@@ -211,12 +286,19 @@ class AuthController extends Controller
                 );
                 DB::commit();
                 $checkUser = User::where('email', $user->email)->first();
-                Auth()->login($checkUser);
-                $token = $checkUser->createToken('authToken')->accessToken;
-                return response()->json(['user' => $user, 'accessToken' => $token], 200);
+                $request = Request::create('oauth/token', 'POST', [
+                    'grant_type' => 'socialite',
+                    'client_id' => env('VITE_PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
+                    'client_secret' => env('VITE_PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
+                    'username' => $user->email,
+                    'password' => $checkUser->password,
+                    'scope' => '',
+                ]);
+                $result = app()->handle($request);
+                $response = json_decode($result->getContent(), true);
+                return response()->json($response, 200);
             } catch (\Exception $e) {
                 DB::rollback();
-                // Log::alert($e);
                 return response()->json(['errors' => $e->getMessage()], 400);
             }
         }
@@ -274,7 +356,8 @@ class AuthController extends Controller
      *     )
      * )
      */
-    public function forgotPassword(Request $request) {
+    public function forgotPassword(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email'
         ]);
@@ -287,11 +370,11 @@ class AuthController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-        try{
+        try {
 
             if (!$checkUser) {
                 return response()->json(['message' => 'Email bạn nhập không đúng !'], 404);
-            }else{
+            } else {
 
                 // Tạo mã xác nhận mới
                 $verificationCode = str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
@@ -306,7 +389,6 @@ class AuthController extends Controller
                 DB::commit();
                 return response()->json(['message' => 'Mã xác nhận đã được gửi đến mail của bạn. Kiểm tra ngay nhé!'], 200);
             }
-
         } catch (\Exception $e) {
             DB::rollback();
             // Log::alert($e);
@@ -352,20 +434,18 @@ class AuthController extends Controller
         DB::beginTransaction();
         if (!$checkVerify) {
             return response()->json(['message' => 'Mã xác nhận không chính xác'], 403);
-        }else{
+        } else {
             // $checkUser->update(['password' => Hash::make($request->password)]);
             DB::table('users')->where('verification_code', $request->verification_code)->update(['password' => Hash::make($request->password)]);
             Mail::to($checkVerify->email)->send(new ForgotPassword($request->password, $checkVerify->username));
             DB::commit();
             return response()->json(['message' => 'Mật khẩu đã được đặt lại thành công'], 200);
         }
-
     }
 
     public function getUser(Request $request)
     {
         $user = $request->user();
-        return response()->json(['user' => $user ], 200);
+        return response()->json(['user' => $user], 200);
     }
-   
 }
