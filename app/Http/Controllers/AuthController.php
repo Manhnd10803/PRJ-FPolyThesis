@@ -57,20 +57,26 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'username' => 'required|string|unique:users',
             'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:8'
+            'password' => 'required|string|min:8',
+            'major_id' => 'required',
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
         ]);
         DB::beginTransaction();
         try {
             if (!$validator->fails()) {
                 $groupId = strpos($request->email, '@fpt.edu.vn') ? config('default.user.groupID.student') : config('default.user.groupID.guest');
                 $codeVerify = str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
+                $username = explode('@', $request->email)[0];
                 DB::table('users')->insert(
                     [
-                        'username' => $request->username,
+                        'username' => $username,
                         'password' => Hash::make($request->password),
                         'email' => $request->email,
+                        'first_name' => $request->first_name,
+                        'last_name' => $request->last_name,
+                        'major_id' => $request->major_id,
                         'group_id' => $groupId,
                         'status' => config('default.user.status.lock'),
                         'verification_code' => $codeVerify,
@@ -185,7 +191,12 @@ class AuthController extends Controller
                 $response = json_decode($result->getContent(), true);
                 return response()->json($response, 200);
             } else {
-                return response()->json(['message' => 'Đăng nhập thất bại'], 400);
+                $checkAccount = User::where('email', $request->email)->first();
+                if ($checkAccount) {
+                    return response()->json(['message' => 'Mật khẩu không đúng'], 400);
+                } else {
+                    return response()->json(['message' => 'Email không tồn tại'], 400);
+                }
             }
         } else {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -207,7 +218,6 @@ class AuthController extends Controller
         $user->tokens->each(function ($token) {
             $token->delete();
         });
-
         return response()->json(['message' => 'Đăng xuất thành công'], 200);
     }
 
@@ -276,12 +286,19 @@ class AuthController extends Controller
                 );
                 DB::commit();
                 $checkUser = User::where('email', $user->email)->first();
-                Auth()->login($checkUser);
-                $token = $checkUser->createToken('authToken')->accessToken;
-                return response()->json(['user' => $user, 'accessToken' => $token], 200);
+                $request = Request::create('oauth/token', 'POST', [
+                    'grant_type' => 'socialite',
+                    'client_id' => env('VITE_PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
+                    'client_secret' => env('VITE_PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
+                    'username' => $user->email,
+                    'password' => $checkUser->password,
+                    'scope' => '',
+                ]);
+                $result = app()->handle($request);
+                $response = json_decode($result->getContent(), true);
+                return response()->json($response, 200);
             } catch (\Exception $e) {
                 DB::rollback();
-                // Log::alert($e);
                 return response()->json(['errors' => $e->getMessage()], 400);
             }
         }
