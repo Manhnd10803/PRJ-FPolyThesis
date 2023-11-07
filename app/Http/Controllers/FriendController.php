@@ -372,4 +372,34 @@ class FriendController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
+
+    // Trạng thái bạn bè 
+    public function getFriendshipStatus($user_id2) {
+        $self = Auth::id();
+        $friendship = Friend::where(function ($query) use ($self, $user_id2) {
+            $query->where('user_id_1', $self)
+                ->where('user_id_2', $user_id2)
+                ->where('status', 1);
+        })->orWhere(function ($query) use ($self, $user_id2) {
+            $query->where('user_id_1', $user_id2)
+                ->where('user_id_2', $self)
+                ->where('status', 1);
+        })->first();
+    
+        if ($friendship) {
+            return 'Bạn bè';
+        } else {
+            $friendshipRequest = Friend::where(function ($query) use ($self, $user_id2) {
+                $query->where('user_id_1', $self)
+                    ->where('user_id_2', $user_id2)
+                    ->where('status', 0);
+            })->first();
+    
+            if ($friendshipRequest) {
+                return 'Đã gửi lời mời kết bạn';
+            } else {
+                return 'Không phải bạn bè';
+            }
+        }
+    }
 }

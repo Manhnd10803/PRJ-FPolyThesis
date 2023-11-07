@@ -31,7 +31,6 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
     }
     setReplyFormsVisible(updatedReplyFormsVisible);
   };
-
   //Create Comment
   const handleCommentTextChange = (e: any) => {
     const value = e.target.value;

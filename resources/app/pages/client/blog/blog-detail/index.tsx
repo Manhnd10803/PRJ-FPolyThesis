@@ -21,7 +21,6 @@ export const BlogDetailPage = () => {
   };
   const BlogsQueryKey = ['blogs', id];
   const { data, isLoading } = useQuery(BlogsQueryKey, { queryFn: fetchDetailBlog });
-
   // Create Comment
   const createCommentMutation = useMutation(CommentService.createComment, {
     onSettled: () => {
@@ -37,7 +36,6 @@ export const BlogDetailPage = () => {
         blog_id: data?.blog?.id,
       };
       const response = await createCommentMutation.mutateAsync(formData);
-      console.log('Bình luận đã được đăng thành công', response);
       return response;
     } catch (error) {
       throw error;
@@ -49,12 +47,11 @@ export const BlogDetailPage = () => {
       queryClient.invalidateQueries(BlogsQueryKey);
     },
   });
-
   const deleteComment = async (commentId: any) => {
     try {
       await deleteCommentMutation.mutateAsync(commentId);
     } catch (error) {
-      console.error('Lỗi khi xóa bình luận', error);
+      throw error;
     }
   };
   // Edit Comment
@@ -64,14 +61,12 @@ export const BlogDetailPage = () => {
     },
   });
   const putComment = async (content: string, commentId: any) => {
-    console.log(content);
     try {
       const formData = {
         id: commentId,
         content: content,
       };
       const response = await editCommentMutation.mutateAsync(formData);
-      console.log('Bình luận đã được cập nhật thành công', response);
       return response;
     } catch (error) {
       throw error;
@@ -84,20 +79,17 @@ export const BlogDetailPage = () => {
     },
   });
   const createLike = async (emotion: string) => {
-    console.log(emotion);
     try {
       const formData = {
         blog_id: data?.blog?.id,
         emotion: emotion,
       };
       const response = await LikeBlogMutation.mutateAsync(formData);
-      console.log('Like đã được cập nhật thành công', response);
       return response;
     } catch (error) {
       throw error;
     }
   };
-
   return (
     <>
       <div id="content-page" className="content-page">

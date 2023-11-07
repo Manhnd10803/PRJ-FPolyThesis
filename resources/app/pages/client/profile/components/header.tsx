@@ -1,11 +1,64 @@
-import { Card, Col } from 'react-bootstrap';
+import { Card, Col, Dropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 const imageUrl = 'https://picsum.photos/20';
 import backgroundImage from '../../../../assets/images/profile-bg1.jpg';
+import { FriendService } from '@/apis/services/friend.service';
+import { useEffect, useState } from 'react';
 
 export const Header = ({ detailUser, isLoading, isUser }) => {
-  const { total_blog, total_post, total_friend, user } = detailUser || [];
+  const { total_blog, total_post, total_friend, user } = detailUser || {};
+  const [checkAddFriend, setCheckAddFriend] = useState('');
+  const [showFriendDropdown, setShowFriendDropdown] = useState(false);
+
+  const getStatusFriend = async () => {
+    try {
+      const { data } = await FriendService.statusFriend(user?.id);
+      return data; // Assuming isFriend is a boolean value
+    } catch (error) {
+      console.error(error);
+      return false; // Set to false in case of an error
+    }
+  };
+
+  // Function to handle adding/removing a friend
+  const HandleAddFriend = async (id: any) => {
+    try {
+      const response = await FriendService.addFriend(id);
+      // Toggle the friend status and trigger a re-render
+      console.log(response?.data.message);
+      setCheckAddFriend(response?.data.message);
+      return response;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const HandleUnFriend = async (id: any) => {
+    try {
+      const response = await FriendService.unFriend(id);
+      // Toggle the friend status and trigger a re-render
+      setCheckAddFriend('Thêm bạn bè');
+      return response;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Fetch friend status when the component mounts
+  useEffect(() => {
+    if (!isUser && user?.id) {
+      getStatusFriend().then(isFriend => {
+        if (isFriend == 'Không phải bạn bè') {
+          setCheckAddFriend('Thêm bạn bè');
+        } else if (isFriend == 'Đã gửi lời mời kết bạn') {
+          setCheckAddFriend('Đã gửi lời mời kết bạn');
+        } else if (isFriend == 'Bạn bè') {
+          setCheckAddFriend('Bạn bè');
+        }
+      });
+    }
+  }, [isUser, user]);
+
   return (
     <>
       <Col sm={12}>
@@ -92,15 +145,35 @@ export const Header = ({ detailUser, isLoading, isUser }) => {
                     </>
                   )}
                 </div>
-                {isUser == false ? (
-                  <>
-                    <div className="social-links">
-                      <button className="btn btn-primary px-5">Kết bạn</button>
-                    </div>
-                  </>
-                ) : (
-                  ''
-                )}
+                <div className="social-links">
+                  {isUser === false && (
+                    <>
+                      {checkAddFriend === 'Đã gửi lời mời kết bạn' ? (
+                        <button className="btn btn-dark px-5" onClick={() => HandleAddFriend(user?.id)}>
+                          Hủy lời mời
+                        </button>
+                      ) : (
+                        (checkAddFriend === 'Thêm bạn bè' || checkAddFriend === 'Đã hủy lời mời kết bạn') && (
+                          <button className="btn btn-primary px-5" onClick={() => HandleAddFriend(user?.id)}>
+                            Thêm bạn bè
+                          </button>
+                        )
+                      )}
+                      {checkAddFriend === 'Bạn bè' && (
+                        <div>
+                          <Dropdown show={showFriendDropdown} onToggle={setShowFriendDropdown}>
+                            <Dropdown.Toggle variant="primary" id="dropdown-friend">
+                              Bạn bè
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu>
+                              <Dropdown.Item onClick={() => HandleUnFriend(user?.id)}>Hủy kết bạn</Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           </Card.Body>
