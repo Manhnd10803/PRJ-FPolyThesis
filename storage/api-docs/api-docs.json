@@ -6,14 +6,14 @@
     },
     "paths": {
         "/api": {},
-        "/api/blogs/list-approved": {
+        "/api/admin/blogs/list-approved": {
             "get": {
                 "tags": [
                     "Admin Blogs"
                 ],
                 "summary": "Danh sách các bài viết đã được duyệt",
                 "description": "Lấy danh sách tất cả các bài viết đã được duyệt bởi admin",
-                "operationId": "b8714cfb1f96dc47908b6052fa556c1b",
+                "operationId": "3e919e31c5ae013bbc21426693a815cf",
                 "responses": {
                     "200": {
                         "description": "Danh sách các bài viết đã được duyệt"
@@ -21,14 +21,14 @@
                 }
             }
         },
-        "/api/blogs/list-pending": {
+        "/api/admin/blogs/list-pending": {
             "get": {
                 "tags": [
                     "Admin Blogs"
                 ],
                 "summary": "Danh sách các bài viết chờ duyệt",
                 "description": "Lấy danh sách tất cả các bài viết đang chờ duyệt",
-                "operationId": "ae8813742f8f89ae065b047a9cf24031",
+                "operationId": "70693b1ec0ccca939bcdad8c1dadf03b",
                 "responses": {
                     "200": {
                         "description": "Danh sách các bài viết chờ duyệt"
@@ -36,14 +36,14 @@
                 }
             }
         },
-        "/api/blogs/approve/{blog}": {
+        "/api/admin/blogs/approve/{blog}": {
             "get": {
                 "tags": [
                     "Admin Blogs"
                 ],
                 "summary": "Duyệt một bài viết",
                 "description": "Duyệt một bài viết chờ duyệt dựa trên ID của bài viết.",
-                "operationId": "b70434bddcba6c83f8a9769e7aa890ea",
+                "operationId": "23c0af3c68fa91b3c80540c20b67ee39",
                 "parameters": [
                     {
                         "name": "blog",
@@ -62,14 +62,14 @@
                 }
             }
         },
-        "/api/blogs/reject/{blog}": {
+        "/api/admin/blogs/reject/{blog}": {
             "get": {
                 "tags": [
                     "Admin Blogs"
                 ],
                 "summary": "Từ chối một blog",
                 "description": "Từ chối một blog dựa trên ID.",
-                "operationId": "6f13caa446b35d0c63e5cca753ff0038",
+                "operationId": "4fa96b218dbec270fb1e835cd203605c",
                 "parameters": [
                     {
                         "name": "blog",
@@ -91,14 +91,14 @@
                 }
             }
         },
-        "/api/blogs/detail/{blog}": {
+        "/api/admin/blogs/detail/{blog}": {
             "get": {
                 "tags": [
                     "Admin Blogs"
                 ],
                 "summary": "Xem chi tiết một bài viết",
                 "description": "Trả về thông tin chi tiết của một bài viết dựa trên ID của bài viết.",
-                "operationId": "8a09ef599950debca45be8ae7fdd2481",
+                "operationId": "77c7c9936c6c4306f4b4c96d413fad69",
                 "parameters": [
                     {
                         "name": "blog",
@@ -113,6 +113,38 @@
                 "responses": {
                     "200": {
                         "description": "Thông tin chi tiết của bài viết"
+                    },
+                    "404": {
+                        "description": "Bài viết không tồn tại"
+                    }
+                }
+            }
+        },
+        "/api/admin/blogs/delete/{blog}": {
+            "delete": {
+                "tags": [
+                    "Admin Blogs"
+                ],
+                "summary": "Xóa một bài viết",
+                "description": "Xóa một bài viết dựa trên ID của bài viết.",
+                "operationId": "fbf42d106b77112d16f1838fe601191d",
+                "parameters": [
+                    {
+                        "name": "blog",
+                        "in": "path",
+                        "description": "ID của bài viết cần xóa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xóa bài viết thành công"
+                    },
+                    "400": {
+                        "description": "Lỗi trong quá trình xử lý"
                     },
                     "404": {
                         "description": "Bài viết không tồn tại"
@@ -3188,6 +3220,789 @@
                         "description": "Danh sách các bài viết"
                     }
                 }
+            }
+        },
+        "/api/profile/posts/{user}": {
+            "get": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Hiển thị thông tin người dùng và bài viết",
+                "operationId": "90a2418567d24256470cc39f27d16e0a",
+                "parameters": [
+                    {
+                        "name": "user",
+                        "in": "path",
+                        "description": "ID của người dùng",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thông tin người dùng và các bài viết",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "users": {
+                                            "properties": {
+                                                "id": {
+                                                    "description": "ID tài khoản người dùng",
+                                                    "type": "integer",
+                                                    "format": "int64"
+                                                },
+                                                "username": {
+                                                    "description": "Tên đăng nhập",
+                                                    "type": "string"
+                                                },
+                                                "first_name": {
+                                                    "description": "Họ",
+                                                    "type": "string"
+                                                },
+                                                "last_name": {
+                                                    "description": "Tên",
+                                                    "type": "string"
+                                                },
+                                                "group_id": {
+                                                    "description": "ID nhóm",
+                                                    "type": "integer",
+                                                    "format": "int32"
+                                                },
+                                                "email": {
+                                                    "description": "Địa chỉ email",
+                                                    "type": "string",
+                                                    "format": "email"
+                                                },
+                                                "birthday": {
+                                                    "description": "Ngày sinh",
+                                                    "type": "string"
+                                                },
+                                                "avatar": {
+                                                    "description": "Link đến ảnh đại diện",
+                                                    "type": "string"
+                                                },
+                                                "phone": {
+                                                    "description": "Số điện thoại",
+                                                    "type": "string"
+                                                },
+                                                "address": {
+                                                    "description": "Địa chỉ",
+                                                    "type": "string"
+                                                },
+                                                "biography": {
+                                                    "description": "Tiểu sử",
+                                                    "type": "string"
+                                                },
+                                                "gender": {
+                                                    "description": "Giới tính",
+                                                    "type": "string"
+                                                },
+                                                "status": {
+                                                    "description": "Trạng thái",
+                                                    "type": "integer",
+                                                    "format": "int32"
+                                                },
+                                                "major_id": {
+                                                    "description": "ID ngành học",
+                                                    "type": "integer",
+                                                    "format": "int32"
+                                                },
+                                                "permissions": {
+                                                    "description": "Danh sách quyền",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "verification_code": {
+                                                    "description": "Mã xác minh",
+                                                    "type": "string"
+                                                },
+                                                "created_at": {
+                                                    "description": "Ngày tạo",
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "description": "Ngày cập nhật",
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "posts": {
+                                                    "properties": {
+                                                        "id": {
+                                                            "description": "id bài viết",
+                                                            "type": "integer"
+                                                        },
+                                                        "user_id": {
+                                                            "description": "id người đăng",
+                                                            "type": "integer"
+                                                        },
+                                                        "content": {
+                                                            "description": "Nội dung",
+                                                            "type": "string"
+                                                        },
+                                                        "feeling": {
+                                                            "description": "cảm giác vd: cảm thấy vui vẻ",
+                                                            "type": "string"
+                                                        },
+                                                        "image": {
+                                                            "description": "ảnh bài viết",
+                                                            "type": "string"
+                                                        },
+                                                        "hashtag": {
+                                                            "description": "HashTag liên quan đến post",
+                                                            "type": "string"
+                                                        },
+                                                        "status": {
+                                                            "description": "trạng thái bài viết vd ẩn hoặc hiện",
+                                                            "type": "integer"
+                                                        },
+                                                        "views": {
+                                                            "description": "Số lượt xem",
+                                                            "type": "integer"
+                                                        },
+                                                        "created_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "nullable": true
+                                                        },
+                                                        "updated_at": {
+                                                            "type": "string",
+                                                            "format": "date-time",
+                                                            "nullable": true
+                                                        },
+                                                        "likes": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "user_id": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "emotion": {
+                                                                        "type": "string"
+                                                                    },
+                                                                    "post_id": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "blog_id": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "qa_id": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "created_at": {
+                                                                        "type": "string",
+                                                                        "format": "date-time",
+                                                                        "nullable": true
+                                                                    },
+                                                                    "updated_at": {
+                                                                        "type": "string",
+                                                                        "format": "date-time",
+                                                                        "nullable": true
+                                                                    },
+                                                                    "user": {
+                                                                        "properties": {
+                                                                            "id": {
+                                                                                "type": "integer"
+                                                                            },
+                                                                            "username": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "first_name": {
+                                                                                "type": "string",
+                                                                                "nullable": true
+                                                                            },
+                                                                            "last_name": {
+                                                                                "type": "string",
+                                                                                "nullable": true
+                                                                            }
+                                                                        },
+                                                                        "type": "object"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        },
+                                                        "like_counts_by_emotion": {
+                                                            "properties": {
+                                                                "total_likes": {
+                                                                    "description": "Tổng số lượt thích",
+                                                                    "type": "integer"
+                                                                },
+                                                                "emotion1": {
+                                                                    "description": "Số lượt thích với emotion1",
+                                                                    "type": "integer"
+                                                                },
+                                                                "emotion2": {
+                                                                    "description": "Số lượt thích với emotion2",
+                                                                    "type": "integer"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "total_comments": {
+                                                            "description": "Tổng số bình luận",
+                                                            "type": "integer"
+                                                        },
+                                                        "comments": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "properties": {
+                                                                    "id": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "user_id": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "content": {
+                                                                        "description": "Nội dung bình luận",
+                                                                        "type": "string"
+                                                                    },
+                                                                    "parent_id": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "post_id": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "blog_id": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "qa_id": {
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "created_at": {
+                                                                        "type": "string",
+                                                                        "format": "date-time",
+                                                                        "nullable": true
+                                                                    },
+                                                                    "updated_at": {
+                                                                        "type": "string",
+                                                                        "format": "date-time",
+                                                                        "nullable": true
+                                                                    },
+                                                                    "reply": {
+                                                                        "description": "Số lượng reply",
+                                                                        "type": "integer"
+                                                                    },
+                                                                    "user": {
+                                                                        "properties": {
+                                                                            "id": {
+                                                                                "type": "integer"
+                                                                            },
+                                                                            "username": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "first_name": {
+                                                                                "type": "string",
+                                                                                "nullable": true
+                                                                            },
+                                                                            "last_name": {
+                                                                                "type": "string",
+                                                                                "nullable": true
+                                                                            }
+                                                                        },
+                                                                        "type": "object"
+                                                                    }
+                                                                },
+                                                                "type": "object"
+                                                            }
+                                                        }
+                                                    },
+                                                    "type": "object"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Lỗi trong quá trình xử lý",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/profile/blogs": {
+            "get": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Hiển thị danh sách blog của người dùng",
+                "operationId": "23d1cb9c4b40e18f3a226e8e808e077f",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách blog của người dùng",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "description": "ID tài khoản người dùng",
+                                                    "type": "integer",
+                                                    "format": "int64"
+                                                },
+                                                "username": {
+                                                    "description": "Tên đăng nhập",
+                                                    "type": "string"
+                                                },
+                                                "first_name": {
+                                                    "description": "Họ",
+                                                    "type": "string"
+                                                },
+                                                "last_name": {
+                                                    "description": "Tên",
+                                                    "type": "string"
+                                                },
+                                                "avatar": {
+                                                    "description": "Link đến ảnh đại diện",
+                                                    "type": "string"
+                                                },
+                                                "phone": {
+                                                    "description": "Số điện thoại",
+                                                    "type": "string"
+                                                },
+                                                "address": {
+                                                    "description": "Địa chỉ",
+                                                    "type": "string"
+                                                },
+                                                "biography": {
+                                                    "description": "Tiểu sử",
+                                                    "type": "string"
+                                                },
+                                                "gender": {
+                                                    "description": "Giới tính",
+                                                    "type": "string"
+                                                },
+                                                "status": {
+                                                    "description": "Trạng thái",
+                                                    "type": "integer",
+                                                    "format": "int32"
+                                                },
+                                                "major_id": {
+                                                    "description": "ID ngành học",
+                                                    "type": "integer",
+                                                    "format": "int32"
+                                                },
+                                                "permissions": {
+                                                    "description": "Danh sách quyền",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "verification_code": {
+                                                    "description": "Mã xác minh",
+                                                    "type": "string"
+                                                },
+                                                "created_at": {
+                                                    "description": "Ngày tạo",
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "description": "Ngày cập nhật",
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "blogs": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "status": {
+                                                        "description": "trạng thái bài blog",
+                                                        "type": "integer"
+                                                    },
+                                                    "user_id": {
+                                                        "description": "người đăng blog",
+                                                        "type": "integer"
+                                                    },
+                                                    "title": {
+                                                        "description": "tiêu đề bài blog",
+                                                        "type": "string"
+                                                    },
+                                                    "content": {
+                                                        "description": "nội dung bài blog",
+                                                        "type": "string"
+                                                    },
+                                                    "thumbnail": {
+                                                        "description": "ảnh  bài blog",
+                                                        "type": "string"
+                                                    },
+                                                    "majors_id": {
+                                                        "description": "id của chuyên ngành liên quan đến blog",
+                                                        "type": "integer"
+                                                    },
+                                                    "hashtag": {
+                                                        "description": "hashtag liên quan đến blog",
+                                                        "type": "string"
+                                                    },
+                                                    "views": {
+                                                        "description": "Số lượt xem bài blog",
+                                                        "type": "integer"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "nullable": true
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "nullable": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Lỗi trong quá trình xử lý",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/quests": {
+            "get": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Hiển thị danh sách Qa của người dùng",
+                "operationId": "7f18f64b00473ed5a52ce3dc2f56e932",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách Qa của người dùng",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "description": "ID tài khoản người dùng",
+                                                    "type": "integer",
+                                                    "format": "int64"
+                                                },
+                                                "username": {
+                                                    "description": "Tên đăng nhập",
+                                                    "type": "string"
+                                                },
+                                                "first_name": {
+                                                    "description": "Họ",
+                                                    "type": "string"
+                                                },
+                                                "last_name": {
+                                                    "description": "Tên",
+                                                    "type": "string"
+                                                },
+                                                "avatar": {
+                                                    "description": "Link đến ảnh đại diện",
+                                                    "type": "string"
+                                                },
+                                                "phone": {
+                                                    "description": "Số điện thoại",
+                                                    "type": "string"
+                                                },
+                                                "address": {
+                                                    "description": "Địa chỉ",
+                                                    "type": "string"
+                                                },
+                                                "biography": {
+                                                    "description": "Tiểu sử",
+                                                    "type": "string"
+                                                },
+                                                "gender": {
+                                                    "description": "Giới tính",
+                                                    "type": "string"
+                                                },
+                                                "status": {
+                                                    "description": "Trạng thái",
+                                                    "type": "integer",
+                                                    "format": "int32"
+                                                },
+                                                "major_id": {
+                                                    "description": "ID ngành học",
+                                                    "type": "integer",
+                                                    "format": "int32"
+                                                },
+                                                "permissions": {
+                                                    "description": "Danh sách quyền",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "verification_code": {
+                                                    "description": "Mã xác minh",
+                                                    "type": "string"
+                                                },
+                                                "created_at": {
+                                                    "description": "Ngày tạo",
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "description": "Ngày cập nhật",
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "qa": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "title": {
+                                                        "description": "tiêu đề bài blog",
+                                                        "type": "string"
+                                                    },
+                                                    "content": {
+                                                        "description": "nội dung bài blog",
+                                                        "type": "string"
+                                                    },
+                                                    "user_id": {
+                                                        "description": "người đăng blog",
+                                                        "type": "integer"
+                                                    },
+                                                    "majors_id": {
+                                                        "description": "id của chuyên ngành liên quan đến blog",
+                                                        "type": "integer"
+                                                    },
+                                                    "hashtag": {
+                                                        "description": "hashtag liên quan đến blog",
+                                                        "type": "string"
+                                                    },
+                                                    "views": {
+                                                        "description": "Số lượt xem bài blog",
+                                                        "type": "integer"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "nullable": true
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "nullable": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Lỗi trong quá trình xử lý",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/profile/images": {
+            "get": {
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Hiển thị danh sách ảnh của người dùng từ các bài viết",
+                "operationId": "60925d1f39118e36961fdb0947476740",
+                "responses": {
+                    "200": {
+                        "description": "Danh sách ảnh của người dùng",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "properties": {
+                                                "id": {
+                                                    "description": "ID tài khoản người dùng",
+                                                    "type": "integer",
+                                                    "format": "int64"
+                                                },
+                                                "username": {
+                                                    "description": "Tên đăng nhập",
+                                                    "type": "string"
+                                                },
+                                                "first_name": {
+                                                    "description": "Họ",
+                                                    "type": "string"
+                                                },
+                                                "last_name": {
+                                                    "description": "Tên",
+                                                    "type": "string"
+                                                },
+                                                "avatar": {
+                                                    "description": "Link đến ảnh đại diện",
+                                                    "type": "string"
+                                                },
+                                                "phone": {
+                                                    "description": "Số điện thoại",
+                                                    "type": "string"
+                                                },
+                                                "address": {
+                                                    "description": "Địa chỉ",
+                                                    "type": "string"
+                                                },
+                                                "biography": {
+                                                    "description": "Tiểu sử",
+                                                    "type": "string"
+                                                },
+                                                "gender": {
+                                                    "description": "Giới tính",
+                                                    "type": "string"
+                                                },
+                                                "status": {
+                                                    "description": "Trạng thái",
+                                                    "type": "integer",
+                                                    "format": "int32"
+                                                },
+                                                "major_id": {
+                                                    "description": "ID ngành học",
+                                                    "type": "integer",
+                                                    "format": "int32"
+                                                },
+                                                "permissions": {
+                                                    "description": "Danh sách quyền",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "string"
+                                                    }
+                                                },
+                                                "verification_code": {
+                                                    "description": "Mã xác minh",
+                                                    "type": "string"
+                                                },
+                                                "created_at": {
+                                                    "description": "Ngày tạo",
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "description": "Ngày cập nhật",
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "images": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "400": {
+                        "description": "Lỗi trong quá trình xử lý",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/api/quests/list-all-qanda": {

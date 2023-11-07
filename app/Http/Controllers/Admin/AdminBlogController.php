@@ -14,7 +14,7 @@ class AdminBlogController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/blogs/list-approved",
+     *     path="/api/admin/blogs/list-approved",
      *     tags={"Admin Blogs"},
      *     summary="Danh sách các bài viết đã được duyệt",
      *     description="Lấy danh sách tất cả các bài viết đã được duyệt bởi admin",
@@ -38,7 +38,7 @@ class AdminBlogController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/blogs/list-pending",
+     *     path="/api/admin/blogs/list-pending",
      *     tags={"Admin Blogs"},
      *     summary="Danh sách các bài viết chờ duyệt",
      *     description="Lấy danh sách tất cả các bài viết đang chờ duyệt",
@@ -62,7 +62,7 @@ class AdminBlogController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/blogs/approve/{blog}",
+     *     path="/api/admin/blogs/approve/{blog}",
      *     tags={"Admin Blogs"},
      *     summary="Duyệt một bài viết",
      *     description="Duyệt một bài viết chờ duyệt dựa trên ID của bài viết.",
@@ -94,7 +94,7 @@ class AdminBlogController extends Controller
     }
     /**
      * @OA\Get(
-     *     path="/api/blogs/reject/{blog}",
+     *     path="/api/admin/blogs/reject/{blog}",
      *     tags={"Admin Blogs"},
      *     summary="Từ chối một blog",
      *     description="Từ chối một blog dựa trên ID.",
@@ -125,7 +125,7 @@ class AdminBlogController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/api/blogs/detail/{blog}",
+     *     path="/api/admin/blogs/detail/{blog}",
      *     tags={"Admin Blogs"},
      *     summary="Xem chi tiết một bài viết",
      *     description="Trả về thông tin chi tiết của một bài viết dựa trên ID của bài viết.",
@@ -150,4 +150,37 @@ class AdminBlogController extends Controller
         $blog->user;
         return response()->json($blog);
     }
+
+    /**
+     * @OA\Delete(
+     *     path="/api/admin/blogs/delete/{blog}",
+     *     tags={"Admin Blogs"},
+     *     summary="Xóa một bài viết",
+     *     description="Xóa một bài viết dựa trên ID của bài viết.",
+     *     @OA\Parameter(
+     *         name="blog",
+     *         in="path",
+     *         required=true,
+     *         description="ID của bài viết cần xóa",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(response=200, description="Xóa bài viết thành công"),
+     *     @OA\Response(response=400, description="Lỗi trong quá trình xử lý"),
+     *     @OA\Response(response=404, description="Bài viết không tồn tại")
+     * )
+     */
+    public function deleteBlog(Blog $blog)
+    {
+        DB::beginTransaction();
+        try {
+            $blog->delete();
+            DB::commit();
+            return response()->json(['message' => 'Xóa bài viết thành công'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['errors' => $e->getMessage()], 400);
+        }
+    }
+
+
 }

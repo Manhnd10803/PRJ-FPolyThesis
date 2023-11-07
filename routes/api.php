@@ -131,6 +131,7 @@ Route::middleware('auth:api')->group(function () {
             Route::get('/approve/{blog}', [AdminBlogController::class, 'approveBlog'])->name('admin.blog.approve');
             Route::get('/reject/{blog}', [AdminBlogController::class, 'rejectBlog'])->name('admin.blog.reject');
             Route::get('/detail/{blog}', [AdminBlogController::class, 'detailBlog'])->name('admin.blog.detailBlog');
+            Route::delete('delete/{blog}', [AdminBlogController::class, 'deleteBlog'])->name('admin.blog.delete');
         });
         //Major Admin
         Route::prefix('majors')->group(function () {
