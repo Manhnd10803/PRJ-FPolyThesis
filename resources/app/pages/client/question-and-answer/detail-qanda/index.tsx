@@ -1,7 +1,11 @@
 import { QandAService } from '@/apis/services/qanda.service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
-import { Container, Col, Row, Card, Button, Badge, Modal, Form, Dropdown } from 'react-bootstrap';
+import { Container, Col, Button, ButtonGroup, Row, Card, Badge, Modal, Form, Dropdown } from 'react-bootstrap';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import ThumbDownOffAltOutlinedIcon from '@mui/icons-material/ThumbDownOffAltOutlined';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { formatDateFromCreatedAt } from '../../blog/components/format-date';
 import { MajorService } from '@/apis/services/major.service';
@@ -20,12 +24,9 @@ export const DetailQandAPage = () => {
   const queryClient = useQueryClient();
   const { id } = useParams();
 
-  // const [showModal, setShowModal] = useState(false);
-  // const handleClose = () => setShowModal(false);
-  // const handleShow = () => setShowModal(true);
-
   const [qAndAData, setQandAData] = useState(null);
   console.log(qAndAData);
+  const [likeStatus, setLikeStatus] = useState(qAndAData?.user_like?.emotion || null);
   const QandAsQueryKey = ['qa', id];
 
   // Create CMT
@@ -103,6 +104,34 @@ export const DetailQandAPage = () => {
       const response = await LikeQandAMutation.mutateAsync(formData);
       console.log('Like đã được cập nhật thành công', response);
       return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const handleLikeClick = async () => {
+    try {
+      if (likeStatus !== 'like') {
+        await createLike('like');
+        setLikeStatus('like');
+      } else {
+        await createLike('like');
+        setLikeStatus(null);
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const handleDislikeClick = async () => {
+    try {
+      if (likeStatus === 'dislike') {
+        await createLike('dislike');
+        setLikeStatus(null);
+      } else {
+        await createLike('dislike');
+        setLikeStatus('dislike');
+      }
     } catch (error) {
       throw error;
     }
@@ -271,6 +300,35 @@ export const DetailQandAPage = () => {
                         </div>
 
                         {/* Icon like cmt */}
+                        <ButtonGroup aria-label="Basic example">
+                          <Button
+                            className="d-flex align-items-center gap-2 "
+                            variant="light"
+                            onClick={handleLikeClick}
+                          >
+                            {likeStatus === 'like' ? (
+                              <ThumbUpIcon className="text-primary" sx={{ fontSize: 20 }} />
+                            ) : (
+                              <ThumbUpOutlinedIcon className="text-primary" sx={{ fontSize: 20 }} />
+                            )}
+                            <Badge bg="primary" className=" text-white ml-2">
+                              {qAndAData?.emotion?.like || '0'}
+                            </Badge>
+                          </Button>
+
+                          <Button
+                            className="d-flex align-items-center"
+                            variant="light"
+                            onClick={handleDislikeClick}
+                            data-bs-placement="bottom"
+                          >
+                            {likeStatus === 'dislike' ? (
+                              <ThumbDownIcon className="text-primary" sx={{ fontSize: 20 }} />
+                            ) : (
+                              <ThumbDownOffAltOutlinedIcon className="text-primary" sx={{ fontSize: 20 }} />
+                            )}
+                          </Button>
+                        </ButtonGroup>
 
                         {/* Câu trả lời */}
 

@@ -35,6 +35,12 @@ export type VerifyEmailRegisterResponseType = {
 export type ForgotPasswordResponseType = {
   email: string;
 };
+
+export type ConfirmPasswordResponseType = {
+  email: string;
+  password: string;
+};
+
 export type ResetPasswordResponseType = {
   verification_code: number;
   password: string;

@@ -1147,14 +1147,109 @@
                 }
             }
         },
+        "/api/auth/confirm-password": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Xác minh email và mật khẩu người dùng",
+                "description": "Xác minh email và mật khẩu của người dùng đang đăng nhập.",
+                "operationId": "2205fdda4ffb4a931b55b03ae8bad670",
+                "requestBody": {
+                    "description": "Dữ liệu đăng nhập",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "user@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "password"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Email và mật khẩu chính xác",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Email và mật khẩu chính xác"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Email và mật khẩu không khớp hoặc lỗi đăng nhập",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Email và mật khẩu không khớp"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Lỗi validation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "errors": {
+                                            "type": "object",
+                                            "example": {
+                                                "email": [
+                                                    "The email field is required."
+                                                ],
+                                                "password": [
+                                                    "The password field is required."
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/auth/post-reset-password": {
             "post": {
                 "tags": [
                     "Authentication"
                 ],
-                "summary": "Reset user password",
-                "description": "Resets the user password using verification code.",
-                "operationId": "resetPassword",
+                "summary": "Cập nhật mật khẩu",
+                "description": "Cập nhật lại mật khẩu với verification code.",
+                "operationId": "f8029c6ccbe740846945fadea3529cea",
                 "requestBody": {
                     "description": "Password reset details",
                     "required": true,

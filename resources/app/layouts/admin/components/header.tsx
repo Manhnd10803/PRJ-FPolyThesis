@@ -35,7 +35,7 @@ export const Header = () => {
                 </svg>
 
                 <h3 className="logo-title d-none d-sm-block" data-setting="app_name">
-                  SocialV
+                  FpolyZone
                 </h3>
               </Link>
               <Link to="#" className="sidebar-toggle" data-toggle="sidebar" data-active="true" onClick={minisidebar}>

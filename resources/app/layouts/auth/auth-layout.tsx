@@ -11,7 +11,8 @@ import 'swiper/swiper-bundle.min.css';
 // import 'swiper/components/navigation/navigation.scss';
 
 //img
-import logo from '../../assets/images/logo-full.png';
+// import logo from '../../assets/images/logo-full.png';
+import logo from '../../assets/images/logo-bee-full.png';
 import login1 from '../../assets/images/login/1.png';
 import login2 from '../../assets/images/login/2.png';
 import login3 from '../../assets/images/login/3.png';

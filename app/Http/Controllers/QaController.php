@@ -1092,6 +1092,8 @@ class QaController extends Controller
     {
         $qa->major;
         $qaLikes = $qa->likes;
+        $user = Auth::user(); // Lấy thông tin người dùng đăng nhập
+        $userLike = $qaLikes->where('user_id', $user->id)->first(); 
         if ($qaLikes->isEmpty()) {
             $emotions = [];
         } else {
@@ -1099,9 +1101,10 @@ class QaController extends Controller
         }
         $countsByEmotion = [];
         foreach ($emotions as $emotion) {
-            $countsByEmotion[$emotion] = $qa->likes->where('emotion', $emotion)->count();
+            $countsByEmotion[$emotion] = $qaLikes->where('emotion', $emotion)->count();
         }
         $qa->user;
+        // $emotions = $likers->pluck('emotion')->unique();
         $comments = Comment::where('qa_id', $qa->id)->where('parent_id', null)->get();
         $totalComments = 0;
         foreach ($comments as $comment) {
@@ -1115,7 +1118,15 @@ class QaController extends Controller
                 $reply->user;
             }
         }
-        return response()->json(['qa' => $qa, 'emotion' => $countsByEmotion, 'comments' => $comments, 'total_comments' => $totalComments]);
+        return response()->json(
+            [
+                'qa' => $qa, 
+                'emotion' => $countsByEmotion, 
+                'comments' => $comments, 
+                'total_comments' => $totalComments,
+                'user_like' => $userLike
+            ]
+        );
         
     }
 
