@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use App\Models\User;
+use App\Models\Major;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -149,5 +151,114 @@ class AdminBlogController extends Controller
         //sau cần lấy ra conmment, like, rate sẽ cập nhật trong sprint 3
         $blog->user;
         return response()->json($blog);
+    }
+
+    //admin web
+    public function index()
+    {
+        $blogs = Blog::latest()->paginate(10);
+        return view('admin.blogs.index', compact('blogs'));
+    }
+
+    public function create()
+    {
+        $users = User::all();
+        $majors = Major::all();
+        return view('admin.blogs.create', compact('users', 'majors'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required',
+            'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Thêm kiểm tra hình ảnh
+            'user_id' => 'required|exists:users,id',
+            'majors_id' => 'required|exists:majors,id',
+            'hashtag' => 'nullable|string|max:255',
+            'status' => 'nullable|integer',
+            'views' => 'integer|min:0',
+        ]);
+
+        // Lưu hình ảnh vào thư mục public/thumbnails
+        $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
+
+        // Lưu thông tin blog vào cơ sở dữ liệu, bao gồm đường dẫn của hình ảnh
+        Blog::create([
+            'title' => $request->input('title'),
+            'content' => $request->input('content'),
+            'thumbnail' => $thumbnailPath, // Lưu đường dẫn của hình ảnh
+            'user_id' => $request->input('user_id'),
+            'majors_id' => $request->input('majors_id'),
+            'hashtag' => $request->input('hashtag'),
+            'status' => $request->input('status'),
+            'views' => $request->input('views', 0),
+        ]);
+
+        return redirect()->route('admin.blogs.index')
+            ->with('success', 'Blog created successfully');
+    }
+
+
+    public function show(Blog $blog)
+    {
+        return view('admin.blogs.show', compact('blog'));
+    }
+
+    public function edit(Blog $blog)
+    {
+        $users = User::all();
+        $majors = Major::all();
+        return view('admin.blogs.edit', compact('blog', 'users', 'majors'));
+    }
+
+    public function update(Request $request, Blog $blog)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required',
+            'user_id' => 'required|exists:users,id',
+            'majors_id' => 'required|exists:majors,id',
+            'hashtag' => 'nullable|string|max:255',
+            'status' => 'nullable|integer',
+            'views' => 'integer|min:0',
+            'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Kiểm tra hình ảnh chỉ khi có sự thay đổi
+        ]);
+    
+        // Kiểm tra và lưu hình ảnh mới (nếu có)
+        if ($request->hasFile('thumbnail')) {
+            // Xóa hình ảnh cũ (nếu có)
+            if ($blog->thumbnail) {
+                Storage::disk('public')->delete($blog->thumbnail);
+            }
+    
+            // Lưu hình ảnh mới vào thư mục public/thumbnails
+            $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
+    
+            // Cập nhật đường dẫn của hình ảnh trong cơ sở dữ liệu
+            $blog->update([
+                'title' => $request->input('title'),
+                'content' => $request->input('content'),
+                'thumbnail' => $thumbnailPath,
+                'user_id' => $request->input('user_id'),
+                'majors_id' => $request->input('majors_id'),
+                'hashtag' => $request->input('hashtag'),
+                'status' => $request->input('status'),
+                'views' => $request->input('views', 0),
+            ]);
+        } else {
+            // Nếu không có hình ảnh mới, chỉ cập nhật thông tin không liên quan đến hình ảnh
+            $blog->update($request->except('thumbnail'));
+        }
+    
+        return redirect()->route('admin.blogs.index')
+            ->with('success', 'Blog updated successfully');
+    }    
+
+    public function destroy(Blog $blog)
+    {
+        $blog->delete();
+        return redirect()->route('admin.blogs.index')
+            ->with('success', 'Blog deleted successfully');
     }
 }

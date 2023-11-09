@@ -157,11 +157,11 @@ Route::middleware('auth:api')->group(function () {
         });
         //Major Admin
         Route::prefix('majors')->group(function () {
-            Route::get('/', [AdminMajorController::class, 'index'])->name('admin.majors.index');
-            Route::get('/{major}', [AdminMajorController::class, 'show'])->name('admin.majors.show');
-            Route::post('/', [AdminMajorController::class, 'store'])->name('admin.majors.store');
-            Route::put('/{major}', [AdminMajorController::class, 'update'])->name('admin.majors.update');
-            Route::delete('/{major}', [AdminMajorController::class, 'destroy'])->name('admin.majors.destroy');
+            Route::get('/', [AdminMajorController::class, 'listMajor'])->name('admin.majors.list');
+            Route::get('/{major}', [AdminMajorController::class, 'detailMajor'])->name('admin.majors.detail');
+            Route::post('/', [AdminMajorController::class, 'addMajor'])->name('admin.majors.add');
+            Route::put('/{major}', [AdminMajorController::class, 'editMajor'])->name('admin.majors.edit');
+            Route::delete('/{major}', [AdminMajorController::class, 'deleteMajor'])->name('admin.majors.delete');
         });
     });
 });

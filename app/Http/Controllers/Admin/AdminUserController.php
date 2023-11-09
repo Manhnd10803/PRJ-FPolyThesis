@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class AdminUserController extends Controller
 {
@@ -198,5 +199,93 @@ class AdminUserController extends Controller
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()], 400);
         }
+    }
+
+    //Admin web
+    public function index()
+    {
+        $users = User::all();
+        return view('admin.users.index', compact('users'));
+    }
+    public function create()
+    {
+        return view('admin.users.create');
+    }
+    public function store(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|unique:users',
+            'password' => 'required',
+            'email' => 'required|email|unique:users',
+            'group_id' => 'required|in:1,2,3,4',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'birthday' => 'nullable|date',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'phone' => 'nullable|numeric|digits:10',
+            'address' => 'nullable|string',
+            'biography' => 'nullable|string',
+            'gender' => 'nullable|in:male,female',
+            'status' => 'nullable|integer',
+            'major_id' => 'nullable|exists:majors,id',
+            'permissions' => 'nullable|string',
+            'verification_code' => 'nullable|string',
+        ]);
+
+        $user = new User;
+        $user->fill($request->all());
+        $user->password = Hash::make($request->password); // Băm mật khẩu trước khi lưu vào cơ sở dữ liệu
+
+        // Xử lý avatar nếu được upload
+        if ($request->hasFile('avatar')) {
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $avatarPath;
+        }
+
+        $user->save();
+
+        return redirect()->route('admin.users.index')->with('success', 'Người dùng đã được tạo mới thành công.');
+    }
+    public function edit(User $user)
+    {
+        return view('admin.users.edit', compact('user'));
+    }
+
+    public function update(Request $request, User $user)
+    {
+        $request->validate([
+            'username' => 'required|unique:users,username,' . $user->id,
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'group_id' => 'required|in:1,2,3,4',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'birthday' => 'nullable|date',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'phone' => 'nullable|numeric|digits:10',
+            'address' => 'nullable|string',
+            'biography' => 'nullable|string',
+            'gender' => 'nullable|in:male,female',
+            'status' => 'nullable|integer',
+            'major_id' => 'nullable|exists:majors,id',
+            'permissions' => 'nullable|string',
+            'verification_code' => 'nullable|string',
+        ]);
+
+        $user->update($request->all());
+
+        // Xử lý avatar nếu được upload
+        if ($request->hasFile('avatar')) {
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            $user->avatar = $avatarPath;
+            $user->save();
+        }
+
+        return redirect()->route('admin.users.index')->with('success', 'Thông tin người dùng đã được cập nhật thành công.');
+    }
+    public function destroy(User $user)
+    {
+        $user->delete();
+
+        return redirect()->route('admin.users.index')->with('success', 'Người dùng đã được xóa thành công.');
     }
 }
