@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const containsNumberOrSymbol = value => {
+const containsNumberOrSymbol = (value: any) => {
   // Kiểm tra xem chuỗi có chứa ký tự hoặc số không
   return !/[0-9!@#$%^&*()_+|~=`{}\[\]:";'<>?,./\\]/.test(value);
 };
