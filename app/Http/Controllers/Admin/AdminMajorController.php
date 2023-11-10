@@ -19,15 +19,10 @@ class AdminMajorController extends Controller
      *     )
      * )
      */
-    public function index()
+    public function listMajor()
     {
         $majors = Major::all();
         return response()->json($majors);
-    }
-
-    public function create()
-    {
-        //
     }
 
     /**
@@ -57,7 +52,7 @@ class AdminMajorController extends Controller
      *     )
      * )
      */
-    public function store(Request $request)
+    public function addMajor(Request $request)
     {
         $this->validate($request, [
             'majors_name' => 'required|string',
@@ -94,14 +89,9 @@ class AdminMajorController extends Controller
      *     )
      * )
      */
-    public function show(Major $major)
+    public function detailMajor(Major $major)
     {
         return response()->json($major);
-    }
-
-    public function edit(string $id)
-    {
-        //
     }
 
     /**
@@ -145,7 +135,7 @@ class AdminMajorController extends Controller
      *     )
      * )
      */
-    public function update(Request $request, Major $major)
+    public function editMajor(Request $request, Major $major)
     {
         $this->validate($request, [
             'majors_name' => 'string',
@@ -184,9 +174,59 @@ class AdminMajorController extends Controller
      *     )
      * )
      */
-    public function destroy(Major $major)
+    public function deleteMajor(Major $major)
     {
         $major->delete();
         return response()->json(['message' => 'Major deleted'], 200);
+    }
+
+    //Admin web
+    public function index()
+    {
+        $majors = Major::all();
+        return view('admin.majors.index', compact('majors'));
+    }
+
+    public function create()
+    {
+        return view('admin.majors.create');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'majors_name' => 'required|string|max:255',
+            'majors_code' => 'nullable|string|max:255|unique:majors',
+            'description' => 'nullable|string',
+        ]);
+
+        Major::create($request->only(['majors_name', 'majors_code', 'description']));
+
+        return redirect()->route('admin.majors.index')->with('success', 'Major has been created successfully.');
+    }
+
+    public function edit(Major $major)
+    {
+        return view('admin.majors.edit', compact('major'));
+    }
+
+    public function update(Request $request, Major $major)
+    {
+        $request->validate([
+            'majors_name' => 'required|string|max:255',
+            'majors_code' => 'nullable|string|max:255|unique:majors,majors_code,' . $major->id,
+            'description' => 'nullable|string',
+        ]);
+
+        $major->update($request->only(['majors_name', 'majors_code', 'description']));
+
+        return redirect()->route('admin.majors.index')->with('success', 'Major has been updated successfully.');
+    }
+
+    public function destroy(Major $major)
+    {
+        $major->delete();
+
+        return redirect()->route('admin.majors.index')->with('success', 'Major has been deleted successfully.');
     }
 }

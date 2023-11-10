@@ -172,6 +172,7 @@ return [
         Laravel\Socialite\SocialiteServiceProvider::class,
         L5Swagger\L5SwaggerServiceProvider::class,
         App\Providers\SocialAuthServiceProvider::class,
+        App\Providers\EmotionsServiceProvider::class,
     ])->toArray(),
     /*
     |--------------------------------------------------------------------------
@@ -191,4 +192,5 @@ return [
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
         'L5Swagger' => L5Swagger\L5SwaggerFacade::class,
     ])->toArray(),
+
 ];

@@ -320,7 +320,7 @@
                     "Admin Majors"
                 ],
                 "summary": "Get the list of majors",
-                "operationId": "14f68a15c7306763efb4c9b5a8b53331",
+                "operationId": "bb2edcf8116c6f85c085100d4b381098",
                 "responses": {
                     "200": {
                         "description": "Successful operation"
@@ -332,7 +332,7 @@
                     "Admin Majors"
                 ],
                 "summary": "Create a new major",
-                "operationId": "e50daa507eec02debf8bb92efff43418",
+                "operationId": "585d8157f1aecac7609922d44813510b",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -394,7 +394,7 @@
                     "Admin Majors"
                 ],
                 "summary": "Get details of a major",
-                "operationId": "e83154923b2a66e396525f8b3a63f17d",
+                "operationId": "021137001fca361b5f41fbd577086f03",
                 "parameters": [
                     {
                         "name": "major",
@@ -433,7 +433,7 @@
                     "Admin Majors"
                 ],
                 "summary": "Update a major",
-                "operationId": "8adbc97b1856e78ba16dcec4b8e4f4d3",
+                "operationId": "c893b084d106286c661d5c1a337b2f2e",
                 "parameters": [
                     {
                         "name": "major",
@@ -520,7 +520,7 @@
                     "Admin Majors"
                 ],
                 "summary": "Delete a major",
-                "operationId": "9348df370d1f1e60c178a6596bcb5e28",
+                "operationId": "9b982dc8af354c76c599b5bfc16f0416",
                 "parameters": [
                     {
                         "name": "major",
@@ -991,6 +991,56 @@
                     },
                     "404": {
                         "description": "Không tìm thấy tài khoản"
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Đăng nhập",
+                "description": "Đăng nhập vào hệ thống bằng địa chỉ email và mật khẩu.",
+                "operationId": "8dcb70df1020986038d098cc08d05dae",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "description": "Địa chỉ email của người dùng",
+                                        "type": "string",
+                                        "format": "email"
+                                    },
+                                    "password": {
+                                        "description": "Mật khẩu của người dùng",
+                                        "type": "string",
+                                        "minLength": 8
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Đăng nhập thành công"
+                    },
+                    "400": {
+                        "description": "Đăng nhập thất bại"
+                    },
+                    "403": {
+                        "description": "Tài khoản chưa được kích hoạt"
+                    },
+                    "422": {
+                        "description": "Dữ liệu không hợp lệ"
                     }
                 }
             }
