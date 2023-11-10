@@ -1,10 +1,13 @@
-import { Col, Form, Button, Spinner } from 'react-bootstrap';
+import { Col, Form, Button, Spinner, Row } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 // import { RegisterSchema } from '@/validation';
 import { AuthService } from '@/apis/services/auth.service';
 import { TSignUpSchema, signUpSchema } from '@/validation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQuery } from '@tanstack/react-query';
+import { MajorService } from '@/apis/services/major.service';
+import { IMajors } from '@/models/major';
 
 export const RegisterPage = () => {
   const navigate = useNavigate();
@@ -32,40 +35,56 @@ export const RegisterPage = () => {
             message: emailError,
           });
         }
-        const usernameError = error.errors.username; // Adjust this according to your API response structure
-        if (usernameError) {
-          setError('username', {
-            type: 'server',
-            message: usernameError,
-          });
-        }
       }
     }
   };
+  const { data } = useQuery({
+    queryKey: ['majors'],
+    queryFn: () => MajorService.getListMajorsRegister(),
+  });
+  const majors = data?.data;
   const loginWithGoogle = () => {
     AuthService.LoginWithGoogle();
   };
 
   return (
-    <Col md="6" className="bg-white pt-5 pt-5 pb-lg-0 pb-5">
+    <Col md="6" className="bg-white pt-5 pb-lg-0 pb-5">
       <div className="sign-in-from">
         <h1 className="mb-0">Sign Up</h1>
-        <p>Enter your email address and password to access the admin panel.</p>
         <Form onSubmit={handleSubmit(onSubmit)} className="mt-4">
+          <Row>
+            <Col md="6">
+              <Form.Group className="form-group">
+                <Form.Label>First name</Form.Label>
+                <Form.Control
+                  {...register('first_name')}
+                  type="text"
+                  className="mb-0"
+                  id="first_name"
+                  placeholder="Your First name"
+                  disabled={isSubmitting}
+                />
+                {errors.first_name && <div className="error-message text-danger">{errors.first_name.message}</div>}
+              </Form.Group>
+            </Col>
+            <Col md="6">
+              <Form.Group className="form-group">
+                <Form.Label>Last name</Form.Label>
+                <Form.Control
+                  {...register('last_name')}
+                  type="text"
+                  className="mb-0"
+                  id="last_name"
+                  placeholder="Your Last name"
+                  disabled={isSubmitting}
+                />
+                {errors.last_name && <div className="error-message text-danger">{errors.last_name.message}</div>}
+              </Form.Group>
+            </Col>
+          </Row>
+
           <Form.Group className="form-group">
-            <Form.Label>Your Full Name</Form.Label>
-            <Form.Control
-              {...register('username')}
-              type="text"
-              className="mb-0"
-              id="username"
-              placeholder="Your Full Name"
-              disabled={isSubmitting}
-            />
-            {errors.username && <div className="error-message text-danger">{errors.username.message}</div>}
-          </Form.Group>
-          <Form.Group className="form-group">
-            <Form.Label>Email address</Form.Label>
+            <Form.Label>Email</Form.Label>
             <Form.Control
               {...register('email')}
               type="email"
@@ -76,32 +95,51 @@ export const RegisterPage = () => {
             />
             {errors.email && <p className="text-danger">{`${errors.email.message}`}</p>}
           </Form.Group>
+
           <Form.Group className="form-group">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              {...register('password')}
-              type="password"
-              className="mb-0"
-              id="password"
-              placeholder="Password"
-              disabled={isSubmitting}
-            />
-            {errors.password && <div className="error-message text-danger">{errors.password.message}</div>}
+            <Form.Label className="form-label" htmlFor="validationDefault041">
+              Chuyên ngành
+            </Form.Label>
+            <Form.Select id="validationDefault041" {...register('major_id')}>
+              <option value="">Chọn chuyên ngành của bạn</option>
+              {majors?.map((item: IMajors) => <option value={item.id}>{item.majors_name}</option>)}
+            </Form.Select>
+            {errors.major_id && <p className="text-danger">{`${errors.major_id.message}`}</p>}
           </Form.Group>
-          <Form.Group className="form-group">
-            <Form.Label>Confirm Password</Form.Label>
-            <Form.Control
-              {...register('confirmPassword')}
-              type="password"
-              className="mb-0"
-              id="confirmPassword"
-              placeholder="Confirm Password"
-              disabled={isSubmitting}
-            />
-            {errors.confirmPassword && (
-              <div className="error-message text-danger">{errors.confirmPassword.message}</div>
-            )}
-          </Form.Group>
+
+          <Row>
+            <Col md="6">
+              <Form.Group className="form-group">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  {...register('password')}
+                  type="password"
+                  className="mb-0"
+                  id="password"
+                  placeholder="Password"
+                  disabled={isSubmitting}
+                />
+                {errors.password && <div className="error-message text-danger">{errors.password.message}</div>}
+              </Form.Group>
+            </Col>
+            <Col md="6">
+              <Form.Group className="form-group">
+                <Form.Label>Confirm Password</Form.Label>
+                <Form.Control
+                  {...register('confirmPassword')}
+                  type="password"
+                  className="mb-0"
+                  id="confirmPassword"
+                  placeholder="Confirm Password"
+                  disabled={isSubmitting}
+                />
+                {errors.confirmPassword && (
+                  <div className="error-message text-danger">{errors.confirmPassword.message}</div>
+                )}
+              </Form.Group>
+            </Col>
+          </Row>
+
           <div className="d-inline-block w-100">
             <Button
               disabled={isSubmitting}

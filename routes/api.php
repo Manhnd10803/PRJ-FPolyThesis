@@ -44,7 +44,7 @@ Route::prefix('auth')->group(function () {
     Route::post('/post-forgot-password', [AuthController::class, 'forgotPassword'])->name('user.forgotPassword');
     Route::post('/post-reset-password', [AuthController::class, 'resetPassword'])->name('user.resetPassword');
 });
-
+Route::get('list-majors', [MajorController::class, 'list_majors']);
 Route::middleware('auth:api')->group(function () {
     Route::get('/get-user', [AuthController::class, 'getUser'])->name('user.getinfo');
     //route has been authenticated
@@ -107,7 +107,6 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/{comment}', [CommentController::class, 'deleteComment']);
     });
 
-    Route::get('majors', [MajorController::class, 'list_majors']);
 
     //qa
     Route::prefix('quests')->group(function () {

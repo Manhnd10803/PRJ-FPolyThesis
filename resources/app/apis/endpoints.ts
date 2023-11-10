@@ -38,6 +38,7 @@ export const ApiConstants = {
 
   // major
   MAJORS: '/api/majors',
+  LIST_MAJORS_REGISTER: '/api/list-majors',
 
   // Comment
   CREATE_COMMENT: '/api/comment',

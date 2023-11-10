@@ -22,8 +22,11 @@ export type RefreshTokenResponseType = {
 };
 
 export type RegisterResponseType = {
+  first_name: string;
+  last_name: string;
+  major_id: string;
   email: string;
-  message: string;
+  password: string;
 };
 
 // --- sua lai giong response cua backend

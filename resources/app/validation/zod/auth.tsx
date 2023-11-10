@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+const containsNumberOrSymbol = (value: any) => {
+  // Kiểm tra xem chuỗi có chứa ký tự hoặc số không
+  return !/[0-9!@#$%^&*()_+|~=`{}\[\]:";'<>?,./\\]/.test(value);
+};
 export const signInSchema = z.object({
   username: z.string().min(1, 'Email is required').email(),
   password: z.string().min(1, 'Password is required').min(8, 'Password must be at least 8 characters'),
@@ -7,13 +11,25 @@ export const signInSchema = z.object({
 
 export const signUpSchema = z
   .object({
-    username: z.string().min(1, 'Username is required'),
-    email: z.string().min(1, 'Email is required').email(),
-    password: z.string().min(1, 'Password is required').min(8, 'Password must be at least 8 characters'),
-    confirmPassword: z.string().min(1, 'Confirm Password is required'),
+    first_name: z
+      .string()
+      .min(1, 'Tên không được để trống')
+      .refine(value => containsNumberOrSymbol(value), {
+        message: 'Tên không được chứa ký tự hoặc số',
+      }),
+    last_name: z
+      .string()
+      .min(1, 'Họ không được để trống')
+      .refine(value => containsNumberOrSymbol(value), {
+        message: 'Họ không được chứa ký tự hoặc số',
+      }),
+    email: z.string().min(1, 'Bạn chưa nhập địa chỉ email').email('Bạn chưa nhập đúng email'),
+    major_id: z.string().min(1, 'Chuyên ngành không được để trống'),
+    password: z.string().min(1, 'Không được để trống').min(8, 'Mật khẩu đủ 8 kí tự'),
+    confirmPassword: z.string().min(1, 'Không được để trống'),
   })
   .refine(data => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
+    message: 'Không khớp mật khẩu',
     path: ['confirmPassword'],
   });
 
