@@ -1,7 +1,9 @@
 <?php
 
+use App\Models\PrivateMessage;
 use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,14 +16,18 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-Broadcast::channel('user.{id}', function ($user, $id) {
-    return true;
+Broadcast::channel('user.{sender_id}', function ($user, $sender_id) {
+    return Auth::check()&&Auth()->user()->id==$sender_id;
 });
 
-// Broadcast::channel('user.{receiver_id}', function ($user, $receiver_id) {
-//     return (int) $user->id === User::find(int) $receiver_id;
+// Broadcast::channel('user.{receiver_id}', function($user, $receiver_id) {
+//     return (int) Auth()->id() === (int) PrivateMessage::findOrNew($receiver_id)->sender_id;
 // });
 
-Broadcast::channel('one-one', function ($user) {
-    return !is_null($user);
-});
+// Broadcast::channel('user.{receiver_id}', function(User $user, $receiver_id) {
+//     return (int) $user->id === (int) PrivateMessage::where('receiver_id', $receiver_id)->select('receiver_id')->first();
+// });
+
+// Broadcast::channel('one-one', function ($user) {
+//     return !is_null($user);
+// });

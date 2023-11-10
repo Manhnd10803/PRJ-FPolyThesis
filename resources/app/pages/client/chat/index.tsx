@@ -7,10 +7,47 @@ import { MessagesService } from '@/apis/services/messages.service';
 import { formatTime } from './components/format-time';
 import { RightSideBar } from './components/right-side-bar/right-side-bar';
 import Echo from 'laravel-echo';
-import { useEffect, useState } from 'react';
-
+import { useEffect, useRef, useState } from 'react';
+import socketio from 'socket.io-client';
 export const ChatPage = () => {
   const localUserId = StorageFunc.getUserId();
+  let { hash } = useLocation();
+  let chat_id = hash.split('#')[1];
+  const [socketID, setSocketID] = useState('');
+  const token = StorageFunc.getAccessToken();
+  useEffect(() => {
+    const echo = new Echo({
+      host: 'http://localhost:6001',
+      broadcaster: 'socket.io',
+      client: socketio,
+      encrypted: false, //Chỉ định xem kết nối giữa client và server có sử dụng SSL/TLS để mã hóa hay không
+      disableStats: true, //thu thập thống kê (statistics) của kết nối
+      auth: {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+      transports: ['websocket'],
+    });
+    echo.connector.socket.connected = true;
+    const socketioID = echo.socketId();
+    setSocketID(socketioID);
+    // echo.leave(`user.${localUserId}`); //rời channel
+    const handlePrivateMessage = (event: any) => {
+      console.log(event.message.content);
+      queryClient.invalidateQueries(queryKeyMessage);
+      alert('Có tin nhắn mới!');
+    };
+
+    // Đăng ký sự kiện listen chỉ một lần khi component được mount
+    echo.private(`user.${localUserId}`).listen('.PrivateMessageSent', handlePrivateMessage);
+
+    // Cleanup: Loại bỏ sự kiện khi component unmount
+    return () => {
+      echo.private(`user.${localUserId}`).stopListening('.PrivateMessageSent', handlePrivateMessage);
+    };
+  }, []);
+
   const getDetailUserProfile = async () => {
     const { data } = await ProfileService.getDetailUserProfile(localUserId);
     return data;
@@ -27,8 +64,6 @@ export const ChatPage = () => {
   const queryKeyListChat = ['listchat'];
   const { data: listChatMessage, isLoading: isListChatLoading } = useQuery(queryKeyListChat, getListChat);
 
-  let { hash } = useLocation();
-  let chat_id = hash.split('#')[1];
   const getDetailReceiverProfile = async () => {
     const { data } = await ProfileService.getDetailUserProfile(chat_id);
     return data.user;
@@ -58,15 +93,10 @@ export const ChatPage = () => {
 
   const [message, setMessage] = useState('');
 
-  const echo = new Echo({
-    broadcaster: 'socket.io',
-    host: 'http://localhost:6001',
-  });
-
   const queryClient = useQueryClient();
   const sendMessageMutation = useMutation(
     messageText => {
-      return MessagesService.sendMessages(Number(chat_id), { content: messageText });
+      return MessagesService.sendMessages(Number(chat_id), { content: messageText }, socketID);
     },
     {
       onSuccess: data => {
@@ -75,30 +105,35 @@ export const ChatPage = () => {
     },
   );
 
-  useEffect(() => {
-    echo.private(`user.${chat_id}`).listen('PrivateMessageSent', (event: any) => {
-      console.log('Received message:', event);
-    });
-  }, []);
-
   const handleSendMessage = (e: any) => {
     e.preventDefault();
 
     const messageText = message.trim();
     if (messageText) {
       sendMessageMutation.mutate(messageText);
-
-      echo.private(`user.${chat_id}`).whisper('typing', {
-        message: messageText,
-      });
-
-      setMessage(''); // Xóa nội dung tin nhắn sau khi gửi
+      setMessage('');
     }
   };
+
+  //scroll to last message
+  const chatContentRef = useRef(null);
+
+  useEffect(() => {
+    const scrollToLastMessage = () => {
+      if (chatContentRef.current) {
+        const chatContent = chatContentRef.current;
+        chatContent.scrollTop = chatContent.scrollHeight;
+      }
+    };
+
+    if (chatMessage && chatMessage.length > 0) {
+      scrollToLastMessage();
+    }
+  }, [chatMessage]);
+
   return (
     <>
       <div id="content-page" className="content-page">
-        {/* <h1>ChatPage</h1> */}
         <Row>
           <Col sm="2"></Col>
           <Col sm="10">
@@ -171,7 +206,7 @@ export const ChatPage = () => {
                         )}
 
                         {!isMessage && (
-                          <div className="chat-content scroller">
+                          <div className="chat-content scroller" ref={chatContentRef}>
                             {chatMessage.map((item, index) => (
                               <>
                                 {localUserId === item.sender_id ? (
@@ -188,7 +223,7 @@ export const ChatPage = () => {
                                         </Link>
                                         <span className="chat-time mt-1">{formatTime(item.created_at)}</span>
                                       </div>
-                                      <div className="chat-detail">
+                                      <div className="chat-detail" style={{ maxWidth: '50%' }}>
                                         <div className="chat-message">
                                           <p>{item.content}</p>
                                         </div>
@@ -209,7 +244,7 @@ export const ChatPage = () => {
                                         </Link>
                                         <span className="chat-time mt-1">{formatTime(item.created_at)}</span>
                                       </div>
-                                      <div className="chat-detail">
+                                      <div className="chat-detail" style={{ maxWidth: '50%' }}>
                                         <div className="chat-message" style={{ backgroundColor: '#F0F0F0' }}>
                                           <p>{item.content}</p>
                                         </div>
@@ -221,30 +256,35 @@ export const ChatPage = () => {
                             ))}
                           </div>
                         )}
-                        <div className="chat-footer p-3 bg-white">
-                          <Form onSubmit={handleSendMessage} className="d-flex align-items-center" action="#">
-                            <div className="chat-attagement d-flex">
-                              <Link to="#">
-                                <i className="far fa-smile pe-3" aria-hidden="true"></i>
-                              </Link>
-                              <Link to="#">
-                                <i className="fa fa-paperclip pe-3" aria-hidden="true"></i>
-                              </Link>
-                            </div>
-                            <Form.Control
-                              type="text"
-                              value={message}
-                              name="content"
-                              onChange={e => setMessage(e.target.value)}
-                              className="me-3"
-                              placeholder="Type your message"
-                            />
-                            <Button type="submit" variant="primary d-flex align-items-center">
-                              <i className="far fa-paper-plane" aria-hidden="true"></i>
-                              <span className="d-none d-lg-block ms-1">Send</span>
-                            </Button>
-                          </Form>
-                        </div>
+                        {chat_id && (
+                          <div className="chat-footer p-3 bg-white">
+                            <Form onSubmit={handleSendMessage} className="d-flex align-items-center" action="#">
+                              <div className="chat-attagement d-flex">
+                                <Link to="#">
+                                  <i className="far fa-smile pe-3" aria-hidden="true"></i>
+                                </Link>
+                                <Link to="#">
+                                  <i className="fa fa-paperclip pe-3" aria-hidden="true"></i>
+                                </Link>
+                              </div>
+                              <Form.Control
+                                type="text"
+                                value={message}
+                                name="content"
+                                onChange={e => {
+                                  setMessage(e.target.value);
+                                }}
+                                className="me-3"
+                                placeholder="Type your message"
+                              />
+
+                              <Button type="submit" variant="primary d-flex align-items-center">
+                                <i className="far fa-paper-plane" aria-hidden="true"></i>
+                                <span className="d-none d-lg-block ms-1">Send</span>
+                              </Button>
+                            </Form>
+                          </div>
+                        )}
                       </Tab.Content>
                     </Col>
                   </Row>
