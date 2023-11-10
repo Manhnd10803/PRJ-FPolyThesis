@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AdminBlogController;
@@ -9,6 +10,9 @@ use App\Http\Controllers\Admin\AdminQaController;
 use App\Http\Controllers\Admin\AdminEmotionController;
 
 // Route dành cho trang quản trị
+Route::get('/login', function () {
+    return 'login';
+})->name('login');
 Route::group(['prefix' => 'admin'], function () {
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
@@ -68,6 +72,9 @@ Route::group(['prefix' => 'admin'], function () {
     Route::put('emotions/{emotion}', [AdminEmotionController::class, 'update'])->name('admin.emotions.update');
     Route::delete('emotions/{emotion}', [AdminEmotionController::class, 'destroy'])->name('admin.emotions.destroy');
     
+});
+Route::get('test', function () {
+    return $users = User::all();
 });
 
 // Route chung cho ứng dụng ReactJS

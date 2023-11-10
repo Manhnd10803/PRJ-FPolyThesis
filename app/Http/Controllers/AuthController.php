@@ -68,7 +68,12 @@ class AuthController extends Controller
             if (!$validator->fails()) {
                 $groupId = strpos($request->email, '@fpt.edu.vn') ? config('default.user.groupID.student') : config('default.user.groupID.guest');
                 $codeVerify = str_pad(mt_rand(1, 99999), 5, '0', STR_PAD_LEFT);
-                $username = explode('@', $request->email)[0];
+                //thêm id vào đuôi
+                if ($groupId == config('default.user.groupID.student')) {
+                    $username = explode('@', $request->email)[0] . 's';
+                } else if ($groupId == config('default.user.groupID.guest')) {
+                    $username = explode('@', $request->email)[0] . 'g';
+                }
                 DB::table('users')->insert(
                     [
                         'username' => $username,
@@ -274,12 +279,14 @@ class AuthController extends Controller
             //đăng ký
             DB::beginTransaction();
             try {
-                $username = explode('@', $user->email)[0];
+                $username = explode('@', $user->email)[0] . 's';
                 DB::table('users')->insert(
                     [
                         'username' => $username,
                         'password' => Hash::make(config('default.user.password')),
                         'email' => $user->email,
+                        'first_name' => $user->user['family_name'],
+                        'last_name' => $user->user['given_name'],
                         'group_id' => config('default.user.groupID.student'),
                         'status' => config('default.user.status.active'),
                     ]
@@ -461,7 +468,6 @@ class AuthController extends Controller
             } else {
                 return response()->json(['message' => 'Email và mật khẩu không khớp'], 400);
             }
-
         } else {
             return response()->json(['errors' => $validator->errors()], 422);
         }

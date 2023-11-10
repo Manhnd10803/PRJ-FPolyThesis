@@ -34,7 +34,7 @@ use Illuminate\Support\Facades\Route;
 
 
 //auth
-
+Route::get('/die-token', function () {return response(['message' => 'token has expired'], 401);})->name('token.die');
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('user.register');
     Route::get('/google-auth', [AuthController::class, 'googleAuth'])->name('user.googleAuth');
@@ -50,7 +50,7 @@ Route::middleware('auth:api')->group(function () {
     //route has been authenticated
     Route::post('/auth/logout', [AuthController::class, 'logout'])->name('user.logout');
     Route::post('/auth/refresh-token', [AuthController::class, 'refreshToken'])->name('token.refresh');
-    Route::post('/auth/confirm-password',[AuthController::class,'confirmPassword'])->name('user.confirmPassword');
+    Route::post('/auth/confirm-password', [AuthController::class, 'confirmPassword'])->name('user.confirmPassword');
     Route::post('/auth/reset-new-password', [AuthController::class, 'resetPassword'])->name('user.resetPassword');
     Route::get('/hello', function () {
         return Auth::user();
@@ -131,7 +131,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/friend-list-request', [FriendController::class, 'listFriendRequest']);
     Route::get('/status-friend/{friend}', [FriendController::class, 'getFriendshipStatus']);
     Route::delete('/unfriend/{friend}', [FriendController::class, 'unfriend']);
-    
+
 
     //notification
     Route::get('/notifications', [NotificationController::class, 'listNotification']);
