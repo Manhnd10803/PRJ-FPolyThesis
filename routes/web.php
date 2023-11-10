@@ -27,6 +27,10 @@ Route::group(['prefix' => 'admin'], function () {
 
 //Admin blog
     Route::get('blogs', [AdminBlogController::class, 'index'])->name('admin.blogs.index');
+    Route::get('blogs/approve', [AdminBlogController::class, 'index'])->name('admin.blogs.approve');
+    Route::put('blogs/approve/{blog}', [AdminBlogController::class, 'approveBlog'])->name('admin.blogs.statusApprove');
+    Route::put('blogs/reject/{blog}', [AdminBlogController::class, 'rejectBlog'])->name('admin.blogs.statusReject');
+    Route::get('blogs/count-pending', [AdminBlogController::class, 'countPendingBlogs'])->name('admin.blogs.countPendingBlogs');
     Route::get('blogs/create', [AdminBlogController::class, 'create'])->name('admin.blogs.create');
     Route::post('blogs', [AdminBlogController::class, 'store'])->name('admin.blogs.store');
     Route::get('blogs/{blog}', [AdminBlogController::class, 'show'])->name('admin.blogs.show');

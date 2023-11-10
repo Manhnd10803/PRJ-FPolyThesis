@@ -88,10 +88,24 @@ class AdminBlogController extends Controller
         try {
             $blog->update(['status' => config('default.blog.status.approved')]);
             DB::commit();
-            return response()->json(['message' => 'Duyệt thành công'], 200);
+            return redirect()->route('admin.blogs.show', ['blog' => $blog->id])
+            ->with('success', 'Bài viết đã được duyệt thành công');
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['errors' => $e->getMessage()], 400);
+            return throw $e;
+        }
+    }
+    public function rejectBlog(Blog $blog)
+    {
+        DB::beginTransaction();
+        try {
+            $blog->update(['status' => config('default.blog.status.reject')]);
+            DB::commit();
+            return redirect()->route('admin.blogs.show', ['blog' => $blog->id])
+            ->with('success', 'Bài viết đã được duyệt thành công');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return throw $e;
         }
     }
     /**
@@ -111,18 +125,7 @@ class AdminBlogController extends Controller
      *     @OA\Response(response=400, description="Lỗi trong quá trình xử lý")
      * )
      */
-    public function rejectBlog(Blog $blog)
-    {
-        DB::beginTransaction();
-        try {
-            $blog->update(['status' => config('default.blog.status.reject')]);
-            DB::commit();
-            return response()->json(['message' => 'Từ chối thành công'], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['errors' => $e->getMessage()], 400);
-        }
-    }
+
     //chi tiết bài viết
 
     /**
@@ -156,8 +159,33 @@ class AdminBlogController extends Controller
     //admin web
     public function index()
     {
-        $blogs = Blog::latest()->paginate(10);
+        $status = request()->is('admin/blogs/approve') ? config('default.blog.status.pending') : config('default.blog.status.approved');
+        $blogs = Blog::with('user',)->where('status', $status)->latest()->get();
+        foreach ($blogs as $blog) {
+            $dislikeCount = $blog->likes->where('emotion', 'dislike')->count();
+            if ($dislikeCount > 100) {
+                $blog->likes()->delete();
+                $blog->comments()->delete();
+                $blog->delete();
+            }
+        }
+        $blogs->transform(function ($blog) {
+            $blog->formatted_created_at = $blog->created_at->format('d M. Y');
+            return $blog;
+        });
+
         return view('admin.blogs.index', compact('blogs'));
+    }
+
+
+
+
+
+    
+    public function countPendingBlogs()
+    {
+        $count = Blog::where('status', config('default.blog.status.pending'))->count();
+        return $count;
     }
 
     public function create()
@@ -198,11 +226,19 @@ class AdminBlogController extends Controller
         return redirect()->route('admin.blogs.index')
             ->with('success', 'Blog created successfully');
     }
+    
 
 
     public function show(Blog $blog)
     {
-        return view('admin.blogs.show', compact('blog'));
+        $blog = Blog::with('user', 'likes', 'comments')->find($blog->id);
+
+    // Calculate like, dislike, and comment counts
+    $blog->like_count = $blog->likes->where('emotion', 'like')->count();
+    $blog->dislike_count = $blog->likes->where('emotion', 'dislike')->count();
+    $blog->comment_count = $blog->comments->count();
+
+    return view('admin.blogs.show', compact('blog'));
     }
 
     public function edit(Blog $blog)
