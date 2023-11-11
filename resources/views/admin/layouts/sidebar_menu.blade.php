@@ -23,7 +23,7 @@
     </form>
 <ul class="sidebar-menu" data-widget="tree">
   <li class="header">MAIN NAVIGATION</li>
-  <li class="active treeview">
+  <li class="treeview">
     <a href="#">
       <i class="fa fa-dashboard"></i> <span>Dashboard</span>
       <span class="pull-right-container">
@@ -31,7 +31,7 @@
       </span>
     </a>
     <ul class="treeview-menu">
-      <li class="active"><a href="{{ route('dashboard') }}"><i class="fa fa-circle-o"></i> Dashboard</a></li>
+      <li><a href="{{ route('dashboard') }}"><i class="fa fa-circle-o"></i> Dashboard</a></li>
     </ul>
   </li>
   <li class="treeview">
@@ -43,9 +43,9 @@
     </a>
     <ul class="treeview-menu">
       <li><a href="{{ route('admin.blogs.index') }}"><i class="fa fa-circle-o"></i>Danh sách blog</a></li>
-      <li><a href="{{ route('admin.blogs.index') }}"><i class="fa fa-circle-o"></i><span>Chờ duyệt</span>
+      <li><a href="{{ route('admin.blogs.approve') }}"><i class="fa fa-circle-o"></i><span>Chờ duyệt</span>
         <span class="pull-right-container">
-          <span class="label label-primary pull-right">4</span>
+          <span class="label label-primary pull-right" id="pendingBlogsCount">...</span>
         </span></a> </li>
     </ul>
   </li>

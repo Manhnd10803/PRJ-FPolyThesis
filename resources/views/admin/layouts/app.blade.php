@@ -4,6 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>@yield('title') | {{ env('APP_NAME') }}</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
@@ -28,7 +29,7 @@
   <link rel="stylesheet" href="{{ asset('bower_components/bootstrap-daterangepicker/daterangepicker.css') }}">
   <!-- bootstrap wysihtml5 - text editor -->
   <link rel="stylesheet" href="{{ asset('plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css') }}">
-
+  @stack('css')
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
   <!--[if lt IE 9]>
@@ -57,7 +58,10 @@
 
     <!-- Content Wrapper. Contains page content -->
     <div class="content-wrapper">
-      @yield('content')
+      <section class="content">
+        @yield('content')
+
+      </section>
     </div>
     <!-- /.content-wrapper -->
     <footer class="main-footer">
@@ -267,7 +271,7 @@
   <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
   <script>
     $.widget.bridge('uibutton', $.ui.button);
-  </script>
+    </script>
   <!-- Bootstrap 3.3.7 -->
   <script src="{{ asset('bower_components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
   <!-- Morris.js charts -->
@@ -297,6 +301,23 @@
   <script src="{{ asset('dist/js/pages/dashboard.js') }}"></script>
   <!-- AdminLTE for demo purposes -->
   <script src="{{ asset('dist/js/demo.js') }}"></script>
+ 
+  @stack('js')
+  <script>
+    $(document).ready(function () {
+        $.ajax({
+            url: '{{ route("admin.blogs.countPendingBlogs") }}',
+            type: 'GET',
+            success: function (response) {
+                $('#pendingBlogsCount').text(response);
+            },
+            error: function (error) {
+                console.log(error);
+            }
+        });
+    });
+</script>
+
 </body>
 
 </html>
