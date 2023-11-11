@@ -1,5 +1,5 @@
 <!-- Logo -->
-<a href="index2.html" class="logo">
+<a href="{{ route('dashboard') }}" class="logo">
   <!-- mini logo for sidebar mini 50x50 pixels -->
   <span class="logo-mini"><b>FPL</b>Z</span>
   <!-- logo for regular state and mobile devices -->
@@ -214,21 +214,26 @@
       <!-- User Account: style can be found in dropdown.less -->
       <li class="dropdown user user-menu">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-          <img src="{{ asset('dist/img/user2-160x160.jpg') }}" class="user-image" alt="User Image">
-          <span class="hidden-xs">Alexander Pierce</span>
+          <span class="hidden-xs">{{ Auth::user()->username }}</span>
         </a>
         <ul class="dropdown-menu">
           <!-- User image -->
           <li class="user-header">
-            <img src="{{ asset('dist/img/user2-160x160.jpg') }}" class="img-circle" alt="User Image">
-
+            <img src="{{ asset('dist/img/admin-male.png') }}" class="img-circle" alt="User Image">
+            @php
+                if (Auth::user()->group_id == 1) {
+                  $group = '';
+                } else {
+                  $group = \App\Models\UserRole::where('user_id', Auth::user()->id)->role->name;
+                };
+            @endphp
             <p>
-              Alexander Pierce - Web Developer
-              <small>Member since Nov. 2012</small>
+              {{ Auth::user()->username }} - {{ $group }}
+              <small>Member since {{ Auth::user()->created_at }}</small>
             </p>
           </li>
           <!-- Menu Body -->
-          <li class="user-body">
+          {{-- <li class="user-body">
             <div class="row">
               <div class="col-xs-4 text-center">
                 <a href="#">Followers</a>
@@ -241,7 +246,7 @@
               </div>
             </div>
             <!-- /.row -->
-          </li>
+          </li> --}}
           <!-- Menu Footer-->
           <li class="user-footer">
             <div class="pull-left">
@@ -254,9 +259,9 @@
         </ul>
       </li>
       <!-- Control Sidebar Toggle Button -->
-      <li>
+      {{-- <li>
         <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
-      </li>
+      </li> --}}
     </ul>
   </div>
 </nav>

@@ -173,6 +173,7 @@ return [
         L5Swagger\L5SwaggerServiceProvider::class,
         App\Providers\SocialAuthServiceProvider::class,
         App\Providers\EmotionsServiceProvider::class,
+        App\Providers\ReadMenuAdminProvider::class,
     ])->toArray(),
     /*
     |--------------------------------------------------------------------------
