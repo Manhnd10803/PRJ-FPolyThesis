@@ -12,4 +12,7 @@ class RolePermission extends Model
         'role_id',
         'permission',
     ];
+    public static function getUserPermistion($role_id) {
+        return self::where('role_id', $role_id)->pluck('permission')->toArray();
+    }
 }

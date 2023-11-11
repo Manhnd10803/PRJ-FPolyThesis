@@ -18,6 +18,7 @@ class UserRole extends Model
     }
     public function getPermissions($id)
     {
+        return $id;
         $role_id = UserRole::where('user_id', $id)->first()->role_id;
         return $this->hasMany(RolePermission::class, $role_id);
     }

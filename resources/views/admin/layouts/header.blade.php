@@ -1,5 +1,5 @@
 <!-- Logo -->
-<a href="{{ route('dashboard') }}" class="logo">
+<a href="{{ route('admin.dashboard') }}" class="logo">
   <!-- mini logo for sidebar mini 50x50 pixels -->
   <span class="logo-mini"><b>FPL</b>Z</span>
   <!-- logo for regular state and mobile devices -->
@@ -224,7 +224,7 @@
                 if (Auth::user()->group_id == 1) {
                   $group = '';
                 } else {
-                  $group = \App\Models\UserRole::where('user_id', Auth::user()->id)->role->name;
+                  $group = \App\Models\UserRole::where('user_id', Auth::user()->id)->first()->role->name;
                 };
             @endphp
             <p>
@@ -253,7 +253,7 @@
               <a href="#" class="btn btn-default btn-flat">Profile</a>
             </div>
             <div class="pull-right">
-              <a href="#" class="btn btn-default btn-flat">Sign out</a>
+              <a href="{{ route('admin.logout') }}" class="btn btn-default btn-flat">Sign out</a>
             </div>
           </li>
         </ul>

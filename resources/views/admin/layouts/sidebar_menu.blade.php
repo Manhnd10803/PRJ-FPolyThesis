@@ -24,7 +24,10 @@
 <ul class="sidebar-menu" data-widget="tree">
   <li class="header">MAIN NAVIGATION</li>
   @php 
-      // $userPermistion = App\Models\UserRole::getPermissions(auth()->user()->id);
+      $role_id = App\Models\UserRole::where('user_id', Auth::user()->id)->first()->role_id;
+      if(!is_null($role_id)){
+        $userPermission = App\Models\RolePermission::getUserPermistion($role_id);
+      }
       $userGroupId = auth()->user()->group_id;
       $isSPAdmin = $userGroupId == config('default.user.groupID.superAdmin') ? true : false;
   @endphp
@@ -46,7 +49,7 @@
                 }
             }
         @endphp
-        @if ($isSPAdmin || in_array($menu_lv1['permission'], $userPermistion))
+        @if ($isSPAdmin || in_array($menu_lv1['permission'], $userPermission))
           <li class="{{ $checkSubMenu ? 'treeview' : '' }} {{ $active ? 'active' : ''}}">
             <a href="{{ $checkSubMenu ? '#' : route($menu_lv1['route']) }}">
               <i class="{{ $menu_lv1['icon'] }}"></i> <span>{{ $menu_lv1['text']  }}</span>
@@ -59,7 +62,7 @@
             @if ($checkSubMenu)
               <ul class="treeview-menu">
                 @foreach ($menu_lv1['sub'] as $menu_lv2)
-                    @if($isSPAdmin || in_array($menu_lv2['permission'], $userPermistion))
+                    @if($isSPAdmin || in_array($menu_lv2['permission'], $userPermission))
                       @php 
                           if($currentRouteName == $menu_lv2['route']){
                               $active = true;

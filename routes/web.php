@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminAuthController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminUserController;
@@ -11,13 +12,13 @@ use App\Http\Controllers\Admin\AdminEmotionController;
 use Illuminate\Support\Facades\Auth;
 
 // Route dành cho trang quản trị
-Route::get('/login', function () {
-    return 'login';
-})->name('login');
+Route::get('admin/login', [AdminAuthController::class, 'viewLogin'])->name('login');
+Route::post('admin/login', [AdminAuthController::class, 'login'])->name('singin');
 Route::group(['prefix' => 'admin'], function () {
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
-    })->name('dashboard');
+    })->name('admin.dashboard');
+    Route::get('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
     //Admin user
     Route::get('user', [AdminUserController::class, 'listUser'])->name('admin.users.list');
     Route::get('user/{user}', [AdminUserController::class, 'detailUser'])->name('admin.users.detail');

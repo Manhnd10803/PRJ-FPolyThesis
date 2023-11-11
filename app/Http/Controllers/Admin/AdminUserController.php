@@ -10,5 +10,6 @@ use Illuminate\Support\Facades\Hash;
 
 class AdminUserController extends Controller
 {
+    //User
     
 }

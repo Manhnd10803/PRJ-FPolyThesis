@@ -3,8 +3,8 @@ return [
   'dashboard' => [
     'order' => 1,
     'text'       => 'Dashboard',
-    'permission' => 'dashboard',
-    'route' => 'dashboard',
+    'permission' => 'admin.dashboard',
+    'route' => 'admin.dashboard',
     'icon' => 'fa fa-fw fa-dashboard',
   ],
   'user' => [
