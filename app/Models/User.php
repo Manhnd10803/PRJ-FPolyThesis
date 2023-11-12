@@ -33,6 +33,7 @@ class User extends Authenticatable
         "biography",
         "gender",
         "major_id",
+        "created_at",
     ];
 
     /**
@@ -71,13 +72,15 @@ class User extends Authenticatable
     }
     public function posts()
     {
-    return $this->hasMany(Post::class);
+        return $this->hasMany(Post::class);
     }
-    public function messagesSent() {
+    public function messagesSent()
+    {
         return $this->hasMany(PrivateMessage::class, 'sender_id');
     }
-    
-    public function messagesReceived() {
+
+    public function messagesReceived()
+    {
         return $this->hasMany(PrivateMessage::class, 'receiver_id');
     }
 
@@ -85,5 +88,4 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Major::class);
     }
-
 }

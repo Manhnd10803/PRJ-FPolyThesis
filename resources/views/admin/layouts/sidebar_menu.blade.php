@@ -4,10 +4,10 @@
     <!-- Sidebar user panel -->
     <div class="user-panel">
       <div class="pull-left image">
-        <img src="{{ asset('dist/img/user2-160x160.jpg') }}" class="img-circle" alt="User Image">
+        <img src="{{ asset('dist/img/admin-male.png') }}" class="img-circle" alt="User Image">
       </div>
       <div class="pull-left info">
-        <p>Alexander Pierce</p>
+        <p>{{ Auth::user()->username }}</p>
         <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
       </div>
     </div>
@@ -23,52 +23,71 @@
     </form>
 <ul class="sidebar-menu" data-widget="tree">
   <li class="header">MAIN NAVIGATION</li>
-  <li class="treeview">
-    <a href="#">
-      <i class="fa fa-dashboard"></i> <span>Dashboard</span>
-      <span class="pull-right-container">
-        <i class="fa fa-angle-left pull-right"></i>
-      </span>
-    </a>
-    <ul class="treeview-menu">
-      <li><a href="{{ route('dashboard') }}"><i class="fa fa-circle-o"></i> Dashboard</a></li>
-    </ul>
-  </li>
-  <li class="treeview">
-    <a href="#">
-      <i class="fa  fa-book"></i> <span>Blog</span>
-      <span class="pull-right-container">
-        <i class="fa fa-angle-left pull-right"></i>
-      </span>
-    </a>
-    <ul class="treeview-menu">
-      <li><a href="{{ route('admin.blogs.index') }}"><i class="fa fa-circle-o"></i>Danh sách blog</a></li>
-      <li><a href="{{ route('admin.blogs.approve') }}"><i class="fa fa-circle-o"></i><span>Chờ duyệt</span>
-        <span class="pull-right-container">
-          <span class="label label-primary pull-right" id="pendingBlogsCount">...</span>
-        </span></a> </li>
-    </ul>
-  </li>
-  <li>
-    <a href="{{ route('admin.users.index') }}">
-      <i class="fa  fa-users"></i> <span>Danh sách người dùng</span>
-    </a>
-  </li>
-  <li>
-    <a href="{{ route('admin.posts.index') }}">
-      <i class="fa fa-calendar-check-o"></i> <span>Danh sách bài post</span>
-    </a>
-  </li>
-  <li>
-    <a href="{{ route('admin.qa.index') }}">
-      <i class="fa  fa-question"></i> <span>Danh sách câu hỏi</span>
-    </a>
-  </li>
-  <li>
-    <a href="{{ route('admin.majors.index') }}">
-      <i class="fa  fa-briefcase"></i> <span>Danh sách chuyên ngành</span>
-    </a>
-  </li>
+  @php 
+      $userGroupId = auth()->user()->group_id;
+      $isSPAdmin = $userGroupId == config('default.user.groupID.superAdmin') ? true : false;
+      if(!$isSPAdmin){
+        $role_id = App\Models\UserRole::where('user_id', Auth::user()->id)->first()->role_id;
+        if(!is_null($role_id)){
+          $userPermission = App\Models\RolePermission::getUserPermistion($role_id);
+        }
+      }
+  @endphp
+  @if (isset($backend_menus) && !empty($backend_menus))
+      @foreach ($backend_menus as $menu_lv1)
+        @php
+            $currentRouteName = request()->route()->getName();
+            $checkSubMenu = (isset($menu_lv1['sub']) && !empty($menu_lv1['sub'])) ? true : false;
+            $active = false;
+            if(!$checkSubMenu) {
+                if($currentRouteName == $menu_lv1['route']){
+                    $active = true;
+                }
+            }else {
+                foreach ($menu_lv1['sub'] as $menu_lv2){
+                    if($currentRouteName == $menu_lv2['route']) {
+                        $active = true;
+                    }
+                }
+            }
+        @endphp
+        @if ($isSPAdmin || in_array($menu_lv1['permission'], $userPermission))
+          <li class="{{ $checkSubMenu ? 'treeview' : '' }} {{ $active ? 'active' : ''}}">
+            <a href="{{ $checkSubMenu ? '#' : route($menu_lv1['route']) }}">
+              <i class="{{ $menu_lv1['icon'] }}"></i> <span>{{ $menu_lv1['text']  }}</span>
+              @if ($checkSubMenu)
+                <span class="pull-right-container">
+                  <i class="fa fa-angle-left pull-right"></i>
+                </span>
+              @endif
+            </a>
+            @if ($checkSubMenu)
+              <ul class="treeview-menu">
+                @foreach ($menu_lv1['sub'] as $menu_lv2)
+                    @if($isSPAdmin || in_array($menu_lv2['permission'], $userPermission))
+                      @php 
+                          if($currentRouteName == $menu_lv2['route']){
+                              $active = true;
+                          }else {
+                              $active = false;
+                          }
+                      @endphp
+                      @if (isset($menu_lv2['count']))
+                        <li class="{{ $active ? 'active' : ''}}"><a href="{{ route($menu_lv2['route']) }}"><i class="fa fa-circle-o"></i><span>{{ $menu_lv2['text'] }}</span>
+                          <span class="pull-right-container">
+                            <span class="label label-primary pull-right" id="pendingBlogsCount">...</span>
+                          </span></a> </li>
+                      @else
+                        <li class="{{ $active ? 'active' : ''}}"><a href="{{ route($menu_lv2['route']) }}"><i class="fa fa-circle-o"></i>{{ $menu_lv2['text'] }}</a></li>
+                      @endif
+                    @endif
+                @endforeach
+              </ul>
+            @endif
+          </li>
+        @endif
+      @endforeach
+  @endif
 </ul>
 </section>
 <!-- /.sidebar -->

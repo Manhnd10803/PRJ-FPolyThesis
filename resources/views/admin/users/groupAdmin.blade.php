@@ -1,5 +1,5 @@
 @extends('admin.layouts.app')
-@section('title') Quản lý User @endsection
+@section('title') Nhóm quản trị @endsection
 @section('content')
 @push('css')
 <link rel="stylesheet" href="../../bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
@@ -44,23 +44,18 @@
         @endif
         <div class="box">
             <div class="box-header">
-                <h3 class="box-title">Danh sách người dùng</h3>
+                <h3 class="box-title ">Danh sách nhóm admin</h3>
+                @if ($isSPAdmin || in_array('admin.groups.create', $userPermission))
+                <a href="{{ route('admin.groups.create') }}" class="btn btn-success btn-sm pull-right"><i class="fa fa-fw fa-arrows"></i></a>
+                @endif
             </div>
             <!-- /.box-header -->
             <div class="box-body">
-                {{-- <a href="{{ route('admin.blogs.create') }}" class="btn btn-primary mb-3">Tạo mới</a> --}}
                 <table id="example1" class="table table-bordered table-striped">
                     <thead>
                         <tr>
                             <th>STT</th>
-                            <th>Họ và tên</th>
-                            <th>Username</th>
-                            <th>Giới tính</th>
-                            <th>Email</th>
-                            <th>Ngành học</th>
-                            <th>Phone</th>
-                            <th>Ngày sinh</th>
-                            <th>Nhóm người dùng</th>
+                            <th>Tên nhóm</th>
                             <th>Thao tác</th>
                         </tr>
                     </thead>
@@ -68,46 +63,17 @@
                         @php
                             $stt = 1;
                         @endphp
-                        @foreach($users as $user)
+                        @foreach($roles as $role)
                             <tr>
                                 <td>{{ $stt }}</td>
-                                <td>{{ $user->last_name . ' '. $user->first_name }}</td>
-                                <td>{{ $user->username }}</td>
+                                <td>{{ $role->name }}</td>
                                 <td>
-                                    @if ($user->gender == config('default.user.gender.male'))
-                                        Nam
-                                    @elseif($user->gender == config('default.user.gender.female'))
-                                        Nữ
+                                    @if ($isSPAdmin || in_array('admin.groups.edit', $userPermission))
+                                    <a href="{{ route('admin.groups.edit', $role->id) }}" class="btn btn-info btn-sm"><i class="fa fa-fw fa-edit"></i></a>
                                     @endif
-                                </td>
-                                <td>{{ $user->email }}</td>
-                                <td>
-                                    @if ($user->major_id)
-                                    {{ $user->major->majors_name }}
-                                    @endif
-                                </td>
-                                <td>{{ $user->phone }}</td>
-                                <td>{{ $user->birthday }}</td>
-                                <td>
-                                    @if ($user->gender == config('default.user.groupID.student'))
-                                        Sinh viên
-                                    @elseif($user->gender == config('default.user.gender.guest'))
-                                        Khách
-                                    @endif
-                                </td>
-                                <td>
-                                    @if ($user->status == config('default.user.status.suspend'))
-                                    @if ($isSPAdmin || in_array('admin.users.unlock', $userPermission))
-                                        <form action="{{ route('admin.users.unlock', $user->id) }}" method="post">
-                                            @csrf
-                                            @method('PUT')
-                                            <button type="submit" class="btn btn-info btn-sm" data-toggle="modal"><i class="fa fa-fw fa-unlock"></i></button>
-                                        </form>
-                                    @endif
-                                    @else
-                                    @if ($isSPAdmin || in_array('admin.users.lock', $userPermission))
-                                        <button type="submit" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modal-danger{{ $user->id }}"><i class="fa fa-fw fa-lock"></i></button>
-                                        <div class="modal modal-danger fade" id="modal-danger{{ $user->id }}">
+                                    @if ($isSPAdmin || in_array('admin.groups.destroy', $userPermission))
+                                        <button type="submit" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modal-danger{{ $role->id }}"><i class="fa fa-fw fa-remove"></i></button>
+                                        <div class="modal modal-danger fade" id="modal-danger{{ $role->id }}">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                 <div class="modal-header">
@@ -116,20 +82,19 @@
                                                     <h4 class="modal-title">FpolyZone</h4>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <p>Bạn có chắc muốn khóa tài khoản {{ $user->username }}? </p>
+                                                    <p>Khi xóa nhóm quản trị {{ $role->name }}, toàn bộ thành viên của nhóm cũng sẽ bị xóa?</p>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Hủy</button>
-                                                    <form action="{{ route('admin.users.lock', $user->id) }}" method="POST" style="display:inline">
+                                                    <form action="{{ route('admin.groups.destroy', $role->id) }}" method="POST" style="display:inline">
                                                     @csrf
-                                                    @method('PUT')
+                                                    @method('DELETE')
                                                     <button type="submit" class="btn btn-outline">Đồng ý</button>
                                                 </form>
                                                 </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    @endif
                                     @endif
                                 </td>
                             </tr>

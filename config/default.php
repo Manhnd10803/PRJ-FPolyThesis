@@ -13,6 +13,10 @@ return [
             'active' => '1',
             'suspend' => '2',
         ],
+        'gender' => [
+            'male' => 1,
+            'female' => 2,
+        ]
     ],
     'blog' => [
         'status' => [

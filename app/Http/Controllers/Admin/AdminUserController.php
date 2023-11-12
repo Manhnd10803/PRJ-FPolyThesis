@@ -3,289 +3,190 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Role;
+use App\Models\RolePermission;
 use App\Models\User;
+use App\Models\UserRole;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Redis;
 
 class AdminUserController extends Controller
 {
-    /**
-     * @OA\Get(
-     *     path="/api/admin/user/",
-     *     tags={"User Management"},
-     *     summary="Danh sách tất cả tài khoản người dùng",
-     *     description="Lấy danh sách tất cả tài khoản người dùng trong hệ thống.",
-     *     @OA\Response(
-     *         response=200,
-     *         description="Danh sách tài khoản người dùng thành công",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 type="object",
-     *                 properties={
-     *                     @OA\Property(property="id", type="integer", format="int64", description="ID tài khoản người dùng"),
-     *                     @OA\Property(property="username", type="string", description="Tên đăng nhập"),
-     *                     @OA\Property(property="first_name", type="string", description="Họ"),
-     *                     @OA\Property(property="last_name", type="string", description="Tên"),
-     *                     @OA\Property(property="group_id", type="integer", format="int32", description="ID nhóm"),
-     *                     @OA\Property(property="email", type="string", format="email", description="Địa chỉ email"),
-     *                     @OA\Property(property="birthday", type="string", description="Ngày sinh"),
-     *                     @OA\Property(property="avatar", type="string", description="Link đến ảnh đại diện"),
-     *                     @OA\Property(property="phone", type="string", description="Số điện thoại"),
-     *                     @OA\Property(property="address", type="string", description="Địa chỉ"),
-     *                     @OA\Property(property="biography", type="string", description="Tiểu sử"),
-     *                     @OA\Property(property="gender", type="string", description="Giới tính"),
-     *                     @OA\Property(property="status", type="integer", format="int32", description="Trạng thái"),
-     *                     @OA\Property(property="major_id", type="integer", format="int32", description="ID ngành học"),
-     *                     @OA\Property(property="permissions", type="array", description="Danh sách quyền",
-     *                         @OA\Items(type="string")
-     *                     ),
-     *                     @OA\Property(property="verification_code", type="string", description="Mã xác minh"),
-     *                     @OA\Property(property="created_at", type="string", format="date-time", description="Ngày tạo"),
-     *                     @OA\Property(property="updated_at", type="string", format="date-time", description="Ngày cập nhật")
-     *                 }
-     *             )
-     *         )
-     *     )
-     * )
-     */
-    //danh sách người dùng
+    //User
     public function listUser()
     {
-        $users = User::all();
-        return response()->json(['users' => $users], 200);
-    }
-
-    //chi tiết
-    /**
-     * @OA\Get(
-     *     path="/api/admin/user/detail/{user}",
-     *     tags={"User Management"},
-     *     summary="Xem chi tiết tài khoản người dùng",
-     *     description="Xem chi tiết thông tin tài khoản người dùng.",
-     *     @OA\Parameter(
-     *         name="user",
-     *         in="path",
-     *         required=true,
-     *         description="ID của tài khoản người dùng",
-     *         @OA\Schema(type="integer", format="int32")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Thông tin chi tiết của tài khoản người dùng",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             properties={
-     *                 @OA\Property(property="id", type="integer", format="int64", description="ID tài khoản người dùng"),
-     *                 @OA\Property(property="username", type="string", description="Tên đăng nhập"),
-     *                 @OA\Property(property="first_name", type="string", description="Họ"),
-     *                 @OA\Property(property="last_name", type="string", description="Tên"),
-     *                 @OA\Property(property="group_id", type="integer", format="int32", description="ID nhóm"),
-     *                 @OA\Property(property="email", type="string", format="email", description="Địa chỉ email"),
-     *                 @OA\Property(property="birthday", type="string", description="Ngày sinh"),
-     *                 @OA\Property(property="avatar", type="string", description="Link đến ảnh đại diện"),
-     *                 @OA\Property(property="phone", type="string", description="Số điện thoại"),
-     *                 @OA\Property(property="address", type="string", description="Địa chỉ"),
-     *                 @OA\Property(property="biography", type="string", description="Tiểu sử"),
-     *                 @OA\Property(property="gender", type="string", description="Giới tính"),
-     *                 @OA\Property(property="status", type="integer", format="int32", description="Trạng thái"),
-     *                 @OA\Property(property="major_id", type="integer", format="int32", description="ID ngành học"),
-     *                 @OA\Property(property="permissions", type="array", description="Danh sách quyền",
-     *                     @OA\Items(type="string")
-     *                 ),
-     *                 @OA\Property(property="verification_code", type="string", description="Mã xác minh"),
-     *                 @OA\Property(property="created_at", type="string", format="date-time", description="Ngày tạo"),
-     *                 @OA\Property(property="updated_at", type="string", format="date-time", description="Ngày cập nhật")
-     *             }
-     *         )
-     *     ),
-     *     @OA\Response(response=404, description="Không tìm thấy tài khoản")
-     * )
-     */
-    public function detailUser(User $user)
-    {
-        return response()->json(['user' => $user], 200);
-    }
-    //tạm khóa người dùng
-    /**
-     * @OA\Put(
-     *     path="/api/admin/user/suspend/{user}",
-     *     tags={"User Management"},
-     *     summary="Tạm khóa tài khoản người dùng",
-     *     description="Tạm khóa tài khoản người dùng dựa trên ID.",
-     *     @OA\Parameter(
-     *         name="user",
-     *         in="path",
-     *         required=true,
-     *         description="ID của tài khoản người dùng",
-     *         @OA\Schema(type="integer", format="int32")
-     *     ),
-     *     @OA\Response(response=200, description="Tạm khóa tài khoản thành công"),
-     *     @OA\Response(response=400, description="Lỗi trong quá trình xử lý"),
-     *     @OA\Response(response=404, description="Không tìm thấy tài khoản")
-     * )
-     */
-    public function suspendUser(User $user)
-    {
-        DB::beginTransaction();
-        try {
-            $user->update(['status' => config('default.user.status.suspend')]);
-            DB::commit();
-            return response()->json(['message' => 'Khóa tài khoản thành công'], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['errors' => $e->getMessage()], 400);
-        }
-    }
-    //kích hoạt người dùng
-    /**
-     * @OA\Put(
-     *     path="/api/admin/user/active/{user}",
-     *     tags={"User Management"},
-     *     summary="Mở khóa tài khoản người dùng",
-     *     description="Mở khóa tài khoản người dùng dựa trên ID.",
-     *     @OA\Parameter(
-     *         name="user",
-     *         in="path",
-     *         required=true,
-     *         description="ID của tài khoản người dùng",
-     *         @OA\Schema(type="integer", format="int32")
-     *     ),
-     *     @OA\Response(response=200, description="Mở khóa tài khoản thành công"),
-     *     @OA\Response(response=400, description="Lỗi trong quá trình xử lý"),
-     *     @OA\Response(response=404, description="Không tìm thấy tài khoản")
-     * )
-     */
-    public function activeUser(User $user)
-    {
-        DB::beginTransaction();
-        try {
-            $user->update(['status' => config('default.user.status.active')]);
-            DB::commit();
-            return response()->json(['message' => 'Mở khóa tài khoản thành công'], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['errors' => $e->getMessage()], 400);
-        }
-    }
-    //xóa tài khoản
-    /**
-     * @OA\Delete(
-     *     path="/api/admin/user/delete/{user}",
-     *     tags={"User Management"},
-     *     summary="Xóa tài khoản người dùng",
-     *     description="Xóa tài khoản người dùng dựa trên ID.",
-     *     @OA\Parameter(
-     *         name="user",
-     *         in="path",
-     *         required=true,
-     *         description="ID của tài khoản người dùng",
-     *         @OA\Schema(type="integer", format="int32")
-     *     ),
-     *     @OA\Response(response=200, description="Xóa tài khoản thành công"),
-     *     @OA\Response(response=400, description="Lỗi trong quá trình xử lý"),
-     *     @OA\Response(response=404, description="Không tìm thấy tài khoản")
-     * )
-     */
-    public function deleteUser(User $user)
-    {
-        DB::beginTransaction();
-        try {
-            $user->delete();
-            DB::commit();
-            return response()->json(['message' => 'Xóa tài khoản thành công'], 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['errors' => $e->getMessage()], 400);
-        }
-    }
-
-    //Admin web
-    public function index()
-    {
-        $users = User::all();
+        $users = User::whereIn('group_id', [config('default.user.groupID.student'), config('default.user.groupID.guest')])->orderByDesc('id')->get();
         return view('admin.users.index', compact('users'));
     }
-    public function create()
+    public function lockUser(User $user)
     {
-        return view('admin.users.create');
+        $user->update(['status' => config('default.user.status.suspend')]);
+        return redirect()->back()->with('success', 'Khóa người dùng thành công');
     }
-    public function store(Request $request)
+    public function unlockUser(User $user)
+    {
+        $user->update(['status' => config('default.user.status.active')]);
+        return redirect()->back()->with('success', 'Mở khóa người dùng thành công');
+    }
+    //Group Member
+    public function listGroup()
+    {
+        $roles = Role::all();
+        return view('admin.users.groupAdmin', compact('roles'));
+    }
+    public function createGroup()
+    {
+        return view('admin.users.createGroupAdmin');
+    }
+    public function storeGroup(Request $request)
     {
         $request->validate([
-            'username' => 'required|unique:users',
-            'password' => 'required',
-            'email' => 'required|email|unique:users',
-            'group_id' => 'required|in:1,2,3,4',
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'birthday' => 'nullable|date',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'phone' => 'nullable|numeric|digits:10',
-            'address' => 'nullable|string',
-            'biography' => 'nullable|string',
-            'gender' => 'nullable|in:male,female',
-            'status' => 'nullable|integer',
-            'major_id' => 'nullable|exists:majors,id',
-            'permissions' => 'nullable|string',
-            'verification_code' => 'nullable|string',
+            'name' => 'required|unique:roles',
         ]);
-
-        $user = new User;
-        $user->fill($request->all());
-        $user->password = Hash::make($request->password); // Băm mật khẩu trước khi lưu vào cơ sở dữ liệu
-
-        // Xử lý avatar nếu được upload
-        if ($request->hasFile('avatar')) {
-            $avatarPath = $request->file('avatar')->store('avatars', 'public');
-            $user->avatar = $avatarPath;
+        DB::beginTransaction();
+        try {
+            // Thêm nhóm 
+            $role = Role::create([
+                'name' => $request->name,
+            ]);
+            // Thêm quyền cho mỗi permission trong mảng
+            foreach ($request->permission as $permission) {
+                RolePermission::create([
+                    'role_id' => $role->id,
+                    'permission' => $permission,
+                ]);
+            }
+            DB::commit();
+            return redirect()->route('admin.groups.list')->with('success', 'Thêm thành công');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('admin.groups.list')->with('error', 'Có lỗi xảy ra');
         }
-
-        $user->save();
-
-        return redirect()->route('admin.users.index')->with('success', 'Người dùng đã được tạo mới thành công.');
     }
-    public function edit(User $user)
+    public function editGroup(Role $role)
     {
-        return view('admin.users.edit', compact('user'));
+        $permission = RolePermission::getUserPermistion($role->id);
+        return view('admin.users.editGroupAdmin', compact('permission', 'role'));
     }
-
-    public function update(Request $request, User $user)
+    public function updateGroup(Request $request, Role $role)
     {
         $request->validate([
-            'username' => 'required|unique:users,username,' . $user->id,
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'group_id' => 'required|in:1,2,3,4',
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'birthday' => 'nullable|date',
-            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'phone' => 'nullable|numeric|digits:10',
-            'address' => 'nullable|string',
-            'biography' => 'nullable|string',
-            'gender' => 'nullable|in:male,female',
-            'status' => 'nullable|integer',
-            'major_id' => 'nullable|exists:majors,id',
-            'permissions' => 'nullable|string',
-            'verification_code' => 'nullable|string',
+            'name' => 'required',
         ]);
-
-        $user->update($request->all());
-
-        // Xử lý avatar nếu được upload
-        if ($request->hasFile('avatar')) {
-            $avatarPath = $request->file('avatar')->store('avatars', 'public');
-            $user->avatar = $avatarPath;
-            $user->save();
+        DB::beginTransaction();
+        try {
+            // Thêm nhóm 
+            $role->update([
+                'name' => $request->name,
+            ]);
+            RolePermission::where('role_id', $role->id)->delete();
+            // Thêm quyền cho mỗi permission trong mảng
+            foreach ($request->permission as $permission) {
+                RolePermission::create([
+                    'role_id' => $role->id,
+                    'permission' => $permission,
+                ]);
+            }
+            DB::commit();
+            return redirect()->route('admin.groups.list')->with('success', 'Sửa thành công');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('admin.groups.list')->with('error', 'Có lỗi xảy ra');
         }
-
-        return redirect()->route('admin.users.index')->with('success', 'Thông tin người dùng đã được cập nhật thành công.');
     }
-    public function destroy(User $user)
+    public function destroyGroup(Role $role)
     {
-        $user->delete();
-
-        return redirect()->route('admin.users.index')->with('success', 'Người dùng đã được xóa thành công.');
+        DB::beginTransaction();
+        try {
+            RolePermission::where('role_id', $role->id)->delete();
+            UserRole::where('role_id', $role->id)->delete();
+            $role->delete();
+            DB::commit();
+            return redirect()->route('admin.groups.list')->with('success', 'Xóa thành công');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('admin.groups.list')->with('error', 'Có lỗi xảy ra');
+        }
+    }
+    public function listMember()
+    {
+        $userRoles = UserRole::all();
+        return view('admin.users.listMember', compact('userRoles'));
+    }
+    public function createMember()
+    {
+        $roles = Role::all();
+        return view('admin.users.createMember', compact('roles'));
+    }
+    public function getInforMember($email)
+    {
+        $user = User::where('email', $email)->first();
+        $major = $user->major->majors_name;
+        $userInfo = [
+            'username' => $user->username,
+            'name' => $user->first_name . ' ' . $user->last_name,
+            'birthday' => $user->birthday,
+            'major' => $major,
+        ];
+        return response()->json($userInfo);
+    }
+    public function storeMember(Request $request)
+    {
+        $request->validate([
+            'email' => 'required',
+        ]);
+        DB::beginTransaction();
+        try {
+            $user = User::where('email', $request->email)->first();
+            $user->update(['group_id' => config('default.user.groupID.admin')]);
+            UserRole::create([
+                'user_id' => $user->id,
+                'role_id' => $request->role
+            ]);
+            DB::commit();
+            return redirect()->route('admin.members.list')->with('success', 'Thêm thành công');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('admin.members.list')->with('error', 'Có lỗi xảy ra');
+        }
+    }
+    public function editMember(UserRole $member)
+    {
+        $roles = Role::all();
+        return view('admin.users.editMember', compact('member', 'roles'));
+    }
+    public function updateMember(Request $request)
+    {
+        $request->validate([
+            'email' => 'required',
+        ]);
+        DB::beginTransaction();
+        try {
+            $user = User::where('email', $request->email)->first();
+            UserRole::where('user_id', $user->id)->update(['role_id' => $request->role]);
+            DB::commit();
+            return redirect()->route('admin.members.list')->with('success', 'Sửa thành công');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->route('admin.members.list')->with('error', 'Có lỗi xảy ra');
+        }
+    }
+    public function destroyMember(UserRole $member)
+    {
+        DB::beginTransaction();
+        try {
+            $user = User::where('id', $member->user_id)->first();
+            $groupId = strpos($user->email, '@fpt.edu.vn') ? config('default.user.groupID.student') : config('default.user.groupID.guest');
+            $user->update(['group_id' =>  $groupId]);
+            $member->delete();
+            DB::commit();
+            return redirect()->route('admin.members.list')->with('success', 'Xóa thành công');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            dd($e);
+            return redirect()->route('admin.members.list')->with('error', 'Có lỗi xảy ra');
+        }
     }
 }
