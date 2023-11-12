@@ -22,4 +22,8 @@ class UserRole extends Model
         $role_id = UserRole::where('user_id', $id)->first()->role_id;
         return $this->hasMany(RolePermission::class, $role_id);
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 }

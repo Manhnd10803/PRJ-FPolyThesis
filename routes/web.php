@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 // Route dành cho trang quản trị
 Route::get('admin/login', [AdminAuthController::class, 'viewLogin'])->name('login');
 Route::post('admin/login', [AdminAuthController::class, 'login'])->name('singin');
-Route::group(['prefix' => 'admin'], function () {
+Route::group(['prefix' => 'admin', 'middleware' => 'authAdmin'], function () {
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
@@ -22,21 +22,23 @@ Route::group(['prefix' => 'admin'], function () {
     //Admin user
     Route::get('user', [AdminUserController::class, 'listUser'])->name('admin.users.list');
     Route::get('user/{user}', [AdminUserController::class, 'detailUser'])->name('admin.users.detail');
-    Route::put('user/{user}', [AdminUserController::class, 'lockUser'])->name('admin.users.lock');
+    Route::put('user/lock/{user}', [AdminUserController::class, 'lockUser'])->name('admin.users.lock');
+    Route::put('user/unlock/{user}', [AdminUserController::class, 'unlockUser'])->name('admin.users.unlock');
     //Admin group member
     Route::get('group-member', [AdminUserController::class, 'listGroup'])->name('admin.groups.list');
     Route::get('group-member/create', [AdminUserController::class, 'createGroup'])->name('admin.groups.create');
     Route::post('group-member', [AdminUserController::class, 'storeGroup'])->name('admin.groups.store');
-    Route::get('group-member/update', [AdminUserController::class, 'editGroup'])->name('admin.groups.edit');
-    Route::put('group-member', [AdminUserController::class, 'updateGroup'])->name('admin.groups.update');
-    Route::delete('group-member', [AdminUserController::class, 'destroyGroup'])->name('admin.groups.destroy');
+    Route::get('group-member/update/{role}', [AdminUserController::class, 'editGroup'])->name('admin.groups.edit');
+    Route::put('group-member/{role}', [AdminUserController::class, 'updateGroup'])->name('admin.groups.update');
+    Route::delete('group-member/{role}', [AdminUserController::class, 'destroyGroup'])->name('admin.groups.destroy');
     //Admin member
     Route::get('member', [AdminUserController::class, 'listMember'])->name('admin.members.list');
     Route::get('member/create', [AdminUserController::class, 'createMember'])->name('admin.members.create');
     Route::post('member', [AdminUserController::class, 'storeMember'])->name('admin.members.store');
-    Route::get('member/update', [AdminUserController::class, 'editMember'])->name('admin.members.edit');
-    Route::put('member', [AdminUserController::class, 'updateMember'])->name('admin.members.update');
-    Route::delete('member', [AdminUserController::class, 'lockMember'])->name('admin.members.lock');
+    Route::get('member/update/{member}', [AdminUserController::class, 'editMember'])->name('admin.members.edit');
+    Route::put('member/{member}', [AdminUserController::class, 'updateMember'])->name('admin.members.update');
+    Route::delete('member/{member}', [AdminUserController::class, 'destroyMember'])->name('admin.members.destroy');
+    Route::get('member/{email}', [AdminUserController::class, 'getInforMember']);
 
     //Admin blog
     Route::get('blogs', [AdminBlogController::class, 'index'])->name('admin.blogs.index');

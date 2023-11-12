@@ -24,12 +24,14 @@
 <ul class="sidebar-menu" data-widget="tree">
   <li class="header">MAIN NAVIGATION</li>
   @php 
-      $role_id = App\Models\UserRole::where('user_id', Auth::user()->id)->first()->role_id;
-      if(!is_null($role_id)){
-        $userPermission = App\Models\RolePermission::getUserPermistion($role_id);
-      }
       $userGroupId = auth()->user()->group_id;
       $isSPAdmin = $userGroupId == config('default.user.groupID.superAdmin') ? true : false;
+      if(!$isSPAdmin){
+        $role_id = App\Models\UserRole::where('user_id', Auth::user()->id)->first()->role_id;
+        if(!is_null($role_id)){
+          $userPermission = App\Models\RolePermission::getUserPermistion($role_id);
+        }
+      }
   @endphp
   @if (isset($backend_menus) && !empty($backend_menus))
       @foreach ($backend_menus as $menu_lv1)

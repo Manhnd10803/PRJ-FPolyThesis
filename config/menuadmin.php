@@ -22,6 +22,10 @@ return [
             'name' => 'Khóa người dùng',
             'permission' => 'admin.users.lock'
           ],
+          [
+            'name' => 'Mở khóa người dùng',
+            'permission' => 'admin.users.unlock'
+          ],
         ],
 
         'text' => 'Danh sách người dùng',
@@ -38,6 +42,8 @@ return [
         'order' => 1,
         'route' => 'admin.groups.list',
         'permission' => 'admin.groups.list',
+        'icon' => 'fa-sitemap',
+        'text' => 'Nhóm quản trị',
         'sub_permission' => [
           [
             'name' => 'Thêm nhóm',
@@ -52,8 +58,6 @@ return [
             'permission' => 'admin.groups.destroy'
           ],
         ],
-        'icon' => 'fa-sitemap',
-        'text' => 'Nhóm quản trị',
       ],
       'list_admin' => [
         'order' => 2,
