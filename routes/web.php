@@ -51,6 +51,7 @@ Route::group(['prefix' => 'admin'], function () {
 //Admin post
     Route::resource('posts', AdminPostController::class)->names([
         'index' => 'admin.posts.index',
+        'show' => 'admin.posts.show',
         'create' => 'admin.posts.create',
         'store' => 'admin.posts.store',
         'edit' => 'admin.posts.edit',

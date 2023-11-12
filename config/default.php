@@ -31,6 +31,12 @@ return [
             'friend' => 1,
         ]
     ],
+    'post'=> [
+        'status'=>[
+            'active'=>1,
+            'suspend'=>2
+        ]
+    ],
     'valid_emotions' => ['dislike', 'like', 'love', 'haha', 'wow', 'sad', 'angry'],
     'private_messages' => [
         'status' => [

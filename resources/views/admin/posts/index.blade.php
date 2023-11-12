@@ -1,45 +1,110 @@
 @extends('admin.layouts.app')
-@section('title') Dashboard @endsection
+@section('title')
+    Danh sách bài post
+@endsection
 @section('content')
-    <div class="container">
-        <h1>Quản lý Posts</h1>
+    @push('css')
+        <link rel="stylesheet" href="{{ asset('bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css')}}">
+        <style>
+            .example-modal .modal {
+                position: relative;
+                top: auto;
+                bottom: auto;
+                right: auto;
+                left: auto;
+                display: block;
+                z-index: 1;
+            }
 
-        <a href="{{ route('admin.posts.create') }}" class="btn btn-primary mb-3">Thêm Post</a>
+            .example-modal .modal {
+                background: transparent !important;
+            }
+        </style>
+    @endpush
+    <div class="row">
+        <div class="col-xs-12 mx-5">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Danh sách bài post</h3>
+                   {{-- <p><a href="{{ route('admin.posts.create') }}" class="btn btn-primary mb-3">Thêm Post</a></p> --}}
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>User ID</th>
-                    <th>Nội dung</th>
-                    <th>Feeling</th>
-                    <th>Hashtag</th>
-                    <th>Trạng thái</th>
-                    <th>Lượt xem</th>
-                    <th>Thao tác</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($posts as $post)
-                    <tr>
-                        <td>{{ $post->id }}</td>
-                        <td>{{ $post->user_id }}</td>
-                        <td>{{ $post->content }}</td>
-                        <td>{{ $post->feeling }}</td>
-                        <td>{{ $post->hashtag }}</td>
-                        <td>{{ $post->status }}</td>
-                        <td>{{ $post->views }}</td>
-                        <td>
-                            <a href="{{ route('admin.posts.edit', $post) }}" class="btn btn-sm btn-warning">Sửa</a>
-                            <form action="{{ route('admin.posts.destroy', $post) }}" method="POST" style="display: inline-block;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa post này không?')">Xóa</button>
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+                    <table id="example1" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>ID</th>
+                                <th>Tên người dùng</th>
+                                <th>Nội dung</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($posts as $index => $post)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $post->id }}</td>
+                                    <td>{{ $post->user->username }}</td>
+                                    <td>{{ $post->content }}</td>
+                                    <td>
+                                        <a href="{{ route('admin.posts.show', $post->id) }}" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></a>
+                                        @if ($post->status == 1)
+                                        <button type="submit" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modal-danger-{{ $post->id }}"><i class="fa fa-trash-o"></i></button>
+                                        @endif
+                                    
+                                        <div class="modal modal-danger fade" id="modal-danger-{{ $post->id }}">
+                                            <div class="modal-dialog">
+                                              <div class="modal-content">
+                                                <div class="modal-header">
+                                                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span></button>
+                                                  <h4 class="modal-title">FpolyZone</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                  <p>Bạn có chắc muốn xóa bài viết "ID: {{ $post->id }}"? </p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                  <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Hủy</button>
+                                                  <form action="{{ route('admin.posts.destroy', $post->id) }}" method="POST" style="display:inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                  <button type="submit" class="btn btn-outline">Đồng ý</button>
+                                                </form>
+                                                </div>
+                                              </div>
+                                              <!-- /.modal-content -->
+                                            </div>
+                                            <!-- /.modal-dialog -->
+                                          </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
+
+
+
+    @push('js')
+        <script src="{{ asset('bower_components/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+        <script src="{{ asset('bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+        <script>
+            $(function() {
+                $('#example1').DataTable()
+                $('#example2').DataTable({
+                    'paging': true,
+                    'lengthChange': false,
+                    'searching': false,
+                    'ordering': true,
+                    'info': true,
+                    'autoWidth': false
+                })
+            })
+        </script>
+    @endpush
 @endsection

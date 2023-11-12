@@ -89,7 +89,7 @@ class AdminBlogController extends Controller
             $blog->update(['status' => config('default.blog.status.approved')]);
             DB::commit();
             return redirect()->route('admin.blogs.show', ['blog' => $blog->id])
-            ->with('success', 'Bài viết đã được duyệt thành công');
+                ->with('success', 'Bài viết đã được duyệt thành công');
         } catch (\Exception $e) {
             DB::rollBack();
             return throw $e;
@@ -102,7 +102,7 @@ class AdminBlogController extends Controller
             $blog->update(['status' => config('default.blog.status.reject')]);
             DB::commit();
             return redirect()->route('admin.blogs.show', ['blog' => $blog->id])
-            ->with('success', 'Bài viết đã được duyệt thành công');
+                ->with('success', 'Bài viết đã được hủy thành công');
         } catch (\Exception $e) {
             DB::rollBack();
             return throw $e;
@@ -164,24 +164,13 @@ class AdminBlogController extends Controller
         foreach ($blogs as $blog) {
             $dislikeCount = $blog->likes->where('emotion', 'dislike')->count();
             if ($dislikeCount > 100) {
-                $blog->likes()->delete();
-                $blog->comments()->delete();
-                $blog->delete();
+                $blog->update(['status' => 0]);
             }
         }
-        $blogs->transform(function ($blog) {
-            $blog->formatted_created_at = $blog->created_at->format('d M. Y');
-            return $blog;
-        });
 
-        return view('admin.blogs.index', compact('blogs'));
+        $title = $status == config('default.blog.status.approved') ? 'Danh sách blog đã duyệt' : 'Danh sách blog chờ duyệt';
+        return view('admin.blogs.index', compact('blogs', 'title'));
     }
-
-
-
-
-
-    
     public function countPendingBlogs()
     {
         $count = Blog::where('status', config('default.blog.status.pending'))->count();
@@ -226,19 +215,19 @@ class AdminBlogController extends Controller
         return redirect()->route('admin.blogs.index')
             ->with('success', 'Blog created successfully');
     }
-    
+
 
 
     public function show(Blog $blog)
     {
         $blog = Blog::with('user', 'likes', 'comments')->find($blog->id);
 
-    // Calculate like, dislike, and comment counts
-    $blog->like_count = $blog->likes->where('emotion', 'like')->count();
-    $blog->dislike_count = $blog->likes->where('emotion', 'dislike')->count();
-    $blog->comment_count = $blog->comments->count();
+        // Calculate like, dislike, and comment counts
+        $blog->like_count = $blog->likes->where('emotion', 'like')->count();
+        $blog->dislike_count = $blog->likes->where('emotion', 'dislike')->count();
+        $blog->comment_count = $blog->comments->count();
 
-    return view('admin.blogs.show', compact('blog'));
+        return view('admin.blogs.show', compact('blog'));
     }
 
     public function edit(Blog $blog)
@@ -260,17 +249,17 @@ class AdminBlogController extends Controller
             'views' => 'integer|min:0',
             'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Kiểm tra hình ảnh chỉ khi có sự thay đổi
         ]);
-    
+
         // Kiểm tra và lưu hình ảnh mới (nếu có)
         if ($request->hasFile('thumbnail')) {
             // Xóa hình ảnh cũ (nếu có)
             if ($blog->thumbnail) {
                 Storage::disk('public')->delete($blog->thumbnail);
             }
-    
+
             // Lưu hình ảnh mới vào thư mục public/thumbnails
             $thumbnailPath = $request->file('thumbnail')->store('thumbnails', 'public');
-    
+
             // Cập nhật đường dẫn của hình ảnh trong cơ sở dữ liệu
             $blog->update([
                 'title' => $request->input('title'),
@@ -286,10 +275,10 @@ class AdminBlogController extends Controller
             // Nếu không có hình ảnh mới, chỉ cập nhật thông tin không liên quan đến hình ảnh
             $blog->update($request->except('thumbnail'));
         }
-    
+
         return redirect()->route('admin.blogs.index')
             ->with('success', 'Blog updated successfully');
-    }    
+    }
 
     public function destroy(Blog $blog)
     {

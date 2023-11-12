@@ -1,5 +1,5 @@
 @extends('admin.layouts.app')
-@section('title') Dashboard @endsection
+@section('title') {{$title}} @endsection
 @section('content')
 @push('css')
 <link rel="stylesheet" href="../../bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
@@ -48,10 +48,10 @@
                                             <a href="{{ route('admin.blogs.show', $blog->id) }}" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></a>
                                             {{-- <a href="{{ route('admin.blogs.edit', $blog->id) }}" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a> --}}
                                             @if ($blog->status == 1)
-                                            <button type="submit" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modal-danger"><i class="fa fa-trash-o"></i></button>
+                                            <button type="submit" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modal-danger-{{ $blog->id }}"><i class="fa fa-trash-o"></i></button>
                                             @endif
                                         
-                                            <div class="modal modal-danger fade" id="modal-danger">
+                                            <div class="modal modal-danger fade" id="modal-danger-{{ $blog->id }}">
                                                 <div class="modal-dialog">
                                                   <div class="modal-content">
                                                     <div class="modal-header">
