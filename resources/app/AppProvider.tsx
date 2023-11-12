@@ -8,7 +8,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false, // Đặt false nếu không muốn refetch lại khi focus vào tab
-      retry: 1,
+      retry: 0,
     },
   },
 });

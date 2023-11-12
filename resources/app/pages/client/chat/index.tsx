@@ -4,47 +4,27 @@ import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { ProfileService } from '@/apis/services/profile.service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { MessagesService } from '@/apis/services/messages.service';
-import { formatTime } from './components/format-time';
 import { RightSideBar } from './components/right-side-bar/right-side-bar';
-import Echo from 'laravel-echo';
 import { useEffect, useRef, useState } from 'react';
-import socketio from 'socket.io-client';
+import moment from 'moment';
+
 export const ChatPage = () => {
   const localUserId = StorageFunc.getUserId();
   let { hash } = useLocation();
   let chat_id = hash.split('#')[1];
-  const [socketID, setSocketID] = useState('');
-  const token = StorageFunc.getAccessToken();
+
   useEffect(() => {
-    const echo = new Echo({
-      host: 'http://localhost:6001',
-      broadcaster: 'socket.io',
-      client: socketio,
-      encrypted: false, //Chỉ định xem kết nối giữa client và server có sử dụng SSL/TLS để mã hóa hay không
-      disableStats: true, //thu thập thống kê (statistics) của kết nối
-      auth: {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-      transports: ['websocket'],
-    });
-    echo.connector.socket.connected = true;
-    const socketioID = echo.socketId();
-    setSocketID(socketioID);
     // echo.leave(`user.${localUserId}`); //rời channel
     const handlePrivateMessage = (event: any) => {
       console.log(event.message.content);
       queryClient.invalidateQueries(queryKeyMessage);
-      alert('Có tin nhắn mới!');
+      // alert('Có tin nhắn mới!');
     };
 
-    // Đăng ký sự kiện listen chỉ một lần khi component được mount
-    echo.private(`user.${localUserId}`).listen('.PrivateMessageSent', handlePrivateMessage);
+    window.Echo.private(`user.${localUserId}`).listen('.PrivateMessageSent', handlePrivateMessage);
 
-    // Cleanup: Loại bỏ sự kiện khi component unmount
     return () => {
-      echo.private(`user.${localUserId}`).stopListening('.PrivateMessageSent', handlePrivateMessage);
+      window.Echo.private(`user.${localUserId}`).stopListening('.PrivateMessageSent', handlePrivateMessage);
     };
   }, []);
 
@@ -96,7 +76,7 @@ export const ChatPage = () => {
   const queryClient = useQueryClient();
   const sendMessageMutation = useMutation(
     messageText => {
-      return MessagesService.sendMessages(Number(chat_id), { content: messageText }, socketID);
+      return MessagesService.sendMessages(Number(chat_id), { content: messageText });
     },
     {
       onSuccess: data => {
@@ -104,16 +84,6 @@ export const ChatPage = () => {
       },
     },
   );
-
-  const handleSendMessage = (e: any) => {
-    e.preventDefault();
-
-    const messageText = message.trim();
-    if (messageText) {
-      sendMessageMutation.mutate(messageText);
-      setMessage('');
-    }
-  };
 
   //scroll to last message
   const chatContentRef = useRef(null);
@@ -131,6 +101,19 @@ export const ChatPage = () => {
     }
   }, [chatMessage]);
 
+  const handleSendMessage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
+
+    const messageText = message.trim();
+    if (messageText) {
+      sendMessageMutation.mutate(messageText);
+      setMessage('');
+    }
+  };
+
+  const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMessage(e.target.value);
+  };
   return (
     <>
       <div id="content-page" className="content-page">
@@ -141,14 +124,6 @@ export const ChatPage = () => {
               <Card.Body className="chat-page p-0">
                 <div className="chat-data-block">
                   <Row>
-                    <Col lg={2} className="chat-data-left scroller">
-                      <RightSideBar
-                        isLoading={isUserLoading}
-                        data={detailUserProfile}
-                        listChatMessage={listChatMessage}
-                        isListChatLoading={isListChatLoading}
-                      />
-                    </Col>
                     <Col lg={10} className=" chat-data p-0 chat-data-right">
                       <Tab.Content>
                         {!isReceiverUserLoading && (
@@ -221,7 +196,7 @@ export const ChatPage = () => {
                                             className="avatar-35 "
                                           />
                                         </Link>
-                                        <span className="chat-time mt-1">{formatTime(item.created_at)}</span>
+                                        <span className="chat-time mt-1">{moment(item.created_at).format('LT')}</span>
                                       </div>
                                       <div className="chat-detail" style={{ maxWidth: '50%' }}>
                                         <div className="chat-message">
@@ -242,7 +217,7 @@ export const ChatPage = () => {
                                             className="avatar-35 "
                                           />
                                         </Link>
-                                        <span className="chat-time mt-1">{formatTime(item.created_at)}</span>
+                                        <span className="chat-time mt-1">{moment(item.created_at).format('LT')}</span>
                                       </div>
                                       <div className="chat-detail" style={{ maxWidth: '50%' }}>
                                         <div className="chat-message" style={{ backgroundColor: '#F0F0F0' }}>
@@ -271,13 +246,10 @@ export const ChatPage = () => {
                                 type="text"
                                 value={message}
                                 name="content"
-                                onChange={e => {
-                                  setMessage(e.target.value);
-                                }}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleMessageChange(e)}
                                 className="me-3"
                                 placeholder="Type your message"
                               />
-
                               <Button type="submit" variant="primary d-flex align-items-center">
                                 <i className="far fa-paper-plane" aria-hidden="true"></i>
                                 <span className="d-none d-lg-block ms-1">Send</span>
@@ -286,6 +258,14 @@ export const ChatPage = () => {
                           </div>
                         )}
                       </Tab.Content>
+                    </Col>
+                    <Col lg={2} className="chat-data-left scroller">
+                      <RightSideBar
+                        isLoading={isUserLoading}
+                        data={detailUserProfile}
+                        listChatMessage={listChatMessage}
+                        isListChatLoading={isListChatLoading}
+                      />
                     </Col>
                   </Row>
                 </div>
