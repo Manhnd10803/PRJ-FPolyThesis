@@ -1,3 +1,4 @@
+import '@/bootstrap';
 import { Outlet } from 'react-router-dom';
 import { Header, RightSidebar, Footer, Sidebar } from './components';
 import { SettingOffCanvas } from '@/components/setting/setting-offcanvas';

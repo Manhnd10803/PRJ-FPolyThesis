@@ -3,12 +3,12 @@ import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouteObject, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import App from './App';
-import { RootAdminRouter, RootClientRouter, RootAuthRouter } from './routes';
+import { RootAdminRouter, RootClientRouter, RootAuthRouter, RootChatRouter } from './routes';
 import { AppProvider } from './AppProvider';
 import { Toaster } from 'react-hot-toast';
 
 //Define all routes here
-const routes: RouteObject[] = [...RootClientRouter, ...RootAdminRouter, ...RootAuthRouter];
+const routes: RouteObject[] = [...RootClientRouter, ...RootAdminRouter, ...RootAuthRouter, ...RootChatRouter];
 
 const router = createBrowserRouter(routes, {
   // basename: process.env.PUBLIC_URL,

@@ -39,7 +39,6 @@ Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('user.register');
     Route::get('/google-auth', [AuthController::class, 'googleAuth'])->name('user.googleAuth');
     Route::get('/google-callback', [AuthController::class, 'googleCallback'])->name('user.googleCallback');
-    Route::post('/login', [AuthController::class, 'login'])->name('user.login');
     Route::post('/verify', [AuthController::class, 'verify'])->name('user.verify');
     Route::post('/post-forgot-password', [AuthController::class, 'forgotPassword'])->name('user.forgotPassword');
     Route::post('/post-reset-password', [AuthController::class, 'resetPassword'])->name('user.resetPassword');
@@ -57,6 +56,7 @@ Route::middleware('auth:api')->group(function () {
     });
     //chat
     Route::prefix('messages')->group(function () {
+        Route::get('/listuserchat',[PrivateMessagesController::class,'ShowListUserChat']);
         Route::get('/{user}', [PrivateMessagesController::class, 'ShowAllMessage'])->name('message.show')->where('user', '[0-9]+');
         Route::post('/{user}', [PrivateMessagesController::class, 'SendMessages'])->name('message.create')->where('user', '[0-9]+');
         Route::put('/{privateMessage}/{user}', [PrivateMessagesController::class, 'UpdateMessage'])->name('message.update');
@@ -136,6 +136,11 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/notifications', [NotificationController::class, 'listNotification']);
     Route::get('/see-notification/{notification}', [NotificationController::class, 'seeNotification']);
     Route::delete('/notification/{notification}', [NotificationController::class, 'deleteNotification']);
+
+    // Chat
+    Route::get('/messages', [PrivateMessagesController::class, 'ShowAllMessage']);
+    Route::post('/messages', [PrivateMessagesController::class, 'SendMessages']);
+    Route::delete('/messages/{id}', [PrivateMessagesController::class, 'DeleteMessage']);
 
     Route::group(['prefix' => 'admin', 'middleware' => 'scope:admin'], function () {
         //User Management

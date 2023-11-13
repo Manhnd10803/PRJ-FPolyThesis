@@ -1,4 +1,3 @@
-import './bootstrap';
 //scss
 import './assets/scss/index.scss';
 import './assets/scss/customizer.scss';

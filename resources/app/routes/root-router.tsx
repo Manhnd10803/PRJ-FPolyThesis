@@ -4,6 +4,8 @@ import { ClientRouter as ClientRouterConfig } from './client-router';
 import { AuthRouter } from './auth-router';
 import { AuthLayout } from '@/layouts/auth/auth-layout';
 import { ClientRouteType } from '@/models/routes';
+import { ChatLayout } from '@/layouts/chat/chat-layout';
+import { ChatRouter } from './chat-route';
 
 //Can add more client router here
 export const RootClientRouter = (() => {
@@ -41,5 +43,12 @@ export const RootAuthRouter = [
     path: '/',
     element: <AuthLayout />,
     children: [...AuthRouter],
+  },
+];
+export const RootChatRouter = [
+  {
+    path: '/',
+    element: <ChatLayout />,
+    children: [...ChatRouter],
   },
 ];

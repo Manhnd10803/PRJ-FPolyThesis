@@ -2,7 +2,6 @@ import { PrivacySettingPage } from '@/pages/client/account/privacy-setting';
 import { BlogPage } from '@/pages/client/blog';
 import { CreateBlogPage } from '@/pages/client/blog-create';
 import { BlogDetailPage } from '@/pages/client/blog/blog-detail';
-import { ChatPage } from '@/pages/client/chat';
 import { EditProfilePage } from '@/pages/client/edit-profile';
 import { RichEditorPage } from '@/pages/client/editor';
 import { FriendListPage } from '@/pages/client/friend-list';
@@ -50,11 +49,6 @@ export const ClientRouter = [
   {
     path: '/blog-detail/:id',
     element: <BlogDetailPage />,
-  },
-  {
-    path: '/chat',
-    element: <ChatPage />,
-    noRightSidebar: true,
   },
   {
     path: '/profile',
