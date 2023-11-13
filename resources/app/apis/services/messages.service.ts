@@ -6,8 +6,12 @@ const showMessages = (id: number) => {
   return httpRequest.get(`${ApiConstants.SHOW_MESSAGE}/${id}`);
 };
 
-const sendMessages = <T>(receiver_id: number, data: T) => {
-  return httpRequest.post<IBlogs>(`${ApiConstants.SEND_MESSAGES}/${receiver_id}`, data);
+const sendMessages = <T>(receiver_id: number, data: T, socketID: any) => {
+  return httpRequest.post<IBlogs>(`${ApiConstants.SEND_MESSAGES}/${receiver_id}`, data, {
+    headers: {
+      'X-Socket-Id': socketID,
+    },
+  });
 };
 
 const getListChat = () => {

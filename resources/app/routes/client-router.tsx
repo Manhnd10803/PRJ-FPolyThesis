@@ -2,7 +2,6 @@ import { PrivacySettingPage } from '@/pages/client/account/privacy-setting';
 import { BlogPage } from '@/pages/client/blog';
 import { CreateBlogPage } from '@/pages/client/blog-create';
 import { BlogDetailPage } from '@/pages/client/blog/blog-detail';
-import { ChatPage } from '@/pages/client/chat';
 import { EditProfilePage } from '@/pages/client/edit-profile';
 import { RichEditorPage } from '@/pages/client/editor';
 import { FriendListPage } from '@/pages/client/friend-list';
@@ -16,7 +15,6 @@ import { CreateQandA } from '@/pages/client/question-and-answer/create-qanda';
 import { DetailQandAPage } from '@/pages/client/question-and-answer/detail-qanda';
 import { UpdateQandA } from '@/pages/client/question-and-answer/update-qanda/update-form';
 import { ExampleUploadPage } from '@/pages/client/example-upload';
-import { ChatApp } from '@/pages/client/chat/test/test';
 
 export const ClientRouter = [
   {
@@ -51,11 +49,6 @@ export const ClientRouter = [
   {
     path: '/blog-detail/:id',
     element: <BlogDetailPage />,
-  },
-  {
-    path: '/chat',
-    element: <ChatPage />,
-    noRightSidebar: true,
   },
   {
     path: '/profile',

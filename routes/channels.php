@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Auth;
 */
 
 Broadcast::channel('user.{sender_id}', function ($user, $sender_id) {
-    return Auth::check()&&Auth()->user()->id==$sender_id;
+    return true;
 });
 
 // Broadcast::channel('user.{receiver_id}', function($user, $receiver_id) {
