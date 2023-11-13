@@ -23,6 +23,7 @@ class User extends Authenticatable
         'password',
         'group_id',
         'status',
+        'activity_user',
         "first_name",
         "last_name",
         "email",

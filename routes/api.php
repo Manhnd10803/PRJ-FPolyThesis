@@ -34,7 +34,9 @@ use Illuminate\Support\Facades\Route;
 
 
 //auth
-Route::get('/die-token', function () {return response(['message' => 'token has expired'], 401);})->name('token.die');
+Route::get('/die-token', function () {
+    return response(['message' => 'token has expired'], 401);
+})->name('token.die');
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('user.register');
     Route::get('/google-auth', [AuthController::class, 'googleAuth'])->name('user.googleAuth');
@@ -54,6 +56,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/hello', function () {
         return Auth::user();
     });
+    Route::post('/activity', [AuthController::class, 'CheckActivityUser']);
     //chat
     Route::prefix('messages')->group(function () {
         Route::get('/listuserchat',[PrivateMessagesController::class,'ShowListUserChat']);
