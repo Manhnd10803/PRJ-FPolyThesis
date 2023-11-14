@@ -21,16 +21,13 @@ const Login = async <T>(dataForm: T) => {
 
     toast.success('Đăng nhập thành công');
     //save data login to storage
-    StorageFunc.saveDataAfterLogin(data);
 
     const { data: userInfo } = await AuthService.GetUserDetail();
 
     store.dispatch(authActions.setAccessToken(data.access_token));
     store.dispatch(authActions.setUserInfo(userInfo));
 
-    //auto refresh token before expired time
-    AuthService.AutoRefreshToken(data.expires_in);
-
+    StorageFunc.saveDataAfterLogin(data);
     StorageFunc.saveUserDetailData(userInfo);
     return data;
   } catch (error: any) {
@@ -43,35 +40,24 @@ const Login = async <T>(dataForm: T) => {
   }
 };
 
+const RefreshToken = async () => {
+  try {
+    const { data } = await httpRequest.post<RefreshTokenResponseType>(ApiConstants.REFRESH_TOKEN, {
+      refresh_token: StorageFunc.getRefreshToken(),
+    });
+
+    store.dispatch(authActions.setAccessToken(data.access_token));
+
+    StorageFunc.saveDataAfterLogin(data);
+    return data;
+  } catch (error) {
+    toast.error('Refresh token failed');
+    throw error;
+  }
+};
+
 const GetUserDetail = () => {
   return httpRequest.get<GetUserDetailResponseType>(ApiConstants.USER_DETAIL);
-};
-
-const RefreshToken = <T>(data: T) => {
-  return httpRequest.post<RefreshTokenResponseType>(ApiConstants.REFRESH_TOKEN, data);
-};
-
-const AutoRefreshToken = (expiresIn: number) => {
-  const refreshTimeoutId = setTimeout(
-    async () => {
-      try {
-        const { data } = await RefreshToken({
-          refresh_token: StorageFunc.getRefreshToken(),
-          grant_type: import.meta.env.VITE_PASSPORT_PASSWORD_GRANT_TYPE_REFRESH,
-          client_id: import.meta.env.PASSPORT_PASSWORD_GRANT_CLIENT_ID,
-          client_secret: import.meta.env.PASSPORT_PASSWORD_GRANT_CLIENT_SECRET,
-        });
-        StorageFunc.saveDataAfterLogin(data);
-
-        // register auto refresh token after refresh token success
-        AutoRefreshToken(data.expires_in);
-        console.log({ data });
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    expiresIn * 1000 - 5000,
-  );
 };
 
 const Register = <T>(data: T) => {
@@ -130,6 +116,5 @@ export const AuthService = {
   ResetNewPassword,
   VerifyEmailRegister,
   RefreshToken,
-  AutoRefreshToken,
   GetUserDetail,
 };
