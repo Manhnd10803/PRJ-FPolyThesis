@@ -36,13 +36,21 @@
                         </span>
                         <h3 class="timeline-header"><a href="#"> <img src="{{ $blog->user->avatar }}"
                                     class="img-circle" width="30" height="30" alt="User Image">
-                                {{ $blog->user->username }}</a>
+                                @if ($blog->user && $blog->user->username)
+                                    {{ $blog->user->username }}
+                                @else
+                                    Không có người dùng
+                                @endif
+                            </a>
                             <span class="fw-lighter">
-                                {{ $blog->major->majors_name }}
+                                @if ($blog->major && $blog->major->majors_code)
+                                    {{ $blog->major->majors_code }}
+                                @else
+                                @endif
                             </span>
-                           
+
                         </h3>
-                       
+
                     </div>
                 </li>
                 <li>
@@ -96,9 +104,9 @@
                             {{-- <span class="time"><i class="fa fa-clock-o"></i> 5 mins ago</span> --}}
 
                             <h3 class="timeline-header no-border" style="display: flex;justify-content: center;gap: 20px">
-                                    <span>{{ $blog->like_count }} <i class="fa fa-thumbs-o-up"></i></span>
-                                    <span>{{ $blog->dislike_count }} <i class="fa fa-thumbs-o-down"></i></span>
-                                    <span>{{ $blog->comment_count }} <i class="fa fa-commenting-o"></i></span>
+                                <span>{{ $blog->like_count }} <i class="fa fa-thumbs-o-up"></i></span>
+                                <span>{{ $blog->dislike_count }} <i class="fa fa-thumbs-o-down"></i></span>
+                                <span>{{ $blog->comment_count }} <i class="fa fa-commenting-o"></i></span>
                             </h3>
                         </div>
                     </li>
@@ -158,9 +166,9 @@
 
 
                             <button type="submit" class="btn btn-danger" data-toggle="modal"
-                                data-target="#modal-danger-{{$blog->id}}">Hủy bài viết</button>
+                                data-target="#modal-danger-{{ $blog->id }}">Hủy bài viết</button>
 
-                            <div class="modal modal-danger fade" id="modal-danger-{{$blog->id}}">
+                            <div class="modal modal-danger fade" id="modal-danger-{{ $blog->id }}">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">

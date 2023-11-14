@@ -1,24 +1,37 @@
 @extends('admin.layouts.app')
-@section('title') Dashboard @endsection
+@section('title')
+  Thêm chuyên ngành
+@endsection
 @section('content')
-    <div class="container">
-        <h1>Thêm Major Mới</h1>
+    <div class="row">
+        <div class="col-xs-12 mx-5">
+            <div class="box">
+                <div style="display: flex;justify-content: space-between;padding: 10px 10px;align-items: center">
+                    <h4>Thêm chuyên ngành</h4>
 
-        <form action="{{ route('admin.majors.store') }}" method="POST">
-            @csrf
-            <div class="form-group">
-                <label for="majors_name">Tên Major:</label>
-                <input type="text" class="form-control" id="majors_name" name="majors_name" required>
+                </div>
+                <div class="box-body">
+                    <form action="{{ route('admin.majors.store') }}" method="POST">
+                        @csrf
+                        <div class="form-group">
+                            <label for="majors_name">Tên chuyên ngành:</label>
+                            <input type="text" class="form-control" id="majors_name" name="majors_name"
+                                value="{{ old('majors_name') }}">
+                            @error('majors_name')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="description">Mô tả:</label>
+                            <textarea class="form-control" id="description" name="description">{{ old('description') }}</textarea>
+                            @error('description')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <button type="submit" class="btn btn-primary">Thêm chuyên ngành</button>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="majors_code">Mã Major:</label>
-                <input type="text" class="form-control" id="majors_code" name="majors_code">
-            </div>
-            <div class="form-group">
-                <label for="description">Mô tả:</label>
-                <textarea class="form-control" id="description" name="description"></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">Thêm Major</button>
-        </form>
+        </div>
     </div>
 @endsection

@@ -42,12 +42,24 @@
                                 @foreach($blogs as $blog)
                                     <tr>
                                         <td>{{ $blog->title }}</td>
-                                        <td>{{ $blog->user->username }}</td>
-                                        <td>{{ $blog->major->majors_name }}</td>
+                                        <td>
+                                          @if ($blog->user && $blog->user->username)
+                                              {{ $blog->user->username }}
+                                          @else
+                                              Chưa có
+                                          @endif
+                                      </td>
+                                      <td>
+                                        @if ($blog->major &&$blog->major->majors_name)
+                                            {{$blog->major->majors_name }}
+                                        @else
+                                            Chưa có
+                                        @endif
+                                    </td>
                                         <td>
                                             <a href="{{ route('admin.blogs.show', $blog->id) }}" class="btn btn-info btn-sm"><i class="fa fa-eye"></i></a>
                                             {{-- <a href="{{ route('admin.blogs.edit', $blog->id) }}" class="btn btn-primary btn-sm"><i class="fa fa-edit"></i></a> --}}
-                                            @if ($blog->status == 1)
+                                            @if ($blog->status == config('default.blog.status.approved'))
                                             <button type="submit" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modal-danger-{{ $blog->id }}"><i class="fa fa-trash-o"></i></button>
                                             @endif
                                         

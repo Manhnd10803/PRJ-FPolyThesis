@@ -13,53 +13,26 @@ class AdminQaController extends Controller
         $qas = Qa::all();
         return view('admin.qa.index', compact('qas'));
     }
-
-    public function create()
+    public function show(Qa $qa)
     {
-        return view('admin.qa.create');
-    }
+        $likes = $qa->likes;
+        $comments = $qa->comments;
 
-    public function store(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|string',
-            'content' => 'required|string',
-            'user_id' => 'required|integer',
-            'majors_id' => 'required|integer',
-            'hashtag' => 'nullable|string',
-            'views' => 'required|integer',
+        $emotionCounts = [];
+        $validEmotions = ['dislike', 'like', 'love', 'haha', 'wow', 'sad', 'angry'];
+        // Đếm số lượng từng trạng thái lượt thích
+        foreach ($validEmotions as $emotion) {
+            $emotionCounts[$emotion] = $likes->where('emotion', $emotion)->count();
+        }
+        return view('admin.qa.show', [
+            'qa' => $qa,
+            'likeCounts' => $emotionCounts,
+            'commentCount' => $comments->count(),
         ]);
-
-        Qa::create($request->all());
-
-        return redirect()->route('admin.qa.index')->with('success', 'Question and Answer has been created successfully.');
     }
-
-    public function edit(Qa $qa)
-    {
-        return view('admin.qa.edit', compact('qa'));
-    }
-
-    public function update(Request $request, Qa $qa)
-    {
-        $request->validate([
-            'title' => 'required|string',
-            'content' => 'required|string',
-            'user_id' => 'required|integer',
-            'majors_id' => 'required|integer',
-            'hashtag' => 'nullable|string',
-            'views' => 'required|integer',
-        ]);
-
-        $qa->update($request->all());
-
-        return redirect()->route('admin.qa.index')->with('success', 'Question and Answer has been updated successfully.');
-    }
-
     public function destroy(Qa $qa)
     {
         $qa->delete();
-
-        return redirect()->route('admin.qa.index')->with('success', 'Question and Answer has been deleted successfully.');
+        return redirect()->route('admin.qa.index')->with('success', 'Xóa câu hỏi thành công.');
     }
 }
