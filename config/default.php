@@ -37,7 +37,7 @@ return [
     ],
     'post'=> [
         'status'=>[
-            'active'=>1,
+            'approved'=>1,
             'suspend'=>2
         ]
     ],

@@ -21,7 +21,7 @@
         </span>
       </div>
     </form>
-<ul class="sidebar-menu" data-widget="tree">
+<ul class="sidebar-menu tree" data-widget="tree">
   <li class="header">MAIN NAVIGATION</li>
   @php 
       $userGroupId = auth()->user()->group_id;

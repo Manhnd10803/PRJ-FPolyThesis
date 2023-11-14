@@ -8,185 +8,14 @@ use Illuminate\Http\Request;
 
 class AdminMajorController extends Controller
 {
-    /**
-     * @OA\Get(
-     *     path="/api/admin/majors",
-     *     summary="Get the list of majors",
-     *     tags={"Admin Majors"},
-     *     @OA\Response(
-     *         response=200,
-     *         description="Successful operation", 
-     *     )
-     * )
-     */
-    public function listMajor()
-    {
-        $majors = Major::all();
-        return response()->json($majors);
-    }
-
-    /**
-     * @OA\Post(
-     *     path="/api/admin/majors",
-     *     summary="Create a new major",
-     *     tags={"Admin Majors"},
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             @OA\Property(property="majors_name", type="string", example="Computer Science"),
-     *             @OA\Property(property="majors_code", type="string", example="CS"),
-     *             @OA\Property(property="description", type="string", example="Study of computer systems and software engineering.")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=201,
-     *         description="Major created successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation error",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
-     *             @OA\Property(property="errors", type="object", example={"majors_name": {"The majors name field is required."}})
-     *         )
-     *     )
-     * )
-     */
-    public function addMajor(Request $request)
-    {
-        $this->validate($request, [
-            'majors_name' => 'required|string',
-            'majors_code' => 'unique:majors|nullable|string',
-            'description' => 'nullable|string'
-        ]);
-
-        $major = Major::create($request->all());
-        return response()->json($major, 201);
-    }
-
-   /**
-     * @OA\Get(
-     *     path="/api/admin/majors/{major}",
-     *     summary="Get details of a major",
-     *     tags={"Admin Majors"},
-     *     @OA\Parameter(
-     *         name="major",
-     *         in="path",
-     *         required=true,
-     *         description="ID of the major",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Successful operation"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Major not found",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Major not found.")
-     *         )
-     *     )
-     * )
-     */
-    public function detailMajor(Major $major)
-    {
-        return response()->json($major);
-    }
-
-    /**
-     * @OA\Put(
-     *     path="/api/admin/majors/{major}",
-     *     summary="Update a major",
-     *     tags={"Admin Majors"},
-     *     @OA\Parameter(
-     *         name="major",
-     *         in="path",
-     *         required=true,
-     *         description="ID of the major",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(
-     *             @OA\Property(property="majors_name", type="string", example="New Major Name"),
-     *             @OA\Property(property="majors_code", type="string", example="NEW"),
-     *             @OA\Property(property="description", type="string", example="Updated description of the major.")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Major updated successfully"
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Major not found",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Major not found.")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation error",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="The given data was invalid."),
-     *             @OA\Property(property="errors", type="object", example={"majors_name": {"The majors name field must be a string."}})
-     *         )
-     *     )
-     * )
-     */
-    public function editMajor(Request $request, Major $major)
-    {
-        $this->validate($request, [
-            'majors_name' => 'string',
-            'majors_code' => 'unique:majors|nullable|string',
-            'description' => 'nullable|string'
-        ]);
-
-        $major->update($request->all());
-        return response()->json($major, 200);
-    }
-    /**
-     * @OA\Delete(
-     *     path="/api/admin/majors/{major}",
-     *     summary="Delete a major",
-     *     tags={"Admin Majors"},
-     *     @OA\Parameter(
-     *         name="major",
-     *         in="path",
-     *         required=true,
-     *         description="ID of the major",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Major deleted successfully",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Major deleted.")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Major not found",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Major not found.")
-     *         )
-     *     )
-     * )
-     */
-    public function deleteMajor(Major $major)
-    {
-        $major->delete();
-        return response()->json(['message' => 'Major deleted'], 200);
-    }
-
+   
+    
     //Admin web
     public function index()
     {
-        $majors = Major::all();
+        $majors = Major::latest()->get();
         return view('admin.majors.index', compact('majors'));
     }
-
     public function create()
     {
         return view('admin.majors.create');
@@ -195,14 +24,26 @@ class AdminMajorController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'majors_name' => 'required|string|max:255',
-            'majors_code' => 'nullable|string|max:255|unique:majors',
+            'majors_name' => 'required|string|max:255|unique:majors',
             'description' => 'nullable|string',
+        ], [
+            'majors_name.required' => 'Tên chuyên ngành không được để trống.',
+            'majors_name.max' => 'Tên chuyên ngành không được vượt quá :max ký tự.',
+            'majors_name.unique' => 'Tên chuyên ngành đã tồn tại trong hệ thống.',
+            // Thêm các thông báo khác tại đây...
         ]);
-
-        Major::create($request->only(['majors_name', 'majors_code', 'description']));
-
-        return redirect()->route('admin.majors.index')->with('success', 'Major has been created successfully.');
+        $majors_code = sprintf('%05d', rand(1, 99999));
+        // Kiểm tra xem majors_code đã tồn tại chưa, nếu có thì tạo lại
+        while (Major::where('majors_code', $majors_code)->exists()) {
+            $majors_code = sprintf('%05d', rand(1, 99999));
+        }
+        // Thêm mới bản ghi với majors_code đã sinh
+        Major::create([
+            'majors_name' => $request->majors_name,
+            'majors_code' => $majors_code,
+            'description' => $request->description,
+        ]);
+        return redirect()->route('admin.majors.index')->with('success', 'Thêm thành công chuyên ngành mới.');
     }
 
     public function edit(Major $major)
@@ -213,20 +54,21 @@ class AdminMajorController extends Controller
     public function update(Request $request, Major $major)
     {
         $request->validate([
-            'majors_name' => 'required|string|max:255',
-            'majors_code' => 'nullable|string|max:255|unique:majors,majors_code,' . $major->id,
+            'majors_name' => 'required|string|max:255|unique:majors,majors_name,' . $major->id,
             'description' => 'nullable|string',
+        ], [
+            'majors_name.required' => 'Tên chuyên ngành không được để trống.',
+            'majors_name.max' => 'Tên chuyên ngành không được vượt quá :max ký tự.',
+            'majors_name.unique' => 'Tên chuyên ngành đã tồn tại trong hệ thống.',
+            // Thêm các thông báo khác tại đây...
         ]);
 
         $major->update($request->only(['majors_name', 'majors_code', 'description']));
-
-        return redirect()->route('admin.majors.index')->with('success', 'Major has been updated successfully.');
+        return redirect()->route('admin.majors.index')->with('success', 'Chuyên ngành đã được chỉnh sửa thành công.');
     }
-
     public function destroy(Major $major)
     {
         $major->delete();
-
-        return redirect()->route('admin.majors.index')->with('success', 'Major has been deleted successfully.');
+        return redirect()->route('admin.majors.index')->with('success', 'Xóa thành công chuyên ngành.');
     }
 }
