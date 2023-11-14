@@ -92,6 +92,7 @@ export const ChatPage = () => {
       onSuccess: data => {
         audioSendMessage();
         queryClient.invalidateQueries(queryKeyMessage);
+        scrollToLastMessage();
       },
     },
   );
@@ -106,14 +107,13 @@ export const ChatPage = () => {
   //scroll to last message
   const chatContentRef = useRef(null);
 
+  const scrollToLastMessage = () => {
+    if (chatContentRef.current) {
+      const chatContent = chatContentRef.current;
+      chatContent.scrollTop = chatContent.scrollHeight;
+    }
+  };
   useEffect(() => {
-    const scrollToLastMessage = () => {
-      if (chatContentRef.current) {
-        const chatContent = chatContentRef.current;
-        chatContent.scrollTop = chatContent.scrollHeight;
-      }
-    };
-
     if (chatMessage && chatMessage.length > 0) {
       scrollToLastMessage();
     }
@@ -130,7 +130,7 @@ export const ChatPage = () => {
               <Card.Body className="chat-page p-0">
                 <div className="chat-data-block">
                   <Row>
-                    <Col lg={2} className="chat-data-left scroller">
+                    <Col lg={2} className="chat-data-left scroller" style={{ paddingRight: '2px' }}>
                       <RightSideBar
                         isLoading={isUserLoading}
                         data={detailUserProfile}
@@ -138,11 +138,11 @@ export const ChatPage = () => {
                         isListChatLoading={isListChatLoading}
                       />
                     </Col>
-                    <Col lg={10} className=" chat-data p-0 chat-data-right">
+                    <Col lg={10} className=" chat-data p-0 chat-data-right border-start">
                       <Tab.Content>
                         {!isReceiverUserLoading && (
                           <>
-                            <div className="chat-head">
+                            <div className="chat-head border-bottom border-2">
                               <header className="d-flex justify-content-between align-items-center bg-white pt-3  ps-3 pe-3 pb-3">
                                 <div className="d-flex align-items-center">
                                   <div className="sidebar-toggle">
@@ -216,8 +216,30 @@ export const ChatPage = () => {
                                         <span className="chat-time mt-1">{moment(item.created_at).format('LT')}</span>
                                       </div>
                                       <div className="chat-detail" style={{ maxWidth: '50%' }}>
+                                        <div>
+                                          <Dropdown
+                                            className="d-flex justify-content-center align-items-center"
+                                            as="span"
+                                          >
+                                            <Dropdown.Toggle
+                                              as={CustomToggle}
+                                              variant="material-symbols-outlined cursor-pointer md-18 nav-hide-arrow pe-0 show"
+                                            >
+                                              more_vert
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu className="dropdown-menu-right">
+                                              <Dropdown.Item
+                                                className="d-flex align-items-center"
+                                                onClick={() => console.log('hihi')}
+                                              >
+                                                <i className="material-symbols-outlined md-18 me-1">delete_outline</i>
+                                                Xoá
+                                              </Dropdown.Item>
+                                            </Dropdown.Menu>
+                                          </Dropdown>
+                                        </div>
                                         <div className="chat-message">
-                                          <div>{parse(item.content)}</div>
+                                          <div>{parse(item.content.replace('</br>', '<br />'))}</div>
                                         </div>
                                       </div>
                                     </div>
@@ -238,7 +260,26 @@ export const ChatPage = () => {
                                       </div>
                                       <div className="chat-detail" style={{ maxWidth: '50%' }}>
                                         <div className="chat-message" style={{ backgroundColor: '#F0F0F0' }}>
-                                          <div>{parse(item.content)}</div>
+                                          <div>{parse(item.content.replace('</br>', '<br />'))}</div>
+                                        </div>
+                                        <div>
+                                          <Dropdown
+                                            className="d-flex justify-content-center align-items-center"
+                                            as="span"
+                                          >
+                                            <Dropdown.Toggle
+                                              as={CustomToggle}
+                                              variant="material-symbols-outlined cursor-pointer md-18 nav-hide-arrow pe-0 show"
+                                            >
+                                              more_vert
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu className="dropdown-menu-right">
+                                              <Dropdown.Item className="d-flex align-items-center" href="#">
+                                                <i className="material-symbols-outlined md-18 me-1">delete_outline</i>
+                                                Xoá
+                                              </Dropdown.Item>
+                                            </Dropdown.Menu>
+                                          </Dropdown>
                                         </div>
                                       </div>
                                     </div>

@@ -74,4 +74,5 @@ export const ApiConstants = {
 
   // chat
   LIST_CHAT_MESSAGE: '/api/messages/listuserchat',
+  DELETE_CHAT_ITEM: '/api/messages',
 } as const;

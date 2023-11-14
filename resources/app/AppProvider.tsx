@@ -21,7 +21,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
   return (
     <QueryClientProvider client={queryClient}>
       <ReduxProvider store={store}>
-        <ReactQueryDevtools position="bottom-right" />
+        <ReactQueryDevtools position="bottom-left" />
         {children}
       </ReduxProvider>
     </QueryClientProvider>
