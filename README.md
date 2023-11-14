@@ -74,7 +74,7 @@ php artisan l5-swagger:generate
 
 ## Create api key
 
-php artisan passport:keys
+php artisan passport:install
 
 ## Created seeder
 PostSeeder có thể thay đổi tùy vào seeder khởi tạo
