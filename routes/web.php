@@ -77,6 +77,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'authAdmin'], function () {
     //Admin qa
     Route::resource('qa', AdminQaController::class)->names([
         'index' => 'admin.qa.index',
+        'show' => 'admin.qa.show',
         'create' => 'admin.qa.create',
         'store' => 'admin.qa.store',
         'edit' => 'admin.qa.edit',

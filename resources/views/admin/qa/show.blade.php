@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 @section('title')
-    Chi tiết {{ $post->id }}
+    Chi tiết {{ $qa->title }}
 @endsection
 @section('content')
     <div class="row">
@@ -8,26 +8,26 @@
             <ul class="timeline">
                 <li class="time-label">
                     <span class="bg-red">
-                        {{ $post->created_at->format('d M. Y') }}
+                        {{ $qa->created_at->format('d M. Y') }}
                     </span>
                 </li>
                 <li>
                     <i class="fa fa-user bg-aqua"></i>
                     <div class="timeline-item">
                         <span class="time" style="margin-top: 6px">
-                            <i class="fa fa-clock-o"></i> {{ $post->created_at }}
+                            <i class="fa fa-clock-o"></i> {{ $qa->created_at }}
                         </span>
-                        <h3 class="timeline-header"><a href="#"> <img src="{{ $post->user->avatar }}"
-                                    class="img-circle" width="30" height="30" alt="User Image">
-                                @if ($post->user && $post->user->username)
-                                    {{ $post->user->username }}
+                        <h3 class="timeline-header"><a href="#"> <img src="{{ $qa->user->avatar }}" class="img-circle"
+                                    width="30" height="30" alt="User Image">
+                                @if ($qa->user && $qa->user->username)
+                                    {{ $qa->user->username }}
                                 @else
-                                    Không có người dùng
+                                Không có người dùng
                                 @endif
                             </a>
                             <span class="fw-lighter">
-                                @if ($post->user->major && $post->user->major->majors_name)
-                                    {{ $post->user->major->majors_name }}
+                                @if ($qa->major && $qa->major->majors_name)
+                                    {{ $qa->major->majors_name }}
                                 @else
                                 @endif
                             </span>
@@ -41,7 +41,8 @@
                             Nội dung
                         </h3>
                         <div class="timeline-body ">
-                            {{ $post->content }}
+                            <h2>{{ $qa->title }}</h2>
+                            {{ $qa->content }}
                         </div>
                     </div>
                 </li>
@@ -52,19 +53,7 @@
                             Hashtag
                         </h3>
                         <div class="timeline-body ">
-                            {{ $post->hashtag }}
-                        </div>
-                    </div>
-                </li>
-                <li>
-                    <i class="fa fa-camera bg-purple"></i>
-                    <div class="timeline-item">
-                        <h3 class="timeline-header">Hình ảnh đăng lên</h3>
-                        <div class="timeline-body" style="display: flex;justify-content: center">
-                            <img src="{{ $post->image }}" alt="..." class="margin" width="150" height="150"
-                                style="border-radius: 3%">
-                            <img src="{{ $post->image }}" alt="..." class="margin" width="150" height="150"
-                                style="border-radius: 3%">
+                            {{ $qa->hashtag }}
                         </div>
                     </div>
                 </li>
@@ -100,7 +89,7 @@
 
                     <div class="timeline-item">
                         <h3 class="timeline-header no-border" style="display: flex;justify-content: center;gap: 10px">
-                            {{ $post->views }} lượt xem
+                            {{ $qa->views }} lượt xem
                         </h3>
                     </div>
                 </li>
