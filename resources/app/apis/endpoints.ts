@@ -1,6 +1,6 @@
 export const ApiConstants = {
   // auth
-  LOGIN: '/oauth/token',
+  LOGIN: '/api/auth/login',
   REFRESH_TOKEN: '/oauth/token',
 
   LOGIN_GOOGLE: '/api/auth/google-auth',

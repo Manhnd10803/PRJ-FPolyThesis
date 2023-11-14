@@ -3,6 +3,14 @@
 
 import { IUser } from './user';
 
+export interface AuthState {
+  accessToken: string | null;
+  loading: boolean;
+  userInfo: IUser | {}; // for user object
+  error: null;
+  success: boolean; // for monitoring the registration process.
+}
+
 export type GetUserDetailResponseType = {
   user: IUser;
 };

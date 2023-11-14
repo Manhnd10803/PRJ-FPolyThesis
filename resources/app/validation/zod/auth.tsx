@@ -5,7 +5,7 @@ const containsNumberOrSymbol = (value: any) => {
   return !/[0-9!@#$%^&*()_+|~=`{}\[\]:";'<>?,./\\]/.test(value);
 };
 export const signInSchema = z.object({
-  username: z.string().min(1, 'Email is required').email(),
+  email: z.string().min(1, 'Email is required').email(),
   password: z.string().min(1, 'Password is required').min(8, 'Password must be at least 8 characters'),
 });
 

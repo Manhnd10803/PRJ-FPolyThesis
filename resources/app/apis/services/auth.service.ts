@@ -11,9 +11,36 @@ import {
   ResetPasswordResponseType,
   VerifyEmailRegisterResponseType,
 } from '@/models/auth';
+import toast from 'react-hot-toast';
+import { store } from '@/redux/store/store';
+import { authActions } from '@/redux/slice';
 
-const Login = <T>(data: T) => {
-  return httpRequest.post<LoginResponseType>(ApiConstants.LOGIN, data);
+const Login = async <T>(dataForm: T) => {
+  try {
+    const { data } = await httpRequest.post<LoginResponseType>(ApiConstants.LOGIN, dataForm);
+
+    toast.success('Đăng nhập thành công');
+    //save data login to storage
+    StorageFunc.saveDataAfterLogin(data);
+
+    const { data: userInfo } = await AuthService.GetUserDetail();
+
+    store.dispatch(authActions.setAccessToken(data.access_token));
+    store.dispatch(authActions.setUserInfo(userInfo));
+
+    //auto refresh token before expired time
+    AuthService.AutoRefreshToken(data.expires_in);
+
+    StorageFunc.saveUserDetailData(userInfo);
+    return data;
+  } catch (error: any) {
+    if (error.message == 'The user credentials were incorrect.') {
+      toast.error('Sai thông tin đăng nhập');
+    } else if (error) {
+      toast.error('Lỗi server');
+    }
+    return error;
+  }
 };
 
 const GetUserDetail = () => {
@@ -31,8 +58,8 @@ const AutoRefreshToken = (expiresIn: number) => {
         const { data } = await RefreshToken({
           refresh_token: StorageFunc.getRefreshToken(),
           grant_type: import.meta.env.VITE_PASSPORT_PASSWORD_GRANT_TYPE_REFRESH,
-          client_id: import.meta.env.VITE_PASSPORT_PASSWORD_GRANT_CLIENT_ID,
-          client_secret: import.meta.env.VITE_PASSPORT_PASSWORD_GRANT_CLIENT_SECRET,
+          client_id: import.meta.env.PASSPORT_PASSWORD_GRANT_CLIENT_ID,
+          client_secret: import.meta.env.PASSPORT_PASSWORD_GRANT_CLIENT_SECRET,
         });
         StorageFunc.saveDataAfterLogin(data);
 

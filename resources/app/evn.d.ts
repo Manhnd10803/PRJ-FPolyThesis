@@ -18,10 +18,8 @@ interface ImportMetaEnv {
   readonly VITE_CLOUDINARY_API_SECRET: string;
   readonly VITE_CLOUDINARY_UPLOAD_PRESET: string;
 
-  readonly VITE_PASSPORT_PASSWORD_GRANT_CLIENT_ID: number;
-  readonly VITE_PASSPORT_PASSWORD_GRANT_CLIENT_SECRET: string;
-  readonly VITE_PASSPORT_PASSWORD_GRANT_TYPE_LOGIN: string;
-  readonly VITE_PASSPORT_PASSWORD_GRANT_TYPE_REFRESH: string;
+  readonly PASSPORT_PASSWORD_GRANT_CLIENT_ID: number;
+  readonly PASSPORT_PASSWORD_GRANT_CLIENT_SECRET: string;
   readonly PASSPORT_AUTH_GRANT_PASSWORD: boolean;
 
   //add more env variables here...

@@ -187,8 +187,8 @@ class AuthController extends Controller
                 }
                 $request = Request::create('oauth/token', 'POST', [
                     'grant_type' => 'password',
-                    'client_id' => env('VITE_PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
-                    'client_secret' => env('VITE_PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
+                    'client_id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
+                    'client_secret' => env('PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
                     'username' => $request->email,
                     'password' => $request->password,
                     'scope' => '',
@@ -213,8 +213,8 @@ class AuthController extends Controller
         if($request->refresh_token){
             $request = Request::create('oauth/token', 'POST', [
                 'grant_type' => 'refresh_token',
-                'client_id' => env('VITE_PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
-                'client_secret' => env('VITE_PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
+                'client_id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
+                'client_secret' => env('PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
                 'refresh_token' => $request->refresh_token,
             ]);
             $result = app()->handle($request);
@@ -282,8 +282,8 @@ class AuthController extends Controller
             };
             $request = Request::create('oauth/token', 'POST', [
                 'grant_type' => 'socialite',
-                'client_id' => env('VITE_PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
-                'client_secret' => env('VITE_PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
+                'client_id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
+                'client_secret' => env('PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
                 'username' => $user->email,
                 'password' => $checkUser->password,
                 'scope' => '',
@@ -311,8 +311,8 @@ class AuthController extends Controller
                 $checkUser = User::where('email', $user->email)->first();
                 $request = Request::create('oauth/token', 'POST', [
                     'grant_type' => 'socialite',
-                    'client_id' => env('VITE_PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
-                    'client_secret' => env('VITE_PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
+                    'client_id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
+                    'client_secret' => env('PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
                     'username' => $user->email,
                     'password' => $checkUser->password,
                     'scope' => '',

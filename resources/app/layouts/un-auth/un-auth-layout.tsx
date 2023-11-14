@@ -19,7 +19,7 @@ import login3 from '../../assets/images/login/3.png';
 
 // install Swiper modules
 SwiperCore.use([Navigation, Autoplay]);
-export const AuthLayout = () => {
+export const UnAuthLayout = () => {
   return (
     <>
       <section className="sign-in-page">
