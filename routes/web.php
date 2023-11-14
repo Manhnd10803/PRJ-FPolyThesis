@@ -92,9 +92,6 @@ Route::group(['prefix' => 'admin', 'middleware' => 'authAdmin'], function () {
     Route::put('emotions/{emotion}', [AdminEmotionController::class, 'update'])->name('admin.emotions.update');
     Route::delete('emotions/{emotion}', [AdminEmotionController::class, 'destroy'])->name('admin.emotions.destroy');
 });
-Route::get('login', function () {
-    Auth::attempt(['email' => 'admin@admin.com', 'password' => 'Manhdeptrai108']);
-});
 
 // Route chung cho ứng dụng ReactJS
 Route::get('/{any}', function () {
