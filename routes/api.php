@@ -34,9 +34,12 @@ use Illuminate\Support\Facades\Route;
 
 
 //auth
-Route::get('/die-token', function () {return response(['message' => 'token has expired'], 401);})->name('token.die');
+Route::get('/die-token', function () {
+    return response(['message' => 'token has expired'], 401);
+})->name('token.die');
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->name('user.register');
+    Route::post('/login', [AuthController::class, 'login'])->name('user.login');
     Route::get('/google-auth', [AuthController::class, 'googleAuth'])->name('user.googleAuth');
     Route::get('/google-callback', [AuthController::class, 'googleCallback'])->name('user.googleCallback');
     Route::post('/verify', [AuthController::class, 'verify'])->name('user.verify');
@@ -54,15 +57,18 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/hello', function () {
         return Auth::user();
     });
+    Route::post('/activity', [AuthController::class, 'CheckActivityUser']);
     //chat
     Route::prefix('messages')->group(function () {
-        Route::get('/listuserchat',[PrivateMessagesController::class,'ShowListUserChat']);
-        Route::get('/{user}', [PrivateMessagesController::class, 'ShowAllMessage'])->name('message.show')->where('user', '[0-9]+');
-        Route::post('/{user}', [PrivateMessagesController::class, 'SendMessages'])->name('message.create')->where('user', '[0-9]+');
-        Route::put('/{privateMessage}/{user}', [PrivateMessagesController::class, 'UpdateMessage'])->name('message.update');
-        Route::delete('/{privateMessage}/{user}', [PrivateMessagesController::class, 'DeleteMessage'])->name('message.delete');
+        Route::get('/', [PrivateMessagesController::class, 'ShowListUserChat']);
+        Route::get('/{user}', [PrivateMessagesController::class, 'ShowAllMessage'])->where('user', '[0-9]+');
+        Route::post('/{user}', [PrivateMessagesController::class, 'SendMessages'])->where('user', '[0-9]+');
+        Route::put('/{privateMessage}', [PrivateMessagesController::class, 'UpdateMessage']);
+        //Xóa  tin nhắn (Xóa 1 tin nhắn) id tin nhắn
+        Route::delete('/{privateMessage}', [PrivateMessagesController::class, 'DeleteMessage']);
+        //XÓa tin nhắn (Xóa đoan chat) id user thêm chat tránh trường hợp messages/{id} bị trùng với bên trên
+        Route::delete('chat/{user}', [PrivateMessagesController::class, 'DeleteMessagesBetweenUsers']);
     });
-
     //major
     Route::get('majors', [MajorController::class, 'list_majors']);
 
@@ -107,7 +113,6 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/{comment}', [CommentController::class, 'deleteComment']);
     });
 
-
     //qa
     Route::prefix('quests')->group(function () {
         Route::get('/', [QaController::class, 'ShowAllQa'])->name('qa.showAll');
@@ -131,16 +136,10 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/status-friend/{friend}', [FriendController::class, 'getFriendshipStatus']);
     Route::delete('/unfriend/{friend}', [FriendController::class, 'unfriend']);
 
-
     //notification
     Route::get('/notifications', [NotificationController::class, 'listNotification']);
     Route::get('/see-notification/{notification}', [NotificationController::class, 'seeNotification']);
     Route::delete('/notification/{notification}', [NotificationController::class, 'deleteNotification']);
-
-    // Chat
-    Route::get('/messages', [PrivateMessagesController::class, 'ShowAllMessage']);
-    Route::post('/messages', [PrivateMessagesController::class, 'SendMessages']);
-    Route::delete('/messages/{id}', [PrivateMessagesController::class, 'DeleteMessage']);
 
     Route::group(['prefix' => 'admin', 'middleware' => 'scope:admin'], function () {
         //User Management

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UpdateActivityUser;
 use App\Mail\ForgotPassword;
 use App\Mail\VerifyAccount;
 use App\Models\User;
@@ -524,5 +525,26 @@ class AuthController extends Controller
     {
         $user = $request->user();
         return response()->json(['user' => $user], 200);
+    }
+    public function CheckActivityUser(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $user = Auth::user();
+            $activity  = $request->activity;
+            $user->update([
+                'activity_user' => $activity,
+            ]);
+            $user->save;
+            $friends = $user->friends;
+            foreach ($friends as $friend) {
+                broadcast(new UpdateActivityUser($friend, $activity))->toOthers();
+            }
+            DB::commit();
+            return response()->json(['message' => 'trạng thái đang là ' . $activity], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
     }
 }
