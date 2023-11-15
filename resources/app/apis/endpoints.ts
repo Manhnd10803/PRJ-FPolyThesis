@@ -1,77 +1,77 @@
 export const ApiConstants = {
   // auth
-  LOGIN: '/oauth/token',
-  REFRESH_TOKEN: '/oauth/token',
+  LOGIN: '/auth/login',
+  REFRESH_TOKEN: '/auth/refresh',
 
-  LOGIN_GOOGLE: '/api/auth/google-auth',
-  REGISTER: '/api/auth/register',
-  FORGOT_PASSWORD: '/api/auth/post-forgot-password',
-  RESET_PASSWORD: '/api/auth/post-reset-password',
-  CONFIRM_PASSWORD: '/api/auth/confirm-password',
-  RESET_NEW_PASSWORD: '/api/auth/reset-new-password',
-  LOGOUT: '/api/auth/logout',
-  VERIFY_EMAIL_REGISTER: '/api/auth/verify',
+  LOGIN_GOOGLE: '/auth/google-auth',
+  REGISTER: '/auth/register',
+  FORGOT_PASSWORD: '/auth/post-forgot-password',
+  RESET_PASSWORD: '/auth/post-reset-password',
+  CONFIRM_PASSWORD: '/auth/confirm-password',
+  RESET_NEW_PASSWORD: '/auth/reset-new-password',
+  LOGOUT: '/auth/logout',
+  VERIFY_EMAIL_REGISTER: '/auth/verify',
 
   // user
-  USER: '/api/users',
-  USER_DETAIL: '/api/get-user',
+  USER: '/users',
+  USER_DETAIL: '/get-user',
 
   // question and answer
-  CREATE_QANDA: '/api/quests',
-  ALL_QANDA: '/api/quests',
-  // LIST_QANDA: '/api/quests/lista',
-  LIST_QANDA_BY_MAJOR: '/api/quests/major',
-  LIST_MY_QANDA: '/api/quests/my-quests',
-  LIST_MOST_CMT_QANDA: '/api/quests/most-commented',
-  LIST_UNANSWER_QANDA: '/api/quests/unanswer',
-  DETAIL_QANDA: '/api/quests',
-  UPDATE_QANDA: '/api/quests',
-  DELETE_QANDA: '/api/quests',
+  CREATE_QANDA: '/quests',
+  ALL_QANDA: '/quests',
+  // LIST_QANDA: '/quests/lista',
+  LIST_QANDA_BY_MAJOR: '/quests/major',
+  LIST_MY_QANDA: '/quests/my-quests',
+  LIST_MOST_CMT_QANDA: '/quests/most-commented',
+  LIST_UNANSWER_QANDA: '/quests/unanswer',
+  DETAIL_QANDA: '/quests',
+  UPDATE_QANDA: '/quests',
+  DELETE_QANDA: '/quests',
 
   // post
-  POSTS: '/api/posts',
+  POSTS: '/posts',
 
   // blog
-  SHOW_BLOGS: '/api/blogs',
-  SHOW_BLOG_DETAIL: '/api/blogs',
-  CREATE_BLOG: '/api/blogs',
+  SHOW_BLOGS: '/blogs',
+  SHOW_BLOG_DETAIL: '/blogs',
+  CREATE_BLOG: '/blogs',
 
   // major
-  MAJORS: '/api/majors',
-  LIST_MAJORS_REGISTER: '/api/list-majors',
+  MAJORS: '/majors',
+  LIST_MAJORS_REGISTER: '/list-majors',
 
   // Comment
-  CREATE_COMMENT: '/api/comment',
-  DELETE_COMMENT: '/api/comment',
-  EDIT_COMMENT: '/api/comment',
+  CREATE_COMMENT: '/comment',
+  DELETE_COMMENT: '/comment',
+  EDIT_COMMENT: '/comment',
   // Like
-  CREATE_LIKE_BLOG: '/api/like/blog',
-  CREATE_LIKE_QANDA: '/api/like/qa',
+  CREATE_LIKE_BLOG: '/like/blog',
+  CREATE_LIKE_QANDA: '/like/qa',
 
   // Friend
-  SHOW_FRIEND_REQUEST: '/api/friend-list-request',
-  CONFIRM_FRIEND_REQUEST: '/api/confirm-request',
-  DELETE_FRIEND_REQUEST: '/api/delete-request',
-  SHOW_FRIEND_MY_USER: `api/friend-list`,
-  ADD_FRIEND: `api/send-request`,
-  STATUS_FRIEND: `api/status-friend`,
-  UN_FRIEND: `api/unfriend`,
+  SHOW_FRIEND_REQUEST: '/friend-list-request',
+  CONFIRM_FRIEND_REQUEST: '/confirm-request',
+  DELETE_FRIEND_REQUEST: '/delete-request',
+  SHOW_FRIEND_MY_USER: `friend-list`,
+  ADD_FRIEND: `send-request`,
+  STATUS_FRIEND: `status-friend`,
+  UN_FRIEND: `unfriend`,
   // profile
-  PROFILE: '/api/profile',
-  DETAIL_USER_PROFILE: '/api/profile',
+  PROFILE: '/profile',
+  DETAIL_USER_PROFILE: '/profile',
 
   //Info User
-  SHOW_INFO_USER: `api/user-info`,
-  EDIT_INFO_USER: `api/profile/update`,
+  SHOW_INFO_USER: `user-info`,
+  EDIT_INFO_USER: `profile/update`,
   // admin
 
-  USERS_ADMIN: '/api/admin/users',
+  USERS_ADMIN: '/admin/users',
 
   // Add more endpoints as needed
 
-  SHOW_MESSAGE: '/api/messages',
-  SEND_MESSAGES: '/api/messages',
+  SHOW_MESSAGE: '/messages',
+  SEND_MESSAGES: '/messages',
 
   // chat
-  LIST_CHAT_MESSAGE: '/api/messages/listuserchat',
+  LIST_CHAT_MESSAGE: '/messages/listuserchat',
 } as const;

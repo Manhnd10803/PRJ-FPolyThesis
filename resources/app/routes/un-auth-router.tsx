@@ -4,7 +4,7 @@ import { LoginPage } from '@/pages/login';
 import { RegisterPage } from '@/pages/register';
 import { VerifyRegisterPage } from '@/pages/verify-register';
 
-export const AuthRouter = [
+export const UnAuthRouter = [
   {
     path: 'login',
     element: <LoginPage />,

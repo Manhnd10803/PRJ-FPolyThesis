@@ -1,10 +1,8 @@
 import { AuthService } from '@/apis/services/auth.service';
-import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { TSignInSchema, signInSchema } from '@/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Col, Form, Spinner } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
 
 export const LoginPage = () => {
@@ -20,43 +18,9 @@ export const LoginPage = () => {
   });
 
   const onSubmit = async (dataForm: TSignInSchema) => {
-    try {
-      const bodyData = {
-        ...dataForm,
-        grant_type: import.meta.env.VITE_PASSPORT_PASSWORD_GRANT_TYPE_LOGIN,
-        client_id: import.meta.env.VITE_PASSPORT_PASSWORD_GRANT_CLIENT_ID,
-        client_secret: import.meta.env.VITE_PASSPORT_PASSWORD_GRANT_CLIENT_SECRET,
-      };
-      const { data } = await AuthService.Login(bodyData);
-
-      toast.success('Đăng nhập thành công');
-      //save data login to storage
-      StorageFunc.saveDataAfterLogin(data);
-
-      // get user detail and save to storage
-      const { data: userData } = await AuthService.GetUserDetail();
-      //auto refresh token before expired time
-      AuthService.AutoRefreshToken(data.expires_in);
-
-      StorageFunc.saveUserDetailData(userData);
-
-      reset();
-      navigate('/');
-    } catch (error: any) {
-      if (error.message == 'The user credentials were incorrect.') {
-        const serverError = 'Sai thông tin đăng nhập';
-        setError('password', {
-          type: 'server',
-          message: serverError,
-        });
-      } else if (error) {
-        const serverError = 'Lỗi server';
-        setError('password', {
-          type: 'server',
-          message: serverError,
-        });
-      }
-    }
+    await AuthService.Login(dataForm);
+    reset();
+    navigate('/');
   };
   const loginWithGoogle = () => {
     AuthService.LoginWithGoogle();
@@ -71,14 +35,14 @@ export const LoginPage = () => {
             <Form.Group className="form-group">
               <Form.Label>Email address</Form.Label>
               <Form.Control
-                {...login('username')}
+                {...login('email')}
                 type="text"
                 className="mb-0"
                 id="exampleInputEmail1"
                 placeholder="Enter email"
-                name="username"
+                name="email"
               />
-              {errors.username && <p className="text-danger">{`${errors.username.message}`}</p>}
+              {errors.email && <p className="text-danger">{`${errors.email.message}`}</p>}
             </Form.Group>
             <Form.Group className="form-group">
               <Form.Label>Password</Form.Label>

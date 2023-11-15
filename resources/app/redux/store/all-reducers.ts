@@ -1,7 +1,8 @@
 import { combineReducers } from '@reduxjs/toolkit';
-import { settingReducer } from '@/redux/slice';
+import { appReducer, authReducer, settingReducer } from '@/redux/slice';
 
 export const allReducer = combineReducers({
-  //   app: appReducer,
   setting: settingReducer,
+  app: appReducer,
+  auth: authReducer,
 });

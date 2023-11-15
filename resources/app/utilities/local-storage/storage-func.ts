@@ -16,9 +16,9 @@ const saveUserDetailData = (data: GetUserDetailResponseType) => {
   save(storageKeys.USER_ID, data.user.id);
 };
 
-// const saveAccessToken = (accessToken: string) => {
-//   save(storageKeys.ACCESS_TOKEN, accessToken);
-// };
+const saveAccessToken = (accessToken: string) => {
+  save(storageKeys.ACCESS_TOKEN, accessToken);
+};
 
 const getUser = () => {
   return load<IUser>(storageKeys.USER);
@@ -42,7 +42,7 @@ const removeUser = () => {
 export const StorageFunc = {
   saveDataAfterLoginGoogle,
   saveDataAfterLogin,
-  // saveAccessToken,
+  saveAccessToken,
   getUser,
   getUserId,
   removeUser,
