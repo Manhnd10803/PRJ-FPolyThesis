@@ -77,6 +77,11 @@ PostSeeder có thể thay đổi tùy vào seeder khởi tạo
 
     php artisan db:seed --class=PostSeeder
 
+Nếu bị lỗi 500 server chạy 2 câu lệnh dưới
+
+    php artisan cache:clear
+    php artisan config:clear
+
 ## Environmental requirements
 
 Laravel 10 (PHP 8.1 + MariaDB 10.4)

@@ -71,4 +71,6 @@ export const ApiConstants = {
 
   // chat
   LIST_CHAT_MESSAGE: '/messages/listuserchat',
+
+  NOTIFICATIONS: '/notifications',
 } as const;

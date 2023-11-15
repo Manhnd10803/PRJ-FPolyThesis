@@ -1,5 +1,7 @@
 /.phpunit.cache
 /node_modules
+laravel-echo-server.lock
+package-lock.json
 /public/build
 /public/hot
 /public/storage
