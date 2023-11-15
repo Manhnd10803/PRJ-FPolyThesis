@@ -21,13 +21,12 @@ const Login = async <T>(dataForm: T) => {
 
     toast.success('Đăng nhập thành công');
     //save data login to storage
+    StorageFunc.saveDataAfterLogin(data);
+    store.dispatch(authActions.setAccessToken(data.access_token));
 
     const { data: userInfo } = await AuthService.GetUserDetail();
-
-    store.dispatch(authActions.setAccessToken(data.access_token));
     store.dispatch(authActions.setUserInfo(userInfo));
 
-    StorageFunc.saveDataAfterLogin(data);
     StorageFunc.saveUserDetailData(userInfo);
     return data;
   } catch (error: any) {

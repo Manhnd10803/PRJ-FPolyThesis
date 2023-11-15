@@ -2,16 +2,6 @@
 
 ## Getting started
 
-## Environmental requirements
-
-Laravel 10 (PHP 8.1 + MariaDB 10.4)
-
-Link xampp for windows: https://sourceforge.net/projects/xampp/files/XAMPP%20Windows/8.1.17/xampp-windows-x64-8.1.17-0-VS16-installer.exe/download
-
-Link composer for windows: https://getcomposer.org/Composer-Setup.exe
-
-Link nodejs for windows: https://nodejs.org/dist/v18.18.0/node-v18.18.0-x64.msi
-
 ## Installation
 
 Clone the repository
@@ -50,15 +40,20 @@ Start the local development server
 You can now access the server at http://localhost:8000
 
 Setup && run Run redis
-redis-server(run redis)
-redis-cli(kiểm tra )
-redis-cli ping (trả lại kết quả Pong -> OK)
+
+    redis-server
+
+    redis-cli(kiểm tra )
+
+    redis-cli ping (trả lại kết quả Pong -> OK)
 
 Setup && Run laravel-echo
-laravel-echo-server init
-npm install --save laravel-echo
-npm install -g laravel-echo-server (Thêm sudo vào đầu câu lệnh nếu dùng macOs hoặc Linux)
-nếu gặp lỗi chạy npm i (npm install) rồi chạy lại câu trên
+
+    laravel-echo-server init
+    npm install --save laravel-echo
+    npm install -g laravel-echo-server (Thêm sudo vào đầu câu lệnh nếu dùng macOs hoặc Linux)
+
+Nếu gặp lỗi chạy npm i (npm install) rồi chạy lại câu trên
 
     Add vào cuối .env như sau
     LARAVEL_ECHO_SERVER_REDIS_HOST=127.0.0.1
@@ -70,12 +65,24 @@ nếu gặp lỗi chạy npm i (npm install) rồi chạy lại câu trên
 
 ## Run & update swagger
 
-php artisan l5-swagger:generate
+    php artisan l5-swagger:generate
 
 ## Create api key
 
-php artisan passport:install
+    php artisan passport:install
 
 ## Created seeder
+
 PostSeeder có thể thay đổi tùy vào seeder khởi tạo
-php artisan db:seed --class=PostSeeder
+
+    php artisan db:seed --class=PostSeeder
+
+## Environmental requirements
+
+Laravel 10 (PHP 8.1 + MariaDB 10.4)
+
+Link xampp for windows: https://sourceforge.net/projects/xampp/files/XAMPP%20Windows/8.1.17/xampp-windows-x64-8.1.17-0-VS16-installer.exe/download
+
+Link composer for windows: https://getcomposer.org/Composer-Setup.exe
+
+Link nodejs for windows: https://nodejs.org/dist/v18.18.0/node-v18.18.0-x64.msi
