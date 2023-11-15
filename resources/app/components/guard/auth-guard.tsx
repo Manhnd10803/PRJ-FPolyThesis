@@ -1,5 +1,6 @@
 import '@/bootstrap';
 import { useAppSelector } from '@/redux/hook';
+import { pathName } from '@/routes/path-name';
 import { load } from '@/utilities/local-storage';
 import { storageKeys } from '@/utilities/local-storage/storage-keys';
 import React, { FC } from 'react';
@@ -14,7 +15,7 @@ export const AuthGuard: FC<AuthGuardProps> = ({ children }) => {
   const isStayIn = load(storageKeys.STAY_IN);
   // render
   if (!accessToken && !isStayIn) {
-    return <Navigate to="/login" />;
+    return <Navigate to={pathName.LOGIN} />;
   }
   return <>{children}</>;
 };

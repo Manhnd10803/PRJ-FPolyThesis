@@ -5,6 +5,7 @@ import { Accordion } from 'react-bootstrap';
 import { NestedNavbarItem } from './nested-navbar-item';
 import { SingleNavbarItem } from './single-navbar-item';
 import { StaticItemTitle } from './static-item-title';
+import { pathName } from '@/routes/path-name';
 
 const circleIcon = (
   <i className="icon">
@@ -24,43 +25,43 @@ const NAVBAR_SOCIAL_CONFIGS = [
   {
     title: 'Newsfeed',
     icon: <i className="icon material-symbols-outlined">newspaper</i>,
-    pathname: '/',
+    pathname: pathName.HOME,
   },
   {
     title: 'Q & A',
     icon: <i className="icon material-symbols-outlined">quiz</i>,
-    pathname: '/quests',
+    pathname: pathName.QUESTS,
   },
   {
     title: 'Blog',
     icon: <i className="icon material-symbols-outlined">article</i>,
-    pathname: '/blog',
+    pathname: pathName.BLOG,
   },
   {
     title: 'Chat',
     icon: <i className="icon material-symbols-outlined">message</i>,
-    pathname: '/chat',
+    pathname: pathName.CHAT,
   },
   {
     title: 'Profile',
     icon: <i className="icon material-symbols-outlined">person</i>,
-    pathname: '/profile',
+    pathname: pathName.PROFILE,
   },
   {
     title: 'Friends',
     icon: <i className="icon material-symbols-outlined">people</i>,
-    pathname: '/friend-list',
+    pathname: pathName.FRIEND_LIST,
     eventKey: 'friend-menu',
     subNav: [
       {
         title: 'Friend List',
-        pathname: '/friend-list',
+        pathname: pathName.FRIEND_LIST,
         icon: circleIcon,
         miniTitle: 'F',
       },
       {
         title: 'Friend Request',
-        pathname: '/friend-request',
+        pathname: pathName.FRIEND_REQUEST,
         icon: circleIcon,
         miniTitle: 'F1',
       },
@@ -69,22 +70,22 @@ const NAVBAR_SOCIAL_CONFIGS = [
   {
     title: 'Group',
     icon: <i className="icon material-symbols-outlined">groups</i>,
-    pathname: '/group',
+    pathname: pathName.GROUP,
   },
   {
     title: 'Notification',
     icon: <i className="icon material-symbols-outlined">notifications</i>,
-    pathname: '/notification',
+    pathname: pathName.NOTIFICATION,
   },
   {
     title: 'Editor',
     icon: <i className="icon material-symbols-outlined">edit</i>,
-    pathname: '/editor',
+    pathname: pathName.EDITOR,
   },
   {
     title: 'Upload Example',
     icon: <i className="icon material-symbols-outlined">edit</i>,
-    pathname: '/upload',
+    pathname: pathName.UPLOAD,
   },
 ];
 

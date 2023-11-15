@@ -1,5 +1,6 @@
 import { AuthService } from '@/apis/services/auth.service';
 import { CustomToggle } from '@/components/custom';
+import { pathName } from '@/routes/path-name';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { useMemo, useState } from 'react';
 import { Card, Dropdown, Image } from 'react-bootstrap';
@@ -20,7 +21,7 @@ export const UserDropdown = () => {
       await AuthService.Logout();
       toast.success('Đăng xuất thành công');
       setLoading(false);
-      navigate('/login');
+      navigate(pathName.LOGIN);
     } catch (error) {
       setLoading(false);
       console.log(error);
@@ -32,22 +33,22 @@ export const UserDropdown = () => {
       {
         icon: 'account_circle',
         title: 'My Profile',
-        link: '/profile',
+        link: pathName.PROFILE,
       },
       {
         icon: 'edit_note',
         title: 'Edit Profile',
-        link: '/edit-profile',
+        link: pathName.EDIT_PROFILE,
       },
       {
         icon: 'manage_accounts',
         title: 'Account settings',
-        link: '/account-setting',
+        link: pathName.ACCOUNT_SETTING,
       },
       {
         icon: 'lock',
         title: 'Privacy & Security',
-        link: '/privacy-security',
+        link: pathName.PRIVACY_SECURITY,
       },
       {
         icon: 'login',

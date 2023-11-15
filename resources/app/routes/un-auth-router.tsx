@@ -3,26 +3,27 @@ import { ResetPasswordPage } from '@/pages/un-auth/forgot-password/components/fo
 import { LoginPage } from '@/pages/un-auth/login';
 import { RegisterPage } from '@/pages/un-auth/register';
 import { VerifyRegisterPage } from '@/pages/un-auth/verify-register';
+import { pathName } from './path-name';
 
 export const UnAuthRouter = [
   {
-    path: 'login',
+    path: pathName.LOGIN,
     element: <LoginPage />,
   },
   {
-    path: 'register',
+    path: pathName.REGISTER,
     element: <RegisterPage />,
   },
   {
-    path: 'get-forgot-password',
+    path: pathName.FORGOT_PASSWORD,
     element: <ForgotPasswordPage />,
   },
   {
-    path: 'get-reset-password',
+    path: pathName.RESET_PASSWORD,
     element: <ResetPasswordPage />,
   },
   {
-    path: 'verify-register',
+    path: pathName.VERIFY_REGISTER,
     element: <VerifyRegisterPage />,
   },
 ];

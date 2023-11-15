@@ -6,6 +6,7 @@ import { AuthService } from '@/apis/services/auth.service';
 import { type } from 'os';
 import { TresetPasswordSchema, resetPasswordSchema } from '@/validation/zod/auth';
 import toast from 'react-hot-toast';
+import { pathName } from '@/routes/path-name';
 
 export const ResetPasswordPage = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ export const ResetPasswordPage = () => {
       const { data } = await AuthService.ResetPassword(dataForm);
       reset();
       toast.success('Đổi mật khẩu thành công');
-      navigate('/login');
+      navigate(pathName.LOGIN);
     } catch (error: any) {
       if (error) {
         const serverError = error.message;

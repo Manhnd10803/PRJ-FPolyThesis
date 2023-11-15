@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { TSVerifyRegisterSchema, verifyRegisterSchema } from '@/validation/zod/auth';
 import { AuthService } from '@/apis/services/auth.service';
 import toast from 'react-hot-toast';
+import { pathName } from '@/routes/path-name';
 export const VerifyRegisterPage = () => {
   const location = useLocation();
   const email = location.state && location.state.email;
@@ -24,7 +25,7 @@ export const VerifyRegisterPage = () => {
     try {
       await AuthService.VerifyEmailRegister(dataForm);
       toast.success('Tài khoản được kích hoạt thành công');
-      navigate('/login');
+      navigate(pathName.LOGIN);
       reset();
     } catch (error: any) {
       if (error) {

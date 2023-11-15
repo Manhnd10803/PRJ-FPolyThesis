@@ -1,4 +1,5 @@
 import { AuthService } from '@/apis/services/auth.service';
+import { pathName } from '@/routes/path-name';
 import {
   TresetNewPasswordSchema,
   TresetPasswordSchema,
@@ -30,7 +31,7 @@ export const ResetForm = () => {
       const { data } = await AuthService.ResetNewPassword(dataForm);
       reset();
       toast.success('Đổi mật khẩu thành công');
-      navigate('/');
+      navigate(pathName.HOME);
     } catch (error: any) {
       reset();
       toast.error('Thông tin bạn nhập không chính xác');

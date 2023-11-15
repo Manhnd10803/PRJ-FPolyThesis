@@ -13,6 +13,7 @@ import { MajorService } from '@/apis/services/major.service';
 import { IMajors } from '@/models/major';
 import { useState } from 'react';
 import { CloudiaryService } from '@/apis/services/cloudinary.service';
+import { pathName } from '@/routes/path-name';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -62,7 +63,7 @@ export const CreateBlogPage = () => {
         },
         onSuccess: () => {
           toast.success('Tạo blog thành công');
-          navigate('/blog');
+          navigate(pathName.BLOG);
         },
       });
     }
