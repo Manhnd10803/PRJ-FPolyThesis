@@ -3,6 +3,9 @@ import axios, { AxiosRequestConfig } from 'axios';
 import toast from 'react-hot-toast';
 import { ApiConstants } from './endpoints';
 import { AuthService } from './services/auth.service';
+import { store } from '@/redux/store/store';
+import { authActions } from '@/redux/slice';
+import { RefreshTokenResponseType } from '@/models/auth';
 
 // Create an Axios instance
 const requestConfig: AxiosRequestConfig = {
@@ -33,6 +36,7 @@ httpRequest.interceptors.request.use(
   },
 );
 
+let refreshTokenPromise: Promise<RefreshTokenResponseType> | null;
 //===================== Response Interceptor =====================//
 
 httpRequest.interceptors.response.use(
@@ -51,17 +55,21 @@ httpRequest.interceptors.response.use(
     ) {
       // Access Token was expired
       if (error.response.status === 401 && !originalRequest._retry) {
+        if (!refreshTokenPromise) {
+          refreshTokenPromise = AuthService.RefreshToken().then(data => {
+            refreshTokenPromise = null;
+            return data;
+          });
+        }
         originalRequest._retry = true;
-        try {
-          const data = await AuthService.RefreshToken();
 
-          const { access_token } = data;
-          StorageFunc.saveAccessToken(access_token);
+        return refreshTokenPromise.then(data => {
+          store.dispatch(authActions.setAccessToken(data.access_token));
+
+          StorageFunc.saveDataAfterLogin(data);
 
           return httpRequest(originalRequest);
-        } catch (_error) {
-          return Promise.reject(_error);
-        }
+        });
       }
     }
 

@@ -46,9 +46,6 @@ const RefreshToken = async () => {
       refresh_token: StorageFunc.getRefreshToken(),
     });
 
-    store.dispatch(authActions.setAccessToken(data.access_token));
-
-    StorageFunc.saveDataAfterLogin(data);
     return data;
   } catch (error) {
     toast.error('Refresh token failed');
