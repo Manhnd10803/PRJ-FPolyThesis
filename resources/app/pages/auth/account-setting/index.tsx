@@ -6,7 +6,7 @@ import { ResetForm } from './components/form-reset';
 
 const imageUrl = 'https://picsum.photos/50';
 
-export const PrivacySettingPage = () => {
+export const AccountSettingPage = () => {
   const [isResetForm, setIsResetForm] = useState(false);
 
   const handleContinue = () => {

@@ -1,12 +1,12 @@
 export interface IUser {
   id: number;
   username: string;
-  first_name: null;
-  last_name: null;
+  first_name?: string;
+  last_name?: string;
   group_id: number;
   email: string;
   birthday: null;
-  avatar: null;
+  avatar?: string;
   phone: null;
   address: null;
   biography: null;

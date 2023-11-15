@@ -45,7 +45,10 @@ httpRequest.interceptors.response.use(
     const originalRequest = error.config;
 
     // If url là /login va /refresh , khong goi api refresh token  ( neu k se bi infinite loop)
-    if (![ApiConstants.LOGIN, ApiConstants.REFRESH_TOKEN].includes(originalRequest.url) && error.response) {
+    if (
+      ![ApiConstants.LOGIN, ApiConstants.REFRESH_TOKEN, ApiConstants.LOGOUT].includes(originalRequest.url) &&
+      error.response
+    ) {
       // Access Token was expired
       if (error.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;

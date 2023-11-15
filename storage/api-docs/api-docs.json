@@ -6,120 +6,6 @@
     },
     "paths": {
         "/api": {},
-        "/api/blogs/list-approved": {
-            "get": {
-                "tags": [
-                    "Admin Blogs"
-                ],
-                "summary": "Danh sách các bài viết đã được duyệt",
-                "description": "Lấy danh sách tất cả các bài viết đã được duyệt bởi admin",
-                "operationId": "b8714cfb1f96dc47908b6052fa556c1b",
-                "responses": {
-                    "200": {
-                        "description": "Danh sách các bài viết đã được duyệt"
-                    }
-                }
-            }
-        },
-        "/api/blogs/list-pending": {
-            "get": {
-                "tags": [
-                    "Admin Blogs"
-                ],
-                "summary": "Danh sách các bài viết chờ duyệt",
-                "description": "Lấy danh sách tất cả các bài viết đang chờ duyệt",
-                "operationId": "ae8813742f8f89ae065b047a9cf24031",
-                "responses": {
-                    "200": {
-                        "description": "Danh sách các bài viết chờ duyệt"
-                    }
-                }
-            }
-        },
-        "/api/blogs/approve/{blog}": {
-            "get": {
-                "tags": [
-                    "Admin Blogs"
-                ],
-                "summary": "Duyệt một bài viết",
-                "description": "Duyệt một bài viết chờ duyệt dựa trên ID của bài viết.",
-                "operationId": "b70434bddcba6c83f8a9769e7aa890ea",
-                "parameters": [
-                    {
-                        "name": "blog",
-                        "in": "path",
-                        "description": "ID của bài viết cần duyệt",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Bài viết đã được duyệt thành công"
-                    }
-                }
-            }
-        },
-        "/api/blogs/reject/{blog}": {
-            "get": {
-                "tags": [
-                    "Admin Blogs"
-                ],
-                "summary": "Từ chối một blog",
-                "description": "Từ chối một blog dựa trên ID.",
-                "operationId": "6f13caa446b35d0c63e5cca753ff0038",
-                "parameters": [
-                    {
-                        "name": "blog",
-                        "in": "path",
-                        "description": "ID của blog cần từ chối",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Từ chối blog thành công"
-                    },
-                    "400": {
-                        "description": "Lỗi trong quá trình xử lý"
-                    }
-                }
-            }
-        },
-        "/api/blogs/detail/{blog}": {
-            "get": {
-                "tags": [
-                    "Admin Blogs"
-                ],
-                "summary": "Xem chi tiết một bài viết",
-                "description": "Trả về thông tin chi tiết của một bài viết dựa trên ID của bài viết.",
-                "operationId": "8a09ef599950debca45be8ae7fdd2481",
-                "parameters": [
-                    {
-                        "name": "blog",
-                        "in": "path",
-                        "description": "ID của bài viết cần xem chi tiết",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Thông tin chi tiết của bài viết"
-                    },
-                    "404": {
-                        "description": "Bài viết không tồn tại"
-                    }
-                }
-            }
-        },
         "/api/admin/emotions": {
             "post": {
                 "tags": [
@@ -310,589 +196,6 @@
                                 }
                             }
                         }
-                    }
-                }
-            }
-        },
-        "/api/admin/majors": {
-            "get": {
-                "tags": [
-                    "Admin Majors"
-                ],
-                "summary": "Get the list of majors",
-                "operationId": "bb2edcf8116c6f85c085100d4b381098",
-                "responses": {
-                    "200": {
-                        "description": "Successful operation"
-                    }
-                }
-            },
-            "post": {
-                "tags": [
-                    "Admin Majors"
-                ],
-                "summary": "Create a new major",
-                "operationId": "585d8157f1aecac7609922d44813510b",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "majors_name": {
-                                        "type": "string",
-                                        "example": "Computer Science"
-                                    },
-                                    "majors_code": {
-                                        "type": "string",
-                                        "example": "CS"
-                                    },
-                                    "description": {
-                                        "type": "string",
-                                        "example": "Study of computer systems and software engineering."
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Major created successfully"
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "The given data was invalid."
-                                        },
-                                        "errors": {
-                                            "type": "object",
-                                            "example": {
-                                                "majors_name": [
-                                                    "The majors name field is required."
-                                                ]
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/majors/{major}": {
-            "get": {
-                "tags": [
-                    "Admin Majors"
-                ],
-                "summary": "Get details of a major",
-                "operationId": "021137001fca361b5f41fbd577086f03",
-                "parameters": [
-                    {
-                        "name": "major",
-                        "in": "path",
-                        "description": "ID of the major",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successful operation"
-                    },
-                    "404": {
-                        "description": "Major not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Major not found."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "put": {
-                "tags": [
-                    "Admin Majors"
-                ],
-                "summary": "Update a major",
-                "operationId": "c893b084d106286c661d5c1a337b2f2e",
-                "parameters": [
-                    {
-                        "name": "major",
-                        "in": "path",
-                        "description": "ID of the major",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "properties": {
-                                    "majors_name": {
-                                        "type": "string",
-                                        "example": "New Major Name"
-                                    },
-                                    "majors_code": {
-                                        "type": "string",
-                                        "example": "NEW"
-                                    },
-                                    "description": {
-                                        "type": "string",
-                                        "example": "Updated description of the major."
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Major updated successfully"
-                    },
-                    "404": {
-                        "description": "Major not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Major not found."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Validation error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "The given data was invalid."
-                                        },
-                                        "errors": {
-                                            "type": "object",
-                                            "example": {
-                                                "majors_name": [
-                                                    "The majors name field must be a string."
-                                                ]
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "tags": [
-                    "Admin Majors"
-                ],
-                "summary": "Delete a major",
-                "operationId": "9b982dc8af354c76c599b5bfc16f0416",
-                "parameters": [
-                    {
-                        "name": "major",
-                        "in": "path",
-                        "description": "ID of the major",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Major deleted successfully",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Major deleted."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Major not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Major not found."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/user/": {
-            "get": {
-                "tags": [
-                    "User Management"
-                ],
-                "summary": "Danh sách tất cả tài khoản người dùng",
-                "description": "Lấy danh sách tất cả tài khoản người dùng trong hệ thống.",
-                "operationId": "0a04c845a99fd15de3b30f480021778d",
-                "responses": {
-                    "200": {
-                        "description": "Danh sách tài khoản người dùng thành công",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {
-                                        "properties": {
-                                            "id": {
-                                                "description": "ID tài khoản người dùng",
-                                                "type": "integer",
-                                                "format": "int64"
-                                            },
-                                            "username": {
-                                                "description": "Tên đăng nhập",
-                                                "type": "string"
-                                            },
-                                            "first_name": {
-                                                "description": "Họ",
-                                                "type": "string"
-                                            },
-                                            "last_name": {
-                                                "description": "Tên",
-                                                "type": "string"
-                                            },
-                                            "group_id": {
-                                                "description": "ID nhóm",
-                                                "type": "integer",
-                                                "format": "int32"
-                                            },
-                                            "email": {
-                                                "description": "Địa chỉ email",
-                                                "type": "string",
-                                                "format": "email"
-                                            },
-                                            "birthday": {
-                                                "description": "Ngày sinh",
-                                                "type": "string"
-                                            },
-                                            "avatar": {
-                                                "description": "Link đến ảnh đại diện",
-                                                "type": "string"
-                                            },
-                                            "phone": {
-                                                "description": "Số điện thoại",
-                                                "type": "string"
-                                            },
-                                            "address": {
-                                                "description": "Địa chỉ",
-                                                "type": "string"
-                                            },
-                                            "biography": {
-                                                "description": "Tiểu sử",
-                                                "type": "string"
-                                            },
-                                            "gender": {
-                                                "description": "Giới tính",
-                                                "type": "string"
-                                            },
-                                            "status": {
-                                                "description": "Trạng thái",
-                                                "type": "integer",
-                                                "format": "int32"
-                                            },
-                                            "major_id": {
-                                                "description": "ID ngành học",
-                                                "type": "integer",
-                                                "format": "int32"
-                                            },
-                                            "permissions": {
-                                                "description": "Danh sách quyền",
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "string"
-                                                }
-                                            },
-                                            "verification_code": {
-                                                "description": "Mã xác minh",
-                                                "type": "string"
-                                            },
-                                            "created_at": {
-                                                "description": "Ngày tạo",
-                                                "type": "string",
-                                                "format": "date-time"
-                                            },
-                                            "updated_at": {
-                                                "description": "Ngày cập nhật",
-                                                "type": "string",
-                                                "format": "date-time"
-                                            }
-                                        },
-                                        "type": "object"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/user/detail/{user}": {
-            "get": {
-                "tags": [
-                    "User Management"
-                ],
-                "summary": "Xem chi tiết tài khoản người dùng",
-                "description": "Xem chi tiết thông tin tài khoản người dùng.",
-                "operationId": "438eb505190666bbc07a7ad55613aac8",
-                "parameters": [
-                    {
-                        "name": "user",
-                        "in": "path",
-                        "description": "ID của tài khoản người dùng",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int32"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Thông tin chi tiết của tài khoản người dùng",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "id": {
-                                            "description": "ID tài khoản người dùng",
-                                            "type": "integer",
-                                            "format": "int64"
-                                        },
-                                        "username": {
-                                            "description": "Tên đăng nhập",
-                                            "type": "string"
-                                        },
-                                        "first_name": {
-                                            "description": "Họ",
-                                            "type": "string"
-                                        },
-                                        "last_name": {
-                                            "description": "Tên",
-                                            "type": "string"
-                                        },
-                                        "group_id": {
-                                            "description": "ID nhóm",
-                                            "type": "integer",
-                                            "format": "int32"
-                                        },
-                                        "email": {
-                                            "description": "Địa chỉ email",
-                                            "type": "string",
-                                            "format": "email"
-                                        },
-                                        "birthday": {
-                                            "description": "Ngày sinh",
-                                            "type": "string"
-                                        },
-                                        "avatar": {
-                                            "description": "Link đến ảnh đại diện",
-                                            "type": "string"
-                                        },
-                                        "phone": {
-                                            "description": "Số điện thoại",
-                                            "type": "string"
-                                        },
-                                        "address": {
-                                            "description": "Địa chỉ",
-                                            "type": "string"
-                                        },
-                                        "biography": {
-                                            "description": "Tiểu sử",
-                                            "type": "string"
-                                        },
-                                        "gender": {
-                                            "description": "Giới tính",
-                                            "type": "string"
-                                        },
-                                        "status": {
-                                            "description": "Trạng thái",
-                                            "type": "integer",
-                                            "format": "int32"
-                                        },
-                                        "major_id": {
-                                            "description": "ID ngành học",
-                                            "type": "integer",
-                                            "format": "int32"
-                                        },
-                                        "permissions": {
-                                            "description": "Danh sách quyền",
-                                            "type": "array",
-                                            "items": {
-                                                "type": "string"
-                                            }
-                                        },
-                                        "verification_code": {
-                                            "description": "Mã xác minh",
-                                            "type": "string"
-                                        },
-                                        "created_at": {
-                                            "description": "Ngày tạo",
-                                            "type": "string",
-                                            "format": "date-time"
-                                        },
-                                        "updated_at": {
-                                            "description": "Ngày cập nhật",
-                                            "type": "string",
-                                            "format": "date-time"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Không tìm thấy tài khoản"
-                    }
-                }
-            }
-        },
-        "/api/admin/user/suspend/{user}": {
-            "put": {
-                "tags": [
-                    "User Management"
-                ],
-                "summary": "Tạm khóa tài khoản người dùng",
-                "description": "Tạm khóa tài khoản người dùng dựa trên ID.",
-                "operationId": "858b4c93688c2026457c1ff85d4d1e8e",
-                "parameters": [
-                    {
-                        "name": "user",
-                        "in": "path",
-                        "description": "ID của tài khoản người dùng",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int32"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Tạm khóa tài khoản thành công"
-                    },
-                    "400": {
-                        "description": "Lỗi trong quá trình xử lý"
-                    },
-                    "404": {
-                        "description": "Không tìm thấy tài khoản"
-                    }
-                }
-            }
-        },
-        "/api/admin/user/active/{user}": {
-            "put": {
-                "tags": [
-                    "User Management"
-                ],
-                "summary": "Mở khóa tài khoản người dùng",
-                "description": "Mở khóa tài khoản người dùng dựa trên ID.",
-                "operationId": "a28a63c9aaa7014b0b82c2ec63442b8e",
-                "parameters": [
-                    {
-                        "name": "user",
-                        "in": "path",
-                        "description": "ID của tài khoản người dùng",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int32"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Mở khóa tài khoản thành công"
-                    },
-                    "400": {
-                        "description": "Lỗi trong quá trình xử lý"
-                    },
-                    "404": {
-                        "description": "Không tìm thấy tài khoản"
-                    }
-                }
-            }
-        },
-        "/api/admin/user/delete/{user}": {
-            "delete": {
-                "tags": [
-                    "User Management"
-                ],
-                "summary": "Xóa tài khoản người dùng",
-                "description": "Xóa tài khoản người dùng dựa trên ID.",
-                "operationId": "f8ece4233a9eae56293e927d468291b0",
-                "parameters": [
-                    {
-                        "name": "user",
-                        "in": "path",
-                        "description": "ID của tài khoản người dùng",
-                        "required": true,
-                        "schema": {
-                            "type": "integer",
-                            "format": "int32"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Xóa tài khoản thành công"
-                    },
-                    "400": {
-                        "description": "Lỗi trong quá trình xử lý"
-                    },
-                    "404": {
-                        "description": "Không tìm thấy tài khoản"
                     }
                 }
             }
@@ -3934,27 +3237,18 @@
                 }
             }
         },
-        "/api/messages/{privateMessage}/{user}": {
+        "/api/messages/{privateMessage}": {
             "put": {
                 "tags": [
                     "Messages"
                 ],
                 "summary": "Cập nhật nội dung tin nhắn",
-                "operationId": "bec29b688272f801912c873f4ea6b415",
+                "operationId": "333dd0ea30812d2501d474bb0a71a8a8",
                 "parameters": [
                     {
                         "name": "privateMessage",
                         "in": "path",
                         "description": "Tin nhắn cần cập nhật",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    },
-                    {
-                        "name": "user",
-                        "in": "path",
-                        "description": "Người dùng có tin nhắn được cập nhật",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -4029,13 +3323,13 @@
                 }
             }
         },
-        "/api/message/{privateMessage}/{user}": {
+        "/api/message/{privateMessage}": {
             "delete": {
                 "tags": [
                     "Messages"
                 ],
                 "summary": "Xóa tin nhắn",
-                "operationId": "904391ebdb96121494b3bc1d8f6904af",
+                "operationId": "247b1a90894d97c28d42ec2dc01e8bb5",
                 "parameters": [
                     {
                         "name": "privateMessage",
@@ -4045,11 +3339,40 @@
                         "schema": {
                             "type": "integer"
                         }
-                    },
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tin nhắn đã được xóa thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Tin nhắn đã được xóa"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/message/chat/{user}}": {
+            "delete": {
+                "tags": [
+                    "Messages"
+                ],
+                "summary": "Xóa tin nhắn",
+                "operationId": "a2a7f810ae6fb42d80ed205e86679fdb",
+                "parameters": [
                     {
                         "name": "user",
                         "in": "path",
-                        "description": "Người dùng có tin nhắn được cập nhật",
+                        "description": "Người được xóa hết tin nhắn",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -4058,7 +3381,7 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Tin nhắn đã được xóa thành công",
+                        "description": "Toàn bộ tin nhắn đã được xóa thành công",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -6297,13 +5620,6 @@
                         }
                     }
                 }
-            }
-        }
-    },
-    "components": {
-        "responses": {
-            "400": {
-                "description": "Lỗi trong quá trình xử lý"
             }
         }
     }

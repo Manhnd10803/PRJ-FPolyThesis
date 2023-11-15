@@ -1,4 +1,4 @@
-import { PrivacySettingPage } from '@/pages/auth/account/privacy-setting';
+import { AccountSettingPage } from '@/pages/auth/account-setting';
 import { BlogPage } from '@/pages/auth/blog';
 import { CreateBlogPage } from '@/pages/auth/blog-create';
 import { BlogDetailPage } from '@/pages/auth/blog/blog-detail';
@@ -15,6 +15,7 @@ import { CreateQandA } from '@/pages/auth/question-and-answer/create-qanda';
 import { DetailQandAPage } from '@/pages/auth/question-and-answer/detail-qanda';
 import { UpdateQandA } from '@/pages/auth/question-and-answer/update-qanda/update-form';
 import { ExampleUploadPage } from '@/pages/auth/example-upload';
+import { PrivacySecurityPage } from '@/pages/auth/privacy-security';
 
 export const AuthRouter = [
   {
@@ -87,7 +88,11 @@ export const AuthRouter = [
     element: <ExampleUploadPage />,
   },
   {
-    path: '/account/user-privacy-setting',
-    element: <PrivacySettingPage />,
+    path: '/account-setting',
+    element: <AccountSettingPage />,
+  },
+  {
+    path: '/privacy-security',
+    element: <PrivacySecurityPage />,
   },
 ];

@@ -28,6 +28,12 @@ const getUserId = () => {
   return load<IUser['id']>(storageKeys.USER_ID);
 };
 
+const getFullName = () => {
+  const userInfo = load<IUser>(storageKeys.USER);
+
+  return userInfo?.first_name + ' ' + userInfo?.last_name || 'NO NAME';
+};
+
 const getRefreshToken = () => {
   return load<string>(storageKeys.REFRESH_TOKEN);
 };
@@ -49,4 +55,5 @@ export const StorageFunc = {
   getRefreshToken,
   getAccessToken,
   saveUserDetailData,
+  getFullName,
 };
