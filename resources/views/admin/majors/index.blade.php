@@ -1,39 +1,114 @@
 @extends('admin.layouts.app')
-@section('title') Dashboard @endsection
+@section('title')
+    Danh sách chuyên ngành
+@endsection
 @section('content')
-    <div class="container">
-        <h1>Quản lý Majors</h1>
+    @push('css')
+        <link rel="stylesheet" href="{{ asset('bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css') }}">
+        <style>
+            .example-modal .modal {
+                position: relative;
+                top: auto;
+                bottom: auto;
+                right: auto;
+                left: auto;
+                display: block;
+                z-index: 1;
+            }
 
-        <a href="{{ route('admin.majors.create') }}" class="btn btn-primary mb-3">Thêm Major</a>
-
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Tên Major</th>
-                    <th>Mã Major</th>
-                    <th>Mô tả</th>
-                    <th>Thao tác</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($majors as $major)
-                    <tr>
-                        <td>{{ $major->id }}</td>
-                        <td>{{ $major->majors_name }}</td>
-                        <td>{{ $major->majors_code }}</td>
-                        <td>{{ $major->description }}</td>
-                        <td>
-                            <a href="{{ route('admin.majors.edit', $major) }}" class="btn btn-sm btn-warning">Sửa</a>
-                            <form action="{{ route('admin.majors.destroy', $major) }}" method="POST" style="display: inline-block;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa major này không?')">Xóa</button>
-                            </form>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+            .example-modal .modal {
+                background: transparent !important;
+            }
+        </style>
+    @endpush
+    <div class="row">
+        <div class="col-xs-12 mx-5">
+            <div class="box">
+                <div style="display: flex;justify-content: space-between;padding: 10px 10px;align-items: center">
+                    <h4>Danh sách chuyên ngành</h4>
+                    <a class="btn btn-success" href="{{ route('admin.majors.create') }}"><i class="fa fa-plus"></i> Thêm chuyên
+                        ngành</a>
+                </div>
+                <div class="box-body">
+                    <table id="example1" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Tên chuyên ngành</th>
+                                <th>Mã chuyên ngành</th>
+                                <th>Mô tả</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($majors as $index => $major)
+                                <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td>{{ $major->majors_name }}</td>
+                                    <td>{{ $major->majors_code }}</td>
+                                    <td>
+                                        @if ($major->description)
+                                            {{ $major->description }}
+                                        @else
+                                            Chưa thêm
+                                        @endif
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('admin.majors.edit', $major) }}" class="btn btn-sm btn-warning"><i
+                                                class="fa fa-edit "></i></a>
+                                        <button type="submit" class="btn btn-danger btn-sm" data-toggle="modal"
+                                            data-target="#modal-danger-{{ $major->id }}"><i
+                                                class="fa fa-trash-o"></i></button>
+                                        <div class="modal modal-danger fade" id="modal-danger-{{ $major->id }}">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span></button>
+                                                        <h4 class="modal-title">FpolyZone</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p>Bạn có chắc muốn xóa {{ $major->majors_name }}? </p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-outline pull-left"
+                                                            data-dismiss="modal">Hủy</button>
+                                                        <form action="{{ route('admin.majors.destroy', $major) }}"
+                                                            method="POST" style="display: inline-block;">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-outline">Đồng
+                                                                ý</button>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
+    @push('js')
+        <script src="{{ asset('bower_components/datatables.net/js/jquery.dataTables.min.js') }}"></script>
+        <script src="{{ asset('bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js') }}"></script>
+        <script>
+            $(function() {
+                $('#example1').DataTable()
+                $('#example2').DataTable({
+                    'paging': true,
+                    'lengthChange': false,
+                    'searching': false,
+                    'ordering': true,
+                    'info': true,
+                    'autoWidth': false
+                })
+            })
+        </script>
+    @endpush
 @endsection
