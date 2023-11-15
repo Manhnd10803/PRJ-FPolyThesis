@@ -4,7 +4,7 @@ import { Dropdown, OverlayTrigger, Tooltip } from 'react-bootstrap';
 //image
 const imageUrl = 'https://picsum.photos/20';
 
-export const FeedEmotion = () => {
+export const ChosePostEmotion = () => {
   return (
     <div className="like-data">
       <Dropdown>

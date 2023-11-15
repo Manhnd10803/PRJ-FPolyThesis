@@ -8,11 +8,11 @@ import tagFriendUrl from '@/assets/images/tag-friend.png';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-type CreateNewFeedChoiceProps = {
+type CreateNewPostChoiceProps = {
   onClickAddPhoto: () => void;
 };
 
-export const CreateNewFeedChoice = ({ onClickAddPhoto }: CreateNewFeedChoiceProps) => {
+export const CreateNewPostChoice = ({ onClickAddPhoto }: CreateNewPostChoiceProps) => {
   const choiceConfig = useMemo(() => {
     return [
       {

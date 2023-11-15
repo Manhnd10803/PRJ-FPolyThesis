@@ -1,11 +1,11 @@
 import { CustomToggle } from '@/components/custom';
 import { Dropdown } from 'react-bootstrap';
 
-type FeedTotalLikeProps = {
+type TotalLikePostProps = {
   totalLike: number;
 };
 
-export const FeedTotalLike = ({ totalLike }: FeedTotalLikeProps) => {
+export const TotalLikePost = ({ totalLike }: TotalLikePostProps) => {
   return (
     <div className="total-like-block ms-2 me-3">
       <Dropdown>

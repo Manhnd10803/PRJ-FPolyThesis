@@ -1,7 +1,7 @@
 import { CustomToggle } from '@/components/custom';
 import { Dropdown } from 'react-bootstrap';
 
-export const FeedTotalComment = () => {
+export const TotalCommentPost = () => {
   return (
     <div className="total-comment-block">
       <Dropdown>
