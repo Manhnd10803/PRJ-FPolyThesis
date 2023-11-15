@@ -1,5 +1,5 @@
 import { ChatPage } from '@/pages/chat';
-import { HomePage } from '@/pages/client/home';
+import { HomePage } from '@/pages/auth/home';
 
 export const ChatRouter = [
   {

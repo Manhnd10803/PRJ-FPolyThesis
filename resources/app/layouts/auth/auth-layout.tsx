@@ -2,11 +2,11 @@ import { Outlet } from 'react-router-dom';
 import { Header, RightSidebar, Footer, Sidebar } from './components';
 import { SettingOffCanvas } from '@/components/setting/setting-offcanvas';
 
-type ClientLayoutProps = {
+type AuthLayoutProps = {
   hasRightSidebar?: boolean;
 };
 
-export const ClientLayout = ({ hasRightSidebar = true }: ClientLayoutProps) => {
+export const AuthLayout = ({ hasRightSidebar = true }: AuthLayoutProps) => {
   return (
     <>
       <Sidebar />

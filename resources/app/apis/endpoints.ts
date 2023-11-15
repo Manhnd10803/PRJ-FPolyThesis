@@ -63,9 +63,6 @@ export const ApiConstants = {
   //Info User
   SHOW_INFO_USER: `user-info`,
   EDIT_INFO_USER: `profile/update`,
-  // admin
-
-  USERS_ADMIN: '/admin/users',
 
   // Add more endpoints as needed
 

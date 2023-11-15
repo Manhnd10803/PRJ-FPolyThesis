@@ -1,22 +1,19 @@
-import { MajorService } from '@/apis/services/major.service';
 import { QandAService } from '@/apis/services/qanda.service';
-import { IMajors } from '@/models/major';
-import { formatDateFromCreatedAt } from '@/pages/client/blog/components/format-date';
-import { useQuery } from '@tanstack/react-query';
+import { formatDateFromCreatedAt } from '@/pages/auth/blog/components/format-date';
 import { useEffect, useState } from 'react';
 import { Badge, Row } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 
 const imageUrl = 'https://picsum.photos/20';
 
-export const ListQAndAsByMajorId = ({ data, majorId }: any) => {
-  // console.log(majorId);
-  // console.log(data);
+export const ListNoAnswerQAndAs = ({ data }: any) => {
+  console.log(data);
 
   const [filteredData, setFilteredData] = useState([]);
-  const [majorName, setMajorName] = useState('');
-
   const navigate = useNavigate();
+
+  // console.log(data);
+
   const handleDetailsClick = (id: number) => {
     QandAService.getDetailQandA(id)
       .then(response => {
@@ -30,33 +27,21 @@ export const ListQAndAsByMajorId = ({ data, majorId }: any) => {
       });
   };
 
-  const { data: majors } = useQuery({
-    queryKey: ['majors'],
-    queryFn: () => MajorService.getMajors(),
-  });
-  const listMajors = majors?.data;
-  console.log(listMajors);
-
   useEffect(() => {
-    QandAService.getAllQandAByMajor(majorId)
+    QandAService.getUnAnswerQandA()
       .then(response => {
         const filteredQAndA = response.data;
         setFilteredData(filteredQAndA);
-
-        const selectedMajor = listMajors.find(item => item.id === majorId);
-        if (selectedMajor) {
-          setMajorName(selectedMajor.majors_name);
-        }
       })
       .catch(error => {
         console.error('Error fetching filtered data:', error);
       });
-  }, [majorId]);
+  }, [filteredData]);
 
   return (
     <>
       {/* List câu hỏi */}
-      <h4>Chuyên Ngành : {majorName}</h4>
+
       {filteredData &&
         filteredData.map((qandA, index) => (
           <div key={qandA.qa.id} className="borderbox1 mt-3 rounded d-flex rounded">
