@@ -35,6 +35,7 @@ return [
             'friend' => 1,
         ]
     ],
+
     'post'=> [
         'status'=>[
             'approved'=>1,
@@ -51,16 +52,16 @@ return [
     ],
     'notification' => [
         'notification_type' => [
-            'friend' => 1,
-            'like_post' => 2,
-            'like_blog' => 3,
-            'like_qa' => 4,
-            'comment_post' => 5,
-            'comment_blog' => 6,
-            'comment_qa' => 7,
-            'reply_post' => 8,
-            'reply_blog' => 9,
-            'reply_qa' => 10,
+            'friend' => 'friend',
+            'like_post' => 'like_post',
+            'like_blog' => 'like_blog',
+            'like_qa' => 'like_qa',
+            'comment_post' => 'comment_post',
+            'comment_blog' => 'comment_blog',
+            'comment_qa' => 'comment_qa',
+            'reply_post' => 'reply_post',
+            'reply_blog' => 'reply_blog',
+            'reply_qa' => 'reply_qa',
         ],
         'status' => [
             'not_seen' => 0,

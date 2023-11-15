@@ -208,6 +208,21 @@ class AuthController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
     }
+    public function refresh(Request $request)
+    {
+        if($request->refresh_token){
+            $request = Request::create('oauth/token', 'POST', [
+                'grant_type' => 'refresh_token',
+                'client_id' => env('VITE_PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
+                'client_secret' => env('VITE_PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
+                'refresh_token' => $request->refresh_token,
+            ]);
+            $result = app()->handle($request);
+            $response = json_decode($result->getContent(), true);
+            return response()->json($response, 200);
+        }
+        return response(['message' => 'refresh_token null'], 401);
+    }
     /**
      * @OA\Post(
      *     path="/api/auth/logout",

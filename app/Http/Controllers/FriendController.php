@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\FriendAccept;
+use App\Events\ReceiveNotification;
 use App\Models\Friend;
 use App\Models\Notification;
 use App\Models\User;
@@ -67,7 +69,7 @@ class FriendController extends Controller
                 ]);
                 //Thông báo
                 $content = Auth::user()->username . ' đã gửi cho bạn lời mời kết bạn.';
-                Notification::create([
+                $notification = Notification::create([
                     'sender' => Auth::id(),
                     'recipient' => $recipient->id,
                     'content' => $content,
@@ -75,6 +77,7 @@ class FriendController extends Controller
                     'status' => config('default.notification.status.not_seen'),
                     'objet_id' => Auth::id(),
                 ]);
+                broadcast(new ReceiveNotification($notification))->toOthers();
                 DB::commit();
                 return response()->json(['message' => 'Đã gửi lời mời kết bạn', 'friend' => $friend], 200);
             }
@@ -124,7 +127,7 @@ class FriendController extends Controller
                     'friendship_type' => config('default.friend.friendship_type.friend'),
                 ]);
             $content = Auth::user()->username . ' đã đồng ý lời mời kết bạn.';
-            Notification::create([
+            $notification = Notification::create([
                 'sender' => Auth::id(),
                 'recipient' => $sender->id,
                 'content' => $content,
@@ -132,6 +135,8 @@ class FriendController extends Controller
                 'status' => config('default.notification.status.not_seen'),
                 'objet_id' => Auth::id(),
             ]);
+            broadcast(new ReceiveNotification($notification))->toOthers();
+            return 'hello';
             DB::commit();
             return response()->json(['message' => 'Đã chấp nhận'], 200);
         } catch (\Exception $e) {
@@ -372,7 +377,6 @@ class FriendController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
-
     // Trạng thái bạn bè 
     public function getFriendshipStatus($user_id2) {
         $self = Auth::id();
@@ -403,3 +407,4 @@ class FriendController extends Controller
         }
     }
 }
+

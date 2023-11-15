@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ReceiveNotification;
 use App\Models\Blog;
 use App\Models\Comment;
 use App\Models\Notification;
@@ -149,9 +150,10 @@ class CommentController extends Controller
                             'content' => $message,
                             'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
                         ]);
+                        broadcast(new ReceiveNotification($notification))->toOthers();
                     } else {
                         //Tạo mới thông báo
-                        Notification::create([
+                        $notification = Notification::create([
                             'sender' => Auth::id(),
                             'recipient' => $model->user_id,
                             'content' => $message,
@@ -159,6 +161,7 @@ class CommentController extends Controller
                             'status' => config('default.notification.status.not_seen'),
                             'objet_id' => $id,
                         ]);
+                        broadcast(new ReceiveNotification($notification))->toOthers();
                     }
                 } else {
                     //Update thời gian thông báo
@@ -167,9 +170,10 @@ class CommentController extends Controller
                             'content' => $message,
                             'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
                         ]);
+                        broadcast(new ReceiveNotification($notification))->toOthers();
                     } else {
                         //Tạo mới thông báo
-                        Notification::create([
+                        $notification = Notification::create([
                             'sender' => Auth::id(),
                             'recipient' => $model->user_id,
                             'content' => $message,
@@ -177,6 +181,7 @@ class CommentController extends Controller
                             'status' => config('default.notification.status.not_seen'),
                             'objet_id' => $id,
                         ]);
+                        broadcast(new ReceiveNotification($notification))->toOthers();
                     }
                 }
             } else {
@@ -229,9 +234,10 @@ class CommentController extends Controller
                             'content' => $message,
                             'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
                         ]);
+                        broadcast(new ReceiveNotification($notification))->toOthers();
                     } else {
                         //Tạo mới thông báo
-                        Notification::create([
+                        $notification = Notification::create([
                             'sender' => Auth::id(),
                             'recipient' => $responsePerson->id,
                             'content' => $message,
@@ -239,6 +245,7 @@ class CommentController extends Controller
                             'status' => config('default.notification.status.not_seen'),
                             'objet_id' => $id,
                         ]);
+                        broadcast(new ReceiveNotification($notification))->toOthers();
                     }
                 } else {
                     //Update thời gian thông báo
@@ -247,9 +254,10 @@ class CommentController extends Controller
                             'content' => $message,
                             'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
                         ]);
+                        broadcast(new ReceiveNotification($notification))->toOthers();
                     } else {
                         //Tạo mới thông báo
-                        Notification::create([
+                        $notification = Notification::create([
                             'sender' => Auth::id(),
                             'recipient' => $responsePerson->id,
                             'content' => $message,
@@ -257,6 +265,7 @@ class CommentController extends Controller
                             'status' => config('default.notification.status.not_seen'),
                             'objet_id' => $id,
                         ]);
+                        broadcast(new ReceiveNotification($notification))->toOthers();
                     }
                 }
             }
