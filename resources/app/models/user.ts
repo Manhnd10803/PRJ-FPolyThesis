@@ -18,14 +18,3 @@ export interface IUser {
   created_at: null;
   updated_at: Date;
 }
-
-export interface IUsersAdmin {
-  id: number;
-  username: string;
-  email: string;
-  birthday: string;
-  phone: string;
-  gender: string;
-  major_id: string;
-  status: string;
-}

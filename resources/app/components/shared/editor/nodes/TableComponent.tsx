@@ -1074,8 +1074,8 @@ export default function TableComponent({
         return clipboardData instanceof DataTransfer
           ? clipboardData.getData(type)
           : clipboardData instanceof ClipboardItem
-            ? await (await clipboardData.getType(type)).text()
-            : '';
+          ? await (await clipboardData.getType(type)).text()
+          : '';
       } catch {
         return '';
       }

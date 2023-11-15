@@ -1,20 +1,19 @@
-import { MajorService } from '@/apis/services/major.service';
 import { QandAService } from '@/apis/services/qanda.service';
-import { formatDateFromCreatedAt } from '@/pages/client/blog/components/format-date';
-import { useQuery } from '@tanstack/react-query';
+import { formatDateFromCreatedAt } from '@/pages/auth/blog/components/format-date';
 import { useEffect, useState } from 'react';
 import { Badge, Row } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 
 const imageUrl = 'https://picsum.photos/20';
 
-export const ListMyQAndAs = ({ data }: any) => {
-  // console.log(majorId);
+export const ListMostsCmtQAndAs = ({ data }: any) => {
   console.log(data);
 
   const [filteredData, setFilteredData] = useState([]);
-
   const navigate = useNavigate();
+
+  // console.log(data);
+
   const handleDetailsClick = (id: number) => {
     QandAService.getDetailQandA(id)
       .then(response => {
@@ -29,11 +28,10 @@ export const ListMyQAndAs = ({ data }: any) => {
   };
 
   useEffect(() => {
-    QandAService.getAllMyQandA()
+    QandAService.getMostCommentQandA()
       .then(response => {
         const filteredQAndA = response.data;
         setFilteredData(filteredQAndA);
-        console.log(filteredQAndA);
       })
       .catch(error => {
         console.error('Error fetching filtered data:', error);
@@ -43,7 +41,7 @@ export const ListMyQAndAs = ({ data }: any) => {
   return (
     <>
       {/* List câu hỏi */}
-      <h4>Tất cả câu hỏi của bạn</h4>
+
       {filteredData &&
         filteredData.map((qandA, index) => (
           <div key={qandA.qa.id} className="borderbox1 mt-3 rounded d-flex rounded">

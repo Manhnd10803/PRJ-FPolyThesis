@@ -1,17 +1,14 @@
 import { QandAService } from '@/apis/services/qanda.service';
-import { formatDateFromCreatedAt } from '@/pages/client/blog/components/format-date';
-import { useEffect, useState } from 'react';
+import { formatDateFromCreatedAt } from '@/pages/auth/blog/components/format-date';
 import { Badge, Row } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 
 const imageUrl = 'https://picsum.photos/20';
 
-export const ListNoAnswerQAndAs = ({ data }: any) => {
+export const ListNewQAndAs = ({ data }: any) => {
   console.log(data);
 
-  const [filteredData, setFilteredData] = useState([]);
   const navigate = useNavigate();
-
   // console.log(data);
 
   const handleDetailsClick = (id: number) => {
@@ -27,23 +24,12 @@ export const ListNoAnswerQAndAs = ({ data }: any) => {
       });
   };
 
-  useEffect(() => {
-    QandAService.getUnAnswerQandA()
-      .then(response => {
-        const filteredQAndA = response.data;
-        setFilteredData(filteredQAndA);
-      })
-      .catch(error => {
-        console.error('Error fetching filtered data:', error);
-      });
-  }, [filteredData]);
-
   return (
     <>
       {/* List câu hỏi */}
 
-      {filteredData &&
-        filteredData.map((qandA, index) => (
+      {data &&
+        data.map((qandA, index) => (
           <div key={qandA.qa.id} className="borderbox1 mt-3 rounded d-flex rounded">
             <div className="user-img me-2">
               <img loading="lazy" src={imageUrl} alt="userimg" className="avatar-40 rounded-circle" />

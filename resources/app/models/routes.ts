@@ -1,4 +1,4 @@
-export type ClientRouteType = {
+export type AuthRouteType = {
   noRightSidebar?: boolean;
   path: string;
   element: JSX.Element;

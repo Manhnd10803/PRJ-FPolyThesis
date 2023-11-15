@@ -1,22 +1,22 @@
-import { PrivacySettingPage } from '@/pages/client/account/privacy-setting';
-import { BlogPage } from '@/pages/client/blog';
-import { CreateBlogPage } from '@/pages/client/blog-create';
-import { BlogDetailPage } from '@/pages/client/blog/blog-detail';
-import { EditProfilePage } from '@/pages/client/edit-profile';
-import { RichEditorPage } from '@/pages/client/editor';
-import { FriendListPage } from '@/pages/client/friend-list';
-import { FriendRequestPage } from '@/pages/client/friend-request';
-import { GroupPage } from '@/pages/client/group';
-import { HomePage } from '@/pages/client/home';
-import { NotificationPage } from '@/pages/client/notification';
-import { ProfilePage } from '@/pages/client/profile';
-import { QuestionAndAnswerPage } from '@/pages/client/question-and-answer';
-import { CreateQandA } from '@/pages/client/question-and-answer/create-qanda';
-import { DetailQandAPage } from '@/pages/client/question-and-answer/detail-qanda';
-import { UpdateQandA } from '@/pages/client/question-and-answer/update-qanda/update-form';
-import { ExampleUploadPage } from '@/pages/client/example-upload';
+import { PrivacySettingPage } from '@/pages/auth/account/privacy-setting';
+import { BlogPage } from '@/pages/auth/blog';
+import { CreateBlogPage } from '@/pages/auth/blog-create';
+import { BlogDetailPage } from '@/pages/auth/blog/blog-detail';
+import { EditProfilePage } from '@/pages/auth/edit-profile';
+import { RichEditorPage } from '@/pages/auth/editor';
+import { FriendListPage } from '@/pages/auth/friend-list';
+import { FriendRequestPage } from '@/pages/auth/friend-request';
+import { GroupPage } from '@/pages/auth/group';
+import { HomePage } from '@/pages/auth/home';
+import { NotificationPage } from '@/pages/auth/notification';
+import { ProfilePage } from '@/pages/auth/profile';
+import { QuestionAndAnswerPage } from '@/pages/auth/question-and-answer';
+import { CreateQandA } from '@/pages/auth/question-and-answer/create-qanda';
+import { DetailQandAPage } from '@/pages/auth/question-and-answer/detail-qanda';
+import { UpdateQandA } from '@/pages/auth/question-and-answer/update-qanda/update-form';
+import { ExampleUploadPage } from '@/pages/auth/example-upload';
 
-export const ClientRouter = [
+export const AuthRouter = [
   {
     path: '/',
     element: <HomePage />,
