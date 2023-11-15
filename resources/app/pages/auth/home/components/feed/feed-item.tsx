@@ -13,28 +13,29 @@ type FeedItemProps = {
   avatar: string;
   content: string;
   authorName: string;
-  createdAt: string;
-  actionType: string;
-  images: string[];
+  createdAt: Date;
+  updatedAt: Date;
+  actionType?: string;
+  images: string;
   commentList: CommentItemProps[];
   totalLike: number;
 };
 
 //image
-const imageUrl = 'https://picsum.photos/20';
 
 export const FeedItem = ({
   avatar,
   content,
   authorName,
   createdAt,
-  actionType,
-  images,
+  actionType = 'Add new post',
+  images: imagesEncoded,
   commentList,
   totalLike,
 }: FeedItemProps) => {
   //func
   const renderContent = () => {
+    const images = JSON.parse(imagesEncoded);
     return (
       <>
         <div className="mt-3">{content}</div>
@@ -53,7 +54,7 @@ export const FeedItem = ({
             ) : (
               <div className="user-post text-center">
                 <Link to="#">
-                  <img src={imageUrl} alt="post1" className="img-fluid rounded w-100 mt-3" />
+                  <img src={images[0]} alt="post1" className="img-fluid rounded w-100 mt-3" />
                 </Link>
               </div>
             )}
@@ -77,7 +78,7 @@ export const FeedItem = ({
                   <div>
                     <h5 className="mb-0 d-inline-block">{authorName}</h5>
                     <span className="mb-0 ps-1 d-inline-block">{actionType}</span>
-                    <p className="mb-0 text-primary">{createdAt}</p>
+                    <p className="mb-0 text-primary">{(JSON.stringify(createdAt), JSON.stringify(createdAt))}</p>
                   </div>
                   <FeedMoreActionDropdown />
                 </div>

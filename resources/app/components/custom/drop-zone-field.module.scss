@@ -1,0 +1,39 @@
+.buttonRemoveAll {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  cursor: pointer;
+  transition: 0.3s;
+  i {
+    font-size: 40px;
+  }
+  &:hover {
+    opacity: 0.5;
+  }
+}
+
+.imagePreviewItem {
+  position: relative;
+  overflow: hidden;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+.buttonRemove {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  cursor: pointer;
+  transition: 0.3s;
+  i {
+    font-size: 40px;
+    color: var(--bs-light);
+  }
+  &:hover {
+    opacity: 0.5;
+  }
+}
