@@ -45,7 +45,6 @@ httpRequest.interceptors.response.use(
     return response;
   },
   async error => {
-    toast.error('Có lỗi xảy ra, vui lòng thử lại sau!');
     const originalRequest = error.config;
 
     // If url là /login va /refresh , khong goi api refresh token  ( neu k se bi infinite loop)
@@ -80,6 +79,7 @@ httpRequest.interceptors.response.use(
       case 404:
       case 500:
       default:
+        toast.error('Có lỗi xảy ra, vui lòng thử lại sau!');
         return Promise.reject(error.response.data);
     }
   },

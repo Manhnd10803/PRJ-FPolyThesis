@@ -8,13 +8,15 @@ export const pathName = {
 
   //======== Auth path ========//
   HOME: '/',
+  POST: '/post',
+  POST_DETAIL: '/post/:id',
   QUESTS: '/quests',
   QUESTS_CREATE: '/quests/create',
   QUESTS_UPDATE: '/quests/update/:id',
   QUESTS_DETAIL: '/quests/:id',
   BLOG: '/blog',
   BLOG_CREATE: '/blog-create',
-  BLOG_DETAIL: '/blog-detail/:id',
+  BLOG_DETAIL: '/blog/:id',
   PROFILE: '/profile',
   PROFILE_ID: '/profile/:id',
   FRIEND_LIST: '/friend-list',
