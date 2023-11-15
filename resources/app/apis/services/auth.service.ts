@@ -14,6 +14,7 @@ import {
 import toast from 'react-hot-toast';
 import { store } from '@/redux/store/store';
 import { authActions } from '@/redux/slice';
+import { clear } from '@/utilities/local-storage';
 
 const Login = async <T>(dataForm: T) => {
   try {
@@ -55,6 +56,20 @@ const RefreshToken = async () => {
   }
 };
 
+const Logout = async () => {
+  try {
+    const response = await httpRequest.post<any>(ApiConstants.LOGOUT);
+
+    store.dispatch(authActions.clear());
+    clear();
+
+    return response;
+  } catch (error) {
+    toast.error('Đăng xuất thất bại');
+    throw error;
+  }
+};
+
 const GetUserDetail = () => {
   return httpRequest.get<GetUserDetailResponseType>(ApiConstants.USER_DETAIL);
 };
@@ -83,7 +98,6 @@ const ResetNewPassword = <T>(data: T) => {
   return httpRequest.post<ResetPasswordResponseType>(ApiConstants.RESET_NEW_PASSWORD, data);
 };
 
-// sau sua thanh service giong nhu tren, doan logic vut vao component
 const LoginWithGoogle = () => {
   fetch('http://localhost:8000/api/auth/google-auth')
     .then(response => {
@@ -116,4 +130,5 @@ export const AuthService = {
   VerifyEmailRegister,
   RefreshToken,
   GetUserDetail,
+  Logout,
 };
