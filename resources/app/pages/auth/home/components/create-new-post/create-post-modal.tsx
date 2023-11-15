@@ -8,18 +8,18 @@ import { DropdownPrivacy } from './dropdown-privacy';
 const imageUrl = 'https://picsum.photos/20';
 
 import { PostService } from '@/apis/services/post.service';
-import { TCreateNewFeedSchema, createNewFeedSchema } from '@/validation/zod/post';
+import { TCreateNewPostSchema, createNewPostSchema } from '@/validation/zod/post';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { CreateNewFeedChoice } from './create-feed-choice';
+import { CreateNewPostChoice } from './create-post-choice';
 import { CloudiaryService } from '@/apis/services/cloudinary.service';
 
-type CreateFeedModalProps = {
+type CreatePostModalProps = {
   handleClose: () => void;
   show: boolean;
 };
 
-export const CreateFeedModal = ({ handleClose, show }: CreateFeedModalProps) => {
+export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => {
   //state
   const [isHaveImage, setIsHaveImage] = useState(false);
   const imagesRef = useRef<File[]>([]);
@@ -28,15 +28,15 @@ export const CreateFeedModal = ({ handleClose, show }: CreateFeedModalProps) => 
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm<TCreateNewFeedSchema>({
-    resolver: zodResolver(createNewFeedSchema),
+  } = useForm<TCreateNewPostSchema>({
+    resolver: zodResolver(createNewPostSchema),
   });
 
   const handleChangeFiles = (files: File[]) => {
     imagesRef.current = files;
   };
 
-  const onSubmit = async (dataForm: TCreateNewFeedSchema) => {
+  const onSubmit = async (dataForm: TCreateNewPostSchema) => {
     let bodyData = dataForm;
     try {
       if (imagesRef.current.length) {
@@ -46,7 +46,7 @@ export const CreateFeedModal = ({ handleClose, show }: CreateFeedModalProps) => 
 
       console.log({ bodyData });
 
-      await PostService.createNewFeed(bodyData);
+      await PostService.createNewPost(bodyData);
       toast.success('Đăng bài thành công');
       reset();
       handleClose();
@@ -110,7 +110,7 @@ export const CreateFeedModal = ({ handleClose, show }: CreateFeedModalProps) => 
             <hr />
             <div className="d-flex justify-content-between align-items-center borderbox border rounded p-2 px-3">
               <div>Add to your post</div>
-              <CreateNewFeedChoice onClickAddPhoto={() => setIsHaveImage(p => !p)} />
+              <CreateNewPostChoice onClickAddPhoto={() => setIsHaveImage(p => !p)} />
             </div>
             <button disabled={isSubmitting} type="submit" className="btn btn-primary d-block w-100 mt-3">
               Post

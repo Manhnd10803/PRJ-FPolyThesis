@@ -1,6 +1,6 @@
 import { IUser } from './user';
 
-export interface GetNewFeedResponseType {
+export interface GetNewPostResponseType {
   post: IPost;
   like_counts_by_emotion: LikeCountsByEmotion;
   like: any[];

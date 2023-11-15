@@ -1,6 +1,6 @@
 import { Dropdown } from 'react-bootstrap';
 
-export const FeedMoreActionDropdown = () => {
+export const MoreActionDropdown = () => {
   return (
     <div className="card-post-toolbar">
       <Dropdown>

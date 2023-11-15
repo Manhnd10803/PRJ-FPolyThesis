@@ -1,28 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
-import { FeedItem } from './feed-item';
+import { PostItem } from './post-item';
 
-import { dataFake } from '../../data/data';
 import { PostService } from '@/apis/services/post.service';
 
-// fake api
-// const fetchMockApi = (response: any): Promise<any> => {
-//   return new Promise(resolve => {
-//     setTimeout(() => {
-//       resolve(response);
-//     }, 1000);
-//   });
-// };
-
-const fetchFeeds = async () => {
-  const { data } = await PostService.getNewFeed();
+const fetchPostNewFeed = async () => {
+  const { data } = await PostService.getPostNewFeed();
   return data;
 };
 
-export const FeedList = () => {
+export const PostList = () => {
   //state
   const { isLoading, error, isError, data } = useQuery({
-    queryKey: ['newFeeds'],
-    queryFn: fetchFeeds,
+    queryKey: ['postNewFeeds'],
+    queryFn: fetchPostNewFeed,
   });
 
   if (isLoading) return <div>Loading...</div>;
@@ -36,7 +26,7 @@ export const FeedList = () => {
     <>
       {data.map(item => {
         return (
-          <FeedItem
+          <PostItem
             key={item.post.id}
             avatar={item.post.user.avatar}
             authorName={item.post.user.username}

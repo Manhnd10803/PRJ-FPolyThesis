@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Card, Col, Dropdown } from 'react-bootstrap';
-import { CreateFeedModal } from './create-feed-modal';
+import { CreatePostModal } from './create-post-modal';
 
 const imageUrl = 'https://picsum.photos/20';
 
@@ -8,7 +8,7 @@ import addImageUrl from '@/assets/images/add-image.png';
 import feelingUrl from '@/assets/images/feeling.png';
 import tagFriendUrl from '@/assets/images/tag-friend.png';
 
-export const CreateFeed = () => {
+export const CreateNewPost = () => {
   // state
   const [showModal, setShowModal] = useState(false);
 
@@ -88,7 +88,7 @@ export const CreateFeed = () => {
         </Card.Body>
 
         {/*============== Modal Create Post =============*/}
-        <CreateFeedModal show={showModal} handleClose={handleClose} />
+        <CreatePostModal show={showModal} handleClose={handleClose} />
       </Card>
     </Col>
   );

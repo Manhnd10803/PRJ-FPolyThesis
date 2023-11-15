@@ -3,13 +3,14 @@ import { Card, Col } from 'react-bootstrap';
 import { CommentItemProps } from '../comment/comment-item';
 import { CommentList } from '../comment/comment-list';
 import { CreateComment } from '../comment/create-comment';
-import { FeedEmotion } from './feed-emotion';
-import { FeedMoreActionDropdown } from './feed-more-action-dropdown';
-import { FeedTotalComment } from './feed-total-comment';
-import { FeedTotalLike } from './feed-total-like';
+import { ChosePostEmotion } from './post-emotion';
+import { MoreActionDropdown } from './post-more-action-dropdown';
+import { TotalCommentPost } from './post-total-comment';
+import { TotalLikePost } from './post-total-like';
 import { Link } from 'react-router-dom';
+import moment from 'moment';
 
-type FeedItemProps = {
+type PostItemProps = {
   avatar: string;
   content: string;
   authorName: string;
@@ -23,7 +24,7 @@ type FeedItemProps = {
 
 //image
 
-export const FeedItem = ({
+export const PostItem = ({
   avatar,
   content,
   authorName,
@@ -32,7 +33,7 @@ export const FeedItem = ({
   images: imagesEncoded,
   commentList,
   totalLike,
-}: FeedItemProps) => {
+}: PostItemProps) => {
   //func
   const renderContent = () => {
     const images = JSON.parse(imagesEncoded);
@@ -78,9 +79,9 @@ export const FeedItem = ({
                   <div>
                     <h5 className="mb-0 d-inline-block">{authorName}</h5>
                     <span className="mb-0 ps-1 d-inline-block">{actionType}</span>
-                    <p className="mb-0 text-primary">{(JSON.stringify(createdAt), JSON.stringify(createdAt))}</p>
+                    <p className="mb-0 text-primary">{moment(createdAt).startOf('day').fromNow()}</p>
                   </div>
-                  <FeedMoreActionDropdown />
+                  <MoreActionDropdown />
                 </div>
               </div>
             </div>
@@ -90,10 +91,10 @@ export const FeedItem = ({
             <div className="d-flex justify-content-between align-items-center flex-wrap">
               <div className="like-block position-relative d-flex align-items-center">
                 <div className="d-flex align-items-center">
-                  <FeedEmotion />
-                  <FeedTotalLike totalLike={totalLike} />
+                  <ChosePostEmotion />
+                  <TotalLikePost totalLike={totalLike} />
                 </div>
-                <FeedTotalComment />
+                <TotalCommentPost />
               </div>
               <ShareOffCanvas />
             </div>

@@ -1,7 +1,7 @@
 import { Col, Container, Row } from 'react-bootstrap';
 
-import { CreateFeed } from './components/create-feed/create-feed';
-import { FeedList } from './components/feed/feed-list';
+import { CreateNewPost } from './components/create-new-post';
+import { PostList } from './components/post/post-list';
 import { ListBirthDay } from './components/list-birthday';
 import { ListEvent } from './components/list-event';
 import { ListSuggestedPages } from './components/list-suggested-pages';
@@ -16,8 +16,8 @@ export const HomePage = () => {
         <Row>
           {/* ==== render left content ==== */}
           <Col lg={8} className="row m-0 p-0">
-            <CreateFeed />
-            <FeedList />
+            <CreateNewPost />
+            <PostList />
           </Col>
           {/* ==== render right content ==== */}
           <Col lg={4}>
