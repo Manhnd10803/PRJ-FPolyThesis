@@ -107,10 +107,10 @@ export const UserDropdown = () => {
           </Card.Header>
 
           <Card.Body className="p-0 ">
-            {listMenu.map((item, index) => {
+            {listMenu.map(item => {
               return (
-                <Link to={item.link} className="mb-0 h6 d-block" onClick={item?.onClick}>
-                  <div className="d-flex align-items-center iq-sub-card border-0" key={index}>
+                <Link to={item.link} key={item.title} className="mb-0 h6 d-block" onClick={item?.onClick}>
+                  <div className="d-flex align-items-center iq-sub-card border-0">
                     <span className="material-symbols-outlined">{item.icon}</span>
                     <div className="ms-3">{item.title}</div>
                   </div>

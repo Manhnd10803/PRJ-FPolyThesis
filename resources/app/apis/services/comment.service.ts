@@ -16,6 +16,11 @@ const createComment = <T>(data: T) => {
 const createCommentQA = <T>(data: T) => {
   return httpRequest.post<CommentResponseType>(`${ApiConstants.CREATE_COMMENT}/qa/${data.qa_id}`, data);
 };
+
+const createCommentPost = <T>(data: T) => {
+  return httpRequest.post<CommentResponseType>(`${ApiConstants.CREATE_COMMENT}/post/${data.post_id}`, data);
+};
+
 const deleteComment = <T>(id: T) => {
   return httpRequest.delete<CommentResponseType>(`${ApiConstants.DELETE_COMMENT}/${id}`);
 };
@@ -23,4 +28,10 @@ const editComment = <T>(data: T) => {
   return httpRequest.put<CommentResponseType>(`${ApiConstants.EDIT_COMMENT}/${data.id}`, data);
 };
 
-export const CommentService = { createComment, deleteComment, editComment, createCommentQA };
+export const CommentService = {
+  createComment,
+  deleteComment,
+  editComment,
+  createCommentQA,
+  createCommentPost,
+};

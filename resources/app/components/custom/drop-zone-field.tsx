@@ -1,7 +1,9 @@
 import { useDropzone, FileRejection, DropzoneOptions } from 'react-dropzone';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import styles from './drop-zone-field.module.scss';
 const baseStyle = {
+  position: 'relative',
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
@@ -34,10 +36,11 @@ const rejectStyle = {
 // };
 
 type DropZoneFieldProps = {
-  onChange?: (files: Array<File>) => void;
+  onChangeFiles?: (files: Array<File>) => void;
+  onCloseAndRemoveAll?: () => void;
 } & DropzoneOptions;
 
-export const DropZoneField = ({ onChange, multiple = true, ...rest }: DropZoneFieldProps) => {
+export const DropZoneField = ({ onChangeFiles, onCloseAndRemoveAll, multiple = true, ...rest }: DropZoneFieldProps) => {
   //state
   const [files, setFiles] = useState<Array<File & { preview: string }>>([]);
   const [rejected, setRejected] = useState<FileRejection[]>([]);
@@ -60,6 +63,12 @@ export const DropZoneField = ({ onChange, multiple = true, ...rest }: DropZoneFi
     }
   }, []);
 
+  useEffect(() => {
+    if (onChangeFiles) {
+      onChangeFiles(files);
+    }
+  }, [files]);
+
   const { acceptedFiles, getRootProps, getInputProps, isDragActive, isFocused, isDragAccept, isDragReject } =
     useDropzone({
       onDrop,
@@ -67,7 +76,6 @@ export const DropZoneField = ({ onChange, multiple = true, ...rest }: DropZoneFi
       ...rest,
     });
 
-  console.log('acceptedFiles', acceptedFiles);
   const removeFile = (name: string) => {
     setFiles(files => files.filter(file => file.name !== name));
   };
@@ -97,8 +105,17 @@ export const DropZoneField = ({ onChange, multiple = true, ...rest }: DropZoneFi
 
   return (
     <>
-      <button onClick={removeAll}>Remove all files</button>
       <div {...getRootProps({ style })}>
+        <div
+          className={styles.buttonRemoveAll}
+          onClick={e => {
+            onCloseAndRemoveAll?.();
+            e.stopPropagation();
+            removeAll();
+          }}
+        >
+          <i className="icon material-symbols-outlined">cancel</i>
+        </div>
         <input {...getInputProps()} />
         {isDragActive ? <p>Drop the files here ...</p> : <p>Drag 'n' drop some files here, or click to select files</p>}
       </div>
@@ -107,16 +124,15 @@ export const DropZoneField = ({ onChange, multiple = true, ...rest }: DropZoneFi
         <>
           {files.map(file => {
             return (
-              <div className="mb-5 w-100" key={file.preview}>
+              <div className={`${styles.imagePreviewItem} mb-4 w-100`} key={file.preview}>
                 <img src={file.preview} alt="Upload preview" className="img-fluid" />
-                <button onClick={() => removeFile(file.name)}>Remove</button>
+                <ButtonRemove onClick={() => removeFile(file.name)} />
               </div>
             );
           })}
         </>
       ) : null}
       <ul className="mt-6 flex flex-col">
-        <h3>Rejected files</h3>
         {rejected.map(({ file, errors }) => (
           <li key={file.name} className="flex items-start justify-between">
             <div>
@@ -127,10 +143,18 @@ export const DropZoneField = ({ onChange, multiple = true, ...rest }: DropZoneFi
                 ))}
               </ul>
             </div>
-            <button onClick={() => removeRejected(file.name)}>remove</button>
+            <ButtonRemove onClick={() => removeRejected(file.name)} />
           </li>
         ))}
       </ul>
     </>
+  );
+};
+
+export const ButtonRemove = ({ onClick }: { onClick: () => void }) => {
+  return (
+    <div className={styles.buttonRemove} onClick={onClick}>
+      <i className="icon material-symbols-outlined">cancel</i>
+    </div>
   );
 };

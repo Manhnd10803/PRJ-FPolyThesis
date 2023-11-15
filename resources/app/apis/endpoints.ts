@@ -30,6 +30,8 @@ export const ApiConstants = {
 
   // post
   POSTS: '/posts',
+  CREATE_NEW_FEED: '/posts',
+  GET_POST_NEW_FEED: `/posts/newfeed`,
 
   // blog
   SHOW_BLOGS: '/blogs',

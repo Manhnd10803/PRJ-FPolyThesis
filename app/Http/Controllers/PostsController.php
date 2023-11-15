@@ -145,6 +145,7 @@ class PostsController extends Controller
             $posts = Post::whereIn('user_id', $friendIds)->latest()->get();
             $result = [];
             foreach ($posts as $post) {
+                $user = $post->user;
                 $likeCountsByEmotion = [];
                 $likeCountsByEmotion['total_likes'] = $post->likes->count();
                 // Lấy danh sách người đã like bài viết và thông tin của họ
@@ -171,7 +172,7 @@ class PostsController extends Controller
                 $postData = [
                     'post' => $post,
                     'like_counts_by_emotion' => $likeCountsByEmotion,
-                    'like' => $likers,
+                    'likers' => $likers,
                     'total_comments' => $totalComment,
                     'comments' => $commentDemos,
                 ];

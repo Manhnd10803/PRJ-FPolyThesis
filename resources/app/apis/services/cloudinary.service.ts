@@ -14,7 +14,7 @@ type folderType = 'default' | 'avatar' | 'cover' | 'post' | 'blog' | 'comment' |
  * @returns list url of uploaded images
  */
 
-const uploadImages = async (images: FileList, folder: folderType) => {
+const uploadImages = async (images: FileList | Array<File>, folder: folderType) => {
   const imageList = Array.from(images);
   const uploadPromises = imageList.map(async image => {
     try {

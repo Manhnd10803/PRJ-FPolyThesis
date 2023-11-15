@@ -1,9 +1,12 @@
 import { useState } from 'react';
-import { Card, Col, Dropdown, Modal } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Card, Col, Dropdown } from 'react-bootstrap';
 import { CreateFeedModal } from './create-feed-modal';
 
 const imageUrl = 'https://picsum.photos/20';
+
+import addImageUrl from '@/assets/images/add-image.png';
+import feelingUrl from '@/assets/images/feeling.png';
+import tagFriendUrl from '@/assets/images/tag-friend.png';
 
 export const CreateFeed = () => {
   // state
@@ -39,19 +42,19 @@ export const CreateFeed = () => {
           <hr></hr>
           <ul className="post-opt-block d-flex list-inline m-0 p-0 flex-wrap">
             <li className="me-3 mb-md-0 mb-2">
-              <Link to="#" className="btn btn-soft-primary">
-                <img src={imageUrl} alt="icon" className="img-fluid me-2" /> Photo/Video
-              </Link>
+              <div onClick={handleShow} className="btn btn-soft-primary">
+                <img src={addImageUrl} alt="icon" className="img-fluid me-2" /> Photo/Video
+              </div>
             </li>
             <li className="me-3 mb-md-0 mb-2">
-              <Link to="#" className="btn btn-soft-primary">
-                <img src={imageUrl} alt="icon" className="img-fluid me-2" /> Tag Friend
-              </Link>
+              <div onClick={handleShow} className="btn btn-soft-primary">
+                <img src={tagFriendUrl} alt="icon" className="img-fluid me-2" /> Tag Friend
+              </div>
             </li>
             <li className="me-3">
-              <Link to="#" className="btn btn-soft-primary">
-                <img src={imageUrl} alt="icon" className="img-fluid me-2" /> Feeling/Activity
-              </Link>
+              <div onClick={handleShow} className="btn btn-soft-primary">
+                <img src={feelingUrl} alt="icon" className="img-fluid me-2" /> Feeling/Activity
+              </div>
             </li>
             <li>
               <button className=" btn btn-soft-primary">
