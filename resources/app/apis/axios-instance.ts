@@ -74,14 +74,12 @@ httpRequest.interceptors.response.use(
     }
 
     switch (error.response?.status) {
-      // case 400:
+      case 400:
       case 401:
-      // return window.location.replace('/login');
       case 403:
       case 404:
       case 500:
       default:
-        // do something
         return Promise.reject(error.response.data);
     }
   },

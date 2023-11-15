@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
 import { MajorService } from '@/apis/services/major.service';
 import { IMajors } from '@/models/major';
+import { pathName } from '@/routes/path-name';
 
 export const RegisterPage = () => {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ export const RegisterPage = () => {
   const onSubmit = async (dataForm: TSignUpSchema) => {
     try {
       const { data } = await AuthService.Register(dataForm);
-      navigate('/verify-register', { state: { email: data.email } });
+      navigate(pathName.VERIFY_REGISTER, { state: { email: data.email } });
       reset();
     } catch (error: any) {
       if (error) {

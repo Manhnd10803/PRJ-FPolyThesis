@@ -1,4 +1,5 @@
 import { AuthService } from '@/apis/services/auth.service';
+import { pathName } from '@/routes/path-name';
 import { load, save } from '@/utilities/local-storage';
 import { storageKeys } from '@/utilities/local-storage/storage-keys';
 import { TSignInSchema, signInSchema } from '@/validation';
@@ -22,7 +23,7 @@ export const LoginPage = () => {
   const onSubmit = async (dataForm: TSignInSchema) => {
     await AuthService.Login(dataForm);
     reset();
-    navigate('/');
+    navigate(pathName.HOME);
   };
   const loginWithGoogle = () => {
     AuthService.LoginWithGoogle();
@@ -52,7 +53,7 @@ export const LoginPage = () => {
             </Form.Group>
             <Form.Group className="form-group">
               <Form.Label>Mật khẩu</Form.Label>
-              <Link to="/get-forgot-password" className="float-end">
+              <Link to={pathName.FORGOT_PASSWORD} className="float-end">
                 Quên mật khẩu?
               </Link>
               <Form.Control
@@ -108,7 +109,7 @@ export const LoginPage = () => {
             </Button>
             <div className="sign-info pt-1">
               <span className="dark-color d-inline-block line-height-2">
-                Bạn chưa có tài khoản? <Link to="/register">Đăng ký</Link>
+                Bạn chưa có tài khoản? <Link to={pathName.REGISTER}>Đăng ký</Link>
               </span>
             </div>
           </Form>

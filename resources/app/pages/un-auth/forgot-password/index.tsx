@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AuthService } from '@/apis/services/auth.service';
 import { TforgotPasswordSchema, forgotPasswordSchema } from '@/validation/zod/auth';
+import { pathName } from '@/routes/path-name';
 
 export const ForgotPasswordPage = () => {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ export const ForgotPasswordPage = () => {
     try {
       const { data } = await AuthService.ForgotPassword(dataForm);
       reset();
-      navigate('/get-reset-password');
+      navigate(pathName.RESET_PASSWORD);
     } catch (error: any) {
       if (error) {
         const serverError = error.message;

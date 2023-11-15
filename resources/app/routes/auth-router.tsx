@@ -16,83 +16,84 @@ import { DetailQandAPage } from '@/pages/auth/question-and-answer/detail-qanda';
 import { UpdateQandA } from '@/pages/auth/question-and-answer/update-qanda/update-form';
 import { ExampleUploadPage } from '@/pages/auth/example-upload';
 import { PrivacySecurityPage } from '@/pages/auth/privacy-security';
+import { pathName } from './path-name';
 
 export const AuthRouter = [
   {
-    path: '/',
+    path: pathName.HOME,
     element: <HomePage />,
   },
   {
-    path: '/quests',
+    path: pathName.QUESTS,
     element: <QuestionAndAnswerPage />,
   },
   {
-    path: '/quests/create',
+    path: pathName.QUESTS_CREATE,
     element: <CreateQandA />,
   },
   {
-    path: '/quests/update/:id',
+    path: pathName.QUESTS_UPDATE,
     element: <UpdateQandA />,
   },
   {
-    path: '/quests/:id',
+    path: pathName.QUESTS_DETAIL,
     element: <DetailQandAPage />,
   },
   {
-    path: '/blog',
+    path: pathName.BLOG,
     element: <BlogPage />,
   },
   {
-    path: '/blog-create',
+    path: pathName.BLOG_CREATE,
     element: <CreateBlogPage />,
     noRightSidebar: true,
   },
   {
-    path: '/blog-detail/:id',
+    path: pathName.BLOG_DETAIL,
     element: <BlogDetailPage />,
   },
   {
-    path: '/profile',
+    path: pathName.PROFILE,
     element: <ProfilePage />,
   },
   {
-    path: '/profile/:id',
+    path: pathName.PROFILE_ID,
     element: <ProfilePage />,
   },
   {
-    path: '/friend-list',
+    path: pathName.FRIEND_LIST,
     element: <FriendListPage />,
   },
   {
-    path: '/friend-request',
+    path: pathName.FRIEND_REQUEST,
     element: <FriendRequestPage />,
   },
   {
-    path: '/group',
+    path: pathName.GROUP,
     element: <GroupPage />,
   },
   {
-    path: '/notification',
+    path: pathName.NOTIFICATION,
     element: <NotificationPage />,
   },
   {
-    path: '/edit-profile',
+    path: pathName.EDIT_PROFILE,
     element: <EditProfilePage />,
   },
   {
-    path: '/editor',
+    path: pathName.EDITOR,
     element: <RichEditorPage />,
   },
   {
-    path: '/upload',
+    path: pathName.UPLOAD,
     element: <ExampleUploadPage />,
   },
   {
-    path: '/account-setting',
+    path: pathName.ACCOUNT_SETTING,
     element: <AccountSettingPage />,
   },
   {
-    path: '/privacy-security',
+    path: pathName.PRIVACY_SECURITY,
     element: <PrivacySecurityPage />,
   },
 ];

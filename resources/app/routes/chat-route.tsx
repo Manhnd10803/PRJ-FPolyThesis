@@ -1,13 +1,14 @@
 import { ChatPage } from '@/pages/chat';
 import { HomePage } from '@/pages/auth/home';
+import { pathName } from './path-name';
 
 export const ChatRouter = [
   {
-    path: 'chat',
+    path: pathName.CHAT,
     element: <ChatPage />,
   },
   {
-    path: '/',
+    path: pathName.HOME,
     element: <HomePage />,
   },
 ];

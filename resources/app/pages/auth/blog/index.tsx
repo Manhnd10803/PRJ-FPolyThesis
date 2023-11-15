@@ -3,6 +3,7 @@ import { ListCard } from './components/list-card';
 import { Link } from 'react-router-dom';
 import { BlogService } from '@/apis/services/blog.service';
 import { useQuery } from '@tanstack/react-query';
+import { pathName } from '@/routes/path-name';
 
 export const BlogPage = () => {
   const fetchBlogs = async () => {
@@ -26,7 +27,10 @@ export const BlogPage = () => {
                 <h3 className="text-white">Blog</h3>
                 <p className="text-white">Welcome to Blog</p>
               </div>
-              <Link to="/blog-create" className="bg-white px-3 py-2 d-flex align-items-center rounded-2 d-block">
+              <Link
+                to={pathName.BLOG_CREATE}
+                className="bg-white px-3 py-2 d-flex align-items-center rounded-2 d-block"
+              >
                 <i className="material-symbols-outlined me-1">lightbulb</i>Create Blog
               </Link>
             </div>
