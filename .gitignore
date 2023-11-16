@@ -18,3 +18,5 @@ npm-debug.log
 yarn-error.log
 /.fleet
 /.idea
+dump.rdb
+.rnd

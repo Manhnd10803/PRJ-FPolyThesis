@@ -1,9 +1,9 @@
 import { Nav } from 'react-bootstrap';
-const imageUrl = 'https://picsum.photos/20';
+
 export const ItemUserChat = ({ item, index }) => {
   return (
     <>
-      <Nav.Item as="li" key={index}>
+      <Nav.Item as="li" key={index} className="item">
         <Nav.Link eventKey={item.id} href={`#${item.id}`}>
           <div className="d-flex align-items-center">
             <div className="avatar me-2">
@@ -19,8 +19,9 @@ export const ItemUserChat = ({ item, index }) => {
             </div>
 
             <div className="chat-meta float-right text-center mt-2 me-1">
-              <div className="chat-msg-counter bg-primary text-white">20</div>
-              <span className="text-nowrap">05 min</span>
+              <div onClick={() => console.log('delete chat')}>
+                <i className="bg-soft-secondary rounded-circle p-1 material-symbols-outlined md-18 me-1">delete</i>
+              </div>
             </div>
           </div>
         </Nav.Link>
