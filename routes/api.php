@@ -68,7 +68,7 @@ Route::middleware('auth:api')->group(function () {
         //Xóa  tin nhắn (Xóa 1 tin nhắn) id tin nhắn
         Route::delete('/{privateMessage}', [PrivateMessagesController::class, 'DeleteMessage']);
         //XÓa tin nhắn (Xóa đoan chat) id user thêm chat tránh trường hợp messages/{id} bị trùng với bên trên
-        Route::delete('chat/{user}', [PrivateMessagesController::class, 'DeleteMessagesBetweenUsers']);
+        Route::delete('/chat/{user}', [PrivateMessagesController::class, 'DeleteMessagesBetweenUsers']);
     });
     //major
     Route::get('majors', [MajorController::class, 'list_majors']);
@@ -136,7 +136,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/friend-list-request', [FriendController::class, 'listFriendRequest']);
     Route::get('/status-friend/{friend}', [FriendController::class, 'getFriendshipStatus']);
     Route::delete('/unfriend/{friend}', [FriendController::class, 'unfriend']);
-    Route::get('/friend-suggest',[FriendController::class, 'getFriendSuggestions']);
+    Route::get('/friend-suggest', [FriendController::class, 'getFriendSuggestions']);
 
     //notification
     Route::get('/notifications', [NotificationController::class, 'listNotification']);
