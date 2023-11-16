@@ -7,6 +7,9 @@ const showAllFriendRequest = () => {
 const showAllFriendMyUser = () => {
   return httpRequest.get(ApiConstants.SHOW_FRIEND_MY_USER);
 };
+const getSuggestFriends = () => {
+  return httpRequest.get(ApiConstants.LIST_SUGGEST_FRIEND);
+};
 const confirmFriendRequest = <T>(id: T) => {
   return httpRequest.post(`${ApiConstants.CONFIRM_FRIEND_REQUEST}/${id}`);
 };
@@ -31,4 +34,5 @@ export const FriendService = {
   addFriend,
   statusFriend,
   unFriend,
+  getSuggestFriends,
 };

@@ -9,6 +9,7 @@ import toast from 'react-hot-toast';
 
 export const FriendRequestPage = () => {
   const queryClient = useQueryClient();
+  const [checkAddFriend, setCheckAddFriend] = useState('Thêm bạn bè');
   const [showDeleteRequest, setShowDeleteRequest] = useState(false);
 
   const fetchAllFriendRequest = async () => {
@@ -17,7 +18,9 @@ export const FriendRequestPage = () => {
     return FriendRequestData;
   };
   const FriendsRequestQueryKey = ['friend'];
-  const { data: friendRequest, isLoading } = useQuery(FriendsRequestQueryKey, { queryFn: fetchAllFriendRequest });
+  const { data: friendRequest, isLoading: isLoadingRequestFriend } = useQuery(FriendsRequestQueryKey, {
+    queryFn: fetchAllFriendRequest,
+  });
   // Confirm friend
   const confirmFriendRequestMutation = useMutation(FriendService.confirmFriendRequest, {
     onSettled: () => {
@@ -48,6 +51,30 @@ export const FriendRequestPage = () => {
       throw error;
     }
   };
+
+  // LIST_SUGGEST_FRIEND
+  const fetchSuggestFriend = async () => {
+    const { data } = await FriendService.getSuggestFriends();
+    const FriendSuggestData = data;
+    return FriendSuggestData;
+  };
+  const FriendsSuggestQueryKey = ['suggestFriend'];
+  const { data: friendSuggest, isLoading: isLoadingSuggestFriend } = useQuery(FriendsSuggestQueryKey, {
+    queryFn: fetchSuggestFriend,
+  });
+  console.log(friendSuggest);
+
+  const HandleAddFriend = async (id: any) => {
+    try {
+      await FriendService.addFriend(id);
+      if (checkAddFriend == 'Hủy lời mời') {
+        return setCheckAddFriend('Thêm bạn bè');
+      }
+      setCheckAddFriend('Hủy lời mời');
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <>
       <div id="content-page" className="content-page">
@@ -61,7 +88,7 @@ export const FriendRequestPage = () => {
                   </div>
                 </Card.Header>
                 <Card.Body>
-                  {isLoading ? (
+                  {isLoadingRequestFriend ? (
                     // Nếu đang tải dữ liệu, hiển thị một thông báo hoặc spinner
                     <p>Đang tải dữ liệu...</p>
                   ) : (
@@ -128,52 +155,56 @@ export const FriendRequestPage = () => {
                   )}
                 </Card.Body>
               </Card>
-              {/* <Card>
+              <Card>
                 <Card.Header className="d-flex justify-content-between">
                   <div className="header-title">
                     <h4 className="card-title">Gợi ý kết bạn</h4>
                   </div>
                 </Card.Header>
                 <Card.Body>
-                  <ul className="request-list m-0 p-0">
-                    <li className="d-flex align-items-center  flex-wrap">
-                      <div className="user-img img-fluid flex-shrink-0">
-                        <img
-                          src={
-                            'https://images.unsplash.com/photo-1682686580391-615b1f28e5ee?auto=format&fit=crop&q=60&w=600&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxlZGl0b3JpYWwtZmVlZHwxfHx8ZW58MHx8fHx8'
-                          }
-                          alt="story-img"
-                          className="rounded-circle avatar-40"
-                        />
-                      </div>
-                      <div className="flex-grow-1 ms-3">
-                        <h6>Jen Youfelct</h6>
-                        <p className="mb-0">4 friends</p>
-                      </div>
-                      <div className="d-flex align-items-center mt-2 mt-md-0">
-                        <Link to="#" className="me-3 btn btn-primary rounded">
-                          <i className="ri-user-add-line me-1"></i>Thêm bạn bè
-                        </Link>
-                        <Link
-                          to="#"
-                          className="btn btn-secondary rounded"
-                          data-extra-toggle="delete"
-                          data-closest-elem=".item"
-                          onClick={() => setShowDeleteSuggest(true)}
-                        >
-                          Xóa, gỡ
-                        </Link>
-                        <ModalRequest
-                          show={showDeleteSuggest}
-                          onHide={() => setShowDeleteSuggest(false)}
-                          onConfirm={handleDeleteSuggest}
-                          title="Bạn muốn xóa gợi ý kết bạn?"
-                        />
-                      </div>
-                    </li>
-                  </ul>
+                  {isLoadingSuggestFriend ? (
+                    // Nếu đang tải dữ liệu, hiển thị một thông báo hoặc spinner
+                    <p>Đang tải dữ liệu...</p>
+                  ) : (
+                    <>
+                      {friendSuggest && friendSuggest.length > 0 ? (
+                        <ul className="request-list list-inline m-0 p-0">
+                          {friendSuggest.map((itemFriend: any) => {
+                            return (
+                              <li
+                                key={itemFriend.id}
+                                className="d-flex align-items-center  justify-content-between flex-wrap"
+                              >
+                                <div className="user-img img-fluid flex-shrink-0">
+                                  <img src={itemFriend.avatar} alt="story-img" className="rounded-circle avatar-40" />
+                                </div>
+                                <div className="flex-grow-1 ms-3">
+                                  <h6>{itemFriend.username}</h6>
+                                </div>
+                                <div className="d-flex align-items-center mt-2 mt-md-0">
+                                  <div className="confirm-click-btn">
+                                    <Link
+                                      to="#"
+                                      onClick={() => HandleAddFriend(itemFriend.id)}
+                                      className={`me-3 btn ${
+                                        checkAddFriend == 'Thêm bạn bè' ? 'btn-primary' : 'btn-secondary'
+                                      } rounded confirm-btn`}
+                                    >
+                                      {checkAddFriend}
+                                    </Link>
+                                  </div>
+                                </div>
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      ) : (
+                        <p>Không có yêu cầu mới</p>
+                      )}
+                    </>
+                  )}
                 </Card.Body>
-              </Card> */}
+              </Card>
             </Col>
           </Row>
         </Container>

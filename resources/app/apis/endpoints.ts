@@ -57,6 +57,7 @@ export const ApiConstants = {
   ADD_FRIEND: `send-request`,
   STATUS_FRIEND: `status-friend`,
   UN_FRIEND: `unfriend`,
+  LIST_SUGGEST_FRIEND: `/friend-suggest`,
   // profile
   PROFILE: '/profile',
   DETAIL_USER_PROFILE: '/profile',
@@ -71,7 +72,7 @@ export const ApiConstants = {
   SEND_MESSAGES: '/messages',
 
   // chat
-  LIST_CHAT_MESSAGE: '/messages/listuserchat',
+  LIST_CHAT_MESSAGE: '/messages',
 
   NOTIFICATIONS: '/notifications',
 } as const;
