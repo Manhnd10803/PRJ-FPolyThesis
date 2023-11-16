@@ -18,4 +18,12 @@ const getListChat = () => {
   return httpRequest.get(ApiConstants.LIST_CHAT_MESSAGE);
 };
 
-export const MessagesService = { showMessages, sendMessages, getListChat };
+const deleteChatItem = (id: number) => {
+  return httpRequest.delete(`${ApiConstants.DELETE_CHAT_ITEM}/${id}`);
+};
+
+const deleteChatChannel = (id: number) => {
+  return httpRequest.delete(`${ApiConstants.DELETE_CHAT_CHANNEL}/${id}`);
+};
+
+export const MessagesService = { showMessages, sendMessages, getListChat, deleteChatItem, deleteChatChannel };

@@ -1,6 +1,6 @@
 import moment from 'moment';
 import parse from 'html-react-parser';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Row, Col, Tab, Dropdown, Card } from 'react-bootstrap';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { ProfileService } from '@/apis/services/profile.service';
@@ -21,6 +21,7 @@ export const ChatPage = () => {
   const audioReceiverMessage = () => {
     new Audio(receiveMessages).play();
   };
+  const navigate = useNavigate();
   useEffect(() => {
     // echo.leave(`user.${localUserId}`); //rời channel
     const handlePrivateMessage = (event: any) => {
@@ -104,6 +105,73 @@ export const ChatPage = () => {
     }
   };
 
+  //xoá 1 tin nhắn
+
+  const deleteMessageItemMutation = useMutation(
+    messageId => {
+      return MessagesService.deleteChatItem(Number(messageId));
+    },
+    {
+      onSuccess: data => {
+        queryClient.invalidateQueries(queryKeyMessage);
+      },
+    },
+  );
+  const handleDeleteChatItem = (id: number) => {
+    // console.log(id);
+    deleteMessageItemMutation.mutate(id);
+  };
+
+  //xoá đoạn chat
+  const deleteMessageMutation = useMutation(
+    channelId => {
+      return MessagesService.deleteChatChannel(Number(channelId));
+    },
+    {
+      onSuccess: data => {
+        queryClient.invalidateQueries(queryKeyListChat);
+        navigate('/chat');
+      },
+    },
+  );
+  const [showModal, setShowModal] = useState(false);
+  const [chatIdToDelete, setChatIdToDelete] = useState(null);
+
+  const modalRef = useRef();
+
+  useEffect(() => {
+    const handleClickOutside = event => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        handleCloseModal();
+      }
+    };
+
+    if (showModal) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showModal]);
+  const handleDeleteChat = id => {
+    setChatIdToDelete(id);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setChatIdToDelete(null);
+  };
+
+  const handleConfirmDelete = () => {
+    deleteMessageMutation.mutate(chatIdToDelete);
+    setShowModal(false);
+    setChatIdToDelete(null);
+  };
+
   //scroll to last message
   const chatContentRef = useRef(null);
 
@@ -120,9 +188,31 @@ export const ChatPage = () => {
   }, [chatMessage]);
   return (
     <>
-      {/* <div>
-        <Button onClick={start}>Play</Button>
-      </div> */}
+      <>
+        {showModal && (
+          <div className="modal fade show" tabIndex={-1} role="dialog" style={{ display: 'block' }}>
+            <div className="modal-dialog modal-dialog-centered" ref={modalRef} role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Xác nhận xóa đoạn chat</h5>
+                  <button type="button" className="btn-close" onClick={handleCloseModal}></button>
+                </div>
+                <div className="modal-body">
+                  Bạn có chắc chắn muốn xóa đoạn chat này không? Hành động này không thể hoàn tác.
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" onClick={handleCloseModal}>
+                    Hủy
+                  </button>
+                  <button type="button" className="btn btn-primary" onClick={handleConfirmDelete}>
+                    Xóa
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </>
       <div id="content-page" className="content-page p-0">
         <Row>
           <Col sm="12">
@@ -163,7 +253,7 @@ export const ChatPage = () => {
                                 </div>
                                 <div className="chat-header-icons d-flex">
                                   <Link
-                                    to="#"
+                                    onClick={() => handleDeleteChat(detailReceiverProfile.id)}
                                     className="chat-icon-phone bg-soft-primary d-flex justify-content-center align-items-center"
                                   >
                                     <i className="material-symbols-outlined md-18">delete</i>
@@ -230,7 +320,7 @@ export const ChatPage = () => {
                                             <Dropdown.Menu className="dropdown-menu-right">
                                               <Dropdown.Item
                                                 className="d-flex align-items-center"
-                                                onClick={() => console.log('hihi')}
+                                                onClick={() => handleDeleteChatItem(item.id)}
                                               >
                                                 <i className="material-symbols-outlined md-18 me-1">delete_outline</i>
                                                 Xoá
@@ -261,25 +351,6 @@ export const ChatPage = () => {
                                       <div className="chat-detail" style={{ maxWidth: '50%' }}>
                                         <div className="chat-message" style={{ backgroundColor: '#F0F0F0' }}>
                                           <div>{parse(item.content.replace('</br>', '<br />'))}</div>
-                                        </div>
-                                        <div>
-                                          <Dropdown
-                                            className="d-flex justify-content-center align-items-center"
-                                            as="span"
-                                          >
-                                            <Dropdown.Toggle
-                                              as={CustomToggle}
-                                              variant="material-symbols-outlined cursor-pointer md-18 nav-hide-arrow pe-0 show"
-                                            >
-                                              more_vert
-                                            </Dropdown.Toggle>
-                                            <Dropdown.Menu className="dropdown-menu-right">
-                                              <Dropdown.Item className="d-flex align-items-center" href="#">
-                                                <i className="material-symbols-outlined md-18 me-1">delete_outline</i>
-                                                Xoá
-                                              </Dropdown.Item>
-                                            </Dropdown.Menu>
-                                          </Dropdown>
                                         </div>
                                       </div>
                                     </div>
