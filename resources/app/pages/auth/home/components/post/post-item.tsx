@@ -41,7 +41,7 @@ export const PostItem = ({
       <>
         <div className="mt-3">{content}</div>
 
-        {images.length > 0 ? (
+        {images && images.length > 0 ? (
           <div className="user-post">
             {images.length > 1 ? (
               <div className=" d-grid grid-rows-2 grid-flow-col gap-3">

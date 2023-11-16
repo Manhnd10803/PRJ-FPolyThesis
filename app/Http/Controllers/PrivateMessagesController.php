@@ -14,9 +14,17 @@ class PrivateMessagesController extends Controller
     public function ShowListUserChat()
     {
         $user_id = Auth::id();
-        // truy vấn lấy thông tin receiver
-        $messages = PrivateMessage::where('receiver_id', $user_id)->get();
-        $listUserChat = User::whereIn('id', $messages->pluck('sender_id'))->get();
+
+        // Danh sách người gửi tin nhắn đến người dùng hiện tại
+        $sentMessages = PrivateMessage::where('sender_id', $user_id)->pluck('receiver_id');
+
+        // Danh sách người nhận tin nhắn từ người dùng hiện tại
+        $receivedMessages = PrivateMessage::where('receiver_id', $user_id)->pluck('sender_id');
+
+        // Kết hợp danh sách người gửi và người nhận tin nhắn, loại bỏ trùng lặp và lấy thông tin người dùng
+        $listUserIds = $sentMessages->merge($receivedMessages)->unique();
+        $listUserChat = User::whereIn('id', $listUserIds)->get();
+
         return response()->json($listUserChat);
     }
     /**
