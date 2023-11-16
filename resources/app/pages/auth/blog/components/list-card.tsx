@@ -15,7 +15,7 @@ export const ListCard = ({ data }: any) => {
 
   // Handle blog detail
   const handleDetailsClick = (id: number) => {
-    navigate(`/blog-detail/${id}`);
+    navigate(`/blog/${id}`);
     console.log(`View details of user with ID ${id}`);
   };
   return (

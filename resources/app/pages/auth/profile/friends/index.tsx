@@ -9,12 +9,9 @@ export const FriendsMyUserPage = () => {
   const queryClient = useQueryClient();
   const [showDeleteFriend, setShowDeleteFriend] = useState(false);
   const fetchAllFriendMyUser = async () => {
-    // const {user} = TokenService.getUser()
     const { data } = await FriendService.showAllFriendMyUser();
-    const FriendRequestData = data;
-    return FriendRequestData;
+    return data;
   };
-
   const FriendsMyUserQueryKey = ['friendmyuser'];
   const { data: friendsMyUser, isLoading } = useQuery(FriendsMyUserQueryKey, { queryFn: fetchAllFriendMyUser });
   const addFriendMutation = useMutation(FriendService.unFriend, {
