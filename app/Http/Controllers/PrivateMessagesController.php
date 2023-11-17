@@ -69,19 +69,47 @@ class PrivateMessagesController extends Controller
     {
         $user1Id  = Auth::id();
         $user2Id = $user->id;
+
         if ($user1Id == $user2Id) {
-            return response()->json(['error' => 'không thể tải tin nhắn'], 400);
+            return response()->json(['error' => 'Không thể tải tin nhắn'], 400);
         }
+
         $messages = PrivateMessage::where(function ($query) use ($user1Id, $user2Id) {
             $query->where('sender_id', $user1Id)
-                ->where('receiver_id', $user2Id);
+                ->where('receiver_id', $user2Id)
+                ->where(function ($query) use ($user1Id) {
+                    $query->whereNull('deleted_by')
+                        ->orWhereJsonDoesntContain('deleted_by', $user1Id);
+                });
         })->orWhere(function ($query) use ($user1Id, $user2Id) {
             $query->where('sender_id', $user2Id)
-                ->where('receiver_id', $user1Id);
+                ->where('receiver_id', $user1Id)
+                ->where(function ($query) use ($user1Id) {
+                    $query->whereNull('deleted_by')
+                        ->orWhereJsonDoesntContain('deleted_by', $user1Id);
+                });
         })->orderBy('created_at', 'asc')->with(['sender:id,avatar', 'receiver:id,avatar,username'])
             ->get();
+
         return response()->json($messages, 200);
     }
+    // public function ShowAllMessage(User $user)
+    // {
+    //     $user1Id  = Auth::id();
+    //     $user2Id = $user->id;
+    //     if ($user1Id == $user2Id) {
+    //         return response()->json(['error' => 'không thể tải tin nhắn'], 400);
+    //     }
+    //     $messages = PrivateMessage::where(function ($query) use ($user1Id, $user2Id) {
+    //         $query->where('sender_id', $user1Id)
+    //             ->where('receiver_id', $user2Id);
+    //     })->orWhere(function ($query) use ($user1Id, $user2Id) {
+    //         $query->where('sender_id', $user2Id)
+    //             ->where('receiver_id', $user1Id);
+    //     })->orderBy('created_at', 'asc')->with(['sender:id,avatar', 'receiver:id,avatar,username'])
+    //         ->get();
+    //     return response()->json($messages, 200);
+    // }
     /**
      * @OA\Post(
      *     path="/api/messages/{user}",
@@ -225,6 +253,7 @@ class PrivateMessagesController extends Controller
     public function DeleteMessage(PrivateMessage $privateMessage)
     {
         $privateMessage->delete();
+        broadcast(new PrivateMessageSent($privateMessage));
         return response()->json(['message' => 'Tin nhắn đã được xóa'], 200);
     }
     /**
@@ -252,14 +281,31 @@ class PrivateMessagesController extends Controller
      */
     public function DeleteMessagesBetweenUsers(User $user)
     {
-        $user_1 = Auth::id();
-        $user_2 = $user->id;
-        if ($user_2) {
-            PrivateMessage::where(function ($query) use ($user_1, $user_2) {
-                $query->where('sender_id', $user_1)->where('receiver_id', $user_2);
-            })->orWhere(function ($query) use ($user_1, $user_2) {
-                $query->where('sender_id', $user_2)->where('receiver_id', $user_1);
-            })->delete();
+        $user1Id = Auth::id();
+        $user2Id = $user->id;
+
+        if ($user2Id) {
+            $messages = PrivateMessage::where(function ($query) use ($user1Id, $user2Id) {
+                $query->where('sender_id', $user1Id)
+                    ->where('receiver_id', $user2Id);
+            })->orWhere(function ($query) use ($user1Id, $user2Id) {
+                $query->where('sender_id', $user2Id)
+                    ->where('receiver_id', $user1Id);
+            })->get();
+            foreach ($messages as $message) {
+                $deletedBy = json_decode($message->deleted_by, true) ?? [];
+                if (empty($deletedBy)) {
+                    if ($user1Id) {
+                        $deletedBy[] = $user1Id;
+                    } elseif ($user2Id) {
+                        $deletedBy[] = $user2Id;
+                    }
+                } elseif (!in_array($user1Id, $deletedBy)) {
+                    $deletedBy[] = $user1Id;
+                }
+                $message->deleted_by = json_encode($deletedBy);
+                $message->save();
+            }
             return response()->json(['message' => 'Xóa tất cả tin nhắn thành công'], 200);
         } else {
             return response()->json(['message' => 'Xóa tất cả tin nhắn thất bại'], 400);
