@@ -16,10 +16,20 @@ class PrivateMessagesController extends Controller
         $user_id = Auth::id();
 
         // Danh sách người gửi tin nhắn đến người dùng hiện tại
-        $sentMessages = PrivateMessage::where('sender_id', $user_id)->pluck('receiver_id');
+        $sentMessages = PrivateMessage::where('sender_id', $user_id)
+            ->where(function ($query) use ($user_id) {
+                $query->whereNull('deleted_by')
+                    ->orWhereJsonDoesntContain('deleted_by', $user_id);
+            })
+            ->pluck('receiver_id');
 
         // Danh sách người nhận tin nhắn từ người dùng hiện tại
-        $receivedMessages = PrivateMessage::where('receiver_id', $user_id)->pluck('sender_id');
+        $receivedMessages = PrivateMessage::where('receiver_id', $user_id)
+            ->where(function ($query) use ($user_id) {
+                $query->whereNull('deleted_by')
+                    ->orWhereJsonDoesntContain('deleted_by', $user_id);
+            })
+            ->pluck('sender_id');
 
         // Kết hợp danh sách người gửi và người nhận tin nhắn, loại bỏ trùng lặp và lấy thông tin người dùng
         $listUserIds = $sentMessages->merge($receivedMessages)->unique();
@@ -305,6 +315,10 @@ class PrivateMessagesController extends Controller
                 }
                 $message->deleted_by = json_encode($deletedBy);
                 $message->save();
+                $updatedDeletedBy = json_decode($message->deleted_by, true) ?? [];
+                if (in_array($user1Id, $updatedDeletedBy) && in_array($user2Id, $updatedDeletedBy)) {
+                    $message->delete(); // Xóa tin nhắn
+                }
             }
             return response()->json(['message' => 'Xóa tất cả tin nhắn thành công'], 200);
         } else {
