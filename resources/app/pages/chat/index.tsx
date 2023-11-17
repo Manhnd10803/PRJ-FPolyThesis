@@ -12,7 +12,6 @@ import { MessagesService } from '@/apis/services/messages.service';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { RightSideBar } from './components/right-side-bar/right-side-bar';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { identity } from 'lodash';
 
 export const ChatPage = () => {
   const localUserId = StorageFunc.getUserId();
@@ -25,17 +24,6 @@ export const ChatPage = () => {
     new Audio(receiveMessages).play();
   };
   const navigate = useNavigate();
-  useEffect(() => {
-    const handlePrivateMessage = (event: any) => {
-      queryClient.invalidateQueries(queryKeyMessage);
-      audioReceiverMessage();
-    };
-
-    window.Echo.private(`user.${localUserId}`).listen('.PrivateMessageSent', handlePrivateMessage);
-    return () => {
-      window.Echo.private(`user.${localUserId}`).stopListening('.PrivateMessageSent', handlePrivateMessage);
-    };
-  }, []);
 
   const getDetailUserProfile = async () => {
     const { data } = await ProfileService.getDetailUserProfile(localUserId);
@@ -79,7 +67,6 @@ export const ChatPage = () => {
   const { data: chatMessage, isLoading: isMessage } = useQuery(queryKeyMessage, getMessage, {
     enabled: !!chat_id,
   });
-
   const [message, setMessage] = useState('');
 
   const audioSendMessage = () => {
@@ -89,10 +76,22 @@ export const ChatPage = () => {
   const checkListChat = (id: number) => {
     const check = listChatMessage?.find(item => item.id === Number(id)) === undefined ? 'load' : false;
     if (check === 'load') {
-      queryClient.invalidateQueries(queryKeyListChat);
+      return queryClient.invalidateQueries(queryKeyListChat);
     }
-    console.log(check);
   };
+
+  useEffect(() => {
+    const handlePrivateMessage = (event: any) => {
+      queryClient.invalidateQueries(queryKeyMessage);
+      checkListChat(chat_id);
+      event?.message?.sender !== undefined ? audioReceiverMessage() : false;
+    };
+
+    window.Echo.private(`user.${localUserId}`).listen('.PrivateMessageSent', handlePrivateMessage);
+    return () => {
+      window.Echo.private(`user.${localUserId}`).stopListening('.PrivateMessageSent', handlePrivateMessage);
+    };
+  }, []);
 
   const sendMessageMutation = useMutation(
     messageText => {
@@ -295,75 +294,76 @@ export const ChatPage = () => {
 
                         {!isMessage && (
                           <div className="chat-content scroller" ref={chatContentRef}>
-                            {chatMessage.map((item, index) => (
-                              <>
-                                {localUserId === item.sender_id ? (
-                                  <>
-                                    <div className="chat d-flex other-user" key={index}>
-                                      <div className="chat-user">
-                                        <Link className="avatar m-0" to="">
-                                          <img
-                                            loading="lazy"
-                                            src={item.sender.avatar}
-                                            alt="avatar"
-                                            className="avatar-35 "
-                                          />
-                                        </Link>
-                                        <span className="chat-time mt-1">{moment(item.created_at).format('LT')}</span>
-                                      </div>
-                                      <div className="chat-detail" style={{ maxWidth: '50%' }}>
-                                        <div>
-                                          <Dropdown
-                                            className="d-flex justify-content-center align-items-center"
-                                            as="span"
-                                          >
-                                            <Dropdown.Toggle
-                                              as={CustomToggle}
-                                              variant="material-symbols-outlined cursor-pointer md-18 nav-hide-arrow pe-0 show"
+                            {chatMessage &&
+                              chatMessage.map((item, index) => (
+                                <>
+                                  {localUserId === item.sender_id ? (
+                                    <>
+                                      <div className="chat d-flex other-user" key={index}>
+                                        <div className="chat-user">
+                                          <Link className="avatar m-0" to="">
+                                            <img
+                                              loading="lazy"
+                                              src={item.sender.avatar}
+                                              alt="avatar"
+                                              className="avatar-35 "
+                                            />
+                                          </Link>
+                                          <span className="chat-time mt-1">{moment(item.created_at).format('LT')}</span>
+                                        </div>
+                                        <div className="chat-detail" style={{ maxWidth: '50%' }}>
+                                          <div>
+                                            <Dropdown
+                                              className="d-flex justify-content-center align-items-center"
+                                              as="span"
                                             >
-                                              more_vert
-                                            </Dropdown.Toggle>
-                                            <Dropdown.Menu className="dropdown-menu-right">
-                                              <Dropdown.Item
-                                                className="d-flex align-items-center"
-                                                onClick={() => handleDeleteChatItem(item.id)}
+                                              <Dropdown.Toggle
+                                                as={CustomToggle}
+                                                variant="material-symbols-outlined cursor-pointer md-18 nav-hide-arrow pe-0 show"
                                               >
-                                                <i className="material-symbols-outlined md-18 me-1">delete_outline</i>
-                                                Xoá
-                                              </Dropdown.Item>
-                                            </Dropdown.Menu>
-                                          </Dropdown>
-                                        </div>
-                                        <div className="chat-message">
-                                          <div>{parse(item.content.replace('</br>', '<br />'))}</div>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </>
-                                ) : (
-                                  <>
-                                    <div className="chat chat-left" key={index}>
-                                      <div className="chat-user">
-                                        <Link className="avatar m-0" to="">
-                                          <img
-                                            loading="lazy"
-                                            src={item.sender.avatar}
-                                            alt="avatar"
-                                            className="avatar-35 "
-                                          />
-                                        </Link>
-                                        <span className="chat-time mt-1">{moment(item.created_at).format('LT')}</span>
-                                      </div>
-                                      <div className="chat-detail" style={{ maxWidth: '50%' }}>
-                                        <div className="chat-message" style={{ backgroundColor: '#F0F0F0' }}>
-                                          <div>{parse(item.content.replace('</br>', '<br />'))}</div>
+                                                more_vert
+                                              </Dropdown.Toggle>
+                                              <Dropdown.Menu className="dropdown-menu-right">
+                                                <Dropdown.Item
+                                                  className="d-flex align-items-center"
+                                                  onClick={() => handleDeleteChatItem(item.id)}
+                                                >
+                                                  <i className="material-symbols-outlined md-18 me-1">delete_outline</i>
+                                                  Xoá
+                                                </Dropdown.Item>
+                                              </Dropdown.Menu>
+                                            </Dropdown>
+                                          </div>
+                                          <div className="chat-message">
+                                            <div>{parse(item.content.replace('</br>', '<br />'))}</div>
+                                          </div>
                                         </div>
                                       </div>
-                                    </div>
-                                  </>
-                                )}
-                              </>
-                            ))}
+                                    </>
+                                  ) : (
+                                    <>
+                                      <div className="chat chat-left" key={index}>
+                                        <div className="chat-user">
+                                          <Link className="avatar m-0" to="">
+                                            <img
+                                              loading="lazy"
+                                              src={item.sender.avatar}
+                                              alt="avatar"
+                                              className="avatar-35 "
+                                            />
+                                          </Link>
+                                          <span className="chat-time mt-1">{moment(item.created_at).format('LT')}</span>
+                                        </div>
+                                        <div className="chat-detail" style={{ maxWidth: '50%' }}>
+                                          <div className="chat-message" style={{ backgroundColor: '#F0F0F0' }}>
+                                            <div>{parse(item.content.replace('</br>', '<br />'))}</div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </>
+                                  )}
+                                </>
+                              ))}
                           </div>
                         )}
                         {chat_id && (
