@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState: AuthState = {
   loading: false,
-  userInfo: {}, // for user object
+  userInfo: null, // for user object
   accessToken: null, // for storing the JWT
   error: null,
   success: false, // for monitoring the registration process.
