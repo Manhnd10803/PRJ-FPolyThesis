@@ -110,7 +110,7 @@ class QaController extends Controller
      *     ),
      * )
      */
-    public function ShowAllQa(Request $request)
+    public function ShowAllQa(Request $request, $quantity = null)
     {
 
         DB::beginTransaction();
@@ -127,7 +127,11 @@ class QaController extends Controller
                 $query->where('content', 'LIKE', '%' . $hashtag . '%');
             }
 
-            $qas = $query->latest()->get();
+            if ($quantity) {
+                $qas = $query->latest()->paginate($quantity);
+            } else {
+                $qas = $query->latest()->get();
+            }
 
             $result = [];
 
@@ -141,7 +145,7 @@ class QaController extends Controller
                         'emotion' => $like->emotion,
                     ];
                 });
-                
+
                 $qa->user;
                 $qa->major;
                 $emotions = $likers->pluck('emotion')->unique();
@@ -297,12 +301,12 @@ class QaController extends Controller
      */
 
 
-    public function showMostCommentedQa(Request $request)
+    public function showMostCommentedQa(Request $request, $quantity = null)
     {
         DB::beginTransaction();
 
         try {
-            
+
             $majorsId = $request->input('majors_id');
             $hashtag = $request->input('hashtag');
 
@@ -320,7 +324,11 @@ class QaController extends Controller
             // $query->withCount('comments')->orderBy('comments_count', 'desc');
             $query->withCount('comments')->having('comments_count', '>', 0)->orderBy('comments_count', 'desc');
 
-            $qas = $query->latest()->get();
+            if ($quantity) {
+                $qas = $query->latest()->paginate($quantity);
+            } else {
+                $qas = $query->latest()->get();
+            }
 
             $result = [];
 
@@ -492,12 +500,12 @@ class QaController extends Controller
      * )
      */
 
-    public function showUnAnswerdQa(Request $request)
+    public function showUnAnswerdQa(Request $request, $quantity = null)
     {
         DB::beginTransaction();
 
         try {
-            
+
             $majorsId = $request->input('majors_id');
             $hashtag = $request->input('hashtag');
 
@@ -515,7 +523,11 @@ class QaController extends Controller
             // $query->withCount('comments')->orderBy('comments_count', 'desc');
             $query->withCount('comments')->having('comments_count', '=', 0)->orderBy('comments_count', 'desc');
 
-            $qas = $query->latest()->get();
+            if ($quantity) {
+                $qas = $query->latest()->paginate($quantity);
+            } else {
+                $qas = $query->latest()->get();
+            }
 
             $result = [];
 
@@ -666,7 +678,7 @@ class QaController extends Controller
      */
 
 
-    public function showMyQa(Request $request)
+    public function showMyQa(Request $request, $quantity = null)
     {
         // Lấy thông tin người dùng đang đăng nhập
         $user = $request->user();
@@ -679,7 +691,11 @@ class QaController extends Controller
 
         try {
             // Lấy tất cả các câu hỏi của người dùng hiện tại
-            $qas = Qa::where('user_id', $user->id)->latest()->get();
+            if ($quantity) {
+                $qas = Qa::where('user_id', $user->id)->latest()->paginate($quantity);
+            } else {
+                $qas = Qa::where('user_id', $user->id)->latest()->get();
+            }
 
             $result = [];
 
@@ -844,7 +860,7 @@ class QaController extends Controller
      * )
      */
 
-    public function ShowQaByMajor(Request $request, $major_id)
+    public function ShowQaByMajor(Request $request, $major_id, $quantity = null)
     {
         DB::beginTransaction();
         try {
@@ -858,7 +874,11 @@ class QaController extends Controller
             // Lọc theo Major_id
             $query->where('majors_id', $major_id);
 
-            $qas = $query->latest()->get();
+            if ($quantity) {
+                $qas = $query->latest()->paginate($quantity);
+            } else {
+                $qas = $query->latest()->get();
+            }
 
             $result = [];
 
@@ -872,7 +892,7 @@ class QaController extends Controller
                         'emotion' => $like->emotion,
                     ];
                 });
-                
+
                 $qa->user;
                 $qa->major;
                 $emotions = $likers->pluck('emotion')->unique();
@@ -930,7 +950,8 @@ class QaController extends Controller
      */
 
 
-    public function listA() {
+    public function listA()
+    {
         $qa = Qa::all();
         return response()->json($qa);
     }
@@ -1093,7 +1114,7 @@ class QaController extends Controller
         $qa->major;
         $qaLikes = $qa->likes;
         $user = Auth::user(); // Lấy thông tin người dùng đăng nhập
-        $userLike = $qaLikes->where('user_id', $user->id)->first(); 
+        $userLike = $qaLikes->where('user_id', $user->id)->first();
         if ($qaLikes->isEmpty()) {
             $emotions = [];
         } else {
@@ -1110,24 +1131,23 @@ class QaController extends Controller
         foreach ($comments as $comment) {
             $comment->user;
             $comment->replies;
-    
+
             $totalComments++; // Tính bình luận gốc
             $totalComments += count($comment->replies); // Tính số lượng câu trả lời
-    
+
             foreach ($comment->replies as $reply) {
                 $reply->user;
             }
         }
         return response()->json(
             [
-                'qa' => $qa, 
-                'emotion' => $countsByEmotion, 
-                'comments' => $comments, 
+                'qa' => $qa,
+                'emotion' => $countsByEmotion,
+                'comments' => $comments,
                 'total_comments' => $totalComments,
                 'user_like' => $userLike
             ]
         );
-        
     }
 
     public function ListQa(Request $request)
@@ -1169,8 +1189,8 @@ class QaController extends Controller
     public function CreateQa(Request $request)
     {
         DB::beginTransaction();
-        try{
-            $data = $request->all();  
+        try {
+            $data = $request->all();
             $qa = new Qa([
                 'user_id' => Auth::id(),
                 'title' => $data['title'],
@@ -1194,7 +1214,7 @@ class QaController extends Controller
             $qa->save();
             DB::commit();
             return response()->json($qa, 200);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()], 400);
         }

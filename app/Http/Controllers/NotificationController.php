@@ -8,9 +8,13 @@ use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
-    public function listNotification()
+    public function listNotification($quantity = null)
     {
-        $notifications = Notification::where('recipient', Auth::id())->orderByDesc('updated_at')->with('user')->get();
+        if ($quantity) {
+            $notifications = Notification::where('recipient', Auth::id())->orderByDesc('updated_at')->with('user')->paginate($quantity);
+        } else {
+            $notifications = Notification::where('recipient', Auth::id())->orderByDesc('updated_at')->with('user')->get();
+        }
         return $notifications;
     }
     public function seeNotification(Notification $notification)

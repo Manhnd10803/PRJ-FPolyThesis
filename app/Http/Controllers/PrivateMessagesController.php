@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class PrivateMessagesController extends Controller
 {
-    public function ShowListUserChat()
+    public function ShowListUserChat($quantity = null)
     {
         $user_id = Auth::id();
 
@@ -33,8 +33,11 @@ class PrivateMessagesController extends Controller
 
         // Kết hợp danh sách người gửi và người nhận tin nhắn, loại bỏ trùng lặp và lấy thông tin người dùng
         $listUserIds = $sentMessages->merge($receivedMessages)->unique();
-        $listUserChat = User::whereIn('id', $listUserIds)->get();
-
+        if ($quantity) {
+            $listUserChat = User::whereIn('id', $listUserIds)->paginate($quantity);
+        } else {
+            $listUserChat = User::whereIn('id', $listUserIds)->get();
+        }
         return response()->json($listUserChat);
     }
     /**
@@ -75,7 +78,7 @@ class PrivateMessagesController extends Controller
      * )
      */
 
-    public function ShowAllMessage(User $user)
+    public function ShowAllMessage(User $user, $quantity = null)
     {
         $user1Id  = Auth::id();
         $user2Id = $user->id;
@@ -98,8 +101,12 @@ class PrivateMessagesController extends Controller
                     $query->whereNull('deleted_by')
                         ->orWhereJsonDoesntContain('deleted_by', $user1Id);
                 });
-        })->orderBy('created_at', 'asc')->with(['sender:id,avatar', 'receiver:id,avatar,username'])
-            ->get();
+        })->orderBy('created_at', 'asc')->with(['sender:id,avatar', 'receiver:id,avatar,username']);
+        if ($quantity) {
+            $messages = $messages->paginate($quantity);
+        } else {
+            $messages = $messages->get();
+        }
 
         return response()->json($messages, 200);
     }
