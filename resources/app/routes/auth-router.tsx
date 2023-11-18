@@ -15,6 +15,10 @@ import { CreateQandA } from '@/pages/auth/question-and-answer/create-qanda';
 import { DetailQandAPage } from '@/pages/auth/question-and-answer/detail-qanda';
 import { UpdateQandA } from '@/pages/auth/question-and-answer/update-qanda/update-form';
 import { ExampleUploadPage } from '@/pages/auth/example-upload';
+import { ListMostsCmtQAndAs } from '@/pages/auth/question-and-answer/list-qanda/components/list-best-cmt-qanda';
+import { ListNoAnswerQAndAs } from '@/pages/auth/question-and-answer/list-qanda/components/list-no-answer-qanda';
+import { ListMyQAndAs } from '@/pages/auth/question-and-answer/list-qanda/components/list-my-qanda';
+import { ListQAndAsByMajorId } from '@/pages/auth/question-and-answer/list-qanda/components/list-qanda-major';
 
 export const AuthRouter = [
   {
@@ -24,6 +28,22 @@ export const AuthRouter = [
   {
     path: '/quests',
     element: <QuestionAndAnswerPage />,
+  },
+  {
+    path: '/quests/most-cmt',
+    element: <ListMostsCmtQAndAs />,
+  },
+  {
+    path: '/quests/no-answer',
+    element: <ListNoAnswerQAndAs />,
+  },
+  {
+    path: '/quests/my-qanda',
+    element: <ListMyQAndAs />,
+  },
+  {
+    path: '/quests/by-majors/:id',
+    element: <ListQAndAsByMajorId />,
   },
   {
     path: '/quests/create',

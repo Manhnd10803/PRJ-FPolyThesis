@@ -9,7 +9,7 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const imageUrl = 'https://picsum.photos/20';
 
-export const ListQAndAsByMajorId = ({ data, majorId }: any) => {
+export const ListQAndAsByMajorId = ({ majorId }: any) => {
   // console.log(majorId);
   // console.log(data);
 

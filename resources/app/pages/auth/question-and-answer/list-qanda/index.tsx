@@ -6,31 +6,47 @@ import { IMajors } from '@/models/major';
 import { formatDateFromCreatedAt } from '../../blog/components/format-date';
 import { QandAService } from '@/apis/services/qanda.service';
 import { ListNewQAndAs } from './components/list-new-qanda';
-import { ListMostsCmtQAndAs } from './components/list-best-cmt-qanda';
-import { ListNoAnswerQAndAs } from './components/list-no-answer-qanda';
-import { ListMyQAndAs } from './components/list-my-qanda';
 import { useQuery } from '@tanstack/react-query';
 import { MajorService } from '@/apis/services/major.service';
-import { ListQAndAsByMajorId } from './components/list-qanda-major';
 
 const imageUrl = 'https://picsum.photos/20';
 
 export const ListQandAPage = ({ data }: any) => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [selectedMajorId, setSelectedMajorId] = useState(null);
 
-  console.log(data);
+  // console.log(data);
 
   const { data: majors } = useQuery({
     queryKey: ['majors'],
     queryFn: () => MajorService.getMajors(),
   });
   const listMajors = majors?.data;
-  console.log(listMajors);
+  // console.log(listMajors);
 
   const handleMajorSelect = majorId => {
     console.log('Selected Major ID:', majorId);
     setSelectedMajorId(majorId);
+    navigate(`/quests/by-majors/${majorId}`);
+  };
+
+  const handleTabClick = key => {
+    switch (key) {
+      case 'f1':
+        navigate('/quests');
+        break;
+      case 'f2':
+        navigate('/quests/most-cmt');
+        break;
+      case 'f3':
+        navigate('/quests/no-answer');
+        break;
+      case 'f4':
+        navigate('/quests/my-qanda');
+        break;
+      default:
+        break;
+    }
   };
 
   return (
@@ -56,25 +72,17 @@ export const ListQandAPage = ({ data }: any) => {
                           </Col>
                           <Col sm={2} className=" p-0">
                             {/* Câu trả lời tốt nhất, đáng tin nhất (Có lượt thích nhiều) */}
-                            <Nav.Link eventKey="f2" role="button">
+                            <Nav.Link eventKey="f2" role="button" onClick={() => handleTabClick('f2')}>
                               Hay nhất
                             </Nav.Link>
                           </Col>
-                          {/* <Col sm={2} className=" p-0">
-                          <Nav.Link eventKey="" role="button">Liked Topics</Nav.Link>
-                          </Col> */}
                           <Col sm={2} className=" p-0">
-                            <Nav.Link eventKey="f3" role="button">
+                            <Nav.Link eventKey="f3" role="button" onClick={() => handleTabClick('f3')}>
                               Chưa trả lời
                             </Nav.Link>
                           </Col>
-                          {/* <Col sm={2} className=" p-0">
-                            <Nav.Link eventKey="f4" role="button">
-                              Nhiều Like
-                            </Nav.Link>
-                          </Col> */}
                           <Col sm={2} className=" p-0">
-                            <Nav.Link eventKey="f5" role="button">
+                            <Nav.Link eventKey="f4" role="button" onClick={() => handleTabClick('f4')}>
                               My Question
                             </Nav.Link>
                           </Col>
@@ -84,7 +92,7 @@ export const ListQandAPage = ({ data }: any) => {
                                 <Dropdown>
                                   <Dropdown.Toggle as="div" className="lh-1">
                                     {/* <span className="material-symbols-outlined">more_horiz</span> */}
-                                    <Nav.Link eventKey="f6" role="button">
+                                    <Nav.Link eventKey="f5" role="button">
                                       Chuyên ngành
                                     </Nav.Link>
                                   </Dropdown.Toggle>
@@ -100,10 +108,6 @@ export const ListQandAPage = ({ data }: any) => {
                                         {item.majors_name}
                                       </Dropdown.Item>
                                     ))}
-
-                                    {/* <Dropdown.Item href="#" eventKey="f8" role="button">
-                                      Xóa câu hỏi
-                                    </Dropdown.Item> */}
                                   </Dropdown.Menu>
                                 </Dropdown>
                               </div>
@@ -122,52 +126,6 @@ export const ListQandAPage = ({ data }: any) => {
                     <Card.Body>
                       {/* Danh sách câu hỏi mới nhất ( ALL CÂU HỎI ) */}
                       <ListNewQAndAs data={data} />
-                    </Card.Body>
-                  </Card>
-                </Tab.Pane>
-
-                <Tab.Pane eventKey="f2" className="fade show" id="Photos" role="tabpanel">
-                  <Card>
-                    <Card.Body>
-                      {/* Danh sách câu hỏi hay nhất */}
-                      <ListMostsCmtQAndAs data={data} />
-                    </Card.Body>
-                  </Card>
-                </Tab.Pane>
-
-                <Tab.Pane eventKey="f3" className="fade show" id="Abouts" role="tabpanel">
-                  <Card>
-                    <Card.Body>
-                      {/* Danh sách câu hỏi chưa có câu trả lời */}
-                      <ListNoAnswerQAndAs data={data} />
-                    </Card.Body>
-                  </Card>
-                </Tab.Pane>
-
-                <Tab.Pane eventKey="f4" className="fade show" id="Friends" role="tabpanel">
-                  <Card>
-                    <Card.Body>
-                      {/* Danh sách câu hỏi nhiều like nhất */}
-                      {/* <ListBestLikeQAndAs /> */}
-                    </Card.Body>
-                  </Card>
-                </Tab.Pane>
-
-                <Tab.Pane eventKey="f5" className="fade show" id="Abouts" role="tabpanel">
-                  <Card>
-                    <Card.Body>
-                      {/* Danh sách câu hỏi của bạn */}
-                      <ListMyQAndAs data={data} />
-                    </Card.Body>
-                  </Card>
-                </Tab.Pane>
-
-                <Tab.Pane eventKey="f7" className="fade show" id="Abouts" role="tabpanel">
-                  <Card>
-                    <Card.Body>
-                      {/* Danh sách câu hỏi của bạn */}
-
-                      <ListQAndAsByMajorId data={data} majorId={selectedMajorId} />
                     </Card.Body>
                   </Card>
                 </Tab.Pane>
