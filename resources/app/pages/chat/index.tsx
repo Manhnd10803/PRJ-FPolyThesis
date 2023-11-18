@@ -16,7 +16,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 export const ChatPage = () => {
   const localUserId = StorageFunc.getUserId();
   let { hash } = useLocation();
-  let chat_id = hash.split('#')[1];
+  let chat_id = Number(hash.split('#')[1]);
   const socketID = window.Echo.socketId();
   const queryClient = useQueryClient();
 
@@ -57,7 +57,7 @@ export const ChatPage = () => {
 
   const getMessage = async () => {
     if (chat_id) {
-      const { data } = await MessagesService.showMessages(Number(chat_id));
+      const { data } = await MessagesService.showMessages(chat_id);
       return data;
     }
     return null;
@@ -74,7 +74,7 @@ export const ChatPage = () => {
   };
 
   const checkListChat = (id: number) => {
-    const check = listChatMessage?.find(item => item.id === Number(id)) === undefined ? 'load' : false;
+    const check = listChatMessage?.find((item: any) => item.id === Number(id)) === undefined ? 'load' : false;
     if (check === 'load') {
       return queryClient.invalidateQueries(queryKeyListChat);
     }
@@ -94,11 +94,11 @@ export const ChatPage = () => {
   }, []);
 
   const sendMessageMutation = useMutation(
-    messageText => {
+    (messageText: string) => {
       return MessagesService.sendMessages(Number(chat_id), { content: messageText }, socketID);
     },
     {
-      onSuccess: data => {
+      onSuccess: () => {
         audioSendMessage();
         queryClient.invalidateQueries(queryKeyMessage);
         checkListChat(chat_id);
@@ -116,11 +116,11 @@ export const ChatPage = () => {
   //xoá 1 tin nhắn
 
   const deleteMessageItemMutation = useMutation(
-    messageId => {
-      return MessagesService.deleteChatItem(Number(messageId));
+    (messageId: number) => {
+      return MessagesService.deleteChatItem(messageId);
     },
     {
-      onSuccess: data => {
+      onSuccess: () => {
         queryClient.invalidateQueries(queryKeyMessage);
       },
     },
@@ -132,11 +132,11 @@ export const ChatPage = () => {
 
   //xoá đoạn chat
   const deleteMessageMutation = useMutation(
-    channelId => {
-      return MessagesService.deleteChatChannel(Number(channelId));
+    (channelId: number) => {
+      return MessagesService.deleteChatChannel(channelId);
     },
     {
-      onSuccess: data => {
+      onSuccess: () => {
         queryClient.invalidateQueries(queryKeyListChat);
         navigate('/chat');
       },
@@ -149,7 +149,7 @@ export const ChatPage = () => {
   const modalRef = useRef();
 
   useEffect(() => {
-    const handleClickOutside = event => {
+    const handleClickOutside = (event: any) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
         handleCloseModal();
       }
@@ -165,7 +165,7 @@ export const ChatPage = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showModal]);
-  const handleDeleteChat = id => {
+  const handleDeleteChat = (id: number) => {
     setChatIdToDelete(id);
     setShowModal(true);
   };
@@ -182,7 +182,7 @@ export const ChatPage = () => {
   };
 
   //scroll to last message
-  const chatContentRef = useRef(null);
+  const chatContentRef = useRef<HTMLDivElement>(null);
 
   const scrollToLastMessage = () => {
     if (chatContentRef.current) {
@@ -295,7 +295,7 @@ export const ChatPage = () => {
                         {!isMessage && (
                           <div className="chat-content scroller" ref={chatContentRef}>
                             {chatMessage &&
-                              chatMessage.map((item, index) => (
+                              chatMessage.map((item: any, index: number) => (
                                 <>
                                   {localUserId === item.sender_id ? (
                                     <>

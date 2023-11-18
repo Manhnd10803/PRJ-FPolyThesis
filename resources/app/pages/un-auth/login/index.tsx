@@ -21,9 +21,11 @@ export const LoginPage = () => {
   });
 
   const onSubmit = async (dataForm: TSignInSchema) => {
-    await AuthService.Login(dataForm);
-    reset();
-    navigate(pathName.HOME);
+    const data = await AuthService.Login(dataForm);
+    if (data.access_token) {
+      reset();
+      navigate(pathName.HOME);
+    }
   };
   const loginWithGoogle = () => {
     AuthService.LoginWithGoogle();
