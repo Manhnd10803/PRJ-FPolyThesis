@@ -4,10 +4,6 @@ import socketio from 'socket.io-client';
 // import Echo from 'laravel-echo';
 import Echo from 'laravel-echo/dist/echo';
 
-import { StorageFunc } from './utilities/local-storage/storage-func';
-
-const token = StorageFunc.getAccessToken();
-
 declare global {
   interface Window {
     Echo: Echo;
@@ -21,11 +17,6 @@ window.Echo = new Echo({
   client: socketio,
   encrypted: false, //Chỉ định xem kết nối giữa client và server có sử dụng SSL/TLS để mã hóa hay không
   disableStats: true, //thu thập thống kê (statistics) của kết nối
-  auth: {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  },
   transports: ['websocket'],
 });
 

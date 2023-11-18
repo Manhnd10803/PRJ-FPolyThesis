@@ -50,7 +50,7 @@ export const RealtimeNotification = () => {
 
   useEffect(() => {
     if (accessToken) {
-      window.Echo.options.auth.headers.Authorization = `Bearer ${accessToken}`;
+      window.Echo.connector.options.auth.headers['Authorization'] = `Bearer ${accessToken}`;
 
       // Lắng nghe notification
       const handleReceiveNotification = (event: any) => {
