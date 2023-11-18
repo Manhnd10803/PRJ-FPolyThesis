@@ -8,6 +8,10 @@ export const ChatRouter = [
     element: <ChatPage />,
   },
   {
+    path: pathName.CHAT_DETAIL,
+    element: <ChatPage />,
+  },
+  {
     path: pathName.HOME,
     element: <HomePage />,
   },

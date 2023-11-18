@@ -1,29 +1,29 @@
-import { IBlogs } from '@/models/blog';
+import { GetListUserChatResponseType, IMessages, SendMessageResponseType } from '@/models/messages';
 import httpRequest from '../axios-instance';
 import { ApiConstants } from '../endpoints';
 
-const showMessages = (id: number) => {
-  return httpRequest.get(`${ApiConstants.SHOW_MESSAGE}/${id}`);
+const showMessages = (id: number | string) => {
+  return httpRequest.get(`${ApiConstants.MESSAGES}/${id}`);
 };
 
 const sendMessages = <T>(receiver_id: number, data: T, socketID: any) => {
-  return httpRequest.post<IBlogs>(`${ApiConstants.SEND_MESSAGES}/${receiver_id}`, data, {
+  return httpRequest.post<SendMessageResponseType>(`${ApiConstants.MESSAGES}/${receiver_id}`, data, {
     headers: {
       'X-Socket-Id': socketID,
     },
   });
 };
 
-const getListChat = () => {
-  return httpRequest.get(ApiConstants.LIST_CHAT_MESSAGE);
+const getListUserChat = () => {
+  return httpRequest.get<GetListUserChatResponseType>(ApiConstants.LIST_USER_CHAT);
 };
 
 const deleteChatItem = (id: number) => {
-  return httpRequest.delete(`${ApiConstants.DELETE_CHAT_ITEM}/${id}`);
+  return httpRequest.delete(`${ApiConstants.MESSAGES}/${id}`);
 };
 
 const deleteChatChannel = (id: number) => {
   return httpRequest.delete(`${ApiConstants.DELETE_CHAT_CHANNEL}/${id}`);
 };
 
-export const MessagesService = { showMessages, sendMessages, getListChat, deleteChatItem, deleteChatChannel };
+export const MessagesService = { showMessages, sendMessages, getListUserChat, deleteChatItem, deleteChatChannel };

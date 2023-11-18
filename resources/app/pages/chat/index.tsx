@@ -1,133 +1,67 @@
-import moment from 'moment';
-import parse from 'html-react-parser';
-import InputEmoji from 'react-input-emoji';
-import { CustomToggle } from '@/components/custom';
-import { useEffect, useRef, useState } from 'react';
-import sendMessageSound from '@/assets/mp3/sendmessage.mp3';
-import receiveMessages from '@/assets/mp3/receiverMessage.mp3';
-import { Row, Col, Tab, Dropdown, Card } from 'react-bootstrap';
-import { ProfileService } from '@/apis/services/profile.service';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { MessagesService } from '@/apis/services/messages.service';
+import receiveMessages from '@/assets/mp3/receive-message.mp3';
+import sendMessageSound from '@/assets/mp3/send-message.mp3';
+import { IMessages } from '@/models/messages';
+import { IUser } from '@/models/user';
+import { useAppDispatch, useAppSelector } from '@/redux/hook';
+import { chatActions } from '@/redux/slice';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
-import { RightSideBar } from './components/right-side-bar/right-side-bar';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useRef, useState } from 'react';
+import { Card, Col, Row, Tab } from 'react-bootstrap';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ChatBox } from './components/chat-box';
+import { ChatForm } from './components/chat-form';
+import { HeaderChat } from './components/header-chat';
+import { PopUpDeleteChat } from './components/pop-up-delete-chat';
+import { SideBar, queryKeyListChat } from './components/side-bar';
+
+const audioSend = new Audio(sendMessageSound);
+const audioReceive = new Audio(receiveMessages);
 
 export const ChatPage = () => {
-  const localUserId = StorageFunc.getUserId();
-  let { hash } = useLocation();
-  let chat_id = Number(hash.split('#')[1]);
-  const socketID = window.Echo.socketId();
-  const queryClient = useQueryClient();
+  // hook
+  const { id: chat_id } = useParams<string>();
 
-  const audioReceiverMessage = () => {
-    new Audio(receiveMessages).play();
-  };
   const navigate = useNavigate();
 
-  const getDetailUserProfile = async () => {
-    const { data } = await ProfileService.getDetailUserProfile(localUserId);
-    return data;
-  };
+  const dispatch = useAppDispatch();
 
-  const queryKeyUser = ['user'];
-  const { data: detailUserProfile, isLoading: isUserLoading } = useQuery(queryKeyUser, getDetailUserProfile);
+  const { listUserChat } = useAppSelector(state => state.chat);
 
-  const getListChat = async () => {
-    const { data } = await MessagesService.getListChat();
-    return data;
-  };
+  const { accessToken } = useAppSelector(state => state.auth);
 
-  const queryKeyListChat = ['listchat'];
-  const { data: listChatMessage, isLoading: isListChatLoading } = useQuery(queryKeyListChat, getListChat);
+  const queryClient = useQueryClient();
 
-  const getDetailReceiverProfile = async () => {
-    const { data } = await ProfileService.getDetailUserProfile(chat_id);
-    return data.user;
-  };
+  //state
+  const [showModal, setShowModal] = useState(false);
 
-  const queryKeyUserReceiver = ['receiver_user', chat_id];
-  const { data: detailReceiverProfile, isLoading: isReceiverUserLoading } = useQuery(
-    queryKeyUserReceiver,
-    getDetailReceiverProfile,
-    {
-      enabled: !!chat_id,
-    },
-  );
+  const modalRef = useRef<HTMLDivElement>(null);
 
-  const getMessage = async () => {
-    if (chat_id) {
-      const { data } = await MessagesService.showMessages(chat_id);
-      return data;
-    }
-    return null;
-  };
+  const localUserId = StorageFunc.getUserId();
 
-  const queryKeyMessage = ['message', chat_id];
-  const { data: chatMessage, isLoading: isMessage } = useQuery(queryKeyMessage, getMessage, {
-    enabled: !!chat_id,
+  const socketID = window.Echo.socketId();
+
+  // func
+
+  const sendMessageMutation = useMutation((messageText: string) => {
+    return MessagesService.sendMessages(Number(chat_id), { content: messageText }, socketID);
   });
-  const [message, setMessage] = useState('');
-
-  const audioSendMessage = () => {
-    new Audio(sendMessageSound).play();
-  };
-
-  const checkListChat = (id: number) => {
-    const check = listChatMessage?.find((item: any) => item.id === Number(id)) === undefined ? 'load' : false;
-    if (check === 'load') {
-      return queryClient.invalidateQueries(queryKeyListChat);
-    }
-  };
-
-  useEffect(() => {
-    const handlePrivateMessage = (event: any) => {
-      queryClient.invalidateQueries(queryKeyMessage);
-      checkListChat(chat_id);
-      event?.message?.sender !== undefined ? audioReceiverMessage() : false;
-    };
-
-    window.Echo.private(`user.${localUserId}`).listen('.PrivateMessageSent', handlePrivateMessage);
-    return () => {
-      window.Echo.private(`user.${localUserId}`).stopListening('.PrivateMessageSent', handlePrivateMessage);
-    };
-  }, []);
-
-  const sendMessageMutation = useMutation(
-    (messageText: string) => {
-      return MessagesService.sendMessages(Number(chat_id), { content: messageText }, socketID);
-    },
-    {
-      onSuccess: () => {
-        audioSendMessage();
-        queryClient.invalidateQueries(queryKeyMessage);
-        checkListChat(chat_id);
-        scrollToLastMessage();
+  const handleSendMessage = (message: string) => {
+    sendMessageMutation.mutate(message, {
+      onSuccess: ({ data }) => {
+        audioSend.play();
+        dispatch(chatActions.addMessageToListMessage(data.data as IMessages));
       },
-    },
-  );
-  const handleSendMessage = () => {
-    const messageText = message.trim();
-    if (messageText) {
-      sendMessageMutation.mutate(messageText);
-    }
+    });
   };
 
-  //xoá 1 tin nhắn
+  const handleDeleteChat = () => {
+    setShowModal(true);
+  };
 
-  const deleteMessageItemMutation = useMutation(
-    (messageId: number) => {
-      return MessagesService.deleteChatItem(messageId);
-    },
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(queryKeyMessage);
-      },
-    },
-  );
-  const handleDeleteChatItem = (id: number) => {
-    // console.log(id);
-    deleteMessageItemMutation.mutate(id);
+  const handleCloseModal = () => {
+    setShowModal(false);
   };
 
   //xoá đoạn chat
@@ -142,11 +76,10 @@ export const ChatPage = () => {
       },
     },
   );
-
-  const [showModal, setShowModal] = useState(false);
-  const [chatIdToDelete, setChatIdToDelete] = useState(null);
-
-  const modalRef = useRef();
+  const handleConfirmDelete = () => {
+    deleteMessageMutation.mutate(Number(chat_id));
+    setShowModal(false);
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: any) => {
@@ -154,7 +87,6 @@ export const ChatPage = () => {
         handleCloseModal();
       }
     };
-
     if (showModal) {
       document.addEventListener('mousedown', handleClickOutside);
     } else {
@@ -165,63 +97,49 @@ export const ChatPage = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [showModal]);
-  const handleDeleteChat = (id: number) => {
-    setChatIdToDelete(id);
-    setShowModal(true);
-  };
 
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setChatIdToDelete(null);
-  };
-
-  const handleConfirmDelete = () => {
-    deleteMessageMutation.mutate(chatIdToDelete);
-    setShowModal(false);
-    setChatIdToDelete(null);
-  };
-
-  //scroll to last message
-  const chatContentRef = useRef<HTMLDivElement>(null);
-
-  const scrollToLastMessage = () => {
-    if (chatContentRef.current) {
-      const chatContent = chatContentRef.current;
-      chatContent.scrollTop = chatContent.scrollHeight;
-    }
-  };
   useEffect(() => {
-    if (chatMessage && chatMessage.length > 0) {
-      scrollToLastMessage();
-    }
-  }, [chatMessage]);
+    if (!accessToken) return;
+
+    window.Echo.connector.options.auth.headers['Authorization'] = `Bearer ${accessToken}`;
+
+    const handlePrivateMessage = (event: any) => {
+      try {
+        const { sender_id } = event.message;
+        // Nếu người gửi chưa có trong danh sách chat thì cập nhật lại danh sách user chat
+        const isNewSender = listUserChat?.findIndex((item: IUser) => item.id === sender_id) === -1;
+
+        console.log('isNewSender', isNewSender);
+
+        if (isNewSender) {
+          queryClient.invalidateQueries(queryKeyListChat);
+        }
+
+        audioReceive.play();
+
+        dispatch(chatActions.addMessageToListMessage(event.message));
+      } catch (error) {
+        console.log('handlePrivateMessage', error);
+      }
+    };
+
+    window.Echo.private(`user.${localUserId}`).listen('.PrivateMessageSent', handlePrivateMessage);
+    return () => {
+      window.Echo.private(`user.${localUserId}`).stopListening('.PrivateMessageSent', handlePrivateMessage);
+    };
+  }, []);
+
+  // render
 
   return (
     <>
       <>
-        {showModal && (
-          <div className="modal fade show" tabIndex={-1} role="dialog" style={{ display: 'block' }}>
-            <div className="modal-dialog modal-dialog-centered" ref={modalRef} role="document">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title">Xác nhận xóa đoạn chat</h5>
-                  <button type="button" className="btn-close" onClick={handleCloseModal}></button>
-                </div>
-                <div className="modal-body">
-                  Bạn có chắc chắn muốn xóa đoạn chat này không? Hành động này không thể hoàn tác.
-                </div>
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" onClick={handleCloseModal}>
-                    Hủy
-                  </button>
-                  <button type="button" className="btn btn-danger" onClick={handleConfirmDelete}>
-                    Xóa
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* <PopUpDeleteChat
+          showModal={showModal}
+          onClose={handleCloseModal}
+          ref={modalRef}
+          onDelete={handleConfirmDelete}
+        /> */}
       </>
       <div id="content-page" className="content-page p-0">
         <Row>
@@ -230,157 +148,23 @@ export const ChatPage = () => {
               <Card.Body className="chat-page p-0">
                 <div className="chat-data-block">
                   <Row>
-                    <Col lg={2} className="chat-data-left scroller" style={{ paddingRight: '2px' }}>
-                      <RightSideBar
-                        isLoading={isUserLoading}
-                        data={detailUserProfile}
-                        listChatMessage={listChatMessage}
-                        isListChatLoading={isListChatLoading}
-                      />
+                    <Col lg={3} className="chat-data-left scroller" style={{ paddingRight: '2px' }}>
+                      <SideBar />
                     </Col>
-                    <Col lg={10} className=" chat-data p-0 chat-data-right border-start">
-                      <Tab.Content>
-                        {!isReceiverUserLoading && (
-                          <>
-                            <Link to={`/profile/${detailReceiverProfile.id}`}>
-                              <div className="chat-head border-bottom border-2">
-                                <header className="d-flex justify-content-between align-items-center bg-white pt-3  ps-3 pe-3 pb-3">
-                                  <div className="d-flex align-items-center">
-                                    <div className="sidebar-toggle">
-                                      <i className="ri-menu-3-line"></i>
-                                    </div>
-                                    <div className="avatar chat-user-profile m-0 me-3">
-                                      <img
-                                        loading="lazy"
-                                        src={detailReceiverProfile.avatar}
-                                        alt="avatar"
-                                        className="avatar-50 "
-                                      />
-                                      <span className="avatar-status">
-                                        <i className="material-symbols-outlined text-success  md-14 filled">circle</i>
-                                      </span>
-                                    </div>
-                                    <h5 className="mb-0">{detailReceiverProfile.username}</h5>
-                                  </div>
-                                  <div className="chat-header-icons d-flex">
-                                    <Link
-                                      onClick={() => handleDeleteChat(detailReceiverProfile.id)}
-                                      className="chat-icon-phone bg-soft-primary d-flex justify-content-center align-items-center"
-                                    >
-                                      <i className="material-symbols-outlined md-18">delete</i>
-                                    </Link>
-                                    <Dropdown
-                                      className="bg-soft-primary d-flex justify-content-center align-items-center"
-                                      as="span"
-                                    >
-                                      <Dropdown.Toggle
-                                        as={CustomToggle}
-                                        variant="material-symbols-outlined cursor-pointer md-18 nav-hide-arrow pe-0 show"
-                                      >
-                                        more_vert
-                                      </Dropdown.Toggle>
-                                      <Dropdown.Menu className="dropdown-menu-right">
-                                        <Dropdown.Item className="d-flex align-items-center" href="#">
-                                          <i className="material-symbols-outlined md-18 me-1">watch_later</i>Block
-                                        </Dropdown.Item>
-                                      </Dropdown.Menu>
-                                    </Dropdown>
-                                  </div>
-                                </header>
-                              </div>
-                            </Link>
-                          </>
-                        )}
+                    <Col lg={9} className="chat-data p-0 chat-data-right border-start">
+                      {chat_id ? (
+                        <Tab.Content>
+                          <HeaderChat onDeleteChat={handleDeleteChat} />
 
-                        {!isMessage && (
-                          <div className="chat-content scroller" ref={chatContentRef}>
-                            {chatMessage &&
-                              chatMessage.map((item: any, index: number) => (
-                                <>
-                                  {localUserId === item.sender_id ? (
-                                    <>
-                                      <div className="chat d-flex other-user" key={index}>
-                                        <div className="chat-user">
-                                          <Link className="avatar m-0" to="">
-                                            <img
-                                              loading="lazy"
-                                              src={item.sender.avatar}
-                                              alt="avatar"
-                                              className="avatar-35 "
-                                            />
-                                          </Link>
-                                          <span className="chat-time mt-1">{moment(item.created_at).format('LT')}</span>
-                                        </div>
-                                        <div className="chat-detail" style={{ maxWidth: '50%' }}>
-                                          <div>
-                                            <Dropdown
-                                              className="d-flex justify-content-center align-items-center"
-                                              as="span"
-                                            >
-                                              <Dropdown.Toggle
-                                                as={CustomToggle}
-                                                variant="material-symbols-outlined cursor-pointer md-18 nav-hide-arrow pe-0 show"
-                                              >
-                                                more_vert
-                                              </Dropdown.Toggle>
-                                              <Dropdown.Menu className="dropdown-menu-right">
-                                                <Dropdown.Item
-                                                  className="d-flex align-items-center"
-                                                  onClick={() => handleDeleteChatItem(item.id)}
-                                                >
-                                                  <i className="material-symbols-outlined md-18 me-1">delete_outline</i>
-                                                  Xoá
-                                                </Dropdown.Item>
-                                              </Dropdown.Menu>
-                                            </Dropdown>
-                                          </div>
-                                          <div className="chat-message">
-                                            <div>{parse(item.content.replace('</br>', '<br />'))}</div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <div className="chat chat-left" key={index}>
-                                        <div className="chat-user">
-                                          <Link className="avatar m-0" to="">
-                                            <img
-                                              loading="lazy"
-                                              src={item.sender.avatar}
-                                              alt="avatar"
-                                              className="avatar-35 "
-                                            />
-                                          </Link>
-                                          <span className="chat-time mt-1">{moment(item.created_at).format('LT')}</span>
-                                        </div>
-                                        <div className="chat-detail" style={{ maxWidth: '50%' }}>
-                                          <div className="chat-message" style={{ backgroundColor: '#F0F0F0' }}>
-                                            <div>{parse(item.content.replace('</br>', '<br />'))}</div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </>
-                                  )}
-                                </>
-                              ))}
-                          </div>
-                        )}
-                        {chat_id && (
-                          <div className="chat-footer p-3 bg-white">
-                            <InputEmoji
-                              value={message}
-                              onChange={setMessage}
-                              cleanOnEnter
-                              onEnter={handleSendMessage}
-                              placeholder="Type a message"
-                              theme="auto"
-                              shouldReturn={true}
-                              keepOpened={true}
-                            />
-                          </div>
-                        )}
-                      </Tab.Content>
+                          <ChatBox />
+
+                          <ChatForm onSend={handleSendMessage} />
+                        </Tab.Content>
+                      ) : (
+                        <div className="d-flex align-items-center justify-content-center" style={{ minHeight: '100%' }}>
+                          <h1>Chat với bạn bè nào 💬 ...</h1>
+                        </div>
+                      )}
                     </Col>
                   </Row>
                 </div>
