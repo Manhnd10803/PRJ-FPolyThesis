@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { Button, Col, Dropdown, Form, Image, Modal, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { formatDateFromCreatedAt } from '../../components/format-date';
+import { compileFunction } from 'vm';
+import { formatFullName } from '@/utilities/functions';
+import { pathName } from '@/routes/path-name';
 
 export const Comments = ({ data, postComment, deleteComment, putComment }: any) => {
   const [replyFormsVisible, setReplyFormsVisible] = useState({});
@@ -15,13 +18,7 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
   // User ID
   const userId = StorageFunc.getUserId();
   // Name :
-  function combineNames(data: any) {
-    if (data.first_name && data.last_name) {
-      return `${data.first_name} ${data.last_name}`;
-    } else {
-      return 'Unknown';
-    }
-  }
+
   const toggleReplyForm = (commentId: any) => {
     const currentVisibility = replyFormsVisible[commentId];
     const updatedReplyFormsVisible = {};
@@ -113,10 +110,10 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
                               <div className="user-image mb-3">
                                 <Image className="avatar-80 rounded" src={comment?.user?.avatar} alt="#" />
                               </div>
-                              <div className="ms-3">
-                                <h5>{comment?.user ? combineNames(comment?.user) : 'Chưa cập nhật'}</h5>
+                              <Link to={`${pathName.PROFILE}/${comment?.user?.id}`} className="ms-3">
+                                <h5>{formatFullName(comment?.user)}</h5>
                                 <p>@{comment?.user?.username}</p>
-                              </div>
+                              </Link>
                             </div>
                             <div className="card-header-toolbar d-flex">
                               <Dropdown>
@@ -258,10 +255,10 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
                                     <div className="user-image mb-3">
                                       <Image className="avatar-80 rounded" src={reply?.user?.avatar} alt="#" />
                                     </div>
-                                    <div className="ms-3">
-                                      <h5>{reply?.user ? combineNames(reply?.user) : 'Chưa cập nhật'}</h5>
+                                    <Link to={`${pathName.PROFILE}/${comment?.user?.id}`} className="ms-3">
+                                      <h5>{formatFullName(reply?.user)}</h5>
                                       <p>@{reply?.user?.username}</p>
-                                    </div>
+                                    </Link>
                                   </div>
                                   <div className="card-header-toolbar d-flex">
                                     <Dropdown>

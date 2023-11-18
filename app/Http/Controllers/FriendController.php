@@ -410,7 +410,6 @@ class FriendController extends Controller
                 ->where('user_id_2', $self)
                 ->where('status', 1);
         })->first();
-
         if ($friendship) {
             return 'Bạn bè';
         } else {
@@ -427,11 +426,7 @@ class FriendController extends Controller
             }
         }
     }
-    // gợi ý kết bạn
-    //gợi ý theo major
-    //những ai đã gửi lời mời thì không hiện
-    //đã là bạn bè thì không hiện
-    public function getFriendSuggestions($quantity = null)
+    public function getFriendSuggestions()
     {
         $self = Auth::user();
         // Lấy danh sách ID của những người đã gửi lời mời kết bạn cho người dùng hiện tại
@@ -442,35 +437,25 @@ class FriendController extends Controller
             ])
             ->pluck('user_id_2')
             ->toArray();
-
+        $friendRequestsIds = Friend::where('user_id_2', $self->id)
+            ->whereIn('status', [
+                config('default.friend.status.pending'),
+                config('default.friend.status.accepted')
+            ])
+            ->pluck('user_id_1')
+            ->toArray();
         // Kết hợp danh sách ID của bạn bè và người đã gửi lời mời kết bạn
-
-
+        $combinedIds = array_merge($friendIds, $friendRequestsIds);
         // Lấy gợi ý kết bạn dựa trên cùng một chuyên ngành và không phải là bạn bè hoặc người đã gửi lời mời kết bạn
         $friendSuggestions = User::where('major_id', $self->major_id)
             ->where('id', '!=', $self->id)
-            ->whereNotIn('id', $friendIds)
-            ->get(['id', 'username', 'avatar', 'first_name', 'last_name', 'major_id'])
+            ->whereNotIn('id', $combinedIds)
+            ->get()
             ->map(function ($user) {
                 $user->major_name = $user->major ? $user->major->name : null;
                 unset($user->major);
                 return $user;
             });
-
-        if ($quantity) {
-            $friendSuggestionsQuery = User::where('major_id', $self->major_id)
-                ->where('id', '!=', $self->id)
-                ->whereNotIn('id', $friendIds);
-
-            // Phân trang
-            $perPage = $quantity;
-            $friendSuggestions = $friendSuggestionsQuery->paginate($perPage, ['id', 'username', 'avatar', 'first_name', 'last_name', 'major_id'])
-                ->map(function ($user) {
-                    $user->major_name = $user->major ? $user->major->name : null;
-                    unset($user->major);
-                    return $user;
-                });
-        }
 
         return response()->json($friendSuggestions);
     }
