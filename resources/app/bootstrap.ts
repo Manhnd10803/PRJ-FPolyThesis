@@ -1,3 +1,4 @@
+//@ts-ignore
 import socketio from 'socket.io-client';
 
 // import Echo from 'laravel-echo';

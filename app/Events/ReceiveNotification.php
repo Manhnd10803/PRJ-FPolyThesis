@@ -11,7 +11,7 @@ use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Notification;
 
-class ReceiveNotification
+class ReceiveNotification implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -35,5 +35,9 @@ class ReceiveNotification
         return [
             new PrivateChannel('receive-notification-' . $this->notification->recipient),
         ];
+    }
+    public function broadcastAs()
+    {
+        return 'ReceiveNotification';
     }
 }

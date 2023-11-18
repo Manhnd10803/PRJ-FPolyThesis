@@ -20,6 +20,11 @@ Broadcast::channel('user.{sender_id}', function ($user, $sender_id) {
     return true;
 });
 
+Broadcast::channel('receive-notification-{recipient}', function ($user, $recipient) {
+    return true;
+});
+
+
 // Broadcast::channel('user.{receiver_id}', function($user, $receiver_id) {
 //     return (int) Auth()->id() === (int) PrivateMessage::findOrNew($receiver_id)->sender_id;
 // });
