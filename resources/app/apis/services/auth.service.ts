@@ -23,16 +23,18 @@ const Login = async <T>(dataForm: T) => {
     toast.success('Đăng nhập thành công');
     //save data login to storage
     StorageFunc.saveDataAfterLogin(data);
+
     store.dispatch(authActions.setAccessToken(data.access_token));
 
-    const { data: userInfo } = await AuthService.GetUserDetail();
-    store.dispatch(authActions.setUserInfo(userInfo));
+    const { data: userData } = await AuthService.GetUserDetail();
 
-    StorageFunc.saveUserDetailData(userInfo);
+    store.dispatch(authActions.setUserInfo(userData.user));
+
+    StorageFunc.saveUserDetailData(userData);
     return data;
   } catch (error: any) {
-    if (error.message === 'Mật khẩu không đúng' || error.message === 'Email không tồn tại') {
-      toast.error('Sai thông tin đăng nhập');
+    if (error.message) {
+      toast.error(error.message);
     } else if (error) {
       toast.error('Lỗi server');
     }
@@ -45,6 +47,11 @@ const RefreshToken = async () => {
     const { data } = await httpRequest.post<RefreshTokenResponseType>(ApiConstants.REFRESH_TOKEN, {
       refresh_token: StorageFunc.getRefreshToken(),
     });
+
+    const { data: userData } = await AuthService.GetUserDetail();
+    store.dispatch(authActions.setUserInfo(userData.user));
+
+    StorageFunc.saveUserDetailData(userData);
 
     return data;
   } catch (error) {

@@ -66,15 +66,11 @@ export const ApiConstants = {
   SHOW_INFO_USER: `user-info`,
   EDIT_INFO_USER: `profile/update`,
 
-  // Add more endpoints as needed
-
-  SHOW_MESSAGE: '/messages',
-  SEND_MESSAGES: '/messages',
-
   // chat
-  LIST_CHAT_MESSAGE: '/messages',
-  DELETE_CHAT_ITEM: '/messages',
+  LIST_USER_CHAT: '/messages/list-user',
   DELETE_CHAT_CHANNEL: '/messages/chat',
+
+  MESSAGES: '/messages',
 
   NOTIFICATIONS: '/notifications',
 } as const;

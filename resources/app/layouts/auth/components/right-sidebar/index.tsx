@@ -36,7 +36,7 @@ export const RightSidebar = () => {
                         {friendsMyUser.map((itemfriend: any) => (
                           <a
                             key={itemfriend?.friend?.id}
-                            href={`${pathName.CHAT}#${itemfriend?.friend?.id}`}
+                            href={`${pathName.CHAT}/${itemfriend?.friend?.id}`}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
