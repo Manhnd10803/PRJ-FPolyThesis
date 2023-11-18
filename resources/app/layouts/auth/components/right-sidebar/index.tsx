@@ -1,7 +1,7 @@
 import { FriendService } from '@/apis/services/friend.service';
+import { pathName } from '@/routes/path-name';
 import { useQuery } from '@tanstack/react-query';
 import { Card, Image } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
 
 export const RightSidebar = () => {
   const minirightsidebar = () => {
@@ -17,7 +17,6 @@ export const RightSidebar = () => {
 
   const FriendsMyUserQueryKey = ['friendmyuser'];
   const { data: friendsMyUser, isLoading } = useQuery(FriendsMyUserQueryKey, { queryFn: fetchAllFriendMyUser });
-  const navigate = useNavigate();
 
   return (
     <>
@@ -35,11 +34,13 @@ export const RightSidebar = () => {
                     {friendsMyUser && friendsMyUser.length > 0 ? (
                       <>
                         {friendsMyUser.map((itemfriend: any) => (
-                          <a key={itemfriend?.friend?.id} href={`/chat#${itemfriend?.friend?.id}`}>
-                            <div
-                              className="d-flex align-items-center mb-4"
-                              // onClick={() => navigate(`/chat#${itemfriend?.friend?.id}`)}
-                            >
+                          <a
+                            key={itemfriend?.friend?.id}
+                            href={`${pathName.CHAT}#${itemfriend?.friend?.id}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <div className="d-flex align-items-center mb-4">
                               <div className="iq-profile-avatar status-online">
                                 <Image
                                   className="rounded-circle avatar-50"

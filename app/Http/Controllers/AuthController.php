@@ -80,6 +80,7 @@ class AuthController extends Controller
                         'username' => $username,
                         'password' => Hash::make($request->password),
                         'email' => $request->email,
+                        'avatar' => config('default.user.avatar.default'),
                         'first_name' => $request->first_name,
                         'last_name' => $request->last_name,
                         'major_id' => $request->major_id,
@@ -210,7 +211,7 @@ class AuthController extends Controller
     }
     public function refresh(Request $request)
     {
-        if($request->refresh_token){
+        if ($request->refresh_token) {
             $request = Request::create('oauth/token', 'POST', [
                 'grant_type' => 'refresh_token',
                 'client_id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID'),

@@ -31,7 +31,7 @@ const Login = async <T>(dataForm: T) => {
     StorageFunc.saveUserDetailData(userInfo);
     return data;
   } catch (error: any) {
-    if (error.message == 'The user credentials were incorrect.') {
+    if (error.message === 'Mật khẩu không đúng' || error.message === 'Email không tồn tại') {
       toast.error('Sai thông tin đăng nhập');
     } else if (error) {
       toast.error('Lỗi server');
