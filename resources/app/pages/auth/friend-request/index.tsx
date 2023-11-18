@@ -1,18 +1,17 @@
-import { Card } from '@/components/custom';
 import { useState } from 'react';
-import { Row, Col, Container, Spinner } from 'react-bootstrap';
+import { Row, Col, Container, Spinner, Button, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { ModalRequest } from './components/modal';
 import { FriendService } from '@/apis/services/friend.service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import { formatFullName } from '@/utilities/functions';
+import { pathName } from '@/routes/path-name';
 interface FriendStates {
   [key: string]: string;
 }
 export const FriendRequestPage = () => {
   const queryClient = useQueryClient();
   const [addFriendStates, setAddFriendStates] = useState<FriendStates>({});
-  const [showDeleteRequest, setShowDeleteRequest] = useState(false);
 
   const fetchAllFriendRequest = async () => {
     const { data } = await FriendService.showAllFriendRequest();
@@ -47,7 +46,6 @@ export const FriendRequestPage = () => {
   const HandleDeleteFriendRequest = async (id: any) => {
     try {
       const response = await deleteFriendRequestMutation.mutateAsync(id);
-      setShowDeleteRequest(false);
       return response;
     } catch (error) {
       throw error;
@@ -97,68 +95,52 @@ export const FriendRequestPage = () => {
                       </Spinner>
                     </>
                   ) : (
-                    <>
+                    <Row>
                       {friendRequest && friendRequest.length > 0 ? (
                         <>
-                          <ul className="request-list list-inline m-0 p-0">
-                            {friendRequest.map((itemFriend: any) => {
-                              return (
-                                <li
-                                  key={itemFriend.id}
-                                  className="d-flex align-items-center  justify-content-between flex-wrap"
-                                >
-                                  <div className="user-img img-fluid flex-shrink-0">
-                                    <img
-                                      src={itemFriend.friend.avatar}
-                                      alt="story-img"
-                                      className="rounded-circle avatar-40"
-                                    />
-                                  </div>
-                                  <div className="flex-grow-1 ms-3">
-                                    <h6>{itemFriend.friend.username}</h6>
-                                  </div>
-                                  <div className="d-flex align-items-center mt-2 mt-md-0">
-                                    <div className="confirm-click-btn">
+                          {friendRequest.map((itemFriend: any) => {
+                            return (
+                              <Col key={itemFriend.id} sm={3}>
+                                <Card className="mb-3">
+                                  <Link to={`${pathName.PROFILE}/${itemFriend.id}`}>
+                                    <Card.Img variant="top" src={itemFriend.friend.avatar} alt="ảnh đại diện" />
+                                  </Link>
+                                  <Card.Body>
+                                    <Link to={`${pathName.PROFILE}/${itemFriend.id}`}>
+                                      <Card.Title as="h5" className="card-title">
+                                        {formatFullName(itemFriend.friend)}
+                                      </Card.Title>
+                                    </Link>
+                                    <Card.Text className="card-text">@{itemFriend.friend.username}</Card.Text>
+                                    <div className="d-flex flex-column gap-2 mt-2 mt-md-0">
                                       <Link
                                         to="#"
                                         onClick={() => HandleConfirmFriendRequest(itemFriend.friend.id)}
-                                        className="me-3 btn btn-primary rounded confirm-btn"
+                                        className="btn btn-primary rounded confirm-btn"
                                       >
                                         Xác nhận
                                       </Link>
+
                                       <Link
                                         to="#"
-                                        className="me-3 btn btn-primary rounded request-btn"
-                                        style={{ display: 'none' }}
+                                        className="btn btn-soft-secondary rounded"
+                                        data-extra-toggle="delete"
+                                        data-closest-elem=".item"
+                                        onClick={() => HandleDeleteFriendRequest(itemFriend.friend.id)}
                                       >
-                                        View All
+                                        Xóa, gỡ
                                       </Link>
                                     </div>
-                                    <Link
-                                      to="#"
-                                      className="btn btn-secondary rounded"
-                                      data-extra-toggle="delete"
-                                      data-closest-elem=".item"
-                                      onClick={() => setShowDeleteRequest(true)}
-                                    >
-                                      Xóa
-                                    </Link>
-                                    <ModalRequest
-                                      show={showDeleteRequest}
-                                      onHide={() => setShowDeleteRequest(false)}
-                                      onConfirm={() => HandleDeleteFriendRequest(itemFriend.friend.id)}
-                                      title="Bạn muốn xóa lời mời kết bạn?"
-                                    />
-                                  </div>
-                                </li>
-                              );
-                            })}
-                          </ul>
+                                  </Card.Body>
+                                </Card>
+                              </Col>
+                            );
+                          })}
                         </>
                       ) : (
                         <Card.Body>Không có yêu cầu mới</Card.Body>
                       )}
-                    </>
+                    </Row>
                   )}
                 </Card.Body>
               </Card>
@@ -166,7 +148,7 @@ export const FriendRequestPage = () => {
               <Card>
                 <Card.Header className="d-flex justify-content-between">
                   <div className="header-title">
-                    <h4 className="card-title">Gợi ý kết bạn</h4>
+                    <h4 className="card-title">Những người bạn có thể biết</h4>
                   </div>
                 </Card.Header>
                 <Card.Body>
@@ -179,38 +161,41 @@ export const FriendRequestPage = () => {
                   ) : (
                     <>
                       {friendSuggest && friendSuggest.length > 0 ? (
-                        <ul className="request-list list-inline m-0 p-0">
+                        <Row>
                           {friendSuggest.map((itemFriend: any) => {
                             return (
-                              <li
-                                key={itemFriend.id}
-                                className="d-flex align-items-center  justify-content-between flex-wrap"
-                              >
-                                <div className="user-img img-fluid flex-shrink-0">
-                                  <img src={itemFriend.avatar} alt="story-img" className="rounded-circle avatar-40" />
-                                </div>
-                                <div className="flex-grow-1 ms-3">
-                                  <h6>{itemFriend.username}</h6>
-                                </div>
-                                <div className="d-flex align-items-center mt-2 mt-md-0">
-                                  <div className="confirm-click-btn">
-                                    <Link
-                                      to="#"
-                                      onClick={() => HandleAddFriend(itemFriend.id)}
-                                      className={`me-3 btn ${
-                                        addFriendStates[itemFriend.id] === 'Hủy lời mời'
-                                          ? 'btn-secondary'
-                                          : 'btn-primary'
-                                      } rounded confirm-btn`}
-                                    >
-                                      {addFriendStates[itemFriend.id] || 'Thêm bạn bè'}
+                              <Col key={itemFriend.id} sm={3}>
+                                <Card className="mb-3">
+                                  <Link to={`${pathName.PROFILE}/${itemFriend.id}`}>
+                                    <Card.Img variant="top" src={itemFriend.avatar} alt="#" />
+                                  </Link>
+                                  <Card.Body>
+                                    <Link to={`${pathName.PROFILE}/${itemFriend.id}`}>
+                                      <Card.Title as="h5" className="card-title">
+                                        {formatFullName(itemFriend)}
+                                      </Card.Title>
                                     </Link>
-                                  </div>
-                                </div>
-                              </li>
+
+                                    <Card.Text className="card-text">@{itemFriend.username}</Card.Text>
+                                    <div className="d-flex flex-column  mt-2">
+                                      <Link
+                                        to="#"
+                                        onClick={() => HandleAddFriend(itemFriend.id)}
+                                        className={`btn ${
+                                          addFriendStates[itemFriend.id] === 'Hủy lời mời'
+                                            ? 'btn btn-soft-secondary'
+                                            : 'btn btn-soft-primary'
+                                        } rounded confirm-btn`}
+                                      >
+                                        {addFriendStates[itemFriend.id] || 'Thêm bạn bè'}
+                                      </Link>
+                                    </div>
+                                  </Card.Body>
+                                </Card>
+                              </Col>
                             );
                           })}
-                        </ul>
+                        </Row>
                       ) : (
                         <p>Không có yêu cầu mới</p>
                       )}
