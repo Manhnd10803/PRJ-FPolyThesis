@@ -4,9 +4,13 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 export default defineConfig({
+  build: {
+    minify: true,
+    outDir: 'dist',
+  },
   plugins: [
     laravel({
-      input: ['resources/app/styles/index.scss', 'resources/app/index.tsx'],
+      input: ['resources/app/assets/scss/index.scss', 'resources/app/index.tsx'],
       refresh: true,
     }),
     react(),
