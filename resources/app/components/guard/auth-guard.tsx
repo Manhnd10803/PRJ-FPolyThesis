@@ -13,22 +13,29 @@ type AuthGuardProps = {
 export const AuthGuard: FC<AuthGuardProps> = ({ children }) => {
   const { accessToken } = useAppSelector(state => state.auth);
 
+  console.log({ accessToken });
   const isStayIn = load(storageKeys.STAY_IN);
   const localUserId = StorageFunc.getUserId();
 
   useEffect(() => {
     if (accessToken) {
-      // Lắng nghe
-      const handlePrivateMessage = (event: any) => {
+      window.Echo.options.auth.headers.Authorization = `Bearer ${accessToken}`;
+
+      // Lắng nghe notification
+      const handleReceiveNotification = (event: any) => {
         console.log('receive-notification', event);
+        alert('receive-notification');
       };
 
-      window.Echo.private(`receive-notification-.${localUserId}`).listen('.ReceiveNotification', handlePrivateMessage);
+      window.Echo.private(`receive-notification-${localUserId}`).listen(
+        '.ReceiveNotification',
+        handleReceiveNotification,
+      );
 
       return () => {
-        window.Echo.private(`receive-notification-.${localUserId}`).stopListening(
+        window.Echo.private(`receive-notification-${localUserId}`).stopListening(
           '.ReceiveNotification',
-          handlePrivateMessage,
+          handleReceiveNotification,
         );
       };
     }
