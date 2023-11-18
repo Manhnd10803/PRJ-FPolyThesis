@@ -52,7 +52,6 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/get-user', [AuthController::class, 'getUser'])->name('user.getinfo');
     //route has been authenticated
     Route::post('/auth/logout', [AuthController::class, 'logout'])->name('user.logout');
-    Route::post('/auth/refresh-token', [AuthController::class, 'refreshToken'])->name('token.refresh');
     Route::post('/auth/confirm-password', [AuthController::class, 'confirmPassword'])->name('user.confirmPassword');
     Route::post('/auth/reset-new-password', [AuthController::class, 'resetPassword'])->name('user.resetPassword');
     Route::get('/hello', function () {
@@ -61,8 +60,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/activity', [AuthController::class, 'CheckActivityUser']);
     //chat
     Route::prefix('messages')->group(function () {
-        Route::get('/', [PrivateMessagesController::class, 'ShowListUserChat']);
-        Route::get('/{user}', [PrivateMessagesController::class, 'ShowAllMessage'])->where('user', '[0-9]+');
+        Route::get('/list-user/{quantity?}', [PrivateMessagesController::class, 'ShowListUserChat']);
+        Route::get('/{user}/{quantity?}', [PrivateMessagesController::class, 'ShowAllMessage'])->where('user', '[0-9]+');
         Route::post('/{user}', [PrivateMessagesController::class, 'SendMessages'])->where('user', '[0-9]+');
         Route::put('/{privateMessage}', [PrivateMessagesController::class, 'UpdateMessage']);
         //Xóa  tin nhắn (Xóa 1 tin nhắn) id tin nhắn
@@ -75,7 +74,7 @@ Route::middleware('auth:api')->group(function () {
 
     //post
     Route::prefix('posts')->group(function () {
-        Route::get('/newfeed', [PostsController::class, 'ShowAllPosts'])->name('post.show');
+        Route::get('/newfeed/{quantity?}', [PostsController::class, 'ShowAllPosts'])->name('post.show');
         Route::post('/', [PostsController::class, 'CreatePost'])->name('post.create');
         Route::put('/{post}', [PostsController::class, 'UpdatePost'])->name('post.update');
         Route::delete('/{post}', [PostsController::class, 'DeletePost'])->name('post.delete');
@@ -93,11 +92,11 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/user-info', [ProfileController::class, 'getInfoUser']);
     //blog
     Route::prefix('blogs')->group(function () {
-        Route::get('/', [BlogController::class, 'ShowAllBlogs'])->name('blog.show');
+        Route::get('/{quantity?}', [BlogController::class, 'ShowAllBlogs'])->name('blog.show');
         Route::post('/', [BlogController::class, 'CreateBlog'])->name('blog.create');
         Route::put('/{blog}', [BlogController::class, 'UpdateBlog'])->name('blog.update');
         Route::delete('/{blog}', [BlogController::class, 'DeleteBlog'])->name('blog.delete');
-        Route::get('/{blog}', [BlogController::class, 'detailBlog']);
+        Route::get('/detail/{blog}', [BlogController::class, 'detailBlog']);
     });
     //Emotion
     Route::prefix('like')->group(function () {
@@ -116,13 +115,13 @@ Route::middleware('auth:api')->group(function () {
 
     //qa
     Route::prefix('quests')->group(function () {
-        Route::get('/', [QaController::class, 'ShowAllQa'])->name('qa.showAll');
-        Route::get('/major/{major_id}', [QaController::class, 'ShowQaByMajor'])->name('qa.showAllByMajor');
-        Route::get('/my-quests', [QaController::class, 'showMyQa'])->name('qa.showMyQa');
-        Route::get('/most-commented', [QaController::class, 'showMostCommentedQa'])->name('qa.showMostCommentedQa');
-        Route::get('/unanswer', [QaController::class, 'showUnAnswerdQa'])->name('qa.showUnAnswerdQa');
+        Route::get('all/{quantity?}', [QaController::class, 'ShowAllQa'])->name('qa.showAll');
+        Route::get('/major/{major_id}/{quantity?}', [QaController::class, 'ShowQaByMajor'])->name('qa.showAllByMajor');
+        Route::get('/my-quests/{quantity?}', [QaController::class, 'showMyQa'])->name('qa.showMyQa');
+        Route::get('/most-commented/{quantity?}', [QaController::class, 'showMostCommentedQa'])->name('qa.showMostCommentedQa');
+        Route::get('/unanswer/{quantity?}', [QaController::class, 'showUnAnswerdQa'])->name('qa.showUnAnswerdQa');
         Route::post('/', [QaController::class, 'CreateQa'])->name('qa.create');
-        Route::get('/{qa}', [QaController::class, 'detailQandA'])->name('qa.detail');
+        Route::get('detail/{qa}', [QaController::class, 'detailQandA'])->name('qa.detail');
         Route::put('/{qa}', [QaController::class, 'UpdateQa'])->name('qa.update');
         Route::delete('/{qa}', [QaController::class, 'DeleteQa'])->name('qa.delete');
         //Route::get('/list', [QaController::class, 'ListQa'])->name('qa.list');
@@ -132,14 +131,14 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/send-request/{recipient}', [FriendController::class, 'SendFriendRequest'])->name('friend.send');
     Route::post('/confirm-request/{sender}', [FriendController::class, 'ConfirmFriendRequest'])->name('friend.confirm');
     Route::delete('/delete-request/{sender}', [FriendController::class, 'DeleteFriendRequest'])->name('friend.delete');
-    Route::get('/friend-list', [FriendController::class, 'FetchAllFriend'])->name('friend.list');
-    Route::get('/friend-list-request', [FriendController::class, 'listFriendRequest']);
+    Route::get('/friend-list/{quantity?}', [FriendController::class, 'FetchAllFriend'])->name('friend.list');
+    Route::get('/friend-list-request/{quantity?}', [FriendController::class, 'listFriendRequest']);
     Route::get('/status-friend/{friend}', [FriendController::class, 'getFriendshipStatus']);
     Route::delete('/unfriend/{friend}', [FriendController::class, 'unfriend']);
-    Route::get('/friend-suggest', [FriendController::class, 'getFriendSuggestions']);
+    Route::get('/friend-suggest/{quantity?}', [FriendController::class, 'getFriendSuggestions']);
 
     //notification
-    Route::get('/notifications', [NotificationController::class, 'listNotification']);
+    Route::get('/notifications/{quantity?}', [NotificationController::class, 'listNotification']);
     Route::get('/see-notification/{notification}', [NotificationController::class, 'seeNotification']);
     Route::delete('/notification/{notification}', [NotificationController::class, 'deleteNotification']);
 

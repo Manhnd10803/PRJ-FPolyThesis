@@ -8,6 +8,7 @@ use App\Models\Friend;
 use App\Models\Notification;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -243,7 +244,7 @@ class FriendController extends Controller
      *     security={{ "bearerAuth": {} }}
      * )
      */
-    public function FetchAllFriend()
+    public function FetchAllFriend($quantity = null)
     {
         $status = config('default.friend.status.accepted');
         //TH người gửi là bản thân
@@ -255,6 +256,22 @@ class FriendController extends Controller
         }
         //Danh sách bạn bè 
         $friends = $listFriend1->concat($listFriend2);
+
+        if ($quantity != null) {
+            $currentPage = LengthAwarePaginator::resolveCurrentPage();
+            $perPage = $quantity;
+
+            $currentPageFriends = $friends->slice(($currentPage - 1) * $perPage, $perPage)->all();
+
+            $friendsPaginated = new LengthAwarePaginator(
+                $currentPageFriends,
+                count($friends),
+                $perPage,
+                $currentPage,
+                ['path' => LengthAwarePaginator::resolveCurrentPath()]
+            );
+            return response()->json($friendsPaginated);
+        }
         return response()->json($friends);
     }
 
@@ -302,10 +319,14 @@ class FriendController extends Controller
      *     security={{ "bearerAuth": {} }}
      * )
      */
-    public function listFriendRequest()
+    public function listFriendRequest($quantity = null)
     {
         $status = config('default.friend.status.pending');
-        $friends = Friend::where('user_id_2', Auth::id())->where('status', $status)->get();
+        if ($quantity) {
+            $friends = Friend::where('user_id_2', Auth::id())->where('status', $status)->paginate($quantity);
+        } else {
+            $friends = Friend::where('user_id_2', Auth::id())->where('status', $status)->get();
+        }
         foreach ($friends as $friend) {
             $friend->friend = User::where('id', $friend->user_id_1)->first();
         }
@@ -377,7 +398,8 @@ class FriendController extends Controller
         }
     }
     // Trạng thái bạn bè 
-    public function getFriendshipStatus($user_id2) {
+    public function getFriendshipStatus($user_id2)
+    {
         $self = Auth::id();
         $friendship = Friend::where(function ($query) use ($self, $user_id2) {
             $query->where('user_id_1', $self)
@@ -388,7 +410,7 @@ class FriendController extends Controller
                 ->where('user_id_2', $self)
                 ->where('status', 1);
         })->first();
-    
+
         if ($friendship) {
             return 'Bạn bè';
         } else {
@@ -397,7 +419,7 @@ class FriendController extends Controller
                     ->where('user_id_2', $user_id2)
                     ->where('status', 0);
             })->first();
-    
+
             if ($friendshipRequest) {
                 return 'Đã gửi lời mời kết bạn';
             } else {
@@ -409,35 +431,47 @@ class FriendController extends Controller
     //gợi ý theo major
     //những ai đã gửi lời mời thì không hiện
     //đã là bạn bè thì không hiện
-    public function getFriendSuggestions()
-{
-    $self = Auth::user();
-    
-   
+    public function getFriendSuggestions($quantity = null)
+    {
+        $self = Auth::user();
+        // Lấy danh sách ID của những người đã gửi lời mời kết bạn cho người dùng hiện tại
+        $friendIds = Friend::where('user_id_1', $self->id)
+            ->whereIn('status', [
+                config('default.friend.status.pending'),
+                config('default.friend.status.accepted')
+            ])
+            ->pluck('user_id_2')
+            ->toArray();
 
-    // Lấy danh sách ID của những người đã gửi lời mời kết bạn cho người dùng hiện tại
-    $friendIds = Friend::where('user_id_1', $self->id)
-    ->whereIn('status', [
-        config('default.friend.status.pending'),
-        config('default.friend.status.accepted')
-    ])
-    ->pluck('user_id_2')
-    ->toArray();
+        // Kết hợp danh sách ID của bạn bè và người đã gửi lời mời kết bạn
 
-    // Kết hợp danh sách ID của bạn bè và người đã gửi lời mời kết bạn
-   
 
-    // Lấy gợi ý kết bạn dựa trên cùng một chuyên ngành và không phải là bạn bè hoặc người đã gửi lời mời kết bạn
-    $friendSuggestions = User::where('major_id', $self->major_id)
-        ->where('id', '!=', $self->id)
-        ->whereNotIn('id', $friendIds)
-        ->get(['id', 'username','avatar','first_name','last_name', 'major_id'])
-        ->map(function ($user) {
-            $user->major_name = $user->major ? $user->major->name : null;
-            unset($user->major);
-            return $user;
-        });
+        // Lấy gợi ý kết bạn dựa trên cùng một chuyên ngành và không phải là bạn bè hoặc người đã gửi lời mời kết bạn
+        $friendSuggestions = User::where('major_id', $self->major_id)
+            ->where('id', '!=', $self->id)
+            ->whereNotIn('id', $friendIds)
+            ->get(['id', 'username', 'avatar', 'first_name', 'last_name', 'major_id'])
+            ->map(function ($user) {
+                $user->major_name = $user->major ? $user->major->name : null;
+                unset($user->major);
+                return $user;
+            });
 
-    return response()->json($friendSuggestions);
-}
+        if ($quantity) {
+            $friendSuggestionsQuery = User::where('major_id', $self->major_id)
+                ->where('id', '!=', $self->id)
+                ->whereNotIn('id', $friendIds);
+
+            // Phân trang
+            $perPage = $quantity;
+            $friendSuggestions = $friendSuggestionsQuery->paginate($perPage, ['id', 'username', 'avatar', 'first_name', 'last_name', 'major_id'])
+                ->map(function ($user) {
+                    $user->major_name = $user->major ? $user->major->name : null;
+                    unset($user->major);
+                    return $user;
+                });
+        }
+
+        return response()->json($friendSuggestions);
+    }
 }

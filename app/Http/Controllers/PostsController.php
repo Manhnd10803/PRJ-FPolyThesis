@@ -133,7 +133,7 @@ class PostsController extends Controller
      * )
      */
 
-    public function ShowAllPosts()
+    public function ShowAllPosts($quantity = null)
     {
         DB::beginTransaction();
         try {
@@ -142,7 +142,11 @@ class PostsController extends Controller
             $friends = $user->friends;
             $friendIds = $friends->pluck('id')->toArray();
             $friendIds[] = $user->id;
-            $posts = Post::whereIn('user_id', $friendIds)->latest()->get();
+            if ($quantity) {
+                $posts = Post::whereIn('user_id', $friendIds)->latest()->paginate($quantity);
+            } else {
+                $posts = Post::whereIn('user_id', $friendIds)->latest()->get();
+            }
             $result = [];
             foreach ($posts as $post) {
                 $user = $post->user;
