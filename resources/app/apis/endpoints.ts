@@ -61,6 +61,7 @@ export const ApiConstants = {
   // profile
   PROFILE: '/profile',
   DETAIL_USER_PROFILE: '/profile',
+  UPDATE_COVER_PHOTO: '/profile/update-cover-photo',
 
   //Info User
   SHOW_INFO_USER: `user-info`,

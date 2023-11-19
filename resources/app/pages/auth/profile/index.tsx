@@ -83,7 +83,7 @@ export const ProfilePage = () => {
       <div id="content-page" className="content-page">
         <Container>
           <Row>
-            <Header detailUser={detailUserProfile} isLoading={isUserLoading} isUser={isUser} />
+            <Header detailUser={detailUserProfile} queryKey={queryKeyUser} isLoading={isUserLoading} isUser={isUser} />
             <Tab.Container id="left-tabs-example" defaultActiveKey="first">
               <Navbar isUser={isUser} />
               <Col sm={12}>

@@ -3,6 +3,7 @@ export interface IUser {
   username: string;
   first_name?: string;
   last_name?: string;
+  cover_photo?: string;
   group_id: number;
   email: string;
   birthday: null;
@@ -17,4 +18,11 @@ export interface IUser {
   verification_code: string;
   created_at: null;
   updated_at: Date;
+}
+
+export interface IProfileUser {
+  user: IUser;
+  total_blog: number;
+  total_post: number;
+  total_friend: number;
 }

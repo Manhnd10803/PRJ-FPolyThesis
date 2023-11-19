@@ -15,20 +15,22 @@ use PhpParser\Node\Expr\FuncCall;
 class ProfileController extends Controller
 {
 
-    public function DetailProfileUser(User $user) {
+    public function DetailProfileUser(User $user)
+    {
         DB::beginTransaction();
-        try{
+        try {
             // $user = Auth::user();
             $countposts = $user->posts->count();
-            $countblogs  =$user->blogs->count();
+            $countblogs  = $user->blogs->count();
             $countfriends = $user->friends->count();
-            $major=$user->major;
+            $major = $user->major;
             $profileData = [
-                'user' =>[
-                    'id'=>$user->id,
-                    'username'=>$user->username,
-                    'avatar'=>$user->avatar,
-                    'major'=>$major->majors_name
+                'user' => [
+                    'id' => $user->id,
+                    'username' => $user->username,
+                    'avatar' => $user->avatar,
+                    'major' => $major->majors_name,
+                    'cover_photo' => $user->cover_photo,
                 ],
                 'total_post' => $countposts,
                 'total_blog' => $countblogs,
@@ -36,12 +38,12 @@ class ProfileController extends Controller
             ];
             DB::commit();
             return response()->json($profileData);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['error' => $e->getMessage()],400);
+            return response()->json(['error' => $e->getMessage()], 400);
         }
     }
-    
+
 
     public function Profile(User $user, $type, $status = null)
     {
@@ -50,15 +52,15 @@ class ProfileController extends Controller
             $loggedInUser = Auth::user();
             $result = [];
             switch ($type) {
-                // Lấy post với friend và images
+                    // Lấy post với friend và images
                 case 'post':
                     // Lấy danh sách bạn bè của người dùng
                     $friends = $user->friends;
                     // Lấy danh sách bài viết của người dùng
                     $postsQuery = Post::where('user_id', $user->id)->orderBy('created_at', 'DESC');
-                        if ($user->id != $loggedInUser->id) {
-                            $postsQuery->where('status', 0);
-                        }
+                    if ($user->id != $loggedInUser->id) {
+                        $postsQuery->where('status', 0);
+                    }
                     $posts = $postsQuery->paginate(10);
                     $images = [];
                     foreach ($posts as $post) {
@@ -93,8 +95,8 @@ class ProfileController extends Controller
                         }
                         $postData = [
                             'user' => [
-                                'username'=>$user->username,
-                                'avatar'=>$user->avatar
+                                'username' => $user->username,
+                                'avatar' => $user->avatar
                             ],
                             'images' => $images,
                             'friends' => $friends,
@@ -107,9 +109,9 @@ class ProfileController extends Controller
                         array_push($result, $postData);
                     }
                     break;
-                // Load blog
+                    // Load blog
                 case 'blog':
-                    $status = request('status')??'approved';
+                    $status = request('status') ?? 'approved';
                     $statuses = config('default.blog.status');
                     if (in_array($status, array_keys($statuses))) {
                         // Xử lý logic cho trường hợp 'blog' dựa trên trạng thái (pending , approved , reject)
@@ -128,7 +130,7 @@ class ProfileController extends Controller
                         return response()->json(['error' => 'Trạng thái không hợp lệ'], 400);
                     }
                     break;
-                // Load qa
+                    // Load qa
                 case 'qa':
                     $qas = Qa::where('user_id', $loggedInUser->id)->orderBy('created_at', 'DESC')->paginate(10);
                     if ($qas->isEmpty()) {
@@ -141,65 +143,66 @@ class ProfileController extends Controller
                     break;
             }
             DB::commit();
-            return response()->json(['data' => $result],200);
+            return response()->json(['data' => $result], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
-    public function UpdateAvatarForUser(Request $request){
+    public function UpdateAvatarForUser(Request $request)
+    {
         $user = Auth::user();
-        $avatar =$request->input('avatar');
+        $avatar = $request->input('avatar');
         $user->avatar = $avatar;
         $user->update();
         $post = new Post([
-            'user_id'=> $user->id,
+            'user_id' => $user->id,
             'content' => " ",
             'image' => json_encode($avatar),
         ]);
         $post->save();
-        return response()->json(['data'=> [$user,$post], 'message'=> 'Thêm ảnh đại diện thành công'],200);
+        return response()->json(['data' => [$user, $post], 'message' => 'Thêm ảnh đại diện thành công'], 200);
     }
-    public function UpdateCoverPhotoForUser(Request $request){
+    public function UpdateCoverPhotoForUser(Request $request)
+    {
         $user = Auth::user();
-        $cover_photo =$request->input('cover_photo');
+        $cover_photo = $request->input('cover_photo');
         $user->cover_photo = $cover_photo;
         $user->update();
         $post = new Post([
-            'user_id'=> $user->id,
+            'user_id' => $user->id,
             'content' => " ",
             'image' => json_encode($cover_photo),
         ]);
         $post->save();
-        return response()->json(['data'=> [$user,$post], 'message'=> 'Thêm ảnh đại diện thành công'],200);
-        
+        return response()->json(['data' => [$user, $post], 'message' => 'Thêm ảnh đại diện thành công'], 200);
     }
     public function updateProfile(Request $request)
-{
-    DB::beginTransaction();
-    try {
-        $user = Auth::user();
+    {
+        DB::beginTransaction();
+        try {
+            $user = Auth::user();
 
-        // Retrieve input data
-        $inputData = $request->except('password');
-        
-        if ($request->input('avatar')) {
-           
-            $inputData['avatar'] = $request->input('avatar');
-        } else {
-            // Nếu không có tệp tin avatar mới, giữ nguyên giá trị avatar hiện có
-            $inputData['avatar'] = $user->avatar;
+            // Retrieve input data
+            $inputData = $request->except('password');
+
+            if ($request->input('avatar')) {
+
+                $inputData['avatar'] = $request->input('avatar');
+            } else {
+                // Nếu không có tệp tin avatar mới, giữ nguyên giá trị avatar hiện có
+                $inputData['avatar'] = $user->avatar;
+            }
+
+            $user->update($inputData);
+            DB::commit();
+            return response()->json($user, 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()], 400);
         }
-        
-        $user->update($inputData);
-        DB::commit();
-        return response()->json($user, 200);
-    } catch (\Exception $e) {
-        DB::rollBack();
-        return response()->json(['error' => $e->getMessage()], 400);
     }
-}
-   
+
     public function getInfoUser()
     {
         try {

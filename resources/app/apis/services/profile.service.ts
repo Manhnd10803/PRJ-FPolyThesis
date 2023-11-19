@@ -9,4 +9,8 @@ const getDetailUserProfile = <T>(id: T) => {
   return httpRequest.get(`${ApiConstants.DETAIL_USER_PROFILE}/${id}`);
 };
 
-export const ProfileService = { getDetailProfile, getDetailUserProfile };
+const updateCoverPhoto = (data: string) => {
+  return httpRequest.put(`${ApiConstants.UPDATE_COVER_PHOTO}`, data);
+};
+
+export const ProfileService = { getDetailProfile, getDetailUserProfile, updateCoverPhoto };
