@@ -7,7 +7,7 @@ import { pathName } from '@/routes/path-name';
 
 export const BlogPage = () => {
   const fetchBlogs = async () => {
-    const { data } = await BlogService.showAllBlog();
+    const { data } = await BlogService.showAllBlog(4);
     const blogData = data;
     return blogData;
   };

@@ -1,6 +1,12 @@
+import { ValidateUserUpdateSchema } from '@/validation/zod/user';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 
-export const Personal = ({ DataUser, update, handleNextValidate, validationErrors, DataMajor }: any) => {
+export const Personal = ({ DataUser, update, handleNextValidate, validationErrors, DataMajor, watch }: any) => {
+  const fields1 = {
+    first_name: watch('first_name'),
+    last_name: watch('last_name'),
+    major_id: watch('major_id'),
+  };
   return (
     <>
       <div className="form-card text-left">
@@ -130,7 +136,7 @@ export const Personal = ({ DataUser, update, handleNextValidate, validationError
         variant="primary"
         className="float-end"
         value="Next"
-        onClick={() => handleNextValidate('Account')}
+        onClick={() => handleNextValidate('Account', fields1, ValidateUserUpdateSchema)}
       >
         Next
       </Button>

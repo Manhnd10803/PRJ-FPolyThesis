@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { Personal } from './component/personal';
 import { Contact } from './component/contact';
 import { Official } from './component/official';
-import { TUserUpdateSchema, userUpdateSchema } from '@/validation/zod/user';
+import { TUserUpdateSchema } from '@/validation/zod/user';
 import { MajorService } from '@/apis/services/major.service';
 import { useMutation } from '@tanstack/react-query';
 import { UserService } from '@/apis/services/user.service';
@@ -24,7 +24,6 @@ export const EditProfilePage = () => {
     register: update,
     formState: { errors },
     handleSubmit,
-    setValue,
     watch,
   } = useForm<TUserUpdateSchema>();
 
@@ -54,16 +53,9 @@ export const EditProfilePage = () => {
     return () => {};
   }, []);
   // HandeValidate
-  const handleNextValidate = (page: any) => {
+  const handleNextValidate = (page: any, fields: Record<string, any>, validate: any) => {
     try {
-      const firstName = watch('first_name');
-      const lastName = watch('last_name');
-      const major = watch('major_id');
-      const validData = userUpdateSchema.parse({
-        first_name: firstName,
-        last_name: lastName,
-        major_id: major,
-      });
+      const validData = validate.parse(fields);
       if (validData) {
         AccountShow(page);
         setValidationErrors({});
@@ -180,10 +172,18 @@ export const EditProfilePage = () => {
                                 handleNextValidate={handleNextValidate}
                                 validationErrors={validationErrors}
                                 DataMajor={DataMajor}
+                                watch={watch}
                               />
                             </fieldset>
                             <fieldset className={`${show === 'Account' ? 'd-block' : 'd-none'}`}>
-                              <Contact AccountShow={AccountShow} DataUser={DataUser} update={update} />
+                              <Contact
+                                AccountShow={AccountShow}
+                                DataUser={DataUser}
+                                update={update}
+                                validationErrors={validationErrors}
+                                handleNextValidate={handleNextValidate}
+                                watch={watch}
+                              />
                             </fieldset>
                             <fieldset className={`${show === 'Personal' ? 'd-block' : 'd-none'}`}>
                               <Official AccountShow={AccountShow} DataUser={DataUser} update={update} />
