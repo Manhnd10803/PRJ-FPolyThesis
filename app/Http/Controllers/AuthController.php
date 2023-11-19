@@ -220,7 +220,10 @@ class AuthController extends Controller
             ]);
             $result = app()->handle($request);
             $response = json_decode($result->getContent(), true);
-            return response()->json($response, 200);
+            if(isset($response['error'])){
+                return response()->json($response, 401);
+            }
+            return response()->json($response);
         }
         return response(['message' => 'refresh_token null'], 401);
     }
