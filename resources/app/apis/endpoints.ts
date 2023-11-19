@@ -34,7 +34,7 @@ export const ApiConstants = {
 
   // blog
   SHOW_BLOGS: '/blogs',
-  SHOW_BLOG_DETAIL: '/blogs',
+  SHOW_BLOG_DETAIL: '/blogs/detail',
   CREATE_BLOG: '/blogs',
 
   // major

@@ -1,6 +1,10 @@
+import { ValidatePhoneSchema } from '@/validation/zod/user';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 
-export const Contact = ({ AccountShow, DataUser, update }: any) => {
+export const Contact = ({ AccountShow, DataUser, update, validationErrors, handleNextValidate, watch }: any) => {
+  const fields2 = {
+    phone: watch('phone'),
+  };
   return (
     <>
       <div className="form-card text-left">
@@ -27,6 +31,7 @@ export const Contact = ({ AccountShow, DataUser, update }: any) => {
                 defaultValue={DataUser?.phone || ''}
                 {...update('phone')}
               />
+              {validationErrors.phone && <div className="error-message text-danger">{validationErrors.phone}</div>}
             </Form.Group>
           </Col>
           <Form.Group className="col-md-12 form-group mb-3 ">
@@ -42,7 +47,12 @@ export const Contact = ({ AccountShow, DataUser, update }: any) => {
           </Form.Group>
         </Row>
       </div>
-      <Button name="next" className="float-end" value="Next" onClick={() => AccountShow('Personal')}>
+      <Button
+        name="next"
+        className="float-end"
+        value="Next"
+        onClick={() => handleNextValidate('Personal', fields2, ValidatePhoneSchema)}
+      >
         Next
       </Button>
       <Button

@@ -1,11 +1,14 @@
 import { z } from 'zod';
 
 const containsNumberOrSymbol = (value: any) => {
-  // Kiểm tra xem chuỗi có chứa ký tự hoặc số không
   return !/[0-9!@#$%^&*()_+|~=`{}\[\]:";'<>?,./\\]/.test(value);
 };
+const isVietnamesePhoneNumber = (value: string): boolean => {
+  const vietnamesePhoneNumberRegex = /^(0|\+84)\d{9,10}$/;
+  return vietnamesePhoneNumberRegex.test(value);
+};
 
-export const userUpdateSchema = z.object({
+export const ValidateUserUpdateSchema = z.object({
   first_name: z
     .string()
     .min(1, 'Tên không được để trống')
@@ -19,6 +22,14 @@ export const userUpdateSchema = z.object({
       message: 'Họ không được chứa ký tự hoặc số',
     }),
   major_id: z.string().min(1, 'Chuyên ngành không được để trống'),
+});
+export const ValidatePhoneSchema = z.object({
+  phone: z
+    .string()
+    .min(1, 'Số điện thoại không được để trống')
+    .refine(value => isVietnamesePhoneNumber(value), {
+      message: 'Số điện thoại không hợp lệ',
+    }),
 });
 
 export type TUserUpdateSchema = {
