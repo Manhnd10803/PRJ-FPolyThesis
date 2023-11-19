@@ -4,7 +4,6 @@
 			@include radius-mixin($border-radius-pill);
 		}
 		border: 1px solid rgba(0, 0, 0, .1);
-		height: auto;
 	}
 }
 ul.header-nav {
@@ -13,6 +12,7 @@ ul.header-nav {
 	right: 0;
 	top: auto;
 	bottom: 1.25rem;
+	z-index: 1;
 	li {
 		list-style: none;
 		a {
