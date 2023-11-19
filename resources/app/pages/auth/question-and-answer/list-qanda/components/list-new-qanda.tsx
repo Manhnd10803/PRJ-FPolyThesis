@@ -6,7 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 const imageUrl = 'https://picsum.photos/20';
 
 export const ListNewQAndAs = ({ data }: any) => {
-  console.log(data);
+  // console.log(data);
 
   const navigate = useNavigate();
   // console.log(data);

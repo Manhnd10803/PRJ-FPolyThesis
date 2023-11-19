@@ -17,6 +17,10 @@ import { UpdateQandA } from '@/pages/auth/question-and-answer/update-qanda/updat
 import { ExampleUploadPage } from '@/pages/auth/example-upload';
 import { PrivacySecurityPage } from '@/pages/auth/privacy-security';
 import { pathName } from './path-name';
+import { ListMostsCmtQAndAs } from '@/pages/auth/question-and-answer/list-qanda/components/list-best-cmt-qanda';
+import { ListNoAnswerQAndAs } from '@/pages/auth/question-and-answer/list-qanda/components/list-no-answer-qanda';
+import { ListMyQAndAs } from '@/pages/auth/question-and-answer/list-qanda/components/list-my-qanda';
+import { ListQAndAsByMajorId } from '@/pages/auth/question-and-answer/list-qanda/components/list-qanda-major';
 
 export const AuthRouter = [
   {
@@ -30,6 +34,22 @@ export const AuthRouter = [
   {
     path: pathName.QUESTS_CREATE,
     element: <CreateQandA />,
+  },
+  {
+    path: pathName.LIST_QUESTS_MOST_CMT,
+    element: <ListMostsCmtQAndAs />,
+  },
+  {
+    path: pathName.LIST_QUESTS_NO_ANSWER,
+    element: <ListNoAnswerQAndAs />,
+  },
+  {
+    path: pathName.LIST_QUESTS_MY_QANDA,
+    element: <ListMyQAndAs />,
+  },
+  {
+    path: pathName.LIST_QUESTS_BY_MAJOR,
+    element: <ListQAndAsByMajorId />,
   },
   {
     path: pathName.QUESTS_UPDATE,

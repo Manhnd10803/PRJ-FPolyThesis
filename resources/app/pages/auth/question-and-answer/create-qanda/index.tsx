@@ -9,11 +9,14 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { MajorService } from '@/apis/services/major.service';
 import { QandAService } from '@/apis/services/qanda.service';
 import { useState } from 'react';
+import PlaygroundApp from '@/components/shared/editor';
 
 const imageUrl = 'https://picsum.photos/20';
 
 export const CreateQandA = () => {
   const navigate = useNavigate();
+
+  const [contentValue, setContentValue] = useState('');
 
   const { data } = useQuery({
     queryKey: ['majors'],
@@ -38,6 +41,7 @@ export const CreateQandA = () => {
   });
 
   const onSubmit = (data: TQandACreateSchema) => {
+    data.content = contentValue;
     if (!isLoading) {
       mutate(data, {
         onError: error => {
@@ -90,13 +94,19 @@ export const CreateQandA = () => {
                     </Form.Group>
                     <Form.Group className="form-group">
                       <Form.Label>Nội dung</Form.Label>
-                      <Form.Control
+                      {/* <Form.Control
                         as="textarea"
                         className="textarea"
                         id="content"
                         {...createAsk('content')}
                         rows={5}
                         placeholder="Nhập chi tiết thông tin câu hỏi của bạn ..."
+                      /> */}
+                      <PlaygroundApp
+                        id="content"
+                        contentValue={contentValue}
+                        onContentChange={value => setContentValue(value)}
+                        {...createAsk('content')}
                       />
                       <p className="text-danger">{errors?.content?.message}</p>
                     </Form.Group>
