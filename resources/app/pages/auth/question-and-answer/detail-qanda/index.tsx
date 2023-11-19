@@ -25,7 +25,7 @@ export const DetailQandAPage = () => {
   const { id } = useParams();
 
   const [qAndAData, setQandAData] = useState(null);
-  console.log(qAndAData);
+  // console.log(qAndAData);
   const [likeStatus, setLikeStatus] = useState(qAndAData?.user_like?.emotion || null);
   const QandAsQueryKey = ['qa', id];
 
@@ -300,6 +300,7 @@ export const DetailQandAPage = () => {
                         </div>
 
                         {/* Icon like cmt */}
+                        <br />
                         <ButtonGroup aria-label="Basic example">
                           <Button
                             className="d-flex align-items-center gap-2 "

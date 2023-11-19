@@ -121,7 +121,7 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/most-commented/{quantity?}', [QaController::class, 'showMostCommentedQa'])->name('qa.showMostCommentedQa');
         Route::get('/unanswer/{quantity?}', [QaController::class, 'showUnAnswerdQa'])->name('qa.showUnAnswerdQa');
         Route::post('/', [QaController::class, 'CreateQa'])->name('qa.create');
-        Route::get('detail/{qa}', [QaController::class, 'detailQandA'])->name('qa.detail');
+        Route::get('/detail/{qa}', [QaController::class, 'detailQandA'])->name('qa.detail');
         Route::put('/{qa}', [QaController::class, 'UpdateQa'])->name('qa.update');
         Route::delete('/{qa}', [QaController::class, 'DeleteQa'])->name('qa.delete');
         //Route::get('/list', [QaController::class, 'ListQa'])->name('qa.list');

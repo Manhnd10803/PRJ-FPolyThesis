@@ -13,8 +13,6 @@ export const ListQAndAsByMajorId = () => {
   // console.log(majorId);
   // console.log(data);
   const { majorId } = useParams();
-  console.log(majorId);
-  console.log('majorId:', majorId);
 
   const [filteredData, setFilteredData] = useState([]);
   const [majorName, setMajorName] = useState('');
@@ -41,7 +39,6 @@ export const ListQAndAsByMajorId = () => {
   // console.log(listMajors);
   const [selectedMajorId, setSelectedMajorId] = useState(null);
   const handleMajorSelect = majorId => {
-    console.log('Selected Major ID:', majorId);
     setSelectedMajorId(majorId);
     navigate(`/quests/by-majors/${majorId}`);
   };
