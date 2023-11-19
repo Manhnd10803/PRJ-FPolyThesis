@@ -185,7 +185,12 @@ export const DetailQandAPage = () => {
                   <div>
                     <div className="borderbox1 mt-3 rounded d-flex rounded">
                       <div className="user-img me-2">
-                        <img loading="lazy" src={imageUrl} alt="userimg" className="avatar-40 rounded-circle" />
+                        <img
+                          loading="lazy"
+                          src={qAndAData?.qa?.user?.avatar}
+                          alt="userimg"
+                          className="avatar-40 rounded-circle"
+                        />
                       </div>
 
                       <div className="borderbox border rounded p-2">

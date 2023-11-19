@@ -32,7 +32,7 @@ export const ListNewQAndAs = ({ data }: any) => {
         data.map((qandA, index) => (
           <div key={qandA.qa.id} className="borderbox1 mt-3 rounded d-flex rounded">
             <div className="user-img me-2">
-              <img loading="lazy" src={imageUrl} alt="userimg" className="avatar-40 rounded-circle" />
+              <img loading="lazy" src={qandA?.qa?.user?.avatar} alt="userimg" className="avatar-40 rounded-circle" />
             </div>
             <div className="borderbox border rounded p-2">
               <div className="d-flex align-items-center flex-wrap mb-2">
