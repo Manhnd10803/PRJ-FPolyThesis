@@ -5621,6 +5621,336 @@
                     }
                 }
             }
+        },
+        "/api/search/{model}": {
+            "get": {
+                "tags": [
+                    "Search"
+                ],
+                "summary": "Tìm kiếm dữ liệu theo mô hình",
+                "description": "Trả về kết quả tìm kiếm dựa trên mô hình được chỉ định.",
+                "operationId": "searchEverything",
+                "parameters": [
+                    {
+                        "name": "model",
+                        "in": "path",
+                        "description": "Tên mô hình (user, post, comment, blog, qa hoặc nếu gọi tất cả dùng default)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Từ khóa tìm kiếm",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "users": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "username": {
+                                                        "type": "string"
+                                                    },
+                                                    "first_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "last_name": {
+                                                        "type": "string"
+                                                    },
+                                                    "group_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "email": {
+                                                        "type": "string"
+                                                    },
+                                                    "birthday": {
+                                                        "type": "string"
+                                                    },
+                                                    "avatar": {
+                                                        "type": "string"
+                                                    },
+                                                    "cover_photo": {
+                                                        "type": "string"
+                                                    },
+                                                    "phone": {
+                                                        "type": "string"
+                                                    },
+                                                    "address": {
+                                                        "type": "string"
+                                                    },
+                                                    "biography": {
+                                                        "type": "string"
+                                                    },
+                                                    "gender": {
+                                                        "type": "string"
+                                                    },
+                                                    "status": {
+                                                        "type": "string"
+                                                    },
+                                                    "activity_user": {
+                                                        "type": "string"
+                                                    },
+                                                    "major_id": {
+                                                        "type": "string"
+                                                    },
+                                                    "permissions": {
+                                                        "type": "string"
+                                                    },
+                                                    "verification_code": {
+                                                        "type": "string"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "posts": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "user_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "content": {
+                                                        "type": "string"
+                                                    },
+                                                    "feeling": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "image": {
+                                                        "properties": {
+                                                            "url": {
+                                                                "type": "string"
+                                                            },
+                                                            "width": {
+                                                                "type": "integer"
+                                                            },
+                                                            "height": {
+                                                                "type": "integer"
+                                                            }
+                                                        },
+                                                        "type": "object",
+                                                        "nullable": true
+                                                    },
+                                                    "hashtag": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "status": {
+                                                        "type": "integer"
+                                                    },
+                                                    "views": {
+                                                        "type": "integer"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "comments": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "user_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "content": {
+                                                        "type": "string"
+                                                    },
+                                                    "parent_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "post_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "blog_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "qa_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "blogs": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "status": {
+                                                        "description": "trạng thái bài blog",
+                                                        "type": "integer"
+                                                    },
+                                                    "user_id": {
+                                                        "description": "người đăng blog",
+                                                        "type": "integer"
+                                                    },
+                                                    "title": {
+                                                        "description": "tiêu đề bài blog",
+                                                        "type": "string"
+                                                    },
+                                                    "content": {
+                                                        "description": "nội dung bài blog",
+                                                        "type": "text"
+                                                    },
+                                                    "thumbnail": {
+                                                        "description": "ảnh  bài blog",
+                                                        "properties": {
+                                                            "url": {
+                                                                "type": "string"
+                                                            },
+                                                            "width": {
+                                                                "type": "integer"
+                                                            },
+                                                            "height": {
+                                                                "type": "integer"
+                                                            }
+                                                        },
+                                                        "type": "object",
+                                                        "nullable": true
+                                                    },
+                                                    "majors_id": {
+                                                        "description": "id của chuyên ngành liên quan đến blog",
+                                                        "type": "integer"
+                                                    },
+                                                    "hashtag": {
+                                                        "description": "hashtag liên quan đến blog",
+                                                        "type": "string"
+                                                    },
+                                                    "views": {
+                                                        "description": "Số lượt xem bài blog",
+                                                        "type": "integer"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "nullable": true
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "nullable": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "qas": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "title": {
+                                                        "description": "Tiêu đề câu hỏi",
+                                                        "type": "string"
+                                                    },
+                                                    "content": {
+                                                        "description": "Nội dung câu hỏi",
+                                                        "type": "string"
+                                                    },
+                                                    "majors_id": {
+                                                        "description": "ID của chuyên ngành liên quan đến câu hỏi",
+                                                        "type": "integer"
+                                                    },
+                                                    "user_id": {
+                                                        "description": "ID của người đặt câu hỏi",
+                                                        "type": "integer"
+                                                    },
+                                                    "hashtag": {
+                                                        "description": "HashTag liên quan đến câu hỏi",
+                                                        "type": "string"
+                                                    },
+                                                    "views": {
+                                                        "description": "Số lượt xem câu hỏi",
+                                                        "type": "integer"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "nullable": true
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time",
+                                                        "nullable": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Lỗi",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
