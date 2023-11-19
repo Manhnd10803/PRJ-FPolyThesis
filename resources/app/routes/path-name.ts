@@ -17,7 +17,7 @@ export const pathName = {
   LIST_QUESTS_MOST_CMT: '/quests/most-cmt',
   LIST_QUESTS_NO_ANSWER: '/quests/no-answer',
   LIST_QUESTS_MY_QANDA: '/quests/my-qanda',
-  LIST_QUESTS_BY_MAJOR: '/quests/by-majors/:id',
+  LIST_QUESTS_BY_MAJOR: '/quests/by-majors/:majorId',
   BLOG: '/blog',
   BLOG_CREATE: '/blog-create',
   BLOG_DETAIL: '/blog/:id',

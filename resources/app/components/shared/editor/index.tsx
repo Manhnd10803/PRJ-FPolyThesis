@@ -114,9 +114,7 @@ function App(): JSX.Element {
         <SharedHistoryContext>
           <TableContext>
             <SharedAutocompleteContext>
-              <header>
-                <h1>Editor</h1>
-              </header>
+              <header>{/* <h1>Editor</h1> */}</header>
               <div className="editor-shell">
                 <Editor />
               </div>

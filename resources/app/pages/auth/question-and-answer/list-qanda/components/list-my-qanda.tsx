@@ -54,6 +54,7 @@ export const ListMyQAndAs = () => {
   const handleMajorSelect = majorId => {
     console.log('Selected Major ID:', majorId);
     setSelectedMajorId(majorId);
+    navigate(`/quests/by-majors/${majorId}`);
   };
 
   const handleTabClick = key => {
@@ -71,7 +72,7 @@ export const ListMyQAndAs = () => {
         navigate('/quests/my-qanda');
         break;
       case 'f5':
-        navigate('/quests/by-majors');
+        navigate(`/quests/by-majors/${majorId}`);
         break;
 
       default:
@@ -147,7 +148,7 @@ export const ListMyQAndAs = () => {
                               <Dropdown>
                                 <Dropdown.Toggle as="div" className="lh-1">
                                   {/* <span className="material-symbols-outlined">more_horiz</span> */}
-                                  <Nav.Link eventKey="f5" role="button" onClick={() => handleTabClick('f5')}>
+                                  <Nav.Link eventKey="f5" role="button">
                                     Chuyên ngành
                                   </Nav.Link>
                                 </Dropdown.Toggle>
