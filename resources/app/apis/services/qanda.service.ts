@@ -3,7 +3,7 @@ import httpRequest from '../axios-instance';
 import { ApiConstants } from '../endpoints';
 
 const createQandA = <T>(data: T) => {
-  return httpRequest.post<IQandAs>(ApiConstants.CREATE_QANDA, data, {
+  return httpRequest.post<IQandAs>(ApiConstants.QANDA, data, {
     headers: {
       'Content-Type': 'multipart/form-data',
     },
@@ -37,7 +37,7 @@ const getDetailQandA = (qaId: number) => {
 };
 
 const UpdateQandA = async <T>(qaId: number, data: T) => {
-  const url = `${ApiConstants.UPDATE_QANDA}/${qaId}`;
+  const url = `${ApiConstants.QANDA}/${qaId}`;
   try {
     const response = httpRequest.put<IQandAs>(url, data);
     return response;
@@ -47,7 +47,7 @@ const UpdateQandA = async <T>(qaId: number, data: T) => {
 };
 
 const deleteQandA = async (qaId: number) => {
-  const url = `${ApiConstants.DELETE_QANDA}/${qaId}`;
+  const url = `${ApiConstants.QANDA}/${qaId}`;
   try {
     const response = await httpRequest.delete(url);
     return response;

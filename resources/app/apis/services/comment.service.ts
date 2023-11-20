@@ -10,22 +10,22 @@ type CommentResponseType = {
 };
 
 const createComment = <T>(data: T) => {
-  return httpRequest.post<CommentResponseType>(`${ApiConstants.CREATE_COMMENT}/blog/${data.blog_id}`, data);
+  return httpRequest.post<CommentResponseType>(`${ApiConstants.COMMENT}/blog/${data.blog_id}`, data);
 };
 
 const createCommentQA = <T>(data: T) => {
-  return httpRequest.post<CommentResponseType>(`${ApiConstants.CREATE_COMMENT}/qa/${data.qa_id}`, data);
+  return httpRequest.post<CommentResponseType>(`${ApiConstants.COMMENT}/qa/${data.qa_id}`, data);
 };
 
 const createCommentPost = <T>(data: T) => {
-  return httpRequest.post<CommentResponseType>(`${ApiConstants.CREATE_COMMENT}/post/${data.post_id}`, data);
+  return httpRequest.post<CommentResponseType>(`${ApiConstants.COMMENT}/post/${data.post_id}`, data);
 };
 
 const deleteComment = <T>(id: T) => {
-  return httpRequest.delete<CommentResponseType>(`${ApiConstants.DELETE_COMMENT}/${id}`);
+  return httpRequest.delete<CommentResponseType>(`${ApiConstants.COMMENT}/${id}`);
 };
 const editComment = <T>(data: T) => {
-  return httpRequest.put<CommentResponseType>(`${ApiConstants.EDIT_COMMENT}/${data.id}`, data);
+  return httpRequest.put<CommentResponseType>(`${ApiConstants.COMMENT}/${data.id}`, data);
 };
 
 export const CommentService = {

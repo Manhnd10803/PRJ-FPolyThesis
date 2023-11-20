@@ -6,7 +6,7 @@ const getDetailProfile = <T>(id: T, type: string, status: string) => {
 };
 
 const getDetailUserProfile = <T>(id: T) => {
-  return httpRequest.get(`${ApiConstants.DETAIL_USER_PROFILE}/${id}`);
+  return httpRequest.get(`${ApiConstants.PROFILE}/${id}`);
 };
 
 const updateCoverPhoto = (data: string) => {

@@ -17,7 +17,7 @@ export const ApiConstants = {
   USER_DETAIL: '/get-user',
 
   // question and answer
-  CREATE_QANDA: '/quests',
+  QANDA: '/quests',
   ALL_QANDA: '/quests/all',
   // LIST_QANDA: '/quests/lista',
   LIST_QANDA_BY_MAJOR: '/quests/major',
@@ -25,26 +25,21 @@ export const ApiConstants = {
   LIST_MOST_CMT_QANDA: '/quests/most-commented',
   LIST_UNANSWER_QANDA: '/quests/unanswer',
   DETAIL_QANDA: '/quests/detail',
-  UPDATE_QANDA: '/quests',
-  DELETE_QANDA: '/quests',
 
   // post
   POSTS: '/posts',
   GET_POSTS_NEW_FEED: `/posts/newfeed`,
 
   // blog
-  SHOW_BLOGS: '/blogs',
-  SHOW_BLOG_DETAIL: '/blogs/detail',
-  CREATE_BLOG: '/blogs',
+  BLOGS: '/blogs',
+  BLOG_DETAIL: '/blogs/detail',
 
   // major
   MAJORS: '/majors',
   LIST_MAJORS_REGISTER: '/list-majors',
 
   // Comment
-  CREATE_COMMENT: '/comment',
-  DELETE_COMMENT: '/comment',
-  EDIT_COMMENT: '/comment',
+  COMMENT: '/comment',
   // Like
   CREATE_LIKE_BLOG: '/like/blog',
   CREATE_LIKE_QANDA: '/like/qa',
@@ -58,9 +53,9 @@ export const ApiConstants = {
   STATUS_FRIEND: `status-friend`,
   UN_FRIEND: `unfriend`,
   LIST_SUGGEST_FRIEND: `/friend-suggest`,
+
   // profile
   PROFILE: '/profile',
-  DETAIL_USER_PROFILE: '/profile',
   UPDATE_COVER_PHOTO: '/profile/update-cover-photo',
 
   //Info User
@@ -69,7 +64,7 @@ export const ApiConstants = {
 
   // chat
   LIST_USER_CHAT: '/messages/list-user',
-  DELETE_CHAT_CHANNEL: '/messages/chat',
+  CHAT_CHANNEL: '/messages/channel',
 
   MESSAGES: '/messages',
 
