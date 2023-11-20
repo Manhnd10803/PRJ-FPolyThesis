@@ -1,4 +1,3 @@
-import 'react-loading-skeleton/dist/skeleton.css';
 //scss
 import './assets/scss/index.scss';
 import './assets/scss/customizer.scss';
