@@ -57,6 +57,8 @@ export const ChatPage = () => {
   };
 
   const handleDeleteChat = () => {
+    dispatch(chatActions.removeChannel(Number(chat_id)));
+
     setShowModal(true);
   };
 
@@ -77,7 +79,7 @@ export const ChatPage = () => {
     },
   );
   const handleConfirmDelete = () => {
-    deleteMessageMutation.mutate(Number(chat_id));
+    // deleteMessageMutation.mutate(Number(chat_id));
     setShowModal(false);
   };
 
@@ -133,14 +135,14 @@ export const ChatPage = () => {
 
   return (
     <>
-      <>
-        {/* <PopUpDeleteChat
+      {/* <>
+        <PopUpDeleteChat
           showModal={showModal}
           onClose={handleCloseModal}
           ref={modalRef}
           onDelete={handleConfirmDelete}
-        /> */}
-      </>
+        />
+      </> */}
       <div id="content-page" className="content-page p-0">
         <Row>
           <Col sm="12">
@@ -154,11 +156,13 @@ export const ChatPage = () => {
                     <Col lg={9} className="chat-data p-0 chat-data-right border-start">
                       {chat_id ? (
                         <Tab.Content>
-                          <HeaderChat onDeleteChat={handleDeleteChat} />
+                          <div style={{ position: 'relative', minHeight: '100%' }}>
+                            <HeaderChat onDeleteChat={handleDeleteChat} />
 
-                          <ChatBox />
+                            <ChatBox />
 
-                          <ChatForm onSend={handleSendMessage} />
+                            <ChatForm onSend={handleSendMessage} />
+                          </div>
                         </Tab.Content>
                       ) : (
                         <div className="d-flex align-items-center justify-content-center" style={{ minHeight: '100%' }}>

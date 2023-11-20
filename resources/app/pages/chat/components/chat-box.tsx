@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import moment from 'moment';
 import parse from 'html-react-parser';
 import { useEffect, useRef } from 'react';
-import { Dropdown } from 'react-bootstrap';
+import { Dropdown, Spinner } from 'react-bootstrap';
 import { Link, useParams } from 'react-router-dom';
 import { chatActions } from '@/redux/slice';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
@@ -73,7 +73,6 @@ export const ChatBox = () => {
     }
   }, [listMessage, isLoading]);
 
-  if (isLoading) return <div>Loading...</div>;
   // render
   return (
     <div className="chat-content scroller">
@@ -124,7 +123,7 @@ export const ChatBox = () => {
                   <span className="chat-time mt-1">{moment(item.created_at).format('LT')}</span>
                 </div>
                 <div className="chat-detail" style={{ maxWidth: '50%' }}>
-                  <div className="chat-message" style={{ backgroundColor: '#F0F0F0' }}>
+                  <div className="chat-message">
                     <div>{parse(item.content.replace('</br>', '<br />'))}</div>
                   </div>
                 </div>
@@ -133,7 +132,11 @@ export const ChatBox = () => {
           }
         })
       ) : (
-        <div>Loading...</div>
+        <div
+          style={{ minHeight: '100%', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        >
+          <Spinner animation="border" variant="primary" />
+        </div>
       )}
       <div ref={messagesEndRef} />
     </div>
