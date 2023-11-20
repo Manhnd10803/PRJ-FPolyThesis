@@ -73,11 +73,6 @@ const NAVBAR_SOCIAL_CONFIGS = [
     pathname: pathName.GROUP,
   },
   {
-    title: 'Notification',
-    icon: <i className="icon material-symbols-outlined">notifications</i>,
-    pathname: pathName.NOTIFICATION,
-  },
-  {
     title: 'Editor',
     icon: <i className="icon material-symbols-outlined">edit</i>,
     pathname: pathName.EDITOR,

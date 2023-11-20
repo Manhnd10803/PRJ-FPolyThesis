@@ -1,4 +1,5 @@
 import { CustomToggle } from '@/components/custom';
+import { pathName } from '@/routes/path-name';
 import { Card, Dropdown, Image } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
@@ -6,7 +7,7 @@ const imageUrl = 'https://picsum.photos/50';
 
 export const Notification = () => {
   return (
-    <Dropdown as="li" className="nav-item ">
+    <Dropdown as="li" className="nav-item">
       <Dropdown.Toggle href="#" as={CustomToggle} variant="search-toggle d-flex align-items-center">
         <i className="material-symbols-outlined">notifications</i>
       </Dropdown.Toggle>
@@ -14,7 +15,7 @@ export const Notification = () => {
         <Card className="shadow-none m-0">
           <Card.Header className="d-flex justify-content-between bg-primary">
             <div className="header-title bg-primary">
-              <h5 className="mb-0 text-white ">All Notifications</h5>
+              <h5 className="mb-0 text-white">All Notifications</h5>
             </div>
             <small className="badge  bg-light text-dark">4</small>
           </Card.Header>
@@ -73,6 +74,11 @@ export const Notification = () => {
                     <small className="float-right font-size-12">3 days ago</small>
                   </div>
                 </div>
+              </div>
+            </Link>
+            <Link to={pathName.NOTIFICATION} className="iq-sub-card">
+              <div className="d-flex align-items-center justify-content-center">
+                <h6 className="mb-0 ">Xem thêm</h6>
               </div>
             </Link>
           </Card.Body>
