@@ -35,6 +35,7 @@ export const LoginPage = () => {
     const isStayIn = load(storageKeys.STAY_IN);
     save(storageKeys.STAY_IN, !isStayIn);
   };
+
   return (
     <>
       <Col md="6" className="bg-white pt-5 pt-5 pb-lg-0 pb-5">
@@ -70,7 +71,13 @@ export const LoginPage = () => {
             </Form.Group>
             <div className="d-inline-block w-100">
               <Form.Check className="d-inline-block mt-2 pt-1">
-                <Form.Check.Input type="checkbox" className="me-2" id="customCheck11" onChange={handleChangeStayIn} />
+                <Form.Check.Input
+                  type="checkbox"
+                  className="me-2"
+                  id="customCheck11"
+                  defaultChecked
+                  onChange={handleChangeStayIn}
+                />
                 <Form.Check.Label>Lưu sau khi đăng nhập</Form.Check.Label>
               </Form.Check>
 

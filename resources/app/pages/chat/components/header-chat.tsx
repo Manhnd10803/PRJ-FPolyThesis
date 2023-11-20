@@ -2,9 +2,8 @@ import { CustomToggle } from '@/components/custom';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { chatActions } from '@/redux/slice';
 import { useEffect } from 'react';
-import { Dropdown } from 'react-bootstrap';
+import { Dropdown, Spinner } from 'react-bootstrap';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-
 type HeaderChatProps = {
   onDeleteChat: () => void;
 };
@@ -66,7 +65,11 @@ export const HeaderChat = ({ onDeleteChat }: HeaderChatProps) => {
             </div>
           </header>
         </div>
-      ) : null}
+      ) : (
+        <div style={{ height: 78, width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Spinner animation="border" variant="primary" />
+        </div>
+      )}
     </>
   );
 };

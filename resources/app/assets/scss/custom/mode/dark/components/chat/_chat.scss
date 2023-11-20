@@ -1,59 +1,60 @@
 .chat-head {
-    header {
-        background-color: $card-bg !important;
-    }
+  header {
+    background-color: $card-bg !important;
+  }
 }
 
 .chat-content {
-    .chat-left {
-        .chat-message {
-            background-color: $card-bg;
-            color: $body-color;
-        }
+  .chat-left {
+    .chat-message {
+      background-color: $card-bg;
+      color: $body-color;
     }
+  }
 }
 
 .chat-data {
-    background: url(../../../../../../images/page-img/dark-100.jpg) no-repeat scroll center center;
+  background: url(@/assets/images/chat/dark-100.jpg) no-repeat scroll center center;
+  background-size: cover;
 }
 
 .chat-data-left {
-    background-color: $card-bg;
+  background-color: $card-bg;
 }
 
 .chat-attagement {
-    a {
-        color: $body-color;
-    }
+  a {
+    color: $body-color;
+  }
 }
 
 .chat-sidebar-channel {
-    h5 {
-        border-color: $border-color;
-    }
+  h5 {
+    border-color: $border-color;
+  }
 
-    .h5 {
-        border-color: $border-color;
-    }
+  .h5 {
+    border-color: $border-color;
+  }
 }
 
 .iq-chat-ui {
-    li {
-        a {
-            border-color: $border-color;
-        }
+  li {
+    a {
+      border-color: $border-color;
     }
+  }
 }
 
 .chat-footer {
-    background-color: $card-bg !important;
+  background-color: $card-bg !important;
 }
 
 #user-detail-popup,
 .chat-user-detail-popup {
-    background: $border-color;
+  background: $border-color;
 }
 
 button.close-popup {
-    color: $white;
+  color: $white;
 }
