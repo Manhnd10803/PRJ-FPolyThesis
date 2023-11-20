@@ -38,17 +38,18 @@ export const PostItem = ({
   const renderContent = () => {
     const images = JSON.parse(imagesEncoded);
 
-    console.log({ images });
+    const imageList = Array.isArray(images) ? images : [images];
+
     return (
       <>
         <div className="my-3">{content}</div>
 
-        {images && images.length > 0 ? (
+        {imageList && imageList.length > 0 ? (
           <div className="user-post">
-            {images.length > 1 ? (
+            {imageList.length > 1 ? (
               <div className=" d-grid grid-cols-2 grid-flow-col gap-3">
                 {/* Image list */}
-                {images?.map((imageUrl: string, index: number) => (
+                {imageList?.map((imageUrl: string, index: number) => (
                   <div key={imageUrl} className="col-span-1">
                     <img src={imageUrl} alt={`post${index}`} className="img-fluid rounded w-100" />
                   </div>
@@ -57,7 +58,7 @@ export const PostItem = ({
             ) : (
               <div className="user-post text-center">
                 <Link to="#">
-                  <img src={images[0]} alt="post1" className="img-fluid rounded w-100 mt-3" />
+                  <img src={imageList[0]} alt="post1" className="img-fluid rounded w-100 mt-3" />
                 </Link>
               </div>
             )}

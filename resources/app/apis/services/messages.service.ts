@@ -23,7 +23,7 @@ const deleteChatItem = (id: number) => {
 };
 
 const deleteChatChannel = (id: number) => {
-  return httpRequest.delete(`${ApiConstants.DELETE_CHAT_CHANNEL}/${id}`);
+  return httpRequest.delete(`${ApiConstants.CHAT_CHANNEL}/${id}`);
 };
 
 export const MessagesService = { showMessages, sendMessages, getListUserChat, deleteChatItem, deleteChatChannel };

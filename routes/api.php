@@ -63,8 +63,8 @@ Route::middleware('auth:api')->group(function () {
         Route::put('/{privateMessage}', [PrivateMessagesController::class, 'UpdateMessage']);
         //Xóa  tin nhắn (Xóa 1 tin nhắn) id tin nhắn
         Route::delete('/{privateMessage}', [PrivateMessagesController::class, 'DeleteMessage']);
-        //XÓa tin nhắn (Xóa đoan chat) id user thêm chat tránh trường hợp messages/{id} bị trùng với bên trên
-        Route::delete('/chat/{user}', [PrivateMessagesController::class, 'DeleteMessagesBetweenUsers']);
+        //XÓa đoạn chat ( channel chat) id user thêm chat tránh trường hợp messages/{id} bị trùng với bên trên
+        Route::delete('/channel/{user}', [PrivateMessagesController::class, 'DeleteMessagesBetweenUsers']);
     });
 
     //post

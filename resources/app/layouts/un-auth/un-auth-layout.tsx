@@ -2,20 +2,18 @@ import { Row, Col, Container, Image } from 'react-bootstrap';
 import { Link, Outlet } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
-//swiper
-import { Swiper, SwiperSlide } from 'swiper/react';
+// @ts-ignore
 import SwiperCore, { Navigation, Autoplay } from 'swiper';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 // Import Swiper styles
 import 'swiper/swiper-bundle.min.css';
 // import 'swiper/components/navigation/navigation.scss';
 
-//img
-// import logo from '../../assets/images/logo-full.png';
-import logo from '../../assets/images/logo-bee-full.png';
-import login1 from '../../assets/images/login/1.png';
-import login2 from '../../assets/images/login/2.png';
-import login3 from '../../assets/images/login/3.png';
+import logo from '@/assets/images/logo-bee-full.png';
+import login1 from '@/assets/images/login/1.png';
+import login2 from '@/assets/images/login/2.png';
+import login3 from '@/assets/images/login/3.png';
 
 // install Swiper modules
 SwiperCore.use([Navigation, Autoplay]);
