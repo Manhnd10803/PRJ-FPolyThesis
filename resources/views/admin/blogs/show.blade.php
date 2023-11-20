@@ -3,6 +3,16 @@
     Chi tiết {{ $blog->title }}
 @endsection
 @section('content')
+    @php
+        $userGroupId = auth()->user()->group_id;
+        $isSPAdmin = $userGroupId == config('default.user.groupID.superAdmin') ? true : false;
+        if (!$isSPAdmin) {
+            $role_id = App\Models\UserRole::where('user_id', Auth::user()->id)->first()->role_id;
+            if (!is_null($role_id)) {
+                $userPermission = App\Models\RolePermission::getUserPermistion($role_id);
+            }
+        }
+    @endphp
     <div class="row">
         <div class="col-md-12">
             <!-- The time line -->
@@ -121,17 +131,14 @@
                             </h3>
                         </div>
                     </li>
-                    <li>
-                        <a class="btn btn-success" href="/blog-detail/{{ $blog->id }}">Đến xem bài viết</a>
-                    </li>
+                 
                 @endif
                 @if ($blog->status == config('default.blog.status.pending'))
+                @if ($isSPAdmin || in_array('admin.blogs.statusApprove', $userPermission))
                     <li>
                         <span class="time">
-
                             <button type="submit" class="btn btn-success" data-toggle="modal"
                                 data-target="#modal-danger"><i class="fa fa-check-circle"></i> Duyệt bài</button>
-
                             <div class="modal modal-success fade" id="modal-danger">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
@@ -161,10 +168,10 @@
                             </div>
                         </span>
                     </li>
+                @endif
+                @if ($isSPAdmin || in_array('admin.blogs.statusReject', $userPermission))
                     <li>
                         <span class="time">
-
-
                             <button type="submit" class="btn btn-danger" data-toggle="modal"
                                 data-target="#modal-danger-{{ $blog->id }}">Hủy bài viết</button>
 
@@ -197,7 +204,11 @@
                             </div>
                         </span>
                     </li>
+                    @endif
                 @endif
+                <li>
+                    <i class="fa fa-check bg-green"></i>
+                </li>
         </div>
     </div>
 @endsection

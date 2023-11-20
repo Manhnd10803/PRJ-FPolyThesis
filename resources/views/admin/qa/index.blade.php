@@ -20,6 +20,16 @@
             }
         </style>
     @endpush
+    @php
+        $userGroupId = auth()->user()->group_id;
+        $isSPAdmin = $userGroupId == config('default.user.groupID.superAdmin') ? true : false;
+        if (!$isSPAdmin) {
+            $role_id = App\Models\UserRole::where('user_id', Auth::user()->id)->first()->role_id;
+            if (!is_null($role_id)) {
+                $userPermission = App\Models\RolePermission::getUserPermistion($role_id);
+            }
+        }
+    @endphp
     <div class="row">
         <div class="col-xs-12 mx-5">
             <div class="box">
@@ -66,40 +76,39 @@
                                     <td>
                                         <a href="{{ route('admin.qa.show', $qa->id) }}" class="btn btn-info btn-sm"><i
                                                 class="fa fa-eye"></i></a>
-
-                                        <button type="submit" class="btn btn-danger btn-sm" data-toggle="modal"
-                                            data-target="#modal-danger-{{ $qa->id }}"><i
-                                                class="fa fa-trash-o"></i></button>
-
-                                        <div class="modal modal-danger fade" id="modal-danger-{{ $qa->id }}">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <button type="button" class="close" data-dismiss="modal"
-                                                            aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span></button>
-                                                        <h4 class="modal-title">FpolyZone</h4>
+                                        @if ($isSPAdmin || in_array('admin.qa.destroy', $userPermission))
+                                            <button type="submit" class="btn btn-danger btn-sm" data-toggle="modal"
+                                                data-target="#modal-danger-{{ $qa->id }}"><i
+                                                    class="fa fa-trash-o"></i></button>
+                                            <div class="modal modal-danger fade" id="modal-danger-{{ $qa->id }}">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span></button>
+                                                            <h4 class="modal-title">FpolyZone</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Bạn có chắc muốn xóa câu hỏi "{{ $qa->title }}" ? </p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-outline pull-left"
+                                                                data-dismiss="modal">Hủy</button>
+                                                            <form action="{{ route('admin.qa.destroy', $qa) }}"
+                                                                method="POST" style="display: inline-block;">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-outline">Đồng
+                                                                    ý</button>
+                                                            </form>
+                                                        </div>
                                                     </div>
-                                                    <div class="modal-body">
-                                                        <p>Bạn có chắc muốn xóa câu hỏi "{{ $qa->title }}" ? </p>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button type="button" class="btn btn-outline pull-left"
-                                                            data-dismiss="modal">Hủy</button>
-                                                        <form action="{{ route('admin.qa.destroy', $qa) }}" method="POST"
-                                                            style="display: inline-block;">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-outline">Đồng
-                                                                ý</button>
-                                                        </form>
-                                                    </div>
+                                                    <!-- /.modal-content -->
                                                 </div>
-                                                <!-- /.modal-content -->
+                                                <!-- /.modal-dialog -->
                                             </div>
-                                            <!-- /.modal-dialog -->
-                                        </div>
-
+                                        @endif
                                     </td>
 
                                 </tr>

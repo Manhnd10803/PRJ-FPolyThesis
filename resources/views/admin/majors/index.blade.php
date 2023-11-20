@@ -21,13 +21,26 @@
             }
         </style>
     @endpush
+    @php
+        $userGroupId = auth()->user()->group_id;
+        $isSPAdmin = $userGroupId == config('default.user.groupID.superAdmin') ? true : false;
+        if (!$isSPAdmin) {
+            $role_id = App\Models\UserRole::where('user_id', Auth::user()->id)->first()->role_id;
+            if (!is_null($role_id)) {
+                $userPermission = App\Models\RolePermission::getUserPermistion($role_id);
+            }
+        }
+    @endphp
     <div class="row">
         <div class="col-xs-12 mx-5">
             <div class="box">
                 <div style="display: flex;justify-content: space-between;padding: 10px 10px;align-items: center">
                     <h4>Danh sách chuyên ngành</h4>
-                    <a class="btn btn-success" href="{{ route('admin.majors.create') }}"><i class="fa fa-plus"></i> Thêm chuyên
-                        ngành</a>
+                    @if ($isSPAdmin || in_array('admin.majors.create', $userPermission))
+                        <a class="btn btn-success" href="{{ route('admin.majors.create') }}"><i class="fa fa-plus"></i> Thêm
+                            chuyên
+                            ngành</a>
+                    @endif
                 </div>
                 <div class="box-body">
                     <table id="example1" class="table table-bordered table-striped">
@@ -54,8 +67,11 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <a href="{{ route('admin.majors.edit', $major) }}" class="btn btn-sm btn-warning"><i
-                                                class="fa fa-edit "></i></a>
+                                        @if ($isSPAdmin || in_array('admin.majors.edit', $userPermission))
+                                            <a href="{{ route('admin.majors.edit', $major) }}"
+                                                class="btn btn-sm btn-warning"><i class="fa fa-edit "></i></a>
+                                        @endif
+                                        @if ($isSPAdmin || in_array('admin.majors.destroy', $userPermission))
                                         <button type="submit" class="btn btn-danger btn-sm" data-toggle="modal"
                                             data-target="#modal-danger-{{ $major->id }}"><i
                                                 class="fa fa-trash-o"></i></button>
@@ -85,6 +101,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

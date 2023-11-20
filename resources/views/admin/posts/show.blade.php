@@ -61,10 +61,12 @@
                     <div class="timeline-item">
                         <h3 class="timeline-header">Hình ảnh đăng lên</h3>
                         <div class="timeline-body" style="display: flex;justify-content: center">
-                            <img src="{{ $post->image }}" alt="..." class="margin" width="150" height="150"
-                                style="border-radius: 3%">
-                            <img src="{{ $post->image }}" alt="..." class="margin" width="150" height="150"
-                                style="border-radius: 3%">
+                            @foreach (json_decode($post->image) as $item)
+                            
+                                    <img src="{{ $item }}" alt="..." class="margin" width="150"
+                                        height="150" style="border-radius: 3%">
+                                
+                            @endforeach
                         </div>
                     </div>
                 </li>
