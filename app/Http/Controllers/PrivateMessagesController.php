@@ -270,7 +270,7 @@ class PrivateMessagesController extends Controller
     public function DeleteMessage(PrivateMessage $privateMessage)
     {
         $privateMessage->delete();
-        broadcast(new PrivateMessageSent($privateMessage));
+        broadcast(new PrivateMessageSent($privateMessage, 'delete'))->toOthers();
         return response()->json(['message' => 'Tin nhắn đã được xóa'], 200);
     }
     /**

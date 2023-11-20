@@ -9,9 +9,10 @@ class PrivateMessageSent implements ShouldBroadcast
 {
     public $message;
 
-    public function __construct($message)
+    public function __construct($message, $action = 'send')
     {
         $this->message = $message;
+        $this->message->action = $action;
     }
 
     public function broadcastOn()

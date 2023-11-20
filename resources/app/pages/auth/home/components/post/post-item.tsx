@@ -37,17 +37,19 @@ export const PostItem = ({
   //func
   const renderContent = () => {
     const images = JSON.parse(imagesEncoded);
+
+    console.log({ images });
     return (
       <>
-        <div className="mt-3">{content}</div>
+        <div className="my-3">{content}</div>
 
         {images && images.length > 0 ? (
           <div className="user-post">
             {images.length > 1 ? (
-              <div className=" d-grid grid-rows-2 grid-flow-col gap-3">
+              <div className=" d-grid grid-cols-2 grid-flow-col gap-3">
                 {/* Image list */}
-                {images.map((imageUrl: string, index: number) => (
-                  <div key={imageUrl} className="row-span-1">
+                {images?.map((imageUrl: string, index: number) => (
+                  <div key={imageUrl} className="col-span-1">
                     <img src={imageUrl} alt={`post${index}`} className="img-fluid rounded w-100" />
                   </div>
                 ))}
@@ -72,7 +74,7 @@ export const PostItem = ({
           <div className="user-post-data">
             <div className="d-flex justify-content-between">
               <div className="me-3">
-                <img className="rounded-circle img-fluid" src={avatar} alt="avatar" />
+                <img className="avatar-50 rounded-circle" src={avatar} alt="avatar" />
               </div>
               <div className="w-100">
                 <div className="d-flex justify-content-between">

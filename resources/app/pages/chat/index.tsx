@@ -107,7 +107,14 @@ export const ChatPage = () => {
 
     const handlePrivateMessage = (event: any) => {
       try {
-        const { sender_id } = event.message;
+        const { sender_id, action = 'send' } = event.message;
+
+        console.log('🤪 action', action);
+
+        if (action === 'delete') {
+          return dispatch(chatActions.removeMessageFromListMessage(event.message.id));
+        }
+
         // Nếu người gửi chưa có trong danh sách chat thì cập nhật lại danh sách user chat
         const isNewSender = listUserChat?.findIndex((item: IUser) => item.id === sender_id) === -1;
 
