@@ -15,6 +15,7 @@ use App\Http\Controllers\PostsController;
 use App\Http\Controllers\QaController;
 use App\Http\Controllers\PrivateMessagesController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SearchController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
@@ -54,10 +55,6 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/auth/logout', [AuthController::class, 'logout'])->name('user.logout');
     Route::post('/auth/confirm-password', [AuthController::class, 'confirmPassword'])->name('user.confirmPassword');
     Route::post('/auth/reset-new-password', [AuthController::class, 'resetPassword'])->name('user.resetPassword');
-    Route::get('/hello', function () {
-        return Auth::user();
-    });
-    Route::post('/activity', [AuthController::class, 'CheckActivityUser']);
     //chat
     Route::prefix('messages')->group(function () {
         Route::get('/list-user/{quantity?}', [PrivateMessagesController::class, 'ShowListUserChat']);
@@ -69,8 +66,6 @@ Route::middleware('auth:api')->group(function () {
         //XÓa tin nhắn (Xóa đoan chat) id user thêm chat tránh trường hợp messages/{id} bị trùng với bên trên
         Route::delete('/chat/{user}', [PrivateMessagesController::class, 'DeleteMessagesBetweenUsers']);
     });
-    //major
-    Route::get('majors', [MajorController::class, 'list_majors']);
 
     //post
     Route::prefix('posts')->group(function () {
@@ -88,8 +83,6 @@ Route::middleware('auth:api')->group(function () {
         Route::put('/update', [ProfileController::class, 'updateProfile'])
             ->name('profile.update');
     });
-    //user
-    Route::get('/user-info', [ProfileController::class, 'getInfoUser']);
     //blog
     Route::prefix('blogs')->group(function () {
         Route::get('/{quantity?}', [BlogController::class, 'ShowAllBlogs'])->name('blog.show');
@@ -112,7 +105,6 @@ Route::middleware('auth:api')->group(function () {
         Route::put('/{comment}', [CommentController::class, 'editComment']);
         Route::delete('/{comment}', [CommentController::class, 'deleteComment']);
     });
-
     //qa
     Route::prefix('quests')->group(function () {
         Route::get('all/{quantity?}', [QaController::class, 'ShowAllQa'])->name('qa.showAll');
@@ -126,7 +118,6 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/{qa}', [QaController::class, 'DeleteQa'])->name('qa.delete');
         //Route::get('/list', [QaController::class, 'ListQa'])->name('qa.list');
     });
-
     //friend --relationship
     Route::post('/send-request/{recipient}', [FriendController::class, 'SendFriendRequest'])->name('friend.send');
     Route::post('/confirm-request/{sender}', [FriendController::class, 'ConfirmFriendRequest'])->name('friend.confirm');
@@ -136,36 +127,18 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/status-friend/{friend}', [FriendController::class, 'getFriendshipStatus']);
     Route::delete('/unfriend/{friend}', [FriendController::class, 'unfriend']);
     Route::get('/friend-suggest/{quantity?}', [FriendController::class, 'getFriendSuggestions']);
-
     //notification
     Route::get('/notifications/{quantity?}', [NotificationController::class, 'listNotification']);
     Route::get('/see-notification/{notification}', [NotificationController::class, 'seeNotification']);
     Route::delete('/notification/{notification}', [NotificationController::class, 'deleteNotification']);
-
-    Route::group(['prefix' => 'admin', 'middleware' => 'scope:admin'], function () {
-        //User Management
-        Route::prefix('users')->group(function () {
-            Route::get('/', [AdminUserController::class, 'listUser'])->name('admin.user.list');
-            Route::get('/detail/{user}', [AdminUserController::class, 'detailUser'])->name('admin.user.detail');
-            Route::put('/suspend/{user}', [AdminUserController::class, 'suspendUser'])->name('admin.user.suspend');
-            Route::put('/active/{user}', [AdminUserController::class, 'activeUser'])->name('admin.user.active');
-            Route::delete('/delete/{user}', [AdminUserController::class, 'deleteUser'])->name('admin.user.delete');
-        });
-        //Blog Management
-        Route::prefix('blogs')->group(function () {
-            Route::get('/list-approved', [AdminBlogController::class, 'listAllBlog'])->name('admin.blog.approved');
-            Route::get('/list-pending', [AdminBlogController::class, 'listPedingBlog'])->name('admin.blog.pending');
-            Route::get('/approve/{blog}', [AdminBlogController::class, 'approveBlog'])->name('admin.blog.approve');
-            Route::get('/reject/{blog}', [AdminBlogController::class, 'rejectBlog'])->name('admin.blog.reject');
-            Route::get('/detail/{blog}', [AdminBlogController::class, 'detailBlog'])->name('admin.blog.detailBlog');
-        });
-        //Major Admin
-        Route::prefix('majors')->group(function () {
-            Route::get('/', [AdminMajorController::class, 'listMajor'])->name('admin.majors.list');
-            Route::get('/{major}', [AdminMajorController::class, 'detailMajor'])->name('admin.majors.detail');
-            Route::post('/', [AdminMajorController::class, 'addMajor'])->name('admin.majors.add');
-            Route::put('/{major}', [AdminMajorController::class, 'editMajor'])->name('admin.majors.edit');
-            Route::delete('/{major}', [AdminMajorController::class, 'deleteMajor'])->name('admin.majors.delete');
-        });
-    });
+    //activity 
+    Route::post('/activity', [AuthController::class, 'CheckActivityUser']);
+    //user
+    Route::get('/user-info', [ProfileController::class, 'getInfoUser']);
+    //major
+    Route::get('majors', [MajorController::class, 'list_majors']);
+    //Searches for everything
+    Route::get('/search/{model}', [SearchController::class, 'SearchEverything']);
+    //recents searches
+    Route::get('/recent-searches', [SearchController::class, 'getRecentSearches']);
 });
