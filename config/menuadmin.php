@@ -83,7 +83,7 @@ return [
     ]
   ],
   'blog' => [
-    'order' => 3,
+    'order' => 4,
     'text'       => 'Quản lý Blog',
     'permission' => 'admin.blogs',
     'icon' => 'fa fa-fw fa-newspaper-o',
@@ -118,6 +118,73 @@ return [
         ],
         'icon' => 'fa fa-circle-o',
         'text' => 'Chờ duyệt',
+      ],
+    ]
+  ],
+  'major' => [
+    'order' => 5,
+    'text'       => 'Quản lý chuyên ngành',
+    'permission' => 'admin.majors',
+    'icon' => 'fa fa-fw fa-briefcase',
+    'sub'        => [
+      'list_majors' => [
+        'order' => 1,
+        'route' => 'admin.majors.index',
+        'permission' => 'admin.majors.index',
+        'sub_permission' => [
+          [
+            'name' => 'Thêm chuyên ngành',
+            'permission' => 'admin.majors.create'
+          ],
+          [
+            'name' => 'Chỉnh sửa chuyên ngành',
+            'icon'=>'fa fa-edit',
+            'permission' => 'admin.majors.edit'
+          ],
+          [
+            'name' => 'Xóa chuyên ngành',
+            'icon'=>'fa fa-trash-o',
+            'permission' => 'admin.majors.destroy'
+          ],
+        ],
+
+        'text' => 'Danh sách chuyên ngành',
+      ],
+    ]
+  ],
+  'post' => [
+    'order' => 6,
+    'text'       => 'Quản lý bài post',
+    'permission' => 'admin.posts',
+    'icon' => 'fa fa-fw fa-book',
+    'sub'        => [
+      'list_posts' => [
+        'order' => 1,
+        'route' => 'admin.posts.index',
+        'permission' => 'admin.posts.index',
+        'text' => 'Danh sách bài post',
+      ],
+    ]
+  ],
+  'question_answers' => [
+    'order' => 7,
+    'text'       => 'Quản lý câu hỏi',
+    'permission' => 'admin.qa',
+    'icon' => 'fa fa-fw fa-question',
+    'sub'        => [
+      'list_question_answers' => [
+        'order' => 1,
+        'route' => 'admin.qa.index',
+        'permission' => 'admin.qa.index',
+        'sub_permission' => [
+          [
+            'name' => 'Xóa câu hỏi',
+            'icon'=>'fa fa-trash-o',
+            'permission' => 'admin.qa.destroy'
+          ],
+        ],
+
+        'text' => 'Danh sách câu hỏi',
       ],
     ]
   ],

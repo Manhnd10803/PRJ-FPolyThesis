@@ -60,11 +60,7 @@
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             <section class="content">
-                @if (session()->has('success'))
-                    <div class="alert alert-success">
-                        {{ session()->get('success') }}
-                    </div>
-                @endif
+              
                 @yield('content')
 
             </section>

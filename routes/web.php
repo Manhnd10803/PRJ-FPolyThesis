@@ -67,10 +67,6 @@ Route::group(['prefix' => 'admin', 'middleware' => 'authAdmin'], function () {
     Route::resource('posts', AdminPostController::class)->names([
         'index' => 'admin.posts.index',
         'show' => 'admin.posts.show',
-        'create' => 'admin.posts.create',
-        'store' => 'admin.posts.store',
-        'edit' => 'admin.posts.edit',
-        'update' => 'admin.posts.update',
         'destroy' => 'admin.posts.destroy',
     ]);
 
@@ -78,10 +74,6 @@ Route::group(['prefix' => 'admin', 'middleware' => 'authAdmin'], function () {
     Route::resource('qa', AdminQaController::class)->names([
         'index' => 'admin.qa.index',
         'show' => 'admin.qa.show',
-        'create' => 'admin.qa.create',
-        'store' => 'admin.qa.store',
-        'edit' => 'admin.qa.edit',
-        'update' => 'admin.qa.update',
         'destroy' => 'admin.qa.destroy',
     ]);
 
