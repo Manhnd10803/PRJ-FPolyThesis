@@ -25,8 +25,7 @@ const chatSlice = createSlice({
       state.listMessage.push(action.payload);
     },
     removeMessageFromListMessage: (state, action) => {
-      const { messageId } = action.payload;
-      state.listMessage = state.listMessage.filter(message => message.id !== messageId);
+      state.listMessage = state.listMessage.filter(message => Number(message.id) !== Number(action.payload));
     },
     removeChannel: (state, action) => {
       state.listUserChat = state.listUserChat.filter(user => user.id !== action.payload);
