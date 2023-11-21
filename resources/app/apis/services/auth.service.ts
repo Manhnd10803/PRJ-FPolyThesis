@@ -19,7 +19,7 @@ import { clear } from '@/utilities/local-storage';
 const Login = async <T>(dataForm: T) => {
   try {
     const { data } = await httpRequest.post<LoginResponseType>(ApiConstants.LOGIN, dataForm);
-
+    toast.dismiss();
     toast.success('Đăng nhập thành công');
     //save data login to storage
     StorageFunc.saveDataAfterLogin(data);
@@ -48,14 +48,8 @@ const RefreshToken = async () => {
       refresh_token: StorageFunc.getRefreshToken(),
     });
 
-    const { data: userData } = await AuthService.GetUserDetail();
-    store.dispatch(authActions.setUserInfo(userData.user));
-
-    StorageFunc.saveUserDetailData(userData);
-
     return data;
   } catch (error) {
-    toast.error('Refresh token failed');
     throw error;
   }
 };

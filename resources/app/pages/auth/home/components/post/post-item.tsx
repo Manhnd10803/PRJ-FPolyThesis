@@ -11,7 +11,7 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 
 type PostItemProps = {
-  avatar: string;
+  avatar?: string;
   content: string;
   authorName: string;
   createdAt: Date;
