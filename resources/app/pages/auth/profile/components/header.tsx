@@ -9,6 +9,9 @@ import { ProfileService } from '@/apis/services/profile.service';
 import toast from 'react-hot-toast';
 import { useQueryClient } from '@tanstack/react-query';
 import { IProfileUser } from '@/models/user';
+import MuiButton from '@mui/material/Button';
+import { styled } from '@mui/material/styles';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 const imageUrl = 'https://picsum.photos/20';
 
@@ -18,6 +21,18 @@ type Props = {
   isUser: boolean;
   queryKey: Array<string>;
 };
+
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 
 export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
   const [modalShow, setModalShow] = React.useState(false);
@@ -82,14 +97,15 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
           <Modal.Title id="contained-modal-title-vcenter">Cập nhật ảnh bìa</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <input
-            type="file"
-            name="avatar"
-            id=""
-            multiple
-            accept="image/png, image/jpg, image/jpeg"
-            onChange={handleImageUpload}
-          />
+          <MuiButton className="w-100" component="label" variant="contained" startIcon={<CloudUploadIcon />}>
+            Tải ảnh lên
+            <VisuallyHiddenInput
+              type="file"
+              name="avatar"
+              onChange={handleImageUpload}
+              accept="image/png, image/jpg, image/jpeg"
+            />
+          </MuiButton>
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={props.onHide}>Close</Button>

@@ -67,9 +67,10 @@ class User extends Authenticatable
     }
     public function friends()
     {
+        $status = config('default.friend.status.accepted');
         return $this->belongsToMany(User::class, 'friends', 'user_id_1', 'user_id_2')
             ->withPivot('status')
-            ->wherePivot('status', 'accepted');
+            ->wherePivot('status', $status);
     }
     public function posts()
     {
