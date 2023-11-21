@@ -7,7 +7,7 @@ import backgroundImage from '../../../../assets/images/profile-bg1.jpg';
 import { CloudiaryService } from '@/apis/services/cloudinary.service';
 import { ProfileService } from '@/apis/services/profile.service';
 import toast from 'react-hot-toast';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { IProfileUser } from '@/models/user';
 import MuiButton from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
@@ -134,10 +134,12 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
           />
         </Modal.Body>
         <Modal.Footer>
-          <Button className="bg-secondary" onClick={props.onHide}>
-            Close
-          </Button>
-          <Button onClick={handleSaveImage}>Lưu</Button>
+          {!isLoadingUpdate && (
+            <Button className="bg-secondary" onClick={props.onHide}>
+              Close
+            </Button>
+          )}
+          <Button onClick={handleSaveImage}>{isLoadingUpdate ? 'Loading...' : 'Lưu'}</Button>
         </Modal.Footer>
       </Modal>
     );
@@ -157,6 +159,8 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
     return new File([u8arr], filename, { type: mime });
   };
 
+  const updateCoverPhotoMutation = useMutation(ProfileService.updateCoverPhoto);
+  const { isLoading: isLoadingUpdate, isSuccess, isError } = updateCoverPhotoMutation;
   const handleSaveImage = async () => {
     const canvas = imageCoverRef?.current?.getImage();
     const imageBase64 = canvas.toDataURL('image/jpeg'); // Chuyển canvas thành base64
@@ -170,10 +174,15 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
     const dataForm = {
       cover_photo: data[0],
     };
-    await ProfileService.updateCoverPhoto(dataForm);
-    toast.success('Cập nhật ảnh bìa thành công');
-    setModalShow2(false);
-    queryClient.invalidateQueries(queryKey);
+    await updateCoverPhotoMutation.mutateAsync(dataForm);
+    if (isSuccess) {
+      toast.success('Cập nhật ảnh bìa thành công');
+      setModalShow2(false);
+      queryClient.invalidateQueries(queryKey);
+    }
+    if (isError) {
+      toast.error('Cập nhật ảnh bìa thất bại');
+    }
   };
 
   const getStatusFriend = async () => {
