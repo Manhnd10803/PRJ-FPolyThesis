@@ -19,7 +19,7 @@
     }
 </style>
 @endpush
-@php 
+@php
     $userGroupId = auth()->user()->group_id;
     $isSPAdmin = $userGroupId == config('default.user.groupID.superAdmin') ? true : false;
     if(!$isSPAdmin){
@@ -89,9 +89,9 @@
                                 <td>{{ $user->phone }}</td>
                                 <td>{{ $user->birthday }}</td>
                                 <td>
-                                    @if ($user->gender == config('default.user.groupID.student'))
+                                    @if ($user->group_id == config('default.user.groupID.student'))
                                         Sinh viên
-                                    @elseif($user->gender == config('default.user.gender.guest'))
+                                    @elseif($user->group_id == config('default.user.groupID.guest'))
                                         Khách
                                     @endif
                                 </td>
