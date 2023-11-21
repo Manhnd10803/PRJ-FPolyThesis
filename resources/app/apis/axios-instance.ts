@@ -6,6 +6,8 @@ import { AuthService } from './services/auth.service';
 import { store } from '@/redux/store/store';
 import { authActions } from '@/redux/slice';
 import { RefreshTokenResponseType } from '@/models/auth';
+import { clear } from '@/utilities/local-storage';
+import { pathName } from '@/routes/path-name';
 
 // Create an Axios instance
 const requestConfig: AxiosRequestConfig = {
@@ -46,41 +48,58 @@ httpRequest.interceptors.response.use(
   },
   async error => {
     const originalRequest = error.config;
-
-    // If url là /login va /refresh , khong goi api refresh token  ( neu k se bi infinite loop)
+    // Nếu url là /login va /refresh , khong goi api refresh token  ( neu k se bi infinite loop)
     if (
-      ![ApiConstants.LOGIN, ApiConstants.REFRESH_TOKEN, ApiConstants.LOGOUT].includes(originalRequest.url) &&
+      ![ApiConstants.LOGIN, , ApiConstants.REFRESH_TOKEN, ApiConstants.LOGOUT].includes(originalRequest.url) &&
       error.response
     ) {
       // Access Token was expired
       if (error.response.status === 401 && !originalRequest._retry) {
         if (!refreshTokenPromise) {
-          refreshTokenPromise = AuthService.RefreshToken().then(data => {
-            refreshTokenPromise = null;
-            return data;
-          });
+          refreshTokenPromise = AuthService.RefreshToken();
         }
         originalRequest._retry = true;
 
-        return refreshTokenPromise.then(data => {
-          store.dispatch(authActions.setAccessToken(data.access_token));
+        return refreshTokenPromise
+          .then(data => {
+            store.dispatch(authActions.setAccessToken(data.access_token));
 
-          StorageFunc.saveDataAfterLogin(data);
+            StorageFunc.saveDataAfterLogin(data);
 
-          return httpRequest(originalRequest);
-        });
+            // Get user info after refresh token (in case user refresh page when token expired )
+            AuthService.GetUserDetail().then(({ data: userData }) => {
+              store.dispatch(authActions.setUserInfo(userData.user));
+
+              StorageFunc.saveUserDetailData(userData);
+            });
+
+            refreshTokenPromise = null;
+
+            return httpRequest(originalRequest);
+          })
+          .catch(error => {
+            console.log(error);
+            refreshTokenPromise = null;
+          });
       }
     }
 
     switch (error.response?.status) {
-      case 400:
-      case 401:
-      case 403:
-      case 404:
-      case 500:
-      default:
+      case 401: {
+        if (ApiConstants.REFRESH_TOKEN === originalRequest.url) {
+          toast.error('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!', {
+            position: 'top-center',
+            duration: 20000,
+          });
+          clear();
+          store.dispatch(authActions.clear());
+        }
+        return;
+      }
+      default: {
         toast.error('Có lỗi xảy ra, vui lòng thử lại sau!');
         return Promise.reject(error.response.data);
+      }
     }
   },
 );

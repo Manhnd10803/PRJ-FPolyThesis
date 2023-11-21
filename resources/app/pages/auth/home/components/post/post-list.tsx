@@ -17,29 +17,28 @@ export const PostList = () => {
 
   if (isLoading) return <div>Loading...</div>;
 
-  if (isError) return 'An error has occurred: ' + error.message;
-
   console.log('data', data);
 
   //render
   return (
     <>
-      {data.map(item => {
-        return (
-          <PostItem
-            key={item.post.id}
-            avatar={item.post.user.avatar}
-            authorName={item.post.user.username}
-            content={item.post.content}
-            createdAt={item.post.created_at}
-            updatedAt={item.post.updated_at}
-            images={item.post.image}
-            // actionType={item.actionType}
-            commentList={item.comments}
-            totalLike={item.like_counts_by_emotion.total_likes}
-          />
-        );
-      })}
+      {data &&
+        data.map(item => {
+          return (
+            <PostItem
+              key={item.post.id}
+              avatar={item.post.user.avatar}
+              authorName={item.post.user.username}
+              content={item.post.content}
+              createdAt={item.post.created_at}
+              updatedAt={item.post.updated_at}
+              images={item.post.image}
+              // actionType={item.actionType}
+              commentList={item.comments}
+              totalLike={item.like_counts_by_emotion.total_likes}
+            />
+          );
+        })}
     </>
   );
 };
