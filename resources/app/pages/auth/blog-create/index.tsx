@@ -82,7 +82,7 @@ export const CreateBlogPage = () => {
             <Card>
               <Card.Header className="d-flex justify-content-between">
                 <div className="header-title">
-                  <h2 className="card-title">Create Blog</h2>
+                  <h2 className="card-title">Thêm mới blog</h2>
                 </div>
               </Card.Header>
               <Card.Body>
@@ -102,9 +102,19 @@ export const CreateBlogPage = () => {
                   </Form.Group>
                   <Form.Group className="form-group">
                     <Form.Label>Thumbnail:</Form.Label>
+                    {files && (
+                      <div className="mb-1">
+                        <img
+                          width={413}
+                          height={236}
+                          src={files ? URL.createObjectURL(files[0]) : ''}
+                          alt="Selected Image"
+                        />
+                      </div>
+                    )}
                     <div>
                       <MuiButton component="label" variant="contained" startIcon={<CloudUploadIcon />}>
-                        Tải lên tệp
+                        Tải ảnh lên
                         <VisuallyHiddenInput
                           type="file"
                           id="thumbnail"
