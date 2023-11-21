@@ -38,10 +38,10 @@ return [
             'friend' => 1,
         ]
     ],
-    'post'=> [
-        'status'=>[
-            'approved'=>1,
-            'suspend'=>2
+    'post' => [
+        'status' => [
+            'approved' => 1,
+            'suspend' => 2
         ]
     ],
     'valid_emotions' => ['dislike', 'like', 'love', 'haha', 'wow', 'sad', 'angry'],
@@ -69,5 +69,12 @@ return [
             'not_seen' => 0,
             'seen' => 1,
         ]
-    ]
+    ],
+    'report' => [
+        'status' => [
+            'pending' => 'pending',
+            'resolved' => 'resolved',
+            'dismissed' => 'dismissed',
+        ]
+    ],
 ];

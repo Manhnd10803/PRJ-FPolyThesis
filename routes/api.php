@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\Admin\AdminBlogController;
 use App\Http\Controllers\Admin\AdminMajorController;
@@ -141,4 +142,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/search/{model}', [SearchController::class, 'SearchEverything']);
     //recents searches
     Route::get('/recent-searches', [SearchController::class, 'getRecentSearches']);
+
+    //Report
+    Route::post('/report/{user}/{model}/{item}', [ReportController::class, 'CreateReport']);
 });
