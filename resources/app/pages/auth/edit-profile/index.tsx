@@ -20,6 +20,7 @@ export const EditProfilePage = () => {
   const [DataMajor, setDataMajor] = useState([]);
   const [loading, setLoading] = useState(true);
   const [DataUser, setUserData] = useState({});
+  const [file, setFile] = useState('');
   const {
     register: update,
     formState: { errors },
@@ -72,7 +73,8 @@ export const EditProfilePage = () => {
   };
 
   const onSubmit = async (data: TUserUpdateSchema) => {
-    const imageURL = await CloudiaryService.uploadImages(data.avatar, 'avatar');
+    const imageURL = await CloudiaryService.uploadImages(file, 'avatar');
+
     const newData = {
       ...data,
       avatar: imageURL[0],
@@ -186,7 +188,14 @@ export const EditProfilePage = () => {
                               />
                             </fieldset>
                             <fieldset className={`${show === 'Personal' ? 'd-block' : 'd-none'}`}>
-                              <Official AccountShow={AccountShow} DataUser={DataUser} update={update} />
+                              <Official
+                                AccountShow={AccountShow}
+                                DataUser={DataUser}
+                                update={update}
+                                file={file}
+                                setFile={setFile}
+                                isLoading={isLoading}
+                              />
                             </fieldset>
                             <fieldset className={`${show === 'Image' ? 'd-block' : 'd-none'}`}>
                               <Finish />

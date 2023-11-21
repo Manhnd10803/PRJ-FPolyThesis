@@ -53,7 +53,7 @@ export const Contact = ({ AccountShow, DataUser, update, validationErrors, handl
         value="Next"
         onClick={() => handleNextValidate('Personal', fields2, ValidatePhoneSchema)}
       >
-        Next
+        Tiếp tục
       </Button>
       <Button
         variant="dark"
@@ -62,7 +62,7 @@ export const Contact = ({ AccountShow, DataUser, update, validationErrors, handl
         value="Previous"
         onClick={() => AccountShow('A')}
       >
-        Previous
+        Quay lại
       </Button>
     </>
   );
