@@ -138,7 +138,7 @@ export const Personal = ({ DataUser, update, handleNextValidate, validationError
         value="Next"
         onClick={() => handleNextValidate('Account', fields1, ValidateUserUpdateSchema)}
       >
-        Next
+        Tiếp tục
       </Button>
     </>
   );

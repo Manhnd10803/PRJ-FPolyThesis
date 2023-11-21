@@ -130,6 +130,7 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
             color={[255, 255, 255, 0.6]}
             scale={1}
             rotate={0}
+            style={{ width: '100%' }}
           />
         </Modal.Body>
         <Modal.Footer>
