@@ -7,7 +7,7 @@ import MyPhoto from './my-photo';
 import { FriendList } from './friend-list';
 import './index.css';
 
-export const Timeline = ({ about, listPost, isLoading, friend_id }) => {
+export const Timeline = ({ about, listPost, isLoading, friend_id, listImage, listFriend }) => {
   const [isSticky, setSticky] = useState(false);
 
   useEffect(() => {
@@ -32,14 +32,14 @@ export const Timeline = ({ about, listPost, isLoading, friend_id }) => {
   return (
     <Card.Body className="p-0">
       <Row>
-        <Col lg={4} className={`col-4 ${isSticky ? 'sticky-col-4' : ''}`}>
+        <Col lg={4} className={`${isSticky ? 'sticky-col-4' : ''}`}>
           <About aboutUser={about} isLoading={isLoading} />
-          <MyPhoto />
-          <FriendList />
+          <MyPhoto listPhoto={listImage} />
+          <FriendList listFriend={listFriend} />
         </Col>
         <Col lg={8}>
           {!friend_id ? <CreatePost /> : ''}
-          <ListPost listPost={listPost} isLoading={isLoading} />
+          <ListPost listPost={listPost} isLoading={isLoading} aboutUser={about} />
         </Col>
       </Row>
     </Card.Body>
