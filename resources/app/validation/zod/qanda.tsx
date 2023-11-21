@@ -5,7 +5,7 @@ export const QandACreateSchema = z.object({
   majors_id: z.string().refine(value => {
     return typeof value === 'string' && value !== '0';
   }, 'Vui lòng chọn một chuyên ngành'),
-  content: z.string().min(1, 'Nội dung là bắt buộc nhập'),
+  content: z.string().optional(),
   hashtag: z
     .string()
     .min(1, 'Hashtag là bắt buộc')
