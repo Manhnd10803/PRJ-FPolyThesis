@@ -113,7 +113,7 @@ class BlogController extends Controller
             $majorsId = $request->input('majors_id');
             $hashtag = $request->input('hashtag');
             $query = Blog::query();
-
+            $query->where('status', config('default.blog.status.approved'));
             if ($majorsId) {
                 $query->where('majors_id', $majorsId);
             }
