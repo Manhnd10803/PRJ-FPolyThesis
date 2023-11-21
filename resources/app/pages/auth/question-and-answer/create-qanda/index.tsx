@@ -8,15 +8,15 @@ import { IMajors } from '@/models/major';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { MajorService } from '@/apis/services/major.service';
 import { QandAService } from '@/apis/services/qanda.service';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import PlaygroundApp from '@/components/shared/editor';
+import { $getRoot } from 'lexical';
+import { MyEditor } from '../editor/MyEditor';
 
 const imageUrl = 'https://picsum.photos/20';
 
 export const CreateQandA = () => {
   const navigate = useNavigate();
-
-  const [contentValue, setContentValue] = useState('');
 
   const { data } = useQuery({
     queryKey: ['majors'],
@@ -40,8 +40,17 @@ export const CreateQandA = () => {
     },
   });
 
+  const editorRef: any = useRef();
+  // ADDED THIS:
+  if (editorRef.current !== undefined) {
+    if (editorRef.current !== null) {
+      const latestEditorState = editorRef.current.getEditorState();
+      const textContent = latestEditorState.read(() => $getRoot().getTextContent());
+      console.log(textContent);
+    }
+  }
+
   const onSubmit = (data: TQandACreateSchema) => {
-    data.content = contentValue;
     if (!isLoading) {
       mutate(data, {
         onError: error => {
@@ -102,12 +111,10 @@ export const CreateQandA = () => {
                         rows={5}
                         placeholder="Nhập chi tiết thông tin câu hỏi của bạn ..."
                       /> */}
-                      <PlaygroundApp
-                        id="content"
-                        contentValue={contentValue}
-                        onContentChange={value => setContentValue(value)}
-                        {...createAsk('content')}
-                      />
+                      {/* <PlaygroundApp ref={editorRef}/> */}
+                      {/* <PlaygroundApp ref={editorRef} onContentChange={onContentChange} /> */}
+                      <MyEditor ref={editorRef} />
+
                       <p className="text-danger">{errors?.content?.message}</p>
                     </Form.Group>
                     <Form.Group className="form-group">

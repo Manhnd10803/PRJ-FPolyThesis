@@ -20,6 +20,8 @@ import { RootNodes } from './nodes/RootNodes';
 import { TableContext } from './plugins/TablePlugin';
 import TypingPerfPlugin from './plugins/TypingPerfPlugin';
 import PlaygroundEditorTheme from './themes/PlaygroundEditorTheme';
+import React, { useEffect } from 'react';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 
 console.warn(
   'If you are profiling the playground app, please ensure you turn off the debug view. You can disable it by pressing on the settings control in the bottom-left of your screen and toggling the debug view setting.',
@@ -118,7 +120,6 @@ function App(): JSX.Element {
               <div className="editor-shell">
                 <Editor />
               </div>
-
               <TypingPerfPlugin />
             </SharedAutocompleteContext>
           </TableContext>
