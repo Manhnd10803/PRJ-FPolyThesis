@@ -112,55 +112,57 @@ class LikeController extends Controller
                 default:
                     break;
             }
-            // Những người đã bày tỏ cảm xúc trước
-            $likes = $model->likes()->where('likes.user_id', '!=', Auth::id())->orderByDesc('id')->get();
-            foreach ($likes as $like) {
-                $participants[] = $like->user_id;
-            }
-            $notification = Notification::where('notification_type', $notificationType)->where('objet_id', $item)->orderByDesc('id')->first();
-            if (count($participants) > 1) {
-                //Cập nhật nội dung thông báo
-                $latestLiker = User::find(array_shift($participants));
-                $remainingLikesCount = count($participants);
-                $message = $latestLiker->username . ' và ' . $remainingLikesCount . ' người khác đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
-                if (!is_null($notification)) {
-                    //Update thời gian thông báo
-                    $notification->update([
-                        'content' => $message,
-                        'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
-                    ]);
-                    broadcast(new ReceiveNotification($notification))->toOthers();
-                } else {
-                    //Tạo mới thông báo
-                    $notification = Notification::create([
-                        'sender' => Auth::id(),
-                        'recipient' => $model->user_id,
-                        'content' => $message,
-                        'notification_type' => $notificationType,
-                        'status' => config('default.notification.status.not_seen'),
-                        'objet_id' => $item,
-                    ]);
-                    broadcast(new ReceiveNotification($notification))->toOthers();
+            if(Auth::user()->id != $model->user_id){
+                // Những người đã bày tỏ cảm xúc trước
+                $likes = $model->likes()->where('likes.user_id', '!=', Auth::id())->orderByDesc('id')->get();
+                foreach ($likes as $like) {
+                    $participants[] = $like->user_id;
                 }
-            } else {
-                if (!is_null($notification)) {
-                    //Update thời gian thông báo
-                    $notification->update([
-                        'content' => $message,
-                        'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
-                    ]);
-                    broadcast(new ReceiveNotification($notification))->toOthers();
+                $notification = Notification::where('notification_type', $notificationType)->where('objet_id', $item)->orderByDesc('id')->first();
+                if (count($participants) > 1) {
+                    //Cập nhật nội dung thông báo
+                    $latestLiker = User::find(array_shift($participants));
+                    $remainingLikesCount = count($participants);
+                    $message = $latestLiker->username . ' và ' . $remainingLikesCount . ' người khác đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
+                    if (!is_null($notification)) {
+                        //Update thời gian thông báo
+                        $notification->update([
+                            'content' => $message,
+                            'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
+                        ]);
+                        broadcast(new ReceiveNotification($notification))->toOthers();
+                    } else {
+                        //Tạo mới thông báo
+                        $notification = Notification::create([
+                            'sender' => Auth::id(),
+                            'recipient' => $model->user_id,
+                            'content' => $message,
+                            'notification_type' => $notificationType,
+                            'status' => config('default.notification.status.not_seen'),
+                            'objet_id' => $item,
+                        ]);
+                        broadcast(new ReceiveNotification($notification))->toOthers();
+                    }
                 } else {
-                    //Tạo mới thông báo
-                    $notification = Notification::create([
-                        'sender' => Auth::id(),
-                        'recipient' => $model->user_id,
-                        'content' => $message,
-                        'notification_type' => $notificationType,
-                        'status' => config('default.notification.status.not_seen'),
-                        'objet_id' => $item,
-                    ]);
-                    broadcast(new ReceiveNotification($notification))->toOthers();
+                    if (!is_null($notification)) {
+                        //Update thời gian thông báo
+                        $notification->update([
+                            'content' => $message,
+                            'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
+                        ]);
+                        broadcast(new ReceiveNotification($notification))->toOthers();
+                    } else {
+                        //Tạo mới thông báo
+                        $notification = Notification::create([
+                            'sender' => Auth::id(),
+                            'recipient' => $model->user_id,
+                            'content' => $message,
+                            'notification_type' => $notificationType,
+                            'status' => config('default.notification.status.not_seen'),
+                            'objet_id' => $item,
+                        ]);
+                        broadcast(new ReceiveNotification($notification))->toOthers();
+                    }
                 }
             }
             $message = 'Emotion added successfully';
