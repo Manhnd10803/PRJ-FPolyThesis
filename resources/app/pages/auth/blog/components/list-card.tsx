@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { icon1, icon2, icon3, icon4 } from './icon';
 import { Card } from '@/components/custom';
 import { formatDateFromCreatedAt } from './format-date';
+import parse from 'html-react-parser';
 export const ListCard = ({ data }: any) => {
   const navigate = useNavigate();
   const truncateTextStyle = {
@@ -18,6 +19,7 @@ export const ListCard = ({ data }: any) => {
     navigate(`/blog/${id}`);
     console.log(`View details of user with ID ${id}`);
   };
+
   return (
     <Row>
       {data &&
@@ -40,7 +42,7 @@ export const ListCard = ({ data }: any) => {
                         <Link to="#">{formatDateFromCreatedAt(itemblog.blog.created_at)}</Link>
                       </div>
                       <h5 className="mb-2">{itemblog.blog.title}</h5>
-                      <div style={truncateTextStyle}>{itemblog.blog.content}</div>
+                      <div style={truncateTextStyle}>{parse(JSON.parse(itemblog.blog.content))}</div>
                       <Button
                         onClick={() => handleDetailsClick(itemblog.blog.id)}
                         className="d-flex align-items-center"
