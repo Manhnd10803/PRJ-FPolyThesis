@@ -112,7 +112,7 @@ class BlogController extends Controller
         try {
             $majorsId = $request->input('majors_id');
             $hashtag = $request->input('hashtag');
-            $query = Blog::query();
+            $query = Blog::query()->where('status', config('default.blog.status.approved'));
 
             if ($majorsId) {
                 $query->where('majors_id', $majorsId);
@@ -166,8 +166,20 @@ class BlogController extends Controller
                 ];
                 array_push($result, $blogData);
             }
+            $paginationData = [
+                'total_pages' => $blogs->lastPage(),
+                'current_page' => $blogs->currentPage(),
+                'per_page' => $blogs->perPage(),
+                'total' => $blogs->total(),
+                // Add other pagination details if needed
+            ];
+    
+            $response = [
+                'blogs' => $result, // Store the individual blog data
+                'pagination' => $paginationData,
+            ];
             DB::commit();
-            return response()->json($result, 200);
+            return response()->json($response, 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()], 400);
