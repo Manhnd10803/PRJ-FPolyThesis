@@ -7,11 +7,12 @@ import backgroundImage from '../../../../assets/images/profile-bg1.jpg';
 import { CloudiaryService } from '@/apis/services/cloudinary.service';
 import { ProfileService } from '@/apis/services/profile.service';
 import toast from 'react-hot-toast';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { IProfileUser } from '@/models/user';
 import MuiButton from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { formatFullName } from '@/utilities/functions';
 
 const imageUrl = 'https://picsum.photos/20';
 
@@ -35,9 +36,9 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
-  const [modalShow, setModalShow] = React.useState(false);
-  const [modalShow2, setModalShow2] = React.useState(false);
-  const [modalShow3, setModalShow3] = React.useState(false);
+  const [modalShowUploadImage, setModalShowUplodaImage] = React.useState(false);
+  const [modalShowResizeImage, setModalShowResizeImage] = React.useState(false);
+  const [modalShowNoti, setModalShowNoti] = React.useState(false);
   const { total_blog, total_post, total_friend, user } = detailUser || {};
   const [imageCoverPhoto, setImageCoverPhoto] = useState('');
   const [checkAddFriend, setCheckAddFriend] = useState('');
@@ -75,13 +76,13 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
           const image = new Image();
           image.onload = () => {
             if (image.width < 1300) {
-              setModalShow3(true);
+              setModalShowNoti(true);
             } else {
               const base64String: string | null = event.target?.result as string;
               if (base64String) {
                 setImageCoverPhoto(base64String);
-                setModalShow(false);
-                setModalShow2(true);
+                setModalShowUplodaImage(false);
+                setModalShowResizeImage(true);
               }
             }
           };
@@ -134,10 +135,12 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
           />
         </Modal.Body>
         <Modal.Footer>
-          <Button className="bg-secondary" onClick={props.onHide}>
-            Close
-          </Button>
-          <Button onClick={handleSaveImage}>Lưu</Button>
+          {!isLoadingUpdate && (
+            <Button className="bg-secondary" onClick={props.onHide}>
+              Close
+            </Button>
+          )}
+          <Button onClick={handleSaveImage}>{isLoadingUpdate ? 'Loading...' : 'Lưu'}</Button>
         </Modal.Footer>
       </Modal>
     );
@@ -157,6 +160,8 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
     return new File([u8arr], filename, { type: mime });
   };
 
+  const updateCoverPhotoMutation = useMutation(ProfileService.updateCoverPhoto);
+  const { isLoading: isLoadingUpdate, isSuccess, isError } = updateCoverPhotoMutation;
   const handleSaveImage = async () => {
     const canvas = imageCoverRef?.current?.getImage();
     const imageBase64 = canvas.toDataURL('image/jpeg'); // Chuyển canvas thành base64
@@ -170,10 +175,15 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
     const dataForm = {
       cover_photo: data[0],
     };
-    await ProfileService.updateCoverPhoto(dataForm);
-    toast.success('Cập nhật ảnh bìa thành công');
-    setModalShow2(false);
-    queryClient.invalidateQueries(queryKey);
+    await updateCoverPhotoMutation.mutateAsync(dataForm);
+    if (isSuccess) {
+      toast.success('Cập nhật ảnh bìa thành công');
+      setModalShowResizeImage(false);
+      queryClient.invalidateQueries(queryKey);
+    }
+    if (isError) {
+      toast.error('Cập nhật ảnh bìa thất bại');
+    }
   };
 
   const getStatusFriend = async () => {
@@ -226,9 +236,9 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
 
   return (
     <>
-      <UploadImage show={modalShow} onHide={() => setModalShow(false)} />
-      <ResizeImage show={modalShow2} onHide={() => setModalShow2(false)} />
-      <NotiModal show={modalShow3} onHide={() => setModalShow3(false)} />
+      <UploadImage show={modalShowUploadImage} onHide={() => setModalShowUplodaImage(false)} />
+      <ResizeImage show={modalShowResizeImage} onHide={() => setModalShowResizeImage(false)} />
+      <NotiModal show={modalShowNoti} onHide={() => setModalShowNoti(false)} />
       <Col sm={12}>
         <Card>
           <Card.Body className=" profile-page p-0">
@@ -272,7 +282,7 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
                         <Link
                           to="#"
                           className="material-symbols-outlined cursor-pointer"
-                          onClick={() => setModalShow(true)}
+                          onClick={() => setModalShowUplodaImage(true)}
                         >
                           photo_camera
                         </Link>
@@ -289,7 +299,7 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
                       <img loading="lazy" src={user?.avatar} alt="profile-img1" className="avatar-130 img-fluid" />
                     </div>
                     <div className="profile-detail">
-                      <h3>{user?.username}</h3>
+                      <h3>{formatFullName(user)}</h3>
                     </div>
                   </div>
                 </>

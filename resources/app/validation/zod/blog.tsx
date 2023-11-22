@@ -14,7 +14,7 @@ export const blogCreateSchema = z.object({
       }
       return false;
     }, 'Hashtag must start with "#"'),
-  content: z.string().min(1, 'Content is required'),
+  // content: z.string().min(1, 'Content is required'),
 });
 
 export type TBlogCreateSchema = z.infer<typeof blogCreateSchema>;

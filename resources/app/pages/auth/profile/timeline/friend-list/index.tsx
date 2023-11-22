@@ -1,9 +1,9 @@
+import { IUser } from '@/models/user';
+import { formatFullName } from '@/utilities/functions';
 import { Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-const imageUrl = 'https://picsum.photos/20';
-
-export const FriendList = () => {
+export const FriendList = ({ listFriend }) => {
   return (
     <>
       <Card>
@@ -13,66 +13,21 @@ export const FriendList = () => {
           </div>
           <div className="card-header-toolbar d-flex align-items-center">
             <p className="m-0">
-              <Link to="javacsript:void();">Add New </Link>
+              <Link to="#">More </Link>
             </p>
           </div>
         </div>
         <Card.Body>
           <ul className="profile-img-gallary p-0 m-0 list-unstyled">
-            <li>
-              <Link to="#">
-                <img loading="lazy" src={imageUrl} alt="gallary" className="img-fluid" />
-              </Link>
-              <h6 className="mt-2 text-center">Anna Rexia</h6>
-            </li>
-            <li>
-              <Link to="#">
-                <img loading="lazy" src={imageUrl} alt="gallary" className="img-fluid" />
-              </Link>
-              <h6 className="mt-2 text-center">Tara Zona</h6>
-            </li>
-            <li>
-              <Link to="#">
-                <img loading="lazy" src={imageUrl} alt="gallary" className="img-fluid" />
-              </Link>
-              <h6 className="mt-2 text-center">Polly Tech</h6>
-            </li>
-            <li>
-              <Link to="#">
-                <img loading="lazy" src={imageUrl} alt="gallary" className="img-fluid" />
-              </Link>
-              <h6 className="mt-2 text-center">Bill Emia</h6>
-            </li>
-            <li>
-              <Link to="#">
-                <img loading="lazy" src={imageUrl} alt="gallary" className="img-fluid" />
-              </Link>
-              <h6 className="mt-2 text-center">Moe Fugga</h6>
-            </li>
-            <li>
-              <Link to="#">
-                <img loading="lazy" src={imageUrl} alt="gallary" className="img-fluid" />
-              </Link>
-              <h6 className="mt-2 text-center">Hal Appeno </h6>
-            </li>
-            <li>
-              <Link to="#">
-                <img loading="lazy" src={imageUrl} alt="gallary" className="img-fluid" />
-              </Link>
-              <h6 className="mt-2 text-center">Zack Lee</h6>
-            </li>
-            <li>
-              <Link to="#">
-                <img loading="lazy" src={imageUrl} alt="gallary" className="img-fluid" />
-              </Link>
-              <h6 className="mt-2 text-center">Terry Aki</h6>
-            </li>
-            <li>
-              <Link to="#">
-                <img loading="lazy" src={imageUrl} alt="gallary" className="img-fluid" />
-              </Link>
-              <h6 className="mt-2 text-center">Greta Life</h6>
-            </li>
+            {listFriend &&
+              listFriend.map((item: IUser, index: number) => (
+                <li key={index}>
+                  <Link to={`/profile/${item.id}`}>
+                    <img loading="lazy" width={80} height={80} src={item.avatar} alt="gallary" className="img-fluid" />
+                  </Link>
+                  <h6 className="mt-2 text-center">{formatFullName(item)}</h6>
+                </li>
+              ))}
           </ul>
         </Card.Body>
       </Card>

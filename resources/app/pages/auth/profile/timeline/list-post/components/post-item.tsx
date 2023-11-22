@@ -11,7 +11,8 @@ import icon5 from '../../../../../../assets/images/icon/05.png';
 import icon6 from '../../../../../../assets/images/icon/06.png';
 import icon7 from '../../../../../../assets/images/icon/07.png';
 import { formatTimeFromCreatedAt } from '../../../components/format-time';
-export const PostItem = ({ data, index }) => {
+import { formatFullName } from '@/utilities/functions';
+export const PostItem = ({ data, index, aboutUser }) => {
   return (
     <>
       <Card key={index}>
@@ -20,19 +21,13 @@ export const PostItem = ({ data, index }) => {
             <div className="user-post-data pb-3">
               <div className="d-flex justify-content-between">
                 <div className="me-3">
-                  {data?.user?.avatar !== null ? (
-                    <>
-                      <img loading="lazy" className="rounded-circle  avatar-60" src={data?.user?.avatar} alt="" />
-                    </>
-                  ) : (
-                    <img loading="lazy" className="rounded-circle  avatar-60" src={imageUrl} alt="" />
-                  )}
+                  <img loading="lazy" className="rounded-circle  avatar-60" src={aboutUser?.avatar} alt="avatar" />
                 </div>
                 <div className="w-100">
                   <div className="d-flex justify-content-between flex-wrap">
                     <div>
                       <h5 className="mb-0 d-inline-block">
-                        <Link to="#">{data?.user?.username}</Link>
+                        <Link to="#">{formatFullName(aboutUser)}</Link>
                       </h5>
                       <p className="ms-1 mb-0 d-inline-block">{data?.post?.feeling}</p>
                       <p className="mb-0">{formatTimeFromCreatedAt(data?.post?.created_at)}</p>

@@ -1,11 +1,11 @@
-.col-4.sticky-col-4 {
+.col-lg-4.sticky-col-4 {
   position: sticky;
-  top: 0;
+  top: 80px;
   height: 100vh;
 }
-.col-4 {
+.col-lg-4 {
   transition: transform 0.3s ease-in-out;
 }
-.content-page{
-overflow: visible;
+.content-page {
+  overflow: visible;
 }
