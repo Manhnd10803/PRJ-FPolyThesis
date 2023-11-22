@@ -17,7 +17,6 @@ class AdminBlogController extends Controller
         DB::beginTransaction();
         try {
             $blog->update(['status' => config('default.blog.status.approved')]);
-            DB::commit();
             $notificationType = config('default.notification.notification_type.comment_blog');
             $message = "Blog " . $blog->title . " của bạn đã được duyệt.";
             $notification = Notification::create([
@@ -28,7 +27,9 @@ class AdminBlogController extends Controller
                 'status' => config('default.notification.status.not_seen'),
                 'objet_id' => $blog->id,
             ]);
+            $notification->avatar_sender = Auth::user()->avatar;
             broadcast(new ReceiveNotification($notification))->toOthers();
+            DB::commit();
             return redirect()->route('admin.blogs.show', ['blog' => $blog->id])
                 ->with('success', 'Bài viết đã được duyệt thành công');
         } catch (\Exception $e) {
@@ -51,6 +52,7 @@ class AdminBlogController extends Controller
                 'status' => config('default.notification.status.not_seen'),
                 'objet_id' => $blog->id,
             ]);
+            $notification->avatar_sender = Auth::user()->avatar;
             broadcast(new ReceiveNotification($notification))->toOthers();
             DB::commit();
             return redirect()->route('admin.blogs.show', ['blog' => $blog->id])

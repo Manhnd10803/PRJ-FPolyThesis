@@ -151,6 +151,7 @@ class CommentController extends Controller
                                 'content' => $message,
                                 'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
                             ]);
+                            $notification->avatar_sender = Auth::user()->avatar;
                             broadcast(new ReceiveNotification($notification))->toOthers();
                         } else {
                             //Tạo mới thông báo
@@ -162,6 +163,7 @@ class CommentController extends Controller
                                 'status' => config('default.notification.status.not_seen'),
                                 'objet_id' => $id,
                             ]);
+                            $notification->avatar_sender = Auth::user()->avatar;
                             broadcast(new ReceiveNotification($notification))->toOthers();
                         }
                     } else {
@@ -171,6 +173,7 @@ class CommentController extends Controller
                                 'content' => $message,
                                 'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
                             ]);
+                            $notification->avatar_sender = Auth::user()->avatar;
                             broadcast(new ReceiveNotification($notification))->toOthers();
                         } else {
                             //Tạo mới thông báo
@@ -182,6 +185,7 @@ class CommentController extends Controller
                                 'status' => config('default.notification.status.not_seen'),
                                 'objet_id' => $id,
                             ]);
+                            $notification->avatar_sender = Auth::user()->avatar;
                             broadcast(new ReceiveNotification($notification))->toOthers();
                         }
                     }
@@ -237,6 +241,7 @@ class CommentController extends Controller
                                 'content' => $message,
                                 'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
                             ]);
+                            $notification->avatar_sender = Auth::user()->avatar;
                             broadcast(new ReceiveNotification($notification))->toOthers();
                         } else {
                             //Tạo mới thông báo
@@ -248,6 +253,7 @@ class CommentController extends Controller
                                 'status' => config('default.notification.status.not_seen'),
                                 'objet_id' => $id,
                             ]);
+                            $notification->avatar_sender = Auth::user()->avatar;
                             broadcast(new ReceiveNotification($notification))->toOthers();
                         }
                     } else {
@@ -257,6 +263,7 @@ class CommentController extends Controller
                                 'content' => $message,
                                 'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
                             ]);
+                            $notification->avatar_sender = Auth::user()->avatar;
                             broadcast(new ReceiveNotification($notification))->toOthers();
                         } else {
                             //Tạo mới thông báo
@@ -268,6 +275,7 @@ class CommentController extends Controller
                                 'status' => config('default.notification.status.not_seen'),
                                 'objet_id' => $id,
                             ]);
+                            $notification->avatar_sender = Auth::user()->avatar;
                             broadcast(new ReceiveNotification($notification))->toOthers();
                         }
                     }

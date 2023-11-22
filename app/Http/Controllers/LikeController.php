@@ -112,7 +112,7 @@ class LikeController extends Controller
                 default:
                     break;
             }
-            if(Auth::user()->id != $model->user_id){
+            if (Auth::user()->id != $model->user_id) {
                 // Những người đã bày tỏ cảm xúc trước
                 $likes = $model->likes()->where('likes.user_id', '!=', Auth::id())->orderByDesc('id')->get();
                 foreach ($likes as $like) {
@@ -130,6 +130,7 @@ class LikeController extends Controller
                             'content' => $message,
                             'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
                         ]);
+                        $notification->avatar_sender = Auth::user()->avatar;
                         broadcast(new ReceiveNotification($notification))->toOthers();
                     } else {
                         //Tạo mới thông báo
@@ -141,6 +142,7 @@ class LikeController extends Controller
                             'status' => config('default.notification.status.not_seen'),
                             'objet_id' => $item,
                         ]);
+                        $notification->avatar_sender = Auth::user()->avatar;
                         broadcast(new ReceiveNotification($notification))->toOthers();
                     }
                 } else {
@@ -150,6 +152,7 @@ class LikeController extends Controller
                             'content' => $message,
                             'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
                         ]);
+                        $notification->avatar_sender = Auth::user()->avatar;
                         broadcast(new ReceiveNotification($notification))->toOthers();
                     } else {
                         //Tạo mới thông báo
@@ -161,6 +164,7 @@ class LikeController extends Controller
                             'status' => config('default.notification.status.not_seen'),
                             'objet_id' => $item,
                         ]);
+                        $notification->avatar_sender = Auth::user()->avatar;
                         broadcast(new ReceiveNotification($notification))->toOthers();
                     }
                 }
