@@ -8,15 +8,17 @@ import { IMajors } from '@/models/major';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { MajorService } from '@/apis/services/major.service';
 import { QandAService } from '@/apis/services/qanda.service';
-import { useState } from 'react';
-import PlaygroundApp from '@/components/shared/editor';
+import { useRef, useState } from 'react';
+import { SupperEditor } from '@/components/shared/editor';
 
-const imageUrl = 'https://picsum.photos/20';
+import { $generateHtmlFromNodes } from '@lexical/html';
 
 export const CreateQandA = () => {
   const navigate = useNavigate();
 
-  const [contentValue, setContentValue] = useState('');
+  const editorRef: any = useRef();
+
+  const contentHtmlRef = useRef<string>();
 
   const { data } = useQuery({
     queryKey: ['majors'],
@@ -41,7 +43,16 @@ export const CreateQandA = () => {
   });
 
   const onSubmit = (data: TQandACreateSchema) => {
-    data.content = contentValue;
+    editorRef.current.getEditorState().read(() => {
+      contentHtmlRef.current = $generateHtmlFromNodes(editorRef.current, null);
+
+      console.log('htmlString', contentHtmlRef.current);
+    });
+
+    data.content = JSON.stringify(contentHtmlRef.current);
+
+    console.log(data);
+
     if (!isLoading) {
       mutate(data, {
         onError: error => {
@@ -102,12 +113,9 @@ export const CreateQandA = () => {
                         rows={5}
                         placeholder="Nhập chi tiết thông tin câu hỏi của bạn ..."
                       /> */}
-                      <PlaygroundApp
-                        id="content"
-                        contentValue={contentValue}
-                        onContentChange={value => setContentValue(value)}
-                        {...createAsk('content')}
-                      />
+
+                      <SupperEditor ref={editorRef} />
+
                       <p className="text-danger">{errors?.content?.message}</p>
                     </Form.Group>
                     <Form.Group className="form-group">

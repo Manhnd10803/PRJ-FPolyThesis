@@ -72,16 +72,6 @@ const NAVBAR_SOCIAL_CONFIGS = [
     icon: <i className="icon material-symbols-outlined">groups</i>,
     pathname: pathName.GROUP,
   },
-  {
-    title: 'Editor',
-    icon: <i className="icon material-symbols-outlined">edit</i>,
-    pathname: pathName.EDITOR,
-  },
-  {
-    title: 'Upload Example',
-    icon: <i className="icon material-symbols-outlined">edit</i>,
-    pathname: pathName.UPLOAD,
-  },
 ];
 
 // ========== Component =========== //
