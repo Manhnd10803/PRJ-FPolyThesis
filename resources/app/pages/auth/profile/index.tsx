@@ -91,13 +91,15 @@ export const ProfilePage = () => {
                   <Tab.Pane eventKey="first">
                     <Timeline
                       about={detailUserProfile?.user}
-                      listPost={detailProfile?.data}
+                      listPost={detailProfile?.listPost}
+                      listImage={detailProfile?.detailTimeline?.images}
+                      listFriend={detailProfile?.detailTimeline?.friend_details}
                       isLoading={isLoading}
                       friend_id={id}
                     />
                   </Tab.Pane>
                   <Tab.Pane eventKey="second">
-                    <MyBlog listBlog={detailProfile?.data[0]?.blog?.data} isLoading={isLoading} />
+                    {type === 'blog' && <MyBlog listBlog={detailProfile?.data[0]?.blog?.data} isLoading={isLoading} />}
                   </Tab.Pane>
                   <Tab.Pane eventKey="third">
                     <FriendsMyUserPage />
@@ -241,7 +243,7 @@ export const ProfilePage = () => {
                     </Tab.Container>
                   </Tab.Pane>
                   <Tab.Pane eventKey="five">
-                    <MyListQa listQa={detailProfile?.data[0]?.qa?.data} isLoading={isLoading} />
+                    {type == 'qa' && <MyListQa listQa={detailProfile?.data[0]?.qa?.data} isLoading={isLoading} />}
                   </Tab.Pane>
                 </Tab.Content>
               </Col>

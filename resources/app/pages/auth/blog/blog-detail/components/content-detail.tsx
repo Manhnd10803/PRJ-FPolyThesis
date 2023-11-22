@@ -9,6 +9,8 @@ import { formatDMYCreatedAt, formatDateFromCreatedAt } from '../../components/fo
 import { Link } from 'react-router-dom';
 import { formatFullName } from '@/utilities/functions';
 import { pathName } from '@/routes/path-name';
+import parse from 'html-react-parser';
+
 export const ContentBlogDetail = ({ data, commentRef, createLike }: any) => {
   const [likeStatus, setLikeStatus] = useState(data?.user_like?.emotion || null);
   const [isContentExpanded, setContentExpanded] = useState(false);
@@ -110,7 +112,11 @@ export const ContentBlogDetail = ({ data, commentRef, createLike }: any) => {
               </div>
               <h5 className="mb-3 pb-3 border-bottom">{data?.blog?.title}</h5>
 
-              <p>{isContentExpanded ? data?.blog?.content : data?.blog?.content.slice(0, 200)}</p>
+              <p>
+                {isContentExpanded
+                  ? parse(JSON.parse(data?.blog?.content))
+                  : parse(JSON.parse(data?.blog?.content).slice(0, 450))}
+              </p>
               {data?.blog?.content.length > 200 && (
                 <div className="d-flex align-items-center text-primary" onClick={toggleContent} role="button">
                   {isContentExpanded ? 'Read Less' : 'Read More'}

@@ -15,6 +15,8 @@ import { FormComment } from '../comments/form-cmt';
 import { CommentsQandA } from '../comments/CommentsQandA';
 import { CommentService } from '@/apis/services/comment.service';
 import { LikeService } from '@/apis/services/like.service';
+import parse from 'html-react-parser';
+
 const imageUrl = 'https://picsum.photos/20';
 
 export const DetailQandAPage = () => {
@@ -270,7 +272,7 @@ export const DetailQandAPage = () => {
 
                         <h3 style={{ fontWeight: '600', marginBottom: '15px' }}>{qAndAData.qa.title}</h3>
 
-                        <h4 style={{ marginBottom: '15px' }}>{qAndAData.qa.content}</h4>
+                        <h4 style={{ marginBottom: '15px' }}>{parse(JSON.parse(qAndAData.qa.content))}</h4>
                         <Row className="mt-2">
                           {/* IMAGE */}
                           {/* <Col lg="4" md="6" className="mt-1">

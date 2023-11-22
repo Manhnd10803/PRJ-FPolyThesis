@@ -27,7 +27,8 @@ class ProfileController extends Controller
             $profileData = [
                 'user' => [
                     'id' => $user->id,
-                    'username' => $user->username,
+                    'first_name' => $user->first_name,
+                    'last_name' => $user->last_name,
                     'avatar' => $user->avatar,
                     'major' => $major->majors_name,
                     'cover_photo' => $user->cover_photo,
@@ -56,21 +57,64 @@ class ProfileController extends Controller
                 case 'post':
                     // Lấy danh sách bạn bè của người dùng
                     $friends = $user->friends;
+                    $friendDetails = [];
+
+                    // Duyệt qua danh sách bạn bè để lấy thông tin ID, firstname, lastname và avatar
+                    foreach ($friends as $friend) {
+                        $friendInfo = [
+                            'id' => $friend->id,
+                            'first_name' => $friend->first_name,
+                            'last_name' => $friend->last_name,
+                            'avatar' => $friend->avatar,
+                        ];
+                        // Thêm thông tin của người bạn vào mảng friendDetails
+                        $friendDetails[] = $friendInfo;
+                    }
                     // Lấy danh sách bài viết của người dùng
                     $postsQuery = Post::where('user_id', $user->id)->orderBy('created_at', 'DESC');
                     if ($user->id != $loggedInUser->id) {
                         $postsQuery->where('status', 0);
                     }
-                    $posts = $postsQuery->paginate(10);
                     $images = [];
-                    foreach ($posts as $post) {
-                        // Lấy danh sách ảnh của bài viết
-                        $postImages = $post->images;
-                        if (!is_null($postImages)) {
+                    $postList = $postsQuery->get();
+                    foreach ($postList as $post) {
+                        $postImages = $post->image;
+                        if (!is_null($postImages) && is_array($postImages)) {
                             foreach ($postImages as $image) {
                                 $images[] = $image;
                             }
+                        } elseif (!is_null($postImages) && is_string($postImages)) {
+                            if ($postImages == "null") {
+                                continue;
+                            }
+                            $images[] = $postImages;
                         }
+                    }
+                    $allImageUrls = [];
+                    foreach ($images as $imageString) {
+                        // Xử lý chuỗi JSON để lấy danh sách URL hình ảnh
+                        $imageArray = json_decode($imageString);
+
+                        // Kiểm tra nếu là một chuỗi JSON hợp lệ
+                        if (json_last_error() === JSON_ERROR_NONE && is_array($imageArray)) {
+                            foreach ($imageArray as $imageUrl) {
+                                // Xử lý các đường dẫn hình ảnh và thêm vào mảng tất cả các đường dẫn
+                                $imageUrl = str_replace(['\\"', '"'], ['', ''], $imageUrl); // Loại bỏ ký tự \ và "
+                                $allImageUrls[] = $imageUrl;
+                            }
+                        } else {
+                            // Nếu không phải là chuỗi JSON, xử lý trực tiếp URL và thêm vào mảng
+                            $imageUrl = str_replace(['\\"', '"'], ['', ''], $imageString); // Loại bỏ ký tự \ và "
+                            $allImageUrls[] = $imageUrl;
+                        }
+                    }
+
+                    // Lấy 9 URL đầu tiên từ danh sách
+                    $firstNineImages = array_slice($allImageUrls, 0, 9);
+                    $posts = $postsQuery->paginate(10);
+                    $listPost = [];
+                    foreach ($posts as $post) {
+
                         // Lấy tất cả like của bài viết
                         $likeCountsByEmotion = [];
                         $likeCountsByEmotion['total_likes'] = $post->likes->count();
@@ -94,20 +138,26 @@ class ProfileController extends Controller
                             $commentDemo->reply = Comment::where('post_id', $post->id)->where('parent_id', $commentDemo->id)->count();
                         }
                         $postData = [
-                            'user' => [
-                                'username' => $user->username,
-                                'avatar' => $user->avatar
-                            ],
-                            'images' => $images,
-                            'friends' => $friends,
                             'post' => $post,
                             'like_counts_by_emotion' => $likeCountsByEmotion,
                             'emotion_like_counts' => $emotionLikeCounts,
                             'total_comments' => $totalComment,
                             'democomments' => $commentDemos,
                         ];
-                        array_push($result, $postData);
+                        $listPost[] = $postData;
                     }
+                    $detailTimeline = [
+                        'user' => [
+                            'id' => $user->id,
+                            'first_name' => $user->first_name,
+                            'last_name' => $user->last_name,
+                            'avatar' => $user->avatar,
+                        ],
+                        'friend_details' => $friendDetails,
+                        'images' => $firstNineImages,
+                    ];
+                    DB::commit();
+                    return response()->json(['listPost' => $listPost, 'detailTimeline' => $detailTimeline], 200);
                     break;
                     // Load blog
                 case 'blog':

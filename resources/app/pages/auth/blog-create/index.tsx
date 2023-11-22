@@ -11,9 +11,12 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { MajorService } from '@/apis/services/major.service';
 import { IMajors } from '@/models/major';
-import { useState } from 'react';
 import { CloudiaryService } from '@/apis/services/cloudinary.service';
 import { pathName } from '@/routes/path-name';
+import { useRef, useState } from 'react';
+import { SupperEditor } from '@/components/shared/editor';
+
+import { $generateHtmlFromNodes } from '@lexical/html';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -28,8 +31,12 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 export const CreateBlogPage = () => {
-  const [files, setFiles] = useState<FileList | null>(null);
+  const editorRef: any = useRef();
+  const contentHtmlRef = useRef<string>();
+
   const navigate = useNavigate();
+
+  const [files, setFiles] = useState<FileList | null>(null);
 
   const { data } = useQuery({
     queryKey: ['majors'],
@@ -51,9 +58,18 @@ export const CreateBlogPage = () => {
   });
 
   const onSubmit = async (data: TBlogCreateSchema) => {
+    editorRef.current.getEditorState().read(() => {
+      contentHtmlRef.current = $generateHtmlFromNodes(editorRef.current, null);
+    });
+
+    const contentEditor = JSON.stringify(contentHtmlRef.current);
+    if (contentEditor == '"<p class=\\"PlaygroundEditorTheme__paragraph\\"><br></p>"' || contentEditor == '""') {
+      return toast.error('Nội dung không được để trống');
+    }
     const imageURL = await CloudiaryService.uploadImages(files, 'blog');
     const newData = {
       ...data,
+      content: contentEditor,
       thumbnail: imageURL[0],
     };
     if (!isLoading) {
@@ -133,8 +149,9 @@ export const CreateBlogPage = () => {
                   </Form.Group>
                   <Form.Group className="mb-3 form-group">
                     <Form.Label>Nội dung:</Form.Label>
-                    <Form.Control type="text" id="content" {...register('content')} />
-                    <span className="text-danger">{errors?.content?.message}</span>
+                    <SupperEditor ref={editorRef} />
+                    {/* <Form.Control type="text" id="content" {...register('content')} />
+                    <span className="text-danger">{errors?.content?.message}</span> */}
                   </Form.Group>
                   <div className="d-flex justify-content-end">
                     <Button
