@@ -2,8 +2,8 @@ import { IBlogs } from '@/models/blog';
 import httpRequest from '../axios-instance';
 import { ApiConstants } from '../endpoints';
 
-const showAllBlog = <T>(quantity: T) => {
-  return httpRequest.get(`${ApiConstants.BLOGS}/${quantity}`);
+const showAllBlog = <T>(page: T) => {
+  return httpRequest.get(`${ApiConstants.BLOGS}/2?page=${page}`);
 };
 const showDetailBlog = <T>(id: T) => {
   return httpRequest.get(`${ApiConstants.BLOG_DETAIL}/${id}`);
