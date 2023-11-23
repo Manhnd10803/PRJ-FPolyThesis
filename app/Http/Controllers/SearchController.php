@@ -152,7 +152,7 @@ class SearchController extends Controller
             // Trường hợp tìm kiếm theo tab như facebook
             switch ($modelName) {
                 case 'user':
-                    $model = User::where('username', 'like', '%' . $query . '%')->get();
+                    $model = User::where('username', 'like', '%' . $query . '%')->select('id', 'first_name', 'last_name', 'avatar')->get();
                     break;
                 case 'post':
                     $model = Post::where('content', 'like', '%' . $query . '%')->get();
@@ -169,7 +169,7 @@ class SearchController extends Controller
                 default:
                     // Trường hợp mặc định: Tìm kiếm theo tất cả các model url có dạng api/search/default
                     $model = collect([]);
-                    $model = $model->merge(User::where('username', 'like', '%' . $query . '%')->get());
+                    $model = $model->merge(User::where('username', 'like', '%' . $query . '%')->select('id', 'first_name', 'last_name', 'avatar')->get());
                     $model = $model->merge(Post::where('content', 'like', '%' . $query . '%')->get());
                     $model = $model->merge(Comment::where('content', 'like', '%' . $query . '%')->get());
                     $model = $model->merge(Blog::where('title', 'like', '%' . $query . '%')->get());
@@ -192,5 +192,19 @@ class SearchController extends Controller
         $userId = Auth::id();
         $recentSearches = Search::where('user_id', $userId)->orderBy('created_at', 'desc')->limit(10)->get();
         return response()->json($recentSearches, 200);
+    }
+    public function deleteOtherRecentSearches(Search $search)
+    {
+        $userId = Auth::id();
+        $deleteItem = Search::where('user_id', $userId)->where('id', $search->id);
+        $deleteItem->delete();
+        return response()->json(['message' => 'Delete item successfully'], 200);
+    }
+    public function deleteAllRecentSearches(Search $search)
+    {
+        $userId = Auth::id();
+        $search = Search::where('user_id', $userId);
+        $search->delete();
+        return response()->json(['message' => 'Delete item successfully'], 200);
     }
 }
