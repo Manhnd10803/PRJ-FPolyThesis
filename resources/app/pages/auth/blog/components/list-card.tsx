@@ -24,7 +24,7 @@ export const ListCard = ({ data }: any) => {
     <Row>
       {data &&
         data.map((itemblog, index) => (
-          <Col lg="12" key={itemblog.blog.id}>
+          <Col lg="12" key={index}>
             <Card className={`card-block card-stretch card-height blog-list ${index % 2 === 0 ? '' : 'list-even'}`}>
               <Card.Body>
                 <Row className="align-items-center">

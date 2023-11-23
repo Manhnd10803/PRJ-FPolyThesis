@@ -1,18 +1,37 @@
-import { Container, Col, Spinner, Row } from 'react-bootstrap';
+import { Container, Col, Spinner } from 'react-bootstrap';
 import { ListCard } from './components/list-card';
 import { Link } from 'react-router-dom';
 import { BlogService } from '@/apis/services/blog.service';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { pathName } from '@/routes/path-name';
+import { useEffect, useState } from 'react';
 
 export const BlogPage = () => {
-  const fetchBlogs = async () => {
-    const { data } = await BlogService.showAllBlog(4);
-    const blogData = data;
-    return blogData;
+  const [totalPage, settotalPage] = useState(0);
+  const fetchBlogs = async ({ pageParam = 1 }) => {
+    const { data } = await BlogService.showAllBlog(pageParam);
+    settotalPage(data?.pagination.total_pages);
+    return data;
   };
-  const { data, isLoading } = useQuery(['blogs'], () => fetchBlogs());
-  console.log(data);
+
+  const { isLoading, data, fetchNextPage, isFetching, hasNextPage } = useInfiniteQuery(['colors'], fetchBlogs, {
+    getNextPageParam: (lastPage, pages) => {
+      return lastPage.pagination.current_page + 1;
+    },
+  });
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const isAtBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 200;
+      if (isAtBottom && !isFetching && totalPage > data?.pages.length) {
+        fetchNextPage();
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isFetching, hasNextPage]);
 
   return (
     <>
@@ -40,7 +59,10 @@ export const BlogPage = () => {
               <span className="visually-hidden">Loading...</span>
             </Spinner>
           ) : (
-            <ListCard data={data} />
+            <>
+              <ListCard data={data?.pages.flatMap(page => page.blogs)} />
+              {isFetching ? <span> Loading...</span> : null}{' '}
+            </>
           )}
         </Container>
       </div>
