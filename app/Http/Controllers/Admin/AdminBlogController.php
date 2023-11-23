@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\ReceiveNotification;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use App\Models\Notification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class AdminBlogController extends Controller
@@ -14,6 +17,18 @@ class AdminBlogController extends Controller
         DB::beginTransaction();
         try {
             $blog->update(['status' => config('default.blog.status.approved')]);
+            $notificationType = config('default.notification.notification_type.comment_blog');
+            $message = "Blog " . $blog->title . " của bạn đã được duyệt.";
+            $notification = Notification::create([
+                'sender' => Auth::id(),
+                'recipient' => $blog->user_id,
+                'content' => $message,
+                'notification_type' => $notificationType,
+                'status' => config('default.notification.status.not_seen'),
+                'objet_id' => $blog->id,
+            ]);
+            $notification->avatar_sender = Auth::user()->avatar;
+            broadcast(new ReceiveNotification($notification))->toOthers();
             DB::commit();
             return redirect()->route('admin.blogs.show', ['blog' => $blog->id])
                 ->with('success', 'Bài viết đã được duyệt thành công');
@@ -27,6 +42,18 @@ class AdminBlogController extends Controller
         DB::beginTransaction();
         try {
             $blog->update(['status' => config('default.blog.status.reject')]);
+            $notificationType = config('default.notification.notification_type.comment_blog');
+            $message = "Blog " . $blog->title . " của bạn bị từ chối.";
+            $notification = Notification::create([
+                'sender' => Auth::id(),
+                'recipient' => $blog->user_id,
+                'content' => $message,
+                'notification_type' => $notificationType,
+                'status' => config('default.notification.status.not_seen'),
+                'objet_id' => $blog->id,
+            ]);
+            $notification->avatar_sender = Auth::user()->avatar;
+            broadcast(new ReceiveNotification($notification))->toOthers();
             DB::commit();
             return redirect()->route('admin.blogs.show', ['blog' => $blog->id])
                 ->with('success', 'Bài viết đã được hủy thành công');
