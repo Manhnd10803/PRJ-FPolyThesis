@@ -5,10 +5,10 @@ import { useEffect } from 'react';
 import { Dropdown, Spinner } from 'react-bootstrap';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 type HeaderChatProps = {
-  onDeleteChat: () => void;
+  onClickRemoveChat: () => void;
 };
 
-export const HeaderChat = ({ onDeleteChat }: HeaderChatProps) => {
+export const HeaderChat = ({ onClickRemoveChat }: HeaderChatProps) => {
   const { id: chat_id } = useParams();
 
   const navigate = useNavigate();
@@ -44,7 +44,7 @@ export const HeaderChat = ({ onDeleteChat }: HeaderChatProps) => {
             <div className="chat-header-icons d-flex">
               <Link
                 to="#"
-                onClick={onDeleteChat}
+                onClick={onClickRemoveChat}
                 className="chat-icon-phone bg-soft-primary d-flex justify-content-center align-items-center"
               >
                 <i className="material-symbols-outlined md-18">delete</i>

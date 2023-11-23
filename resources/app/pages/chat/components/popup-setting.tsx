@@ -1,8 +1,16 @@
-import { useEffect, useState } from 'react';
+import { StorageFunc } from '@/utilities/local-storage/storage-func';
+import { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-export const PopUpSetting = ({ data, show1, setShow1 }) => {
+type PopUpSettingProps = {
+  show: boolean;
+  setShow: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export const PopUpSetting = ({ show, setShow }: PopUpSettingProps) => {
+  const userInfo = StorageFunc.getUser();
+
   useEffect(() => {
     ChatSidebar();
   }, []);
@@ -15,26 +23,24 @@ export const PopUpSetting = ({ data, show1, setShow1 }) => {
     document.getElementsByClassName('scroller')[0].classList.remove('show');
   };
   return (
-    <div id="user-detail-popup" className={`scroller ${show1 === 'true' ? 'show' : ''}`}>
+    <div id="user-detail-popup" className={`scroller ${show ? 'show' : ''}`}>
       <div className="user-profile">
         <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3">
-          <i className="material-symbols-outlined md-18" onClick={() => setShow1('false')}>
+          <i className="material-symbols-outlined md-18" onClick={() => setShow(false)}>
             close
           </i>
         </Button>
 
         <div className="user text-center mb-4">
           <Link className="avatar m-0" to="">
-            <img loading="lazy" src={data?.user?.avatar} alt="avatar" width={70} height={70} />
+            <img loading="lazy" src={userInfo?.avatar} alt="avatar" width={70} height={70} />
           </Link>
 
           <div className="user-name mt-4">
-            <h4 className="text-center">{data?.user?.username}</h4>
+            <h4 className="text-center">{userInfo?.username}</h4>
           </div>
 
-          <div className="user-desc">
-            <p className="text-center">{data?.user?.major}</p>
-          </div>
+          <div className="user-desc">{/* <p className="text-center">{userInfo?.major}</p> */}</div>
         </div>
 
         <hr />

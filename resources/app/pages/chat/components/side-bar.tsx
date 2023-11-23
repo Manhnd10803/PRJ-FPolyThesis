@@ -5,7 +5,7 @@ import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Form, Nav } from 'react-bootstrap';
-import { ListUserChat } from './list-user-chat';
+import { ListPrivateChannel } from './list-private-channel';
 import { PopUpSetting } from './popup-setting';
 
 export const queryKeyListChat = ['list_user_chat'];
@@ -15,26 +15,28 @@ export const SideBar = () => {
 
   const dispatch = useAppDispatch();
 
+  const [showPopupSetting, setShowPopupSetting] = useState(false);
+
   const [searchText, setSearchText] = useState('');
 
   // func
-  const getListUserChat = async () => {
-    const { data } = await MessagesService.getListUserChat();
+  const getListPrivateChannel = async () => {
+    const { data } = await MessagesService.getListPrivateChannel();
     return data;
   };
 
-  const { data: listUserChat, isLoading } = useQuery({
+  const { data: listPrivateChannel, isLoading } = useQuery({
     queryKey: queryKeyListChat,
-    queryFn: getListUserChat,
+    queryFn: getListPrivateChannel,
     onSuccess: data => {
-      dispatch(chatActions.setListUserChat(data));
+      dispatch(chatActions.setListPrivateChannel(data));
     },
   });
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
   };
-  const [show1, setShow1] = useState('false');
+
   return (
     <>
       <div className="chat-search pt-3 ps-3">
@@ -45,7 +47,7 @@ export const SideBar = () => {
               src={userInfo?.avatar}
               alt="chat-user"
               className="avatar-60 "
-              onClick={() => setShow1('true')}
+              onClick={() => setShowPopupSetting(true)}
             />
           </div>
           <div className="chat-caption">
@@ -54,7 +56,7 @@ export const SideBar = () => {
           </div>
         </div>
 
-        <PopUpSetting data={userInfo} show1={show1} setShow1={setShow1} />
+        <PopUpSetting show={showPopupSetting} setShow={setShowPopupSetting} />
 
         <div className="chat-searchbar mt-4">
           <Form.Group className="form-group chat-search-data m-0">
@@ -73,8 +75,10 @@ export const SideBar = () => {
         <h5 className="mt-3">Tin nhắn</h5>
         <Nav as="ul" variant="pills" className="iq-chat-ui nav flex-column">
           {isLoading ? <div>Loading...</div> : null}
-          {listUserChat?.length === 0 && <div>Không có tin nhắn nào</div>}
-          {listUserChat && listUserChat.length > 0 ? <ListUserChat data={listUserChat} search={searchText} /> : null}
+          {listPrivateChannel?.length === 0 && <div>Không có tin nhắn nào</div>}
+          {listPrivateChannel && listPrivateChannel.length > 0 ? (
+            <ListPrivateChannel data={listPrivateChannel} search={searchText} />
+          ) : null}
         </Nav>
       </div>
     </>

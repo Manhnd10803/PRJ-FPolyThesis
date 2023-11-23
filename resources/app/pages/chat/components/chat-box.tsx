@@ -33,7 +33,7 @@ export const ChatBox = () => {
   };
   //======================================= get list message =======================================//
   const getListMessage = async () => {
-    const { data } = await MessagesService.showMessages(chat_id);
+    const { data } = await MessagesService.getMessagesOfChannel(chat_id);
     dispatch(chatActions.setListMessage(data));
     return data;
   };

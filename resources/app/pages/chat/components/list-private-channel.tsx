@@ -4,12 +4,12 @@ import { IUser } from '@/models/user';
 import { pathName } from '@/routes/path-name';
 import { Link } from 'react-router-dom';
 
-type ListUserChatProps = {
+type ListPrivateChannelProps = {
   data: Array<IUser>;
   search: string;
 };
 
-export const ListUserChat = ({ data, search }: ListUserChatProps) => {
+export const ListPrivateChannel = ({ data, search }: ListPrivateChannelProps) => {
   const normalizedSearch = diacritics.remove(search.toLowerCase());
 
   const filteredUsers = search

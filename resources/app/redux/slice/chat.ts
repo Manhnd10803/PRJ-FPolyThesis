@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState: ChatState = {
   isLoading: false,
-  listUserChat: [],
+  listPrivateChannel: [],
   listMessage: [],
   chatWithUser: undefined,
 };
@@ -12,11 +12,11 @@ const chatSlice = createSlice({
   name: 'chat',
   initialState,
   reducers: {
-    setListUserChat: (state, action) => {
-      state.listUserChat = action.payload;
+    setListPrivateChannel: (state, action) => {
+      state.listPrivateChannel = action.payload;
     },
     getDetailUserChatById: (state, action) => {
-      state.chatWithUser = state.listUserChat.find(user => Number(user.id) === Number(action.payload));
+      state.chatWithUser = state.listPrivateChannel.find(user => Number(user.id) === Number(action.payload));
     },
     setListMessage: (state, action) => {
       state.listMessage = action.payload;
@@ -28,7 +28,7 @@ const chatSlice = createSlice({
       state.listMessage = state.listMessage.filter(message => Number(message.id) !== Number(action.payload));
     },
     removeChannel: (state, action) => {
-      state.listUserChat = state.listUserChat.filter(user => user.id !== action.payload);
+      state.listPrivateChannel = state.listPrivateChannel.filter(user => user.id !== action.payload);
     },
     clear: () => initialState,
   },

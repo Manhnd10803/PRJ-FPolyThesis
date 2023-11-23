@@ -27,7 +27,7 @@ export const ChatPage = () => {
 
   const dispatch = useAppDispatch();
 
-  const { listUserChat } = useAppSelector(state => state.chat);
+  const { listPrivateChannel } = useAppSelector(state => state.chat);
 
   const { accessToken } = useAppSelector(state => state.auth);
 
@@ -35,8 +35,6 @@ export const ChatPage = () => {
 
   //state
   const [showModal, setShowModal] = useState(false);
-
-  const modalRef = useRef<HTMLDivElement>(null);
 
   const localUserId = StorageFunc.getUserId();
 
@@ -56,14 +54,9 @@ export const ChatPage = () => {
     });
   };
 
-  const handleDeleteChat = () => {
+  const handleConfirmDeleteChat = () => {
     dispatch(chatActions.removeChannel(Number(chat_id)));
-
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
+    // setShowModal(true);
   };
 
   //xoá đoạn chat
@@ -80,25 +73,10 @@ export const ChatPage = () => {
   );
   const handleConfirmDelete = () => {
     // deleteMessageMutation.mutate(Number(chat_id));
+    console.log('xoa');
+
     setShowModal(false);
   };
-
-  useEffect(() => {
-    const handleClickOutside = (event: any) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        handleCloseModal();
-      }
-    };
-    if (showModal) {
-      document.addEventListener('mousedown', handleClickOutside);
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showModal]);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -116,7 +94,7 @@ export const ChatPage = () => {
         }
 
         // Nếu người gửi chưa có trong danh sách chat thì cập nhật lại danh sách user chat
-        const isNewSender = listUserChat?.findIndex((item: IUser) => item.id === sender_id) === -1;
+        const isNewSender = listPrivateChannel?.findIndex((item: IUser) => item.id === sender_id) === -1;
 
         console.log('isNewSender', isNewSender);
 
@@ -142,14 +120,9 @@ export const ChatPage = () => {
 
   return (
     <>
-      {/* <>
-        <PopUpDeleteChat
-          showModal={showModal}
-          onClose={handleCloseModal}
-          ref={modalRef}
-          onDelete={handleConfirmDelete}
-        />
-      </> */}
+      <>
+        <PopUpDeleteChat showModal={showModal} onClose={() => setShowModal(false)} onDelete={handleConfirmDelete} />
+      </>
       <div id="content-page" className="content-page p-0">
         <Row>
           <Col sm="12">
@@ -164,7 +137,7 @@ export const ChatPage = () => {
                       {chat_id ? (
                         <Tab.Content>
                           <div style={{ position: 'relative', minHeight: '100%' }}>
-                            <HeaderChat onDeleteChat={handleDeleteChat} />
+                            <HeaderChat onClickRemoveChat={handleConfirmDeleteChat} />
 
                             <ChatBox />
 

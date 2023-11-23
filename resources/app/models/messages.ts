@@ -26,12 +26,12 @@ export interface Sender {
 
 export type ChatState = {
   isLoading: boolean;
-  listUserChat: Array<IUser>;
+  listPrivateChannel: Array<IUser>;
   listMessage: Array<IMessages>;
   chatWithUser: IUser | undefined;
 };
 
-export type GetListUserChatResponseType = Array<IUser>;
+export type GetListPrivateChannelResponseType = Array<IUser>;
 
 export type SendMessageResponseType = {
   message: string;
