@@ -4,32 +4,46 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState: ChatState = {
   isLoading: false,
   listPrivateChannel: [],
-  listMessage: [],
-  chatWithUser: undefined,
+  selectedUserInfo: undefined,
+  conversation: [],
 };
 
 const chatSlice = createSlice({
   name: 'chat',
   initialState,
   reducers: {
+    setLoading: (state, action) => {
+      state.isLoading = action.payload;
+    },
     setListPrivateChannel: (state, action) => {
       state.listPrivateChannel = action.payload;
     },
+
     getDetailUserChatById: (state, action) => {
-      state.chatWithUser = state.listPrivateChannel.find(user => Number(user.id) === Number(action.payload));
+      state.selectedUserInfo = state.listPrivateChannel.find(user => +user.id === +action.payload);
     },
-    setListMessage: (state, action) => {
-      state.listMessage = action.payload;
+
+    setConversation: (state, action) => {
+      state.conversation = action.payload;
     },
-    addMessageToListMessage: (state, action) => {
-      state.listMessage.push(action.payload);
+
+    addMessageToConversation: (state, action) => {
+      state.conversation.push(action.payload);
     },
-    removeMessageFromListMessage: (state, action) => {
-      state.listMessage = state.listMessage.filter(message => Number(message.id) !== Number(action.payload));
+
+    removeMessageFromConversation: (state, action) => {
+      state.conversation = state.conversation.filter(message => +message.id !== +action.payload);
     },
-    removeChannel: (state, action) => {
-      state.listPrivateChannel = state.listPrivateChannel.filter(user => user.id !== action.payload);
+
+    removePrivateChannel: (state, action) => {
+      state.conversation = [];
+      state.listPrivateChannel = state.listPrivateChannel.filter(channel => +channel.id !== +action.payload);
     },
+
+    clearConversation: state => {
+      state.conversation = [];
+    },
+
     clear: () => initialState,
   },
 });

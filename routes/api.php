@@ -51,7 +51,7 @@ Route::prefix('auth')->group(function () {
 });
 Route::get('list-majors', [MajorController::class, 'list_majors']);
 Route::middleware('auth:api')->group(function () {
-    Route::get('/get-user', [AuthController::class, 'getUser'])->name('user.getinfo');
+    Route::get('/get-user/{id?}', [AuthController::class, 'getUser'])->name('user.getinfo');
     //route has been authenticated
     Route::post('/auth/logout', [AuthController::class, 'logout'])->name('user.logout');
     Route::post('/auth/confirm-password', [AuthController::class, 'confirmPassword'])->name('user.confirmPassword');

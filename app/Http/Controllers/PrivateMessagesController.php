@@ -12,34 +12,45 @@ use Illuminate\Support\Facades\DB;
 class PrivateMessagesController extends Controller
 {
     public function ShowListUserChat($quantity = null)
-    {
-        $user_id = Auth::id();
+{
+    $user_id = Auth::id();
 
-        // Danh sách người gửi tin nhắn đến người dùng hiện tại
-        $sentMessages = PrivateMessage::where('sender_id', $user_id)
-            ->where(function ($query) use ($user_id) {
-                $query->whereNull('deleted_by')
-                    ->orWhereJsonDoesntContain('deleted_by', $user_id);
-            })
-            ->pluck('receiver_id');
+    // Danh sách người gửi tin nhắn đến người dùng hiện tại
+    $sentMessages = PrivateMessage::where('sender_id', $user_id)
+        ->where(function ($query) use ($user_id) {
+            $query->whereNull('deleted_by')
+                ->orWhereJsonDoesntContain('deleted_by', $user_id);
+        })
+        ->pluck('receiver_id');
 
-        // Danh sách người nhận tin nhắn từ người dùng hiện tại
-        $receivedMessages = PrivateMessage::where('receiver_id', $user_id)
-            ->where(function ($query) use ($user_id) {
-                $query->whereNull('deleted_by')
-                    ->orWhereJsonDoesntContain('deleted_by', $user_id);
-            })
-            ->pluck('sender_id');
+    // Danh sách người nhận tin nhắn từ người dùng hiện tại
+    $receivedMessages = PrivateMessage::where('receiver_id', $user_id)
+        ->where(function ($query) use ($user_id) {
+            $query->whereNull('deleted_by')
+                ->orWhereJsonDoesntContain('deleted_by', $user_id);
+        })
+        ->pluck('sender_id');
 
-        // Kết hợp danh sách người gửi và người nhận tin nhắn, loại bỏ trùng lặp và lấy thông tin người dùng
-        $listUserIds = $sentMessages->merge($receivedMessages)->unique();
-        if ($quantity) {
-            $listUserChat = User::whereIn('id', $listUserIds)->paginate($quantity);
-        } else {
-            $listUserChat = User::whereIn('id', $listUserIds)->get();
-        }
-        return response()->json($listUserChat);
-    }
+    // Kết hợp danh sách người gửi và người nhận tin nhắn, loại bỏ trùng lặp và lấy thông tin người dùng
+    $listUserIds = $sentMessages->merge($receivedMessages)->unique();
+
+    $listUserChat = User::whereIn('id', $listUserIds)
+        ->with(['major' => function ($query) {
+            $query->select('id', 'majors_name'); // Chọn các trường cần lấy từ bảng Major
+        }])
+        ->when($quantity, function ($query) use ($quantity) {
+            return $query->paginate($quantity);
+        }, function ($query) {
+            return $query->get();
+        })
+        ->map(function ($user) {
+            unset($user['major']); // Xóa trường major
+            return array_merge($user->toArray(), ['majors_name' => $user->major->majors_name]);
+        });
+
+    return response()->json($listUserChat);
+}
+
     /**
      * @OA\Get(
      *     path="/api/messages/{user}",

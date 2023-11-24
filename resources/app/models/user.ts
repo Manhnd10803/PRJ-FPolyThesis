@@ -14,6 +14,7 @@ export interface IUser {
   gender: null;
   status: number;
   major_id: null;
+  majors_name?: string;
   permissions: null;
   verification_code: string;
   created_at: null;

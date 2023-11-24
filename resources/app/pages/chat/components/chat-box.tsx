@@ -1,51 +1,51 @@
 import { MessagesService } from '@/apis/services/messages.service';
 import { CustomToggle } from '@/components/custom';
+import { Loading } from '@/components/shared/loading';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import moment from 'moment';
-import parse from 'html-react-parser';
-import { useEffect, useRef } from 'react';
-import { Dropdown, Spinner } from 'react-bootstrap';
-import { Link, useParams } from 'react-router-dom';
 import { chatActions } from '@/redux/slice';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import parse from 'html-react-parser';
+import moment from 'moment';
+import { useEffect, useRef } from 'react';
+import { Dropdown } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import { useChatContext } from '../context';
 
 export const ChatBox = () => {
   // state
-  const { id: chat_id } = useParams<string>();
-
-  if (!chat_id) return null;
+  const { chatId } = useChatContext();
 
   const localUserId = StorageFunc.getUserId();
 
   const dispatch = useAppDispatch();
 
-  const { listMessage } = useAppSelector(state => state.chat);
+  const { conversation, isLoading } = useAppSelector(state => state.chat);
 
   const queryClient = useQueryClient();
 
   //scroll to last message
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messageEndRef = useRef<HTMLDivElement>(null);
 
   // func
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
   //======================================= get list message =======================================//
-  const getListMessage = async () => {
-    const { data } = await MessagesService.getMessagesOfChannel(chat_id);
-    dispatch(chatActions.setListMessage(data));
+  const getConversation = async () => {
+    const { data } = await MessagesService.getConversationOfChannel(chatId);
+    dispatch(chatActions.setConversation(data));
     return data;
   };
 
-  const queryKeyListMessage = ['list_message', chat_id];
+  const queryKeyConversation = ['conversation', chatId];
 
-  const { isLoading } = useQuery({
-    queryKey: queryKeyListMessage,
-    queryFn: getListMessage,
-    enabled: !!chat_id,
+  const { isError: _, isFetching } = useQuery({
+    queryKey: queryKeyConversation,
+    queryFn: getConversation,
+    enabled: !!chatId,
     onSuccess: data => {
-      dispatch(chatActions.setListMessage(data));
+      dispatch(chatActions.setConversation(data));
     },
   });
 
@@ -53,92 +53,90 @@ export const ChatBox = () => {
 
   const deleteMessageItemMutation = useMutation(
     (messageId: number) => {
-      return MessagesService.deleteChatItem(messageId);
+      return MessagesService.deleteMessage(messageId);
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(queryKeyListMessage);
+        queryClient.invalidateQueries(queryKeyConversation);
       },
     },
   );
-  const handleDeleteChatItem = (id: number) => {
-    // console.log(id);
-    deleteMessageItemMutation.mutate(id);
+
+  const handleDeleteMessage = (messageId: number) => {
+    return () => {
+      deleteMessageItemMutation.mutate(messageId);
+    };
   };
 
   // effect
   useEffect(() => {
-    if (listMessage && listMessage.length > 0) {
+    if (conversation && conversation.length > 0) {
       scrollToBottom();
     }
-  }, [listMessage, isLoading]);
+  }, [conversation, isLoading]);
 
   // render
   return (
     <div className="chat-content scroller">
-      {listMessage ? (
-        listMessage.map(item => {
-          if (localUserId === item.sender_id) {
-            return (
-              <div className="chat d-flex other-user" key={item.id}>
-                <div className="chat-user">
-                  <Link className="avatar m-0" to="">
-                    <img loading="lazy" src={item.sender.avatar} alt="avatar" className="avatar-35 " />
-                  </Link>
-                  <span className="chat-time mt-1">{moment(item.created_at).format('LT')}</span>
-                </div>
-                <div className="chat-detail" style={{ maxWidth: '60%' }}>
-                  <div>
-                    <Dropdown className="d-flex justify-content-center align-items-center" as="span">
-                      <Dropdown.Toggle
-                        as={CustomToggle}
-                        variant="material-symbols-outlined cursor-pointer md-18 nav-hide-arrow pe-0 show"
-                      >
-                        more_vert
-                      </Dropdown.Toggle>
-                      <Dropdown.Menu className="dropdown-menu-right">
-                        <Dropdown.Item
-                          className="d-flex align-items-center"
-                          onClick={() => handleDeleteChatItem(item.id)}
-                        >
-                          <i className="material-symbols-outlined md-18 me-1">delete_outline</i>
-                          Xoá
-                        </Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown>
-                  </div>
-                  <div className="chat-message">
-                    <div>{parse(item.content.replace('</br>', '<br />'))}</div>
-                  </div>
-                </div>
-              </div>
-            );
-          } else {
-            return (
-              <div className="chat chat-left" key={item.id}>
-                <div className="chat-user">
-                  <Link className="avatar m-0" to="">
-                    <img loading="lazy" src={item.sender.avatar} alt="avatar" className="avatar-35 " />
-                  </Link>
-                  <span className="chat-time mt-1">{moment(item.created_at).format('LT')}</span>
-                </div>
-                <div className="chat-detail" style={{ maxWidth: '50%' }}>
-                  <div className="chat-message">
-                    <div>{parse(item.content.replace('</br>', '<br />'))}</div>
-                  </div>
-                </div>
-              </div>
-            );
-          }
-        })
+      {isFetching ? (
+        <Loading size={100} textStyle={{ fontSize: '30px' }} />
       ) : (
-        <div
-          style={{ minHeight: '100%', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
-        >
-          <Spinner animation="border" variant="primary" />
-        </div>
+        <>
+          {conversation.map(item => {
+            if (localUserId === item.sender_id) {
+              return (
+                <div className="chat d-flex other-user" key={item.id}>
+                  <div className="chat-user">
+                    <Link className="avatar m-0" to="">
+                      <img loading="lazy" src={item.sender.avatar} alt="avatar" className="avatar-35 " />
+                    </Link>
+                    <span className="chat-time mt-1">{moment(item.created_at).format('LT')}</span>
+                  </div>
+                  <div className="chat-detail" style={{ maxWidth: '60%' }}>
+                    <div>
+                      <Dropdown className="d-flex justify-content-center align-items-center" as="span">
+                        <Dropdown.Toggle
+                          as={CustomToggle}
+                          variant="material-symbols-outlined cursor-pointer md-18 nav-hide-arrow pe-0 show"
+                        >
+                          more_vert
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu className="dropdown-menu-right">
+                          <Dropdown.Item className="d-flex align-items-center" onClick={handleDeleteMessage(item.id)}>
+                            <i className="material-symbols-outlined md-18 me-1">delete_outline</i>
+                            Xoá
+                          </Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    </div>
+                    <div className="chat-message">
+                      <div>{parse(item.content.replace('</br>', '<br />'))}</div>
+                    </div>
+                  </div>
+                </div>
+              );
+            } else {
+              return (
+                <div className="chat chat-left" key={item.id}>
+                  <div className="chat-user">
+                    <Link className="avatar m-0" to="">
+                      <img loading="lazy" src={item.sender.avatar} alt="avatar" className="avatar-35 " />
+                    </Link>
+                    <span className="chat-time mt-1">{moment(item.created_at).format('LT')}</span>
+                  </div>
+                  <div className="chat-detail" style={{ maxWidth: '50%' }}>
+                    <div className="chat-message">
+                      <div>{parse(item.content.replace('</br>', '<br />'))}</div>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+          })}
+        </>
       )}
-      <div ref={messagesEndRef} />
+
+      <div ref={messageEndRef} />
     </div>
   );
 };

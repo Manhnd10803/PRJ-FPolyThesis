@@ -1,23 +1,26 @@
-import { Nav } from 'react-bootstrap';
-import diacritics from 'diacritics';
-import { IUser } from '@/models/user';
+import { useAppSelector } from '@/redux/hook';
 import { pathName } from '@/routes/path-name';
+import diacritics from 'diacritics';
+import { Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 type ListPrivateChannelProps = {
-  data: Array<IUser>;
   search: string;
 };
 
-export const ListPrivateChannel = ({ data, search }: ListPrivateChannelProps) => {
+export const ListPrivateChannel = ({ search }: ListPrivateChannelProps) => {
+  const { listPrivateChannel } = useAppSelector(state => state.chat);
+
   const normalizedSearch = diacritics.remove(search.toLowerCase());
 
   const filteredUsers = search
-    ? data.filter(item => diacritics.remove(item.username.toLowerCase()).includes(normalizedSearch))
-    : data;
+    ? listPrivateChannel.filter(item => diacritics.remove(item.username.toLowerCase()).includes(normalizedSearch))
+    : listPrivateChannel;
+
+  if (listPrivateChannel.length === 0) return <div>Bạn chưa nhắn tin với ai</div>;
 
   return (
-    <>
+    <Nav as="ul" variant="pills" className="iq-chat-ui nav flex-column">
       {filteredUsers?.map((item, index) => {
         return (
           <Nav.Item as="li" key={index} className="item">
@@ -32,6 +35,7 @@ export const ListPrivateChannel = ({ data, search }: ListPrivateChannelProps) =>
 
                 <div className="chat-sidebar-name">
                   <h6 className="mb-0">{item.username}</h6>
+                  <h6 className="mb-0">{item.majors_name}</h6>
                   <span>Đang hoạt động</span>
                 </div>
 
@@ -45,6 +49,6 @@ export const ListPrivateChannel = ({ data, search }: ListPrivateChannelProps) =>
           </Nav.Item>
         );
       })}
-    </>
+    </Nav>
   );
 };

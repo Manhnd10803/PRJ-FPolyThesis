@@ -27,8 +27,8 @@ export interface Sender {
 export type ChatState = {
   isLoading: boolean;
   listPrivateChannel: Array<IUser>;
-  listMessage: Array<IMessages>;
-  chatWithUser: IUser | undefined;
+  conversation: Array<IMessages>;
+  selectedUserInfo: IUser | undefined;
 };
 
 export type GetListPrivateChannelResponseType = Array<IUser>;
