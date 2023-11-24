@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Blog;
 use App\Models\Comment;
 use App\Models\Like;
+use App\Models\Rating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -173,7 +174,7 @@ class BlogController extends Controller
                 'total' => $blogs->total(),
                 // Add other pagination details if needed
             ];
-    
+
             $response = [
                 'blogs' => $result, // Store the individual blog data
                 'pagination' => $paginationData,
@@ -482,6 +483,14 @@ class BlogController extends Controller
         $blog->major;
         $blogLikes = $blog->likes;
 
+        //Đánh giá blog của bản thân
+        $rate = Rating::where('blog_id', $blog->id)->where('user_id', Auth::id())->first();
+        if ($rate) {
+            $blog->star = $rate->rating_scores;
+        } else {
+            $blog->star = 0;
+        }
+
         $user = Auth::user(); // Lấy thông tin người dùng đăng nhập
 
         $userLike = $blogLikes->where('user_id', $user->id)->first(); // Tìm thông tin "like" của người dùng hiện tại
@@ -521,5 +530,53 @@ class BlogController extends Controller
             'total_comments' => $totalComments,
             'user_like' => $userLike // Thêm thông tin về việc người dùng đã "like" hay "dislike" bài viết hay chưa
         ]);
+    }
+
+    /**
+     * @OA\Post(
+     *     path="/api/blogs/{blog}/rate",
+     *     tags={"Blogs"},
+     *     summary="Đánh giá blog",
+     *     description="Đánh giá một blog bằng cách cung cấp số sao (rating). Nếu người dùng đã đánh giá trước đó, thì cập nhật lại đánh giá.",
+     *     @OA\Parameter(
+     *         name="blog",
+     *         in="path",
+     *         required=true,
+     *         description="ID của blog cần đánh giá",
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"star"},
+     *             @OA\Property(property="star", type="integer", description="Số sao đánh giá (1-5)")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Đánh giá thành công"),
+     *     @OA\Response(response=400, description="Dữ liệu không hợp lệ hoặc lỗi xử lý"),
+     *     @OA\Response(response=401, description="Không có quyền truy cập"),
+     *     @OA\Response(response=404, description="Không tìm thấy blog"),
+     * )
+     */
+
+    public function rateBlog(Request $request, Blog $blog)
+    {
+        try {
+            $rate = Rating::where('user_id', Auth::id())->where('blog_id', $blog->id)->first();
+            if ($rate) {
+                $rate->update([
+                    'rating_scores' => $request->star,
+                ]);
+            } else {
+                Rating::create([
+                    'user_id' => Auth::id(),
+                    'blog_id' => $blog->id,
+                    'rating_scores' => $request->star,
+                ]);
+            }
+            return response(['message' => 'Đánh giá thành công'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['errors' => $e->getMessage()], 400);
+        }
     }
 }

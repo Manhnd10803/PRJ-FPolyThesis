@@ -1513,6 +1513,60 @@
                 }
             }
         },
+        "/api/blogs/{blog}/rate": {
+            "post": {
+                "tags": [
+                    "Blogs"
+                ],
+                "summary": "Đánh giá blog",
+                "description": "Đánh giá một blog bằng cách cung cấp số sao (rating). Nếu người dùng đã đánh giá trước đó, thì cập nhật lại đánh giá.",
+                "operationId": "7b75e89aba121202e22b2158dbb5a43e",
+                "parameters": [
+                    {
+                        "name": "blog",
+                        "in": "path",
+                        "description": "ID của blog cần đánh giá",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "star"
+                                ],
+                                "properties": {
+                                    "star": {
+                                        "description": "Số sao đánh giá (1-5)",
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Đánh giá thành công"
+                    },
+                    "400": {
+                        "description": "Dữ liệu không hợp lệ hoặc lỗi xử lý"
+                    },
+                    "401": {
+                        "description": "Không có quyền truy cập"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy blog"
+                    }
+                }
+            }
+        },
         "/api/comments/{type}/{id}": {
             "get": {
                 "tags": [

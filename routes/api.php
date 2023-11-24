@@ -91,6 +91,7 @@ Route::middleware('auth:api')->group(function () {
         Route::put('/{blog}', [BlogController::class, 'UpdateBlog'])->name('blog.update');
         Route::delete('/{blog}', [BlogController::class, 'DeleteBlog'])->name('blog.delete');
         Route::get('/detail/{blog}', [BlogController::class, 'detailBlog']);
+        Route::post('/rate/{blog}', [BlogController::class, 'rateBlog']);
     });
     //Emotion
     Route::prefix('like')->group(function () {
