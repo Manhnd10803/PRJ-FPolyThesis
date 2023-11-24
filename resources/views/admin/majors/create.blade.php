@@ -1,6 +1,6 @@
 @extends('admin.layouts.app')
 @section('title')
-  Thêm chuyên ngành
+    Thêm chuyên ngành
 @endsection
 @section('content')
     <div class="row">
@@ -18,6 +18,14 @@
                             <input type="text" class="form-control" id="majors_name" name="majors_name"
                                 value="{{ old('majors_name') }}">
                             @error('majors_name')
+                                <div class="text-danger">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="majors_code">Mã chuyên ngành:</label>
+                            <input type="text" class="form-control" id="majors_code" name="majors_code"
+                                value="{{ old('majors_code') }}">
+                            @error('majors_code')
                                 <div class="text-danger">{{ $message }}</div>
                             @enderror
                         </div>

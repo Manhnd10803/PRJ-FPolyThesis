@@ -44,6 +44,67 @@
         @endif
         <div class="box">
             <div class="box-header">
+                <h3 class="box-title">Tìm kiếm</h3>
+            </div>
+            <div class="box-body">
+                <form action="" method="get">
+                    <div class="box-body">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <label for="">Họ và tên</label>
+                                <input type="text" class="form-control" placeholder="">
+                            </div>
+                            <div class="col-xs-3">
+                                <label for="">Email</label>
+                                <input type="text" class="form-control" placeholder="">
+                            </div>
+                            <div class="col-xs-3">
+                                <label for="">Chuyên ngành</label>
+                                <select name="" id="" class="form-control">
+                                    <option value="">--Chọn chuyên ngành--</option>
+                                </select>
+                            </div>
+                            <div class="col-xs-3">
+                                <label for="">Giới tính</label>
+                                <select name="" id="" class="form-control">
+                                    <option value="">--Chọn giới tính--</option>
+                                </select>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <label for="">Thời gian gia nhập từ</label>
+                                <input type="date" class="form-control" placeholder="">
+                            </div>
+                            <div class="col-xs-3">
+                                <label for="">Đến</label>
+                                <input type="date" class="form-control" placeholder="">
+                            </div>
+                            <div class="col-xs-2">
+                                <label for="">Nhóm người dùng</label>
+                                <select name="" id="" class="form-control">
+                                    <option value="">--Chọn nhóm--</option>
+                                    <option value=""></option>
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                            <div class="col-xs-2">
+                                <label for="">Trạng thái</label>
+                                <select name="" id="" class="form-control">
+                                    <option value="">Hoạt động</option>
+                                    <option value="">Đã khóa</option>
+                                </select>
+                            </div>
+                        </div>
+                        <br>
+                        <button type="submit" class="btn btn-primary pull-right">Tìm kiếm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="box">
+            <div class="box-header">
                 <h3 class="box-title">Danh sách người dùng</h3>
             </div>
             <!-- /.box-header -->

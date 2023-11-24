@@ -83,7 +83,7 @@ return [
     ]
   ],
   'blog' => [
-    'order' => 4,
+    'order' => 5,
     'text'       => 'Quản lý Blog',
     'permission' => 'admin.blogs',
     'icon' => 'fa fa-fw fa-newspaper-o',
@@ -122,7 +122,7 @@ return [
     ]
   ],
   'major' => [
-    'order' => 5,
+    'order' => 4,
     'text'       => 'Quản lý chuyên ngành',
     'permission' => 'admin.majors',
     'icon' => 'fa fa-fw fa-briefcase',
@@ -183,7 +183,6 @@ return [
             'permission' => 'admin.qa.destroy'
           ],
         ],
-
         'text' => 'Danh sách câu hỏi',
       ],
     ]

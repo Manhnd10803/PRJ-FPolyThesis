@@ -31,6 +31,17 @@
         }
     @endphp
     <div class="row">
+        @if (session('success'))
+        <div class="alert alert-success alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <i class="icon fa fa-check"></i>{{ session('success') }}.
+        </div>
+        @elseif(session('error'))
+        <div class="alert alert-danger alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <i class="icon fa fa-ban"></i>{{ session('error') }}
+        </div>
+        @endif
         <div class="col-xs-12 mx-5">
             <div class="box">
                 <div class="box-header">
