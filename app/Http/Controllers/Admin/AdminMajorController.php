@@ -8,8 +8,8 @@ use Illuminate\Http\Request;
 
 class AdminMajorController extends Controller
 {
-   
-    
+
+
     //Admin web
     public function index()
     {
@@ -25,22 +25,26 @@ class AdminMajorController extends Controller
     {
         $request->validate([
             'majors_name' => 'required|string|max:255|unique:majors',
+            'majors_code' => 'required|unique:majors',
             'description' => 'nullable|string',
         ], [
             'majors_name.required' => 'Tên chuyên ngành không được để trống.',
             'majors_name.max' => 'Tên chuyên ngành không được vượt quá :max ký tự.',
             'majors_name.unique' => 'Tên chuyên ngành đã tồn tại trong hệ thống.',
+            'majors_code.required' => 'Mã chuyên ngành không được để trống.',
+            'majors_code.unique' => 'Mã chuyên ngành đã tồn tại trong hệ thống.',
             // Thêm các thông báo khác tại đây...
         ]);
-        $majors_code = sprintf('%05d', rand(1, 99999));
-        // Kiểm tra xem majors_code đã tồn tại chưa, nếu có thì tạo lại
-        while (Major::where('majors_code', $majors_code)->exists()) {
-            $majors_code = sprintf('%05d', rand(1, 99999));
-        }
+        // $majors_code = sprintf('%05d', rand(1, 99999));
+        // // Kiểm tra xem majors_code đã tồn tại chưa, nếu có thì tạo lại
+        // while (Major::where('majors_code', $majors_code)->exists()) {
+        //     $majors_code = sprintf('%05d', rand(1, 99999));
+        // }
+
         // Thêm mới bản ghi với majors_code đã sinh
         Major::create([
             'majors_name' => $request->majors_name,
-            'majors_code' => $majors_code,
+            'majors_code' => $request->majors_code,
             'description' => $request->description,
         ]);
         return redirect()->route('admin.majors.index')->with('success', 'Thêm thành công chuyên ngành mới.');

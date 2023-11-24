@@ -33,6 +33,74 @@
     @endphp
     <div class="row">
         <div class="col-xs-12 mx-5">
+            @if (session('success'))
+            <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <i class="icon fa fa-check"></i>{{ session('success') }}.
+            </div>
+            @elseif(session('error'))
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <i class="icon fa fa-ban"></i>{{ session('error') }}
+            </div>
+            @endif
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Tìm kiếm</h3>
+                </div>
+                <div class="box-body">
+                    @php
+                        if(request()->is('admin/blogs/approve')){
+                            $route = route('admin.blogs.approve');
+                        }else{
+                            $route = route('admin.blogs.index');
+                        }
+                    @endphp
+                    <form action="{{ $route }}" method="get">
+                        <div class="box-body">
+                            <div class="row">
+                                <div class="col-xs-5">
+                                    <label for="">Tiêu đề</label>
+                                    <input type="text" name="title" class="form-control" placeholder="" value="{{ !empty($params['title']) ? $params['title'] : '' }}">
+                                </div>
+                                <div class="col-xs-3">
+                                    <label for="">Chuyên ngành</label>
+                                    <select name="majors_id" id="" class="form-control">
+                                        <option value="">--Chọn chuyên ngành--</option>
+                                        @foreach ($majors as $major)
+                                            @php
+                                                if(!empty($params['majors_id'])){
+                                                    $selected = ($params['majors_id'] == $major->id) ? 'selected' : '';
+                                                }else{
+                                                    $selected = '';
+                                                }
+                                            @endphp
+                                            <option value="{{ $major->id }}" {{ $selected }}>{{ $major->majors_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-xs-4">
+                                    <label for="">Người tạo</label>
+                                    <input type="text" name="username" class="form-control" placeholder="" value="{{ !empty($params['username']) ? $params['username'] : '' }}">
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <label for="">Thời gian từ</label>
+                                    <input type="date" name="dateFrom" class="form-control" placeholder="" value="{{ !empty($params['dateFrom']) ? $params['dateFrom'] : '' }}">
+                                </div>
+                                <div class="col-xs-3">
+                                    <label for="">Đến</label>
+                                    <input type="date" name="dateTo" class="form-control" placeholder="" value="{{ !empty($params['dateTo']) ? $params['dateTo'] : '' }}">
+                                </div>
+                            </div>
+                            <br>
+                            <button type="submit" class="btn btn-primary pull-right">Tìm kiếm</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
             <div class="box">
                 <div class="box-header">
                     <h3 class="box-title">Danh sách blog</h3>
@@ -46,28 +114,29 @@
                                 <th>Tiêu đề</th>
                                 <th>Người tạo</th>
                                 <th>Chuyên ngành</th>
+                                <th>Cảm xúc</th>
+                                <th>Số bình luận</th>
+                                <th>Rate</th>
+                                <th>Ngày tạo</th>
                                 <th>Thao tác</th>
-
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($blogs as $blog)
                                 <tr>
                                     <td>{{ $blog->title }}</td>
+                                    <td>{{ $blog->username }}</td>
                                     <td>
-                                        @if ($blog->user && $blog->user->username)
-                                            {{ $blog->user->username }}
+                                        @if ($blog->majorCode)
+                                            {{ $blog->majorCode }}
                                         @else
                                             Chưa có
                                         @endif
                                     </td>
-                                    <td>
-                                        @if ($blog->major && $blog->major->majors_name)
-                                            {{ $blog->major->majors_name }}
-                                        @else
-                                            Chưa có
-                                        @endif
-                                    </td>
+                                    <td>{{ $blog->likes->where('emotion', 'like')->count() }}<i class="fa fa-fw fa-thumbs-o-up"></i> {{ $blog->likes->where('emotion', 'dislike')->count() }}<i class="fa fa-fw fa-thumbs-o-down"></i></td>
+                                    <td>{{ $blog->comments->count() }}<i class="fa fa-fw fa-comments-o"></i></td>
+                                    <td></td>
+                                    <td>{{ $blog->created_at }}</td>
                                     <td>
                                         <a href="{{ route('admin.blogs.show', $blog->id) }}" class="btn btn-info btn-sm"><i
                                                 class="fa fa-eye"></i></a>

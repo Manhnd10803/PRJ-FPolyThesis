@@ -33,6 +33,17 @@
     @endphp
     <div class="row">
         <div class="col-xs-12 mx-5">
+            @if (session('success'))
+            <div class="alert alert-success alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <i class="icon fa fa-check"></i>{{ session('success') }}.
+            </div>
+            @elseif(session('error'))
+            <div class="alert alert-danger alert-dismissible">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                <i class="icon fa fa-ban"></i>{{ session('error') }}
+            </div>
+            @endif
             <div class="box">
                 <div style="display: flex;justify-content: space-between;padding: 10px 10px;align-items: center">
                     <h4>Danh sách chuyên ngành</h4>
