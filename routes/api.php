@@ -138,10 +138,16 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/user-info', [ProfileController::class, 'getInfoUser']);
     //major
     Route::get('majors', [MajorController::class, 'list_majors']);
-    //Searches for everything
-    Route::get('/search/{model}', [SearchController::class, 'SearchEverything']);
-    //recents searches
-    Route::get('/recent-searches', [SearchController::class, 'getRecentSearches']);
+    Route::prefix('search')->group(function () {
+        //Searches for everything
+        Route::get('/{model}', [SearchController::class, 'SearchEverything']);
+        //recents searches
+        Route::get('/recent-searches', [SearchController::class, 'getRecentSearches']);
+        //delete others search results
+        Route::delete('/delete-others-recent-searches/{search}', [SearchController::class, 'deleteOtherRecentSearches']);
+        //delete all search results
+        Route::delete('/delete-all-recent-searches/{search}', [SearchController::class, 'deleteAllRecentSearches']);
+    });
 
     //Report
     Route::post('/report/{user}/{model}/{item}', [ReportController::class, 'CreateReport']);
