@@ -5,13 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Events\ReceiveNotification;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
+use App\Models\Major;
 use App\Models\Notification;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redis;
 
 class AdminBlogController extends Controller
 {
-
     public function approveBlog(Blog $blog)
     {
         DB::beginTransaction();
@@ -63,19 +65,41 @@ class AdminBlogController extends Controller
         }
     }
     //admin web
-    public function index()
+    public function index(Request $request)
     {
+        $params = $request->all();
         $status = request()->is('admin/blogs/approve') ? config('default.blog.status.pending') : config('default.blog.status.approved');
-        $blogs = Blog::with('user',)->where('status', $status)->latest()->get();
+        $blogs = Blog::join('users', 'blogs.user_id', 'users.id')->join('majors', 'majors.id', 'blogs.majors_id')->select([
+            'blogs.id as id',
+            'blogs.title as title',
+            'users.username as username',
+            'majors.majors_code as majorCode',
+            'blogs.created_at as created_at',
+        ])->where('blogs.status', $status);
+        if (!empty($params['title'])) {
+            $blogs = $blogs->where('blogs.title', 'like', '%' . $params['title'] . '%');
+        };
+        if (!empty($params['majors_id'])) {
+            $blogs = $blogs->where('blogs.majors_id', $params['majors_id']);
+        };
+        if (!empty($params['username'])) {
+            $blogs = $blogs->where('users.username', 'like', '%' . $params['username'] . '%');
+        };
+        if (!empty($params['dateFrom'])) {
+            if (!empty($params['dateTo'])) {
+                $blogs = $blogs->where('blogs.created_at', '>=', $params['dateFrom'])->where('blogs.created_at', '<', $params['dateTo']);
+            }
+        };
+        $blogs = $blogs->orderByDesc('blogs.id')->get();
         foreach ($blogs as $blog) {
             $dislikeCount = $blog->likes->where('emotion', 'dislike')->count();
             if ($dislikeCount > 100) {
                 $blog->update(['status' => 0]);
             }
         }
-
+        $majors = Major::all();
         $title = $status == config('default.blog.status.approved') ? 'Danh sách blog đã duyệt' : 'Danh sách blog chờ duyệt';
-        return view('admin.blogs.index', compact('blogs', 'title'));
+        return view('admin.blogs.index', compact('blogs', 'title', 'majors', 'params'));
     }
     public function countPendingBlogs()
     {
@@ -85,12 +109,10 @@ class AdminBlogController extends Controller
     public function show(Blog $blog)
     {
         $blog = Blog::with('user', 'likes', 'comments')->find($blog->id);
-
         // Calculate like, dislike, and comment counts
         $blog->like_count = $blog->likes->where('emotion', 'like')->count();
         $blog->dislike_count = $blog->likes->where('emotion', 'dislike')->count();
         $blog->comment_count = $blog->comments->count();
-
         return view('admin.blogs.show', compact('blog'));
     }
     public function destroy(Blog $blog)
