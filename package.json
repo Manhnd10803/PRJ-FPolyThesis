@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "format": "prettier --check \"resources/**/*.{js,jsx,ts,tsx}\"",
-    "format:fix": "prettier --write \"resources/**/*.{js,jsx,ts,tsx}\""
+    "format:fix": "prettier --write \"resources/**/*.{js,jsx,ts,tsx}\"",
+    "server": "laravel-echo-server start",
+    "listen": "php artisan queue:work"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^4.36.1",

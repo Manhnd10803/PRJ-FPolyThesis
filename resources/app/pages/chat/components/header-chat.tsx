@@ -1,50 +1,36 @@
 import { CustomToggle } from '@/components/custom';
-import { useAppDispatch, useAppSelector } from '@/redux/hook';
-import { chatActions } from '@/redux/slice';
-import { useEffect } from 'react';
-import { Dropdown, Spinner } from 'react-bootstrap';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useAppSelector } from '@/redux/hook';
+import { Dropdown } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 type HeaderChatProps = {
-  onDeleteChat: () => void;
+  onClickRemoveChat: () => void;
 };
 
-export const HeaderChat = ({ onDeleteChat }: HeaderChatProps) => {
-  const { id: chat_id } = useParams();
-
-  const navigate = useNavigate();
-
-  const dispatch = useAppDispatch();
-
-  const { chatWithUser } = useAppSelector(state => state.chat);
-
-  useEffect(() => {
-    dispatch(chatActions.getDetailUserChatById(chat_id));
-  }, [chat_id]);
-
-  if (!chat_id) return null;
+export const HeaderChat = ({ onClickRemoveChat }: HeaderChatProps) => {
+  const { selectedUserInfo } = useAppSelector(state => state.chat);
 
   // render
   return (
     <>
-      {chatWithUser ? (
+      {selectedUserInfo ? (
         <div className="chat-head border-bottom border-2">
           <header className="d-flex justify-content-between align-items-center bg-white pt-3  ps-3 pe-3 pb-3">
-            <Link to={`/profile/${chatWithUser.id}`} className="d-flex align-items-center">
+            <Link to={`/profile/${selectedUserInfo.id}`} className="d-flex align-items-center">
               <div className="sidebar-toggle">
                 <i className="ri-menu-3-line"></i>
               </div>
               <div className="avatar chat-user-profile m-0 me-3">
-                <img loading="lazy" src={chatWithUser.avatar} alt="avatar" className="avatar-50 " />
+                <img loading="lazy" src={selectedUserInfo.avatar} alt="avatar" className="avatar-50 " />
                 <span className="avatar-status">
                   <i className="material-symbols-outlined text-success  md-14 filled">circle</i>
                 </span>
               </div>
-              <h5 className="mb-0">{chatWithUser.username}</h5>
+              <h5 className="mb-0">{selectedUserInfo.username}</h5>
             </Link>
             <div className="chat-header-icons d-flex">
               <Link
                 to="#"
-                onClick={onDeleteChat}
+                onClick={onClickRemoveChat}
                 className="chat-icon-phone bg-soft-primary d-flex justify-content-center align-items-center"
               >
                 <i className="material-symbols-outlined md-18">delete</i>
@@ -67,7 +53,7 @@ export const HeaderChat = ({ onDeleteChat }: HeaderChatProps) => {
         </div>
       ) : (
         <div style={{ height: 78, width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <Spinner animation="border" variant="primary" />
+          <h3>Không tìm thấy người dùng này</h3>
         </div>
       )}
     </>

@@ -51,21 +51,26 @@ Route::prefix('auth')->group(function () {
 });
 Route::get('list-majors', [MajorController::class, 'list_majors']);
 Route::middleware('auth:api')->group(function () {
-    Route::get('/get-user', [AuthController::class, 'getUser'])->name('user.getinfo');
+    Route::get('/get-user/{id?}', [AuthController::class, 'getUser'])->name('user.getinfo');
     //route has been authenticated
     Route::post('/auth/logout', [AuthController::class, 'logout'])->name('user.logout');
     Route::post('/auth/confirm-password', [AuthController::class, 'confirmPassword'])->name('user.confirmPassword');
     Route::post('/auth/reset-new-password', [AuthController::class, 'resetPassword'])->name('user.resetPassword');
     //chat
     Route::prefix('messages')->group(function () {
-        Route::get('/list-user/{quantity?}', [PrivateMessagesController::class, 'ShowListUserChat']);
-        Route::get('/{user}/{quantity?}', [PrivateMessagesController::class, 'ShowAllMessage'])->where('user', '[0-9]+');
-        Route::post('/{user}', [PrivateMessagesController::class, 'SendMessages'])->where('user', '[0-9]+');
+        // danh sach cac private channel chat
+        Route::get('/list-private-channel/{quantity?}', [PrivateMessagesController::class, 'ShowListUserChat']);
+        // list message cua 1 channel chat
+        Route::get('/private-channel/{user}/{quantity?}', [PrivateMessagesController::class, 'ShowAllMessage'])->where('user', '[0-9]+');
+        // gui tin nhan ( private channel chat)
+        Route::post('/private-channel/{user}', [PrivateMessagesController::class, 'SendMessages'])->where('user', '[0-9]+');
+        //XÓa đoạn chat ( private channel chat) id user thêm chat tránh trường hợp messages/{id} bị trùng với bên trên
+        Route::delete('/private-channel/{user}', [PrivateMessagesController::class, 'DeleteMessagesBetweenUsers']);
+        
         Route::put('/{privateMessage}', [PrivateMessagesController::class, 'UpdateMessage']);
         //Xóa  tin nhắn (Xóa 1 tin nhắn) id tin nhắn
         Route::delete('/{privateMessage}', [PrivateMessagesController::class, 'DeleteMessage']);
-        //XÓa đoạn chat ( channel chat) id user thêm chat tránh trường hợp messages/{id} bị trùng với bên trên
-        Route::delete('/channel/{user}', [PrivateMessagesController::class, 'DeleteMessagesBetweenUsers']);
+        
     });
 
     //post

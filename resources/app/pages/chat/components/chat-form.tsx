@@ -90,7 +90,7 @@ export const ChatForm = ({ onSend }: ChatFormProps) => {
         />
         <Button type="submit" variant="primary d-flex align-items-center">
           <i className="far fa-paper-plane" aria-hidden="true"></i>
-          <span className="d-none d-lg-block ms-1">Send</span>
+          <span className="d-none d-lg-block ms-1">Gửi</span>
         </Button>
       </Form>
     </div>

@@ -7,27 +7,28 @@ import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { chatActions } from '@/redux/slice';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useRef, useState } from 'react';
-import { Card, Col, Row, Tab } from 'react-bootstrap';
+import { useCallback, useEffect, useState } from 'react';
+import { Card, Col, Row } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ChatBox } from './components/chat-box';
 import { ChatForm } from './components/chat-form';
 import { HeaderChat } from './components/header-chat';
 import { PopUpDeleteChat } from './components/pop-up-delete-chat';
-import { SideBar, queryKeyListChat } from './components/side-bar';
+import { SideBar, queryListPrivateChannel } from './components/side-bar';
+import { ChatContextProvider } from './context';
 
 const audioSend = new Audio(sendMessageSound);
 const audioReceive = new Audio(receiveMessages);
 
 export const ChatPage = () => {
   // hook
-  const { id: chat_id } = useParams<string>();
+  const { id: chatId } = useParams();
 
   const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
 
-  const { listUserChat } = useAppSelector(state => state.chat);
+  const { listPrivateChannel } = useAppSelector(state => state.chat);
 
   const { accessToken } = useAppSelector(state => state.auth);
 
@@ -36,8 +37,6 @@ export const ChatPage = () => {
   //state
   const [showModal, setShowModal] = useState(false);
 
-  const modalRef = useRef<HTMLDivElement>(null);
-
   const localUserId = StorageFunc.getUserId();
 
   const socketID = window.Echo.socketId();
@@ -45,111 +44,96 @@ export const ChatPage = () => {
   // func
 
   const sendMessageMutation = useMutation((messageText: string) => {
-    return MessagesService.sendMessages(Number(chat_id), { content: messageText }, socketID);
+    return MessagesService.sendMessages(Number(chatId), { content: messageText }, socketID);
   });
   const handleSendMessage = (message: string) => {
     sendMessageMutation.mutate(message, {
       onSuccess: ({ data }) => {
         audioSend.play();
-        dispatch(chatActions.addMessageToListMessage(data.data as IMessages));
+        dispatch(chatActions.addMessageToConversation(data.data as IMessages));
       },
     });
   };
 
-  const handleDeleteChat = () => {
-    dispatch(chatActions.removeChannel(Number(chat_id)));
-
+  const handleConfirmDeleteChat = () => {
     setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
   };
 
   //xoá đoạn chat
   const deleteMessageMutation = useMutation(
     (channelId: number) => {
-      return MessagesService.deleteChatChannel(channelId);
+      return MessagesService.deletePrivateChannel(channelId);
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(queryKeyListChat);
+        dispatch(chatActions.removePrivateChannel(chatId));
+
         navigate('/chat');
       },
     },
   );
   const handleConfirmDelete = () => {
-    // deleteMessageMutation.mutate(Number(chat_id));
+    deleteMessageMutation.mutate(Number(chatId));
+
     setShowModal(false);
   };
 
-  useEffect(() => {
-    const handleClickOutside = (event: any) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        handleCloseModal();
-      }
-    };
-    if (showModal) {
-      document.addEventListener('mousedown', handleClickOutside);
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside);
-    }
+  const handleStreamPrivateMessage = useCallback(
+    (event: any) => {
+      try {
+        const { sender_id, action = 'send' } = event.message;
 
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showModal]);
+        console.log('🤪 event.message', event.message);
+
+        if (action === 'delete') {
+          return dispatch(chatActions.removeMessageFromConversation(event.message.id));
+        }
+        console.log('listPrivateChannel2', listPrivateChannel);
+        // Nếu người gửi chưa có trong danh sách chat thì cập nhật lại danh sách user chat
+        const isNewSender = listPrivateChannel.findIndex((item: IUser) => +item.id === +sender_id) === -1;
+
+        console.log('isNewSender', isNewSender);
+
+        if (isNewSender) {
+          queryClient.invalidateQueries(queryListPrivateChannel);
+        }
+
+        audioReceive.play();
+
+        dispatch(chatActions.addMessageToConversation(event.message));
+      } catch (error) {
+        console.log('handlePrivateMessage', error);
+      }
+    },
+    [listPrivateChannel],
+  );
 
   useEffect(() => {
     if (!accessToken) return;
 
     window.Echo.connector.options.auth.headers['Authorization'] = `Bearer ${accessToken}`;
 
-    const handlePrivateMessage = (event: any) => {
-      try {
-        const { sender_id, action = 'send' } = event.message;
+    window.Echo.private(`user.${localUserId}`).listen('.PrivateMessageSent', handleStreamPrivateMessage);
 
-        console.log('🤪 action', action);
-
-        if (action === 'delete') {
-          return dispatch(chatActions.removeMessageFromListMessage(event.message.id));
-        }
-
-        // Nếu người gửi chưa có trong danh sách chat thì cập nhật lại danh sách user chat
-        const isNewSender = listUserChat?.findIndex((item: IUser) => item.id === sender_id) === -1;
-
-        console.log('isNewSender', isNewSender);
-
-        if (isNewSender) {
-          queryClient.invalidateQueries(queryKeyListChat);
-        }
-
-        audioReceive.play();
-
-        dispatch(chatActions.addMessageToListMessage(event.message));
-      } catch (error) {
-        console.log('handlePrivateMessage', error);
-      }
-    };
-
-    window.Echo.private(`user.${localUserId}`).listen('.PrivateMessageSent', handlePrivateMessage);
     return () => {
-      window.Echo.private(`user.${localUserId}`).stopListening('.PrivateMessageSent', handlePrivateMessage);
+      window.Echo.private(`user.${localUserId}`).stopListening('.PrivateMessageSent', handleStreamPrivateMessage);
     };
   }, []);
 
-  // render
+  // trường hợp nhập id từ url cũng phải lấy thông tin user
+  useEffect(() => {
+    if (chatId) {
+      dispatch(chatActions.getDetailUserChatById(chatId));
+    }
+    return () => {
+      dispatch(chatActions.clearConversation());
+    };
+  }, [chatId]);
 
+  // render
   return (
     <>
-      {/* <>
-        <PopUpDeleteChat
-          showModal={showModal}
-          onClose={handleCloseModal}
-          ref={modalRef}
-          onDelete={handleConfirmDelete}
-        />
-      </> */}
+      {listPrivateChannel ? '' : null}
       <div id="content-page" className="content-page p-0">
         <Row>
           <Col sm="12">
@@ -161,16 +145,16 @@ export const ChatPage = () => {
                       <SideBar />
                     </Col>
                     <Col lg={9} className="chat-data p-0 chat-data-right border-start">
-                      {chat_id ? (
-                        <Tab.Content>
+                      {chatId ? (
+                        <ChatContextProvider value={{ chatId: chatId }}>
                           <div style={{ position: 'relative', minHeight: '100%' }}>
-                            <HeaderChat onDeleteChat={handleDeleteChat} />
+                            <HeaderChat onClickRemoveChat={handleConfirmDeleteChat} />
 
                             <ChatBox />
 
                             <ChatForm onSend={handleSendMessage} />
                           </div>
-                        </Tab.Content>
+                        </ChatContextProvider>
                       ) : (
                         <div className="d-flex align-items-center justify-content-center" style={{ minHeight: '100%' }}>
                           <h1>Chat với bạn bè nào 💬 ...</h1>
@@ -184,6 +168,7 @@ export const ChatPage = () => {
           </Col>
         </Row>
       </div>
+      <PopUpDeleteChat showModal={showModal} onClose={() => setShowModal(false)} onDelete={handleConfirmDelete} />
     </>
   );
 };

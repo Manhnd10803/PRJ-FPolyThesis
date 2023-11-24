@@ -1,18 +1,36 @@
-import React from 'react';
+import { useEffect, useRef } from 'react';
 
 type PopUpDeleteChatProps = {
   showModal: boolean;
-  ref: React.RefObject<HTMLDivElement>;
   onClose: () => void;
   onDelete: () => void;
 };
 
-export const PopUpDeleteChat = ({ showModal, ref, onClose, onDelete }: PopUpDeleteChatProps) => {
+export const PopUpDeleteChat = ({ showModal, onClose, onDelete }: PopUpDeleteChatProps) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+    if (showModal) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showModal]);
+
   if (!showModal) return null;
 
   return (
     <div className="modal fade show" tabIndex={-1} role="dialog" style={{ display: 'block' }}>
-      <div className="modal-dialog modal-dialog-centered" ref={ref} role="document">
+      <div className="modal-dialog modal-dialog-centered" ref={modalRef} role="document">
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Xác nhận xóa đoạn chat</h5>

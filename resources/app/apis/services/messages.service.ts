@@ -1,29 +1,37 @@
-import { GetListUserChatResponseType, IMessages, SendMessageResponseType } from '@/models/messages';
+import { GetListPrivateChannelResponseType, SendMessageResponseType } from '@/models/messages';
 import httpRequest from '../axios-instance';
 import { ApiConstants } from '../endpoints';
 
-const showMessages = (id: number | string) => {
-  return httpRequest.get(`${ApiConstants.MESSAGES}/${id}`);
+// channel
+const getConversationOfChannel = (id: number | string) => {
+  return httpRequest.get(`${ApiConstants.PRIVATE_CHANNEL}/${id}`);
 };
 
-const sendMessages = <T>(receiver_id: number, data: T, socketID: any) => {
-  return httpRequest.post<SendMessageResponseType>(`${ApiConstants.MESSAGES}/${receiver_id}`, data, {
+const getListPrivateChannel = () => {
+  return httpRequest.get<GetListPrivateChannelResponseType>(ApiConstants.LIST_PRIVATE_CHANNEL);
+};
+
+const deletePrivateChannel = (id: number) => {
+  return httpRequest.delete(`${ApiConstants.PRIVATE_CHANNEL}/${id}`);
+};
+
+// message
+const sendMessages = <T>(receiverId: number, data: T, socketID: any) => {
+  return httpRequest.post<SendMessageResponseType>(`${ApiConstants.PRIVATE_CHANNEL}/${receiverId}`, data, {
     headers: {
       'X-Socket-Id': socketID,
     },
   });
 };
 
-const getListUserChat = () => {
-  return httpRequest.get<GetListUserChatResponseType>(ApiConstants.LIST_USER_CHAT);
-};
-
-const deleteChatItem = (id: number) => {
+const deleteMessage = (id: number) => {
   return httpRequest.delete(`${ApiConstants.MESSAGES}/${id}`);
 };
 
-const deleteChatChannel = (id: number) => {
-  return httpRequest.delete(`${ApiConstants.CHAT_CHANNEL}/${id}`);
+export const MessagesService = {
+  getConversationOfChannel,
+  sendMessages,
+  getListPrivateChannel,
+  deleteMessage,
+  deletePrivateChannel,
 };
-
-export const MessagesService = { showMessages, sendMessages, getListUserChat, deleteChatItem, deleteChatChannel };

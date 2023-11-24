@@ -540,11 +540,30 @@ class AuthController extends Controller
         }
     }
 
-    public function getUser(Request $request)
+    public function getUser(Request $request, $id = null)
     {
-        $user = $request->user();
-        return response()->json(['user' => $user], 200);
+        if ($id !== null) {
+            $user = User::find($id);
+        } else {
+            $user = $request->user();
+        }
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+        
+        $userData = $user->toArray();
+
+        $user->load(['major' => function ($query) {
+            $query->select('id', 'majors_name');
+        }]);
+
+         // Thêm majors_name vào mảng dữ liệu của người dùng
+        $userData['majors_name'] = $user->major->majors_name;
+
+        return response()->json(['user' => $userData], 200);
     }
+    
+
     public function CheckActivityUser(Request $request)
     {
         DB::beginTransaction();

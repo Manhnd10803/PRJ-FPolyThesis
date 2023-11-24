@@ -63,8 +63,8 @@ export const ApiConstants = {
   EDIT_INFO_USER: `profile/update`,
 
   // chat
-  LIST_USER_CHAT: '/messages/list-user',
-  CHAT_CHANNEL: '/messages/channel',
+  LIST_PRIVATE_CHANNEL: '/messages/list-private-channel',
+  PRIVATE_CHANNEL: '/messages/private-channel',
 
   MESSAGES: '/messages',
 

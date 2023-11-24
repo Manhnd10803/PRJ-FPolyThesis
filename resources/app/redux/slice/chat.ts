@@ -3,33 +3,47 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState: ChatState = {
   isLoading: false,
-  listUserChat: [],
-  listMessage: [],
-  chatWithUser: undefined,
+  listPrivateChannel: [],
+  selectedUserInfo: undefined,
+  conversation: [],
 };
 
 const chatSlice = createSlice({
   name: 'chat',
   initialState,
   reducers: {
-    setListUserChat: (state, action) => {
-      state.listUserChat = action.payload;
+    setLoading: (state, action) => {
+      state.isLoading = action.payload;
     },
+    setListPrivateChannel: (state, action) => {
+      state.listPrivateChannel = action.payload;
+    },
+
     getDetailUserChatById: (state, action) => {
-      state.chatWithUser = state.listUserChat.find(user => Number(user.id) === Number(action.payload));
+      state.selectedUserInfo = state.listPrivateChannel.find(user => +user.id === +action.payload);
     },
-    setListMessage: (state, action) => {
-      state.listMessage = action.payload;
+
+    setConversation: (state, action) => {
+      state.conversation = action.payload;
     },
-    addMessageToListMessage: (state, action) => {
-      state.listMessage.push(action.payload);
+
+    addMessageToConversation: (state, action) => {
+      state.conversation.push(action.payload);
     },
-    removeMessageFromListMessage: (state, action) => {
-      state.listMessage = state.listMessage.filter(message => Number(message.id) !== Number(action.payload));
+
+    removeMessageFromConversation: (state, action) => {
+      state.conversation = state.conversation.filter(message => +message.id !== +action.payload);
     },
-    removeChannel: (state, action) => {
-      state.listUserChat = state.listUserChat.filter(user => user.id !== action.payload);
+
+    removePrivateChannel: (state, action) => {
+      state.conversation = [];
+      state.listPrivateChannel = state.listPrivateChannel.filter(channel => +channel.id !== +action.payload);
     },
+
+    clearConversation: state => {
+      state.conversation = [];
+    },
+
     clear: () => initialState,
   },
 });
