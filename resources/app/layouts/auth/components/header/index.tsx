@@ -28,7 +28,7 @@ export const Header = () => {
 
             <ul className="navbar-nav navbar-list">
               <HomeItem />
-              <SearchBarMobile show={show} handleClose={handleClose} handleShow={handleShow} />
+              {/* <SearchBarMobile show={show} handleClose={handleClose} handleShow={handleShow} /> */}
               <FriendRequest />
               <Notification />
               <NotiMessage />

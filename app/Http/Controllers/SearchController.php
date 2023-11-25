@@ -148,32 +148,58 @@ class SearchController extends Controller
         try {
             $user = Auth::id();
             $query = $request->input('search');
+            if (empty($query)) {
+                return response()->json(['message' => 'No search query provided'], 200);
+            }
             $modelName = strtolower(class_basename($model));
             // Trường hợp tìm kiếm theo tab như facebook
             switch ($modelName) {
                 case 'user':
-                    $model = User::where('username', 'like', '%' . $query . '%')->select('id', 'first_name', 'last_name', 'avatar')->get();
+                    $model = User::where(function ($queryBuilder) use ($query) {
+                        $queryBuilder->where('username', 'like', '%' . $query . '%')
+                            ->orWhere('first_name', 'like', '%' . $query . '%')
+                            ->orWhere('last_name', 'like', '%' . $query . '%');
+                    })->where('id', '!=', $user)->get();
                     break;
                 case 'post':
-                    $model = Post::where('content', 'like', '%' . $query . '%')->get();
-                    break;
-                case 'comment':
-                    $model = Comment::where('content', 'like', '%' . $query . '%')->get();
+                    $model = Post::with('user:id,first_name,last_name,avatar')->withCount('likes')->withCount('comments')
+                        ->where('content', 'like', '%' . $query . '%')->get();
                     break;
                 case 'blog':
-                    $model = Blog::where('title', 'like', '%' . $query . '%')->get();
+                    $model = Blog::with('user:id,username,first_name,last_name,avatar', 'major:id,majors_name')->withCount('likes')->withCount('comments')
+                        ->where('title', 'like', '%' . $query . '%')->get();
                     break;
                 case 'qa':
-                    $model = Qa::where('title', 'like', '%' . $query . '%')->get();
+                    $model = Qa::with('user:id,username,first_name,last_name,avatar', 'major:id,majors_name')->withCount('likes')->withCount('comments')
+                        ->where('title', 'like', '%' . $query . '%')->get();
                     break;
                 default:
                     // Trường hợp mặc định: Tìm kiếm theo tất cả các model url có dạng api/search/default
-                    $model = collect([]);
-                    $model = $model->merge(User::where('username', 'like', '%' . $query . '%')->select('id', 'first_name', 'last_name', 'avatar')->get());
-                    $model = $model->merge(Post::where('content', 'like', '%' . $query . '%')->get());
-                    $model = $model->merge(Comment::where('content', 'like', '%' . $query . '%')->get());
-                    $model = $model->merge(Blog::where('title', 'like', '%' . $query . '%')->get());
-                    $model = $model->merge(Qa::where('title', 'like', '%' . $query . '%')->get());
+                    $model = [
+                        'user' => [],
+                        'post' => [],
+                        'blog' => [],
+                        'qa' => [],
+                    ];
+                    $model['user'] = User::where(function ($queryBuilder) use ($query) {
+                        $queryBuilder->where('username', 'like', '%' . $query . '%')
+                            ->orWhere('first_name', 'like', '%' . $query . '%')
+                            ->orWhere('last_name', 'like', '%' . $query . '%');
+                    })->where('id', '!=', $user)->get()->map(function ($item) {
+                        return $item;
+                    });
+                    $model['post'] = Post::with('user:id,first_name,last_name,avatar')->withCount('likes')->withCount('comments')
+                        ->where('content', 'like', '%' . $query . '%')->get()->map(function ($item) {
+                            return $item;
+                        });
+                    $model['blog'] = Blog::with('user:id,first_name,last_name,avatar', 'major:id,majors_name')->withCount('likes')->withCount('comments')
+                        ->where('title', 'like', '%' . $query . '%')->get()->map(function ($item) {
+                            return $item;
+                        });
+                    $model['qa'] = Qa::with('user:id,first_name,last_name,avatar', 'major:id,majors_name')->withCount('likes')->withCount('comments')
+                        ->where('title', 'like', '%' . $query . '%')->get()->map(function ($item) {
+                            return $item;
+                        });
                     break;
             }
             Search::create([

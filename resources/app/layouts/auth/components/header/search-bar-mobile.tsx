@@ -10,6 +10,7 @@ type SearchBarMobileProps = {
 const imageUrl = 'https://picsum.photos/50';
 
 export const SearchBarMobile = ({ show, handleShow, handleClose }: SearchBarMobileProps) => {
+  // getSearchEverything(m)
   return (
     <Nav.Item as="li" className="d-lg-none">
       <div className="iq-search-bar device-search  position-relative">
@@ -171,7 +172,7 @@ export const SearchBarMobile = ({ show, handleShow, handleClose }: SearchBarMobi
                   </Link>
                 </div>
               </div>
-              <div className="">
+              {/* <div className="">
                 <h4 className="px-3 py-2">Suggestions</h4>
 
                 <div className="suggestion-card px-3 d-flex">
@@ -301,7 +302,7 @@ export const SearchBarMobile = ({ show, handleShow, handleClose }: SearchBarMobi
                     </Link>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </Modal.Body>
           </div>
         </Modal>
