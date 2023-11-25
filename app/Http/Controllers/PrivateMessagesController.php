@@ -202,8 +202,19 @@ class PrivateMessagesController extends Controller
             ]);
             $message->save();
             DB::commit();
-            // 
-            broadcast(new PrivateMessageSent($message->load('sender')))->toOthers();
+            
+            // relationship to take major_name of sender
+            $messageWithSender = $message->load(['sender.major' => function ($query) {
+                $query->select('id', 'majors_name');
+            }]);
+            
+
+            $messageWithSender->sender->majors_name = $messageWithSender->sender->major->majors_name;
+
+            unset($messageWithSender->sender->major);
+
+            broadcast(new PrivateMessageSent($messageWithSender))->toOthers();
+            
             return response()->json(['message' => 'Tin nhắn đã được gửi', 'data' => $message->load('sender')], 200);
         } catch (\Exception $e) {
             DB::rollBack();

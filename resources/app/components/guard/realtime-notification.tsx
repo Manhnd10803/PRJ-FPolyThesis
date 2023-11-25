@@ -44,6 +44,7 @@ const showNotification = (content: INotification['content'], onClick: (id: strin
 
 export const RealtimeNotification = () => {
   const navigate = useNavigate();
+
   const { accessToken } = useAppSelector(state => state.auth);
 
   const localUserId = StorageFunc.getUserId();
@@ -54,7 +55,9 @@ export const RealtimeNotification = () => {
 
       // Lắng nghe notification
       const handleReceiveNotification = (event: any) => {
+        // play sound
         audioReceiverNotification();
+
         showNotification(event.notification.content, (id: string) => {
           navigate(formatNotificationLink(event.notification));
           toast.dismiss(id);
@@ -73,7 +76,7 @@ export const RealtimeNotification = () => {
         );
       };
     }
-  }, []);
+  }, [accessToken]);
 
-  return <></>;
+  return null;
 };
