@@ -162,16 +162,31 @@ class SearchController extends Controller
                     })->where('id', '!=', $user)->get();
                     break;
                 case 'post':
-                    $model = Post::with('user:id,first_name,last_name,avatar')->withCount('likes')->withCount('comments')
-                        ->where('content', 'like', '%' . $query . '%')->get();
+                    $model = Post::with('user:id,first_name,last_name,avatar')
+                        ->withCount('likes')
+                        ->withCount('comments')
+                        ->where(function ($queryBuilder) use ($query) {
+                            $queryBuilder->where('content', 'like', '%' . $query . '%')
+                                ->orWhere('hashtag', 'like', '%' . $query . '%');
+                        })->get();                   
                     break;
                 case 'blog':
-                    $model = Blog::with('user:id,username,first_name,last_name,avatar', 'major:id,majors_name')->withCount('likes')->withCount('comments')
-                        ->where('title', 'like', '%' . $query . '%')->get();
+                    $model = Blog::with('user:id,username,first_name,last_name,avatar', 'major:id,majors_name')
+                        ->withCount('likes')->withCount('comments')
+                        ->where(function ($queryBuilder) use ($query) {
+                            $queryBuilder->where('title', 'like', '%' . $query . '%')
+                                ->orWhere('content', 'like', '%' . $query . '%')
+                                ->orWhere('hashtag', 'like', '%' . $query . '%');
+                        })->where('status', config('default.blog.status.approved'))->get();
                     break;
                 case 'qa':
-                    $model = Qa::with('user:id,username,first_name,last_name,avatar', 'major:id,majors_name')->withCount('likes')->withCount('comments')
-                        ->where('title', 'like', '%' . $query . '%')->get();
+                    $model = Qa::with('user:id,username,first_name,last_name,avatar', 'major:id,majors_name')
+                        ->withCount('likes')->withCount('comments')
+                        ->where(function ($queryBuilder) use ($query) {
+                            $queryBuilder->where('title', 'like', '%' . $query . '%')
+                                ->orWhere('content', 'like', '%' . $query . '%')
+                                ->orWhere('hashtag', 'like', '%' . $query . '%');
+                        })->get();
                     break;
                 default:
                     // Trường hợp mặc định: Tìm kiếm theo tất cả các model url có dạng api/search/default
@@ -188,16 +203,30 @@ class SearchController extends Controller
                     })->where('id', '!=', $user)->get()->map(function ($item) {
                         return $item;
                     });
-                    $model['post'] = Post::with('user:id,first_name,last_name,avatar')->withCount('likes')->withCount('comments')
-                        ->where('content', 'like', '%' . $query . '%')->get()->map(function ($item) {
+                    $model['post'] = Post::with('user:id,first_name,last_name,avatar')
+                        ->withCount('likes')
+                        ->withCount('comments')
+                        ->where(function ($queryBuilder) use ($query) {
+                            $queryBuilder->where('content', 'like', '%' . $query . '%')
+                                ->orWhere('hashtag', 'like', '%' . $query . '%');
+                        })->get();
+                    $model['blog'] = Blog::with('user:id,first_name,last_name,avatar', 'major:id,majors_name')
+                        ->withCount('likes')->withCount('comments')
+                        ->where(function ($queryBuilder) use ($query) {
+                            $queryBuilder->where('title', 'like', '%' . $query . '%')
+                                ->orWhere('content', 'like', '%' . $query . '%')
+                                ->orWhere('hashtag', 'like', '%' . $query . '%');
+                        })->where('status', config('default.blog.status.approved'))
+                        ->get()->map(function ($item) {
                             return $item;
                         });
-                    $model['blog'] = Blog::with('user:id,first_name,last_name,avatar', 'major:id,majors_name')->withCount('likes')->withCount('comments')
-                        ->where('title', 'like', '%' . $query . '%')->get()->map(function ($item) {
-                            return $item;
-                        });
-                    $model['qa'] = Qa::with('user:id,first_name,last_name,avatar', 'major:id,majors_name')->withCount('likes')->withCount('comments')
-                        ->where('title', 'like', '%' . $query . '%')->get()->map(function ($item) {
+                    $model['qa'] = Qa::with('user:id,first_name,last_name,avatar', 'major:id,majors_name')
+                        ->withCount('likes')->withCount('comments')
+                        ->where(function ($queryBuilder) use ($query) {
+                            $queryBuilder->where('title', 'like', '%' . $query . '%')
+                                ->orWhere('content', 'like', '%' . $query . '%')
+                                ->orWhere('hashtag', 'like', '%' . $query . '%');
+                        })->get()->map(function ($item) {
                             return $item;
                         });
                     break;

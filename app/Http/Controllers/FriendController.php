@@ -128,6 +128,12 @@ class FriendController extends Controller
                     'status' => config('default.friend.status.accepted'),
                     'friendship_type' => config('default.friend.friendship_type.friend'),
                 ]);
+            Friend::create([
+                'user_id_1' => $user2,
+                'user_id_2' => $sender->id,
+                'status' => config('default.friend.status.accepted'),
+                'friendship_type' => config('default.friend.friendship_type.friend'),
+            ]);
             $content = Auth::user()->username . ' đã đồng ý lời mời kết bạn.';
             $notification = Notification::create([
                 'sender' => Auth::id(),
