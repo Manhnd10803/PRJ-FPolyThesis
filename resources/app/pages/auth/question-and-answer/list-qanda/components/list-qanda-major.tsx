@@ -19,16 +19,7 @@ export const ListQAndAsByMajorId = () => {
 
   const navigate = useNavigate();
   const handleDetailsClick = (id: number) => {
-    QandAService.getDetailQandA(id)
-      .then(response => {
-        const detailData = response.data;
-        const idToPass = detailData.id;
-        console.log(`Thông tin chi tiết câu hỏi ID - ${id}`);
-        navigate(`/quests/${id}`);
-      })
-      .catch(error => {
-        console.error('Error fetching details:', error);
-      });
+    navigate(`/quests/${id}`);
   };
 
   const { data: majors } = useQuery({
