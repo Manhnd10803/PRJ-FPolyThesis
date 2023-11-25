@@ -68,5 +68,8 @@ export const ApiConstants = {
 
   MESSAGES: '/messages',
 
+  // search
+  SEARCH_EVERYTHING: '/search',
+
   NOTIFICATIONS: '/notifications',
 } as const;

@@ -36,4 +36,5 @@ export const pathName = {
   //======== Chat path ========//
   CHAT: '/chat',
   CHAT_DETAIL: '/chat/:id',
+  SEARCH: '/search',
 } as const;

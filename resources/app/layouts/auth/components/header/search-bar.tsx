@@ -1,305 +1,203 @@
+import { SearchService } from '@/apis/services/search.service';
+import { useDebounce } from '@/hooks';
+import { formatDateFromCreatedAt } from '@/pages/auth/blog/components/format-date';
+import { formatFullName } from '@/utilities/functions';
+import parse from 'html-react-parser';
+import { useEffect, useState } from 'react';
 import { Form, Image, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-const imageUrl = 'https://picsum.photos/50';
+type SearchBarProps = {};
+const Overlay: React.FC<{ onClick: () => void }> = ({ children, onClick }) => {
+  const overlayStyles = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Adjust the background color and opacity as needed
+    zIndex: 1000,
+  };
 
-type SearchBarProps = {
-  show: boolean;
-  handleShow: () => void;
-  handleClose: () => void;
-};
-
-export const SearchBar = ({ show, handleShow, handleClose }: SearchBarProps) => {
   return (
-    <div className="iq-search-bar device-search  position-relative">
-      <form
-        action="#"
-        className="searchbox"
-        onClick={handleShow}
-        data-bs-toggle="modal"
-        data-bs-target="#exampleModalFullscreenSm"
-      >
-        <Link className="search-link d-none d-lg-block" to="/">
-          <span className="material-symbols-outlined">search</span>
-        </Link>
-        <Form.Control
-          type="text"
-          className="text search-input form-control bg-soft-primary  d-none d-lg-block"
-          placeholder="Search here..."
-        />
-        <Link
-          className="d-lg-none d-flex d-none d-lg-block"
-          to="/"
-          onClick={handleShow}
-          data-bs-toggle="modal"
-          data-bs-target="#exampleModalFullscreenSm"
-        >
-          <span className="material-symbols-outlined">search</span>
-        </Link>
-      </form>
-
-      <Modal show={show} onHide={handleClose} className="search-modal" id="post-modal">
-        <div className="modal-dialog modal-fullscreen-lg-down m-0">
-          <Modal.Header className="py-2">
-            <div className="d-flex align-items-center justify-content-between d-lg-none w-100">
-              <form
-                action="#"
-                className="searchbox w-50"
-                data-bs-toggle="modal"
-                data-bs-target="#exampleModalFullscreenSm"
-                onClick={handleShow}
-              >
-                <Link className="search-link" to="/">
-                  <span className="material-symbols-outlined">search</span>
-                </Link>
-
-                <Form.Control type="text" className="text search-input bg-soft-primary" placeholder="Search here..." />
-              </form>
-
-              <Link to="/" className="material-symbols-outlined text-dark" onClick={handleClose}>
-                close
-              </Link>
-            </div>
-            {/* <Modal.Title> */}
-            <div className="d-flex align-items-center justify-content-between ms-auto w-100">
-              <h5 className=" h4" id="exampleModalFullscreenLabel">
-                Recent
-              </h5>
-
-              <Link to="/" className="text-dark">
-                Clear All
-              </Link>
-            </div>
-            {/* </Modal.Title> */}
-          </Modal.Header>
-          <Modal.Body className="p-0">
-            <div className="d-flex d-lg-none align-items-center justify-content-between w-100 p-3 pb-0">
-              <h5 className=" h4" id="exampleModalFullscreenLabel">
-                Recent
-              </h5>
-
-              <Link to="/" className="text-dark">
-                Clear All
-              </Link>
-            </div>
-            <div className="d-flex align-items-center border-bottom search-hover py-2 px-3">
-              <div className="flex-shrink-0">
-                <Image
-                  className="align-self-center img-fluid avatar-50 rounded-pill"
-                  src={imageUrl}
-                  alt=""
-                  loading="lazy"
-                />
-              </div>
-
-              <div className="d-flex flex-column ms-3">
-                <Link to="/" className="h5">
-                  Paige Turner
-                </Link>
-
-                <span>Paige001</span>
-              </div>
-
-              <div className="d-flex align-items-center ms-auto">
-                <Link to="/" className="me-3 d-flex align-items-center">
-                  <small>Follow</small>{' '}
-                </Link>
-
-                <Link to="/" className="material-symbols-outlined text-dark">
-                  close
-                </Link>
-              </div>
-            </div>
-            <div className="d-flex align-items-center border-bottom search-hover py-2 px-3">
-              <div className="flex-shrink-0">
-                <Image
-                  className="align-self-center img-fluid avatar-50 rounded-pill"
-                  src={imageUrl}
-                  alt=""
-                  loading="lazy"
-                />
-              </div>
-
-              <div className="d-flex flex-column ms-3">
-                <Link to="/" className="h5">
-                  Monty Carlo
-                </Link>
-
-                <span>Carlo.m</span>
-              </div>
-
-              <div className="d-flex align-items-center ms-auto">
-                <Link to="/" className="me-3 d-flex align-items-center">
-                  <small>Unfollow</small>{' '}
-                </Link>
-
-                <Link to="/" className="material-symbols-outlined text-dark">
-                  close
-                </Link>
-              </div>
-            </div>
-            <div className="d-flex align-items-center search-hover py-2 px-3 border-bottom">
-              <div className="flex-shrink-0">
-                <Image
-                  className="align-self-center img-fluid avatar-50 rounded-pill"
-                  src={imageUrl}
-                  alt=""
-                  loading="lazy"
-                />
-              </div>
-
-              <div className="d-flex flex-column ms-3">
-                <Link to="/" className="h5">
-                  Paul Molive
-                </Link>
-
-                <span>Paul.45</span>
-              </div>
-
-              <div className="d-flex align-items-center ms-auto">
-                <Link to="/" className="me-3 d-flex align-items-center">
-                  <small>Request</small>{' '}
-                </Link>
-
-                <Link to="/" className="material-symbols-outlined text-dark">
-                  close
-                </Link>
-              </div>
-            </div>
-            <div className="">
-              <h4 className="px-3 py-2">Suggestions</h4>
-
-              <div className="suggestion-card px-3 d-flex">
-                <div className="text-center story">
-                  <div className="story-profile">
-                    <Image className="avatar-50 rounded-pill" src={imageUrl} alt="" loading="lazy" />
-
-                    <Link to="/" className="h6 mt-0 mt-lg-2 ms-3 ms-lg-0 text-ellipsis short-2 small">
-                      Ammy Paul
-                    </Link>
-                  </div>
-
-                  <Link to="/" className="d-lg-none align-items-center d-flex">
-                    <small>Follow</small>{' '}
-                  </Link>
-                </div>
-
-                <div className="text-center story">
-                  <div className="story-profile">
-                    <Image className="avatar-50 rounded-pill" src={imageUrl} alt="" loading="lazy" />
-
-                    <Link to="/" className="h6 mt-0 mt-lg-2 ms-3 ms-lg-0 text-ellipsis short-2 small">
-                      Roger Carlo
-                    </Link>
-                  </div>
-
-                  <Link to="/" className="d-lg-none align-items-center d-flex">
-                    <small>Unfollow</small>{' '}
-                  </Link>
-                </div>
-
-                <div className="text-center story ">
-                  <div className="story-profile">
-                    <Image className="avatar-50 rounded-pill" src={imageUrl} alt="" loading="lazy" />
-
-                    <Link to="/" className="h6 mt-0 mt-lg-2 ms-3 ms-lg-0 text-ellipsis short-2 small">
-                      Justin Molive
-                    </Link>
-                  </div>
-
-                  <Link to="/" className="d-lg-none align-items-center d-flex">
-                    <small>Follow</small>{' '}
-                  </Link>
-                </div>
-
-                <div className="text-center story">
-                  <div className="story-profile ">
-                    <Image className="avatar-50 rounded-pill" src={imageUrl} alt="" loading="lazy" />
-
-                    <Link to="/" className="h6 mt-0 mt-lg-2 ms-3 ms-lg-0 text-ellipsis short-2 small">
-                      Roy Fisher
-                    </Link>
-                  </div>
-
-                  <Link to="/" className="d-lg-none align-items-center d-flex">
-                    <small>Request</small>{' '}
-                  </Link>
-                </div>
-
-                <div className="text-center story">
-                  <div className="story-profile">
-                    <Image className="avatar-50 rounded-pill" src={imageUrl} alt="" loading="lazy" />
-
-                    <Link to="/" className="h6 mt-0 mt-lg-2 ms-3 ms-lg-0 text-ellipsis short-2 small">
-                      Johan Carlo
-                    </Link>
-                  </div>
-
-                  <Link to="/" className="d-lg-none align-items-center d-flex">
-                    <small>Follow</small>{' '}
-                  </Link>
-                </div>
-
-                <div className="text-center story">
-                  <div className="story-profile">
-                    <Image className="avatar-50 rounded-pill" src={imageUrl} alt="" loading="lazy" />
-
-                    <Link to="/" className="h6 mt-0 mt-lg-2 ms-3 ms-lg-0 text-ellipsis short-2 small">
-                      MedrLink Miles
-                    </Link>
-                  </div>
-
-                  <Link to="/" className="d-lg-none align-items-center d-flex">
-                    <small>Unfollow</small>{' '}
-                  </Link>
-                </div>
-
-                <div className="text-center story">
-                  <div className="story-profile">
-                    <Image className="avatar-50 rounded-pill" src={imageUrl} alt="" loading="lazy" />
-
-                    <Link to="/" className="h6 mt-0 mt-lg-2 ms-3 ms-lg-0 text-ellipsis short-2 small">
-                      Aohan Paul
-                    </Link>
-                  </div>
-
-                  <Link to="/" className="d-lg-none align-items-center d-flex">
-                    <small>Request</small>{' '}
-                  </Link>
-                </div>
-
-                <div className="text-center story">
-                  <div className="story-profile">
-                    <Image className="avatar-50 rounded-pill" src={imageUrl} alt="" loading="lazy" />
-
-                    <Link to="/" className="h6 mt-0 mt-lg-2 ms-3 ms-lg-0 text-ellipsis short-2 small">
-                      Rokni Joy
-                    </Link>
-                  </div>
-
-                  <Link to="/" className="d-lg-none align-items-center d-flex">
-                    <small>Follow</small>{' '}
-                  </Link>
-                </div>
-
-                <div className="text-center story">
-                  <div className="story-profile">
-                    <Image className="avatar-50 rounded-pill" src={imageUrl} alt="" loading="lazy" />
-
-                    <Link to="/" className="h6 mt-0 mt-lg-2 ms-3 ms-lg-0 text-ellipsis short-2 small">
-                      Sepid Ryan
-                    </Link>
-                  </div>
-
-                  <Link to="/" className="d-lg-none align-items-center d-flex">
-                    <small>Unfollow</small>{' '}
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </Modal.Body>
-        </div>
-      </Modal>
+    <div style={overlayStyles} onClick={onClick}>
+      {children}
     </div>
+  );
+};
+const calculateDropdownPosition = (isOpen: any) => {
+  return {
+    position: 'absolute',
+    top: '0',
+    left: '50%',
+    transition: 'transform 1s ease',
+    transform: `translate(-50%, 0) scale(${isOpen ? 1 : 0})`,
+    transformOrigin: 'top center',
+    zIndex: 1000,
+    backgroundColor: 'white',
+    border: '1px solid #ccc',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    padding: '10px',
+    borderRadius: '4px',
+    overflowY: 'auto',
+  };
+};
+const truncateTextStyle = {
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  display: '-webkit-box',
+  WebkitLineClamp: 1,
+  WebkitBoxOrient: 'vertical',
+};
+export const SearchBar: React.FC<SearchBarProps> = () => {
+  const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [type, setType] = useState('default');
+  const [searchValue, setSearchValue] = useState('');
+  const [data, setData] = useState([]);
+  const debouncedValue = useDebounce(searchValue, 500);
+  const handleToggleDropdown = () => {
+    setDropdownOpen(!isDropdownOpen);
+  };
+
+  const handleOverlayClick = () => {
+    setDropdownOpen(false);
+  };
+
+  useEffect(() => {
+    if (!debouncedValue.trim()) {
+      setSearchValue('');
+      return;
+    }
+    const fetchApi = async () => {
+      setLoading(true);
+      const result = await SearchService.getSearchEverything(type, debouncedValue);
+      console.log(result);
+      setData(result.data);
+      setLoading(false);
+    };
+    fetchApi();
+  }, [debouncedValue]);
+
+  console.log(data);
+  return (
+    <>
+      {isDropdownOpen && <Overlay onClick={handleOverlayClick} />}
+      <div className="iq-search-bar device-search position-relative">
+        <form action="#" className="searchbox" onClick={handleToggleDropdown}>
+          <Link className="search-link d-none d-lg-block" to="/">
+            <span className="material-symbols-outlined">search</span>
+          </Link>
+          <Form.Control
+            type="text"
+            className="text search-input form-control bg-soft-primary d-none d-lg-block"
+            placeholder="Search here..."
+          />
+          <Link className="d-lg-none d-flex d-none d-lg-block" to="/" onClick={handleToggleDropdown}>
+            <span className="material-symbols-outlined">search</span>
+          </Link>
+        </form>
+
+        {isDropdownOpen && (
+          <div className="custom-dropdown " style={calculateDropdownPosition(isDropdownOpen)}>
+            <form action="#" className="searchbox">
+              <Link className="search-link  d-lg-block" to="/">
+                <span className="material-symbols-outlined">search</span>
+              </Link>
+              <Form.Control
+                type="text"
+                className="text search-input form-control bg-soft-primary d-lg-block"
+                placeholder="Search here..."
+                value={searchValue}
+                onChange={e => setSearchValue(e.target.value)}
+              />
+            </form>
+            <Modal.Body className="p-0" style={{ overflowY: 'auto', maxHeight: '500px' }}>
+              {data?.blog && data.blog.length > 0 ? (
+                <>
+                  <div className="mt-2">
+                    <h4 className="px-3 py-2 bg-primary text-white">Bài viết</h4>
+                    {data?.blog.map((item, index) => (
+                      <div className="suggestion-card px-3 d-flex search-hover" key={index}>
+                        <div>
+                          <h4>{item.title}</h4>
+                          <div className="d-flex flex-wrap-reverse gap-2">
+                            <div>{formatFullName(item.user)}</div>{' '}
+                            <span>{formatDateFromCreatedAt(item?.created_at)}</span>
+                          </div>
+                          <div className="p" style={truncateTextStyle}>
+                            {' '}
+                            {item?.content ? parse(JSON.parse(item?.content)) : 'Content not available'}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <></>
+              )}
+
+              {data?.qa && data.qa.length > 0 ? (
+                <>
+                  <div className="mt-2">
+                    <h4 className="px-3 py-2 bg-primary text-white">Câu hỏi</h4>
+                    {data?.qa.map((item, index) => (
+                      <div className="suggestion-card px-3 d-flex search-hover" key={index}>
+                        <div>
+                          <h4>{item.title}</h4>
+                          <div className="d-flex flex-wrap-reverse gap-2">
+                            <div>{formatFullName(item.user)}</div>{' '}
+                            <span>{formatDateFromCreatedAt(item?.created_at)}</span>
+                          </div>
+                          <div className="p" style={truncateTextStyle}>
+                            {' '}
+                            {item?.content ? parse(JSON.parse(item?.content)) : 'Content not available'}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <></>
+              )}
+              {data?.user && data.user.length > 0 ? (
+                <>
+                  <div className="mt-2">
+                    <h4 className="px-3 py-2 bg-primary text-white">Tác giả</h4>
+
+                    <div className="">
+                      {data?.user.map((item, index) => (
+                        <div className="d-flex align-items-center search-hover py-2 border-bottom">
+                          <div className="flex-shrink-0">
+                            <Image
+                              className="align-self-center img-fluid avatar-50 rounded-pill"
+                              src={item.avatar}
+                              alt=""
+                              loading="lazy"
+                            />
+                          </div>
+
+                          <div className="d-flex flex-column ms-3">
+                            <Link to="/" className="h5">
+                              {formatFullName(item)}
+                            </Link>
+
+                            <span>@{item.username}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <></>
+              )}
+            </Modal.Body>
+          </div>
+        )}
+      </div>
+    </>
   );
 };

@@ -19,6 +19,7 @@ import { ListNoAnswerQAndAs } from '@/pages/auth/question-and-answer/list-qanda/
 import { ListQAndAsByMajorId } from '@/pages/auth/question-and-answer/list-qanda/components/list-qanda-major';
 import { UpdateQandA } from '@/pages/auth/question-and-answer/update-qanda/update-form';
 import { pathName } from './path-name';
+import { SearchPage } from '@/pages/auth/search';
 
 export const AuthRouter = [
   {
@@ -105,5 +106,9 @@ export const AuthRouter = [
   {
     path: pathName.PRIVACY_SECURITY,
     element: <PrivacySecurityPage />,
+  },
+  {
+    path: pathName.SEARCH,
+    element: <SearchPage />,
   },
 ];
