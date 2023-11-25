@@ -220,7 +220,7 @@ class AuthController extends Controller
             ]);
             $result = app()->handle($request);
             $response = json_decode($result->getContent(), true);
-            if(isset($response['error'])){
+            if (isset($response['error'])) {
                 return response()->json($response, 401);
             }
             return response()->json($response);
@@ -543,6 +543,12 @@ class AuthController extends Controller
     public function getUser(Request $request)
     {
         $user = $request->user();
+
+        $userWithMajor = $user->with(['major' => function ($query) {
+            $query->select('id', 'majors_name');
+        }])->first();
+        $user->major_name = $userWithMajor->major->majors_name;
+
         return response()->json(['user' => $user], 200);
     }
     public function CheckActivityUser(Request $request)

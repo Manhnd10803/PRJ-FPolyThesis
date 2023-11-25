@@ -22,7 +22,7 @@ const chatSlice = createSlice({
       state.listMessage = action.payload;
     },
     addMessageToListMessage: (state, action) => {
-      state.listMessage.push(action.payload);
+      state.listMessage = [action.payload, ...state.listMessage];
     },
     removeMessageFromListMessage: (state, action) => {
       state.listMessage = state.listMessage.filter(message => Number(message.id) !== Number(action.payload));

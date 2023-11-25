@@ -2,8 +2,8 @@ import { GetListUserChatResponseType, IMessages, SendMessageResponseType } from 
 import httpRequest from '../axios-instance';
 import { ApiConstants } from '../endpoints';
 
-const showMessages = (id: number | string) => {
-  return httpRequest.get(`${ApiConstants.MESSAGES}/${id}`);
+const showMessages = (id: number | string, quantityMessages: number, page: number) => {
+  return httpRequest.get(`${ApiConstants.MESSAGES}/${id}/${quantityMessages}?page=${page}`);
 };
 
 const sendMessages = <T>(receiver_id: number, data: T, socketID: any) => {

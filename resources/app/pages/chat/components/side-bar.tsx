@@ -50,7 +50,7 @@ export const SideBar = () => {
           </div>
           <div className="chat-caption">
             <h5 className="mb-0">{userInfo?.username}</h5>
-            {/* <p className="m-0">{userInfo?.major}</p> */}
+            <p className="m-0">{userInfo?.major?.majors_name}</p>
           </div>
         </div>
 
