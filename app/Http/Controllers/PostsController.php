@@ -139,7 +139,7 @@ class PostsController extends Controller
         try {
             // Lấy thông tin người đăng bài và thông tin bài viết (lọc theo bạn bè)
             $user = Auth::user();
-            $friends = $user->friends;
+            $friends = $user->friends()->where('friends.status', config('default.friend.status.accepted'))->get();
             $friendIds = $friends->pluck('id')->toArray();
             $friendIds[] = $user->id;
             if ($quantity) {
