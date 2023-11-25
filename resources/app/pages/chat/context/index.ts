@@ -1,7 +1,8 @@
 import { createContext, useContext } from 'react';
 
 type ChatContextType = {
-  chatId: string;
+  chatId: number;
+  onClickRemoveChat: (chatId: number) => void;
 };
 
 const ChatContext = createContext<ChatContextType>({} as ChatContextType);

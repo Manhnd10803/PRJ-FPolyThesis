@@ -6,6 +6,8 @@ import { storageKeys } from '@/utilities/local-storage/storage-keys';
 import React, { FC } from 'react';
 import { Navigate } from 'react-router-dom';
 import { RealtimeNotification } from './realtime-notification';
+import { RealtimeMessage } from './realtime-message';
+import { PrepareData } from './prepare-data';
 type AuthGuardProps = {
   children?: React.ReactNode;
 };
@@ -20,9 +22,10 @@ export const AuthGuard: FC<AuthGuardProps> = ({ children }) => {
     return <Navigate to={pathName.LOGIN} />;
   }
   return (
-    <>
+    <PrepareData>
       <RealtimeNotification />
+      <RealtimeMessage />
       {children}
-    </>
+    </PrepareData>
   );
 };

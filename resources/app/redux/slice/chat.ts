@@ -1,5 +1,6 @@
-import { ChatState } from '@/models/messages';
-import { createSlice } from '@reduxjs/toolkit';
+import { ChatState, IMessages } from '@/models/messages';
+import { IUser } from '@/models/user';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 const initialState: ChatState = {
   isLoading: false,
@@ -12,35 +13,48 @@ const chatSlice = createSlice({
   name: 'chat',
   initialState,
   reducers: {
-    setLoading: (state, action) => {
-      state.isLoading = action.payload;
-    },
-    setListPrivateChannel: (state, action) => {
-      state.listPrivateChannel = action.payload;
+    setLoading: (state, { payload }: PayloadAction<ChatState['isLoading']>) => {
+      state.isLoading = payload;
     },
 
-    getDetailUserChatById: (state, action) => {
-      state.selectedUserInfo = state.listPrivateChannel.find(user => +user.id === +action.payload);
+    setListPrivateChannel: (state, { payload }: PayloadAction<ChatState['listPrivateChannel']>) => {
+      state.listPrivateChannel = payload;
     },
 
-    setConversation: (state, action) => {
-      state.conversation = action.payload;
+    addPrivateChannel: (state, { payload }: PayloadAction<IUser>) => {
+      const isExist = state.listPrivateChannel.findIndex(item => +item.id === +payload.id) !== -1;
+      if (isExist) {
+        console.log('Đã tồn tai channel, Không add vào nữa');
+        return;
+      }
+      state.listPrivateChannel = [payload, ...state.listPrivateChannel];
     },
 
-    addMessageToConversation: (state, action) => {
-      state.conversation.push(action.payload);
+    getDetailUserChatById: (state, { payload }: PayloadAction<IUser['id']>) => {
+      state.selectedUserInfo = state.listPrivateChannel.find(user => +user.id === +payload);
     },
 
-    removeMessageFromConversation: (state, action) => {
-      state.conversation = state.conversation.filter(message => +message.id !== +action.payload);
+    setConversation: (state, { payload }: PayloadAction<ChatState['conversation']>) => {
+      state.conversation = payload;
     },
 
-    removePrivateChannel: (state, action) => {
+    addMessageToConversation: (state, { payload }: PayloadAction<IMessages>) => {
+      state.conversation.push(payload);
+    },
+
+    removeMessageFromConversation: (state, { payload }: PayloadAction<IMessages['id']>) => {
+      state.conversation = state.conversation.filter(message => +message.id !== +payload);
+    },
+
+    removePrivateChannel: (state, { payload }: PayloadAction<IUser['id']>) => {
       state.conversation = [];
-      state.listPrivateChannel = state.listPrivateChannel.filter(channel => +channel.id !== +action.payload);
+      state.listPrivateChannel = state.listPrivateChannel.filter(channel => +channel.id !== +payload);
+
+      state.selectedUserInfo = undefined;
     },
 
     clearConversation: state => {
+      state.selectedUserInfo = undefined;
       state.conversation = [];
     },
 

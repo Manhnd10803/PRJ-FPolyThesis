@@ -1,38 +1,19 @@
-import { MessagesService } from '@/apis/services/messages.service';
 import { Loading } from '@/components/shared/loading';
-import { useAppDispatch } from '@/redux/hook';
-import { chatActions } from '@/redux/slice';
+import { useAppSelector } from '@/redux/hook';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
-import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { ListPrivateChannel } from './list-private-channel';
 import { PopUpSetting } from './popup-setting';
 
-export const queryListPrivateChannel = ['list_private_channel'];
-
 export const SideBar = () => {
   const userInfo = StorageFunc.getUser();
 
-  const dispatch = useAppDispatch();
+  const { isLoading } = useAppSelector(state => state.chat);
 
   const [showPopupSetting, setShowPopupSetting] = useState(false);
 
   const [searchText, setSearchText] = useState('');
-
-  // func
-  const getListPrivateChannel = async () => {
-    const { data } = await MessagesService.getListPrivateChannel();
-    return data;
-  };
-
-  const { isLoading } = useQuery({
-    queryKey: queryListPrivateChannel,
-    queryFn: getListPrivateChannel,
-    onSuccess: data => {
-      dispatch(chatActions.setListPrivateChannel(data));
-    },
-  });
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
@@ -53,7 +34,7 @@ export const SideBar = () => {
           </div>
           <div className="chat-caption">
             <h5 className="mb-0">{userInfo?.username}</h5>
-            <p className="m-0">{userInfo?.majors_name}</p>
+            <p className="m-0">{userInfo?.majors_name ?? ''}</p>
           </div>
         </div>
 

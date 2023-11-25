@@ -23,12 +23,12 @@ const circleIcon = (
 
 const NAVBAR_SOCIAL_CONFIGS = [
   {
-    title: 'Newsfeed',
+    title: 'Bảng tin',
     icon: <i className="icon material-symbols-outlined">newspaper</i>,
     pathname: pathName.HOME,
   },
   {
-    title: 'Q & A',
+    title: 'Hỏi & Đáp',
     icon: <i className="icon material-symbols-outlined">quiz</i>,
     pathname: pathName.QUESTS,
   },
@@ -38,39 +38,34 @@ const NAVBAR_SOCIAL_CONFIGS = [
     pathname: pathName.BLOG,
   },
   {
-    title: 'Chat',
+    title: 'Nhắn tin',
     icon: <i className="icon material-symbols-outlined">message</i>,
     pathname: pathName.CHAT,
   },
   {
-    title: 'Profile',
+    title: 'Trang cá nhân',
     icon: <i className="icon material-symbols-outlined">person</i>,
     pathname: pathName.PROFILE,
   },
   {
-    title: 'Friends',
+    title: 'Bạn bè',
     icon: <i className="icon material-symbols-outlined">people</i>,
     pathname: pathName.FRIEND_LIST,
     eventKey: 'friend-menu',
     subNav: [
       {
-        title: 'Friend List',
+        title: 'Danh sách bạn bè',
         pathname: pathName.FRIEND_LIST,
         icon: circleIcon,
         miniTitle: 'F',
       },
       {
-        title: 'Friend Request',
+        title: 'Lời mời kết bạn',
         pathname: pathName.FRIEND_REQUEST,
         icon: circleIcon,
         miniTitle: 'F1',
       },
     ],
-  },
-  {
-    title: 'Group',
-    icon: <i className="icon material-symbols-outlined">groups</i>,
-    pathname: pathName.GROUP,
   },
 ];
 
