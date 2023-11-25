@@ -47,6 +47,9 @@ export const ProfilePage = () => {
     case 'qa':
       type = 'qa';
       break;
+    case 'commentedQuestions':
+      type = 'commentedQuestions';
+      break;
 
     default:
       type = 'post';
@@ -243,7 +246,12 @@ export const ProfilePage = () => {
                     </Tab.Container>
                   </Tab.Pane>
                   <Tab.Pane eventKey="five">
-                    {type == 'qa' && <MyListQa listQa={detailProfile?.data[0]?.qa?.data} isLoading={isLoading} />}
+                    {(type === 'qa' || type === 'commentedQuestions') && (
+                      <MyListQa
+                        listQa={type === 'qa' ? detailProfile?.data[0]?.qa?.data : detailProfile?.data[0]?.qa?.data}
+                        isLoading={isLoading}
+                      />
+                    )}
                   </Tab.Pane>
                 </Tab.Content>
               </Col>

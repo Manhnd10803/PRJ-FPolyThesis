@@ -20,7 +20,7 @@ export const ListPrivateChannel = ({ search }: ListPrivateChannelProps) => {
     ? listPrivateChannel.filter(item => diacritics.remove(item.username.toLowerCase()).includes(normalizedSearch))
     : listPrivateChannel;
 
-  if (listPrivateChannel.length === 0) return <div>Bạn chưa nhắn tin với ai</div>;
+  if (listPrivateChannel && listPrivateChannel.length === 0) return <div>Bạn chưa nhắn tin với ai</div>;
 
   return (
     <Nav as="ul" variant="pills" className="iq-chat-ui nav flex-column">

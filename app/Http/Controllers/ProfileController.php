@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Expr\FuncCall;
+use PhpParser\Node\Stmt\Break_;
 
 class ProfileController extends Controller
 {
@@ -190,6 +191,41 @@ class ProfileController extends Controller
                         'qa' => $qas,
                     ];
                     array_push($result, $qaData);
+                    break;
+                case 'commentedQuestions':
+                    $commentedQas = Comment::select('qa_id')
+                        ->where('user_id', $loggedInUser->id)
+                        ->whereNotNull('qa_id')
+                        ->with(['qa' => function ($query) {
+                            $query->select('id', 'title');
+                        }])
+                        ->orderBy('qa_id')
+                        ->orderBy('created_at', 'ASC')
+                        ->paginate(10);
+
+                    $groupedQas = $commentedQas->groupBy('qa_id');
+                    $uniqueQas = $groupedQas->map(function ($items) {
+                        return [
+                            'qa_id' => $items->first()->qa_id,
+                            'title' => $items->first()->qa->title,
+                            'updated_at' => $items->first()->qa->updated_at,
+                        ];
+                    });
+
+                    $qaData = [
+                        'pagination' => [
+                            'current_page' => $commentedQas->currentPage(),
+                            'per_page' => $commentedQas->perPage(),
+                            'total' => $commentedQas->total(),
+                            'last_page' => $commentedQas->lastPage(),
+                        ],
+                        'data' => $uniqueQas->values()->all(),
+                    ];
+
+                    $data = [
+                        'qa' => $qaData
+                    ];
+                    array_push($result, $data);
                     break;
             }
             DB::commit();
