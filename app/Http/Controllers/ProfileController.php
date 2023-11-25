@@ -206,7 +206,7 @@ class ProfileController extends Controller
                     $groupedQas = $commentedQas->groupBy('qa_id');
                     $uniqueQas = $groupedQas->map(function ($items) {
                         return [
-                            'qa_id' => $items->first()->qa_id,
+                            'id' => $items->first()->qa_id,
                             'title' => $items->first()->qa->title,
                             'updated_at' => $items->first()->qa->updated_at,
                         ];

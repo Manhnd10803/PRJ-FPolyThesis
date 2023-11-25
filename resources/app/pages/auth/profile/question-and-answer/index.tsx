@@ -3,6 +3,7 @@ import { Card, Col, Nav, Row, Tab } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { formatTime } from '../components/format-time';
 import diacritics from 'diacritics';
+import { pathName } from '@/routes/path-name';
 
 export const MyListQa = ({ listQa, isLoading }) => {
   const [searchQueries, setSearchQueries] = useState({
@@ -48,7 +49,11 @@ export const MyListQa = ({ listQa, isLoading }) => {
             {filteredList.map((item: any, index: number) => (
               <Row className="mb-2" key={index}>
                 <div className="col-12">
-                  <Link className="text-dark font-bold" style={{ fontSize: '20px' }} to={`/quest/${item.id}`}>
+                  <Link
+                    className="text-dark font-bold"
+                    style={{ fontSize: '20px' }}
+                    to={`${pathName.QUESTS}/${item.id}`}
+                  >
                     {item.title}
                   </Link>
                 </div>
