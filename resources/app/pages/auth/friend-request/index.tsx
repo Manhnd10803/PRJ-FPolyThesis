@@ -167,7 +167,18 @@ export const FriendRequestPage = () => {
                               <Col key={itemFriend.id} sm={3}>
                                 <Card className="mb-3">
                                   <Link to={`${pathName.PROFILE}/${itemFriend.id}`}>
-                                    <Card.Img variant="top" src={itemFriend.avatar} alt="#" />
+                                    <Card.Img
+                                      style={{
+                                        width: '100%',
+                                        aspectRatio: '1/1',
+                                        objectFit: 'cover',
+                                        objectPosition: 'center',
+                                      }}
+                                      className="img-fluid"
+                                      variant="top"
+                                      src={itemFriend.avatar}
+                                      alt="#"
+                                    />
                                   </Link>
                                   <Card.Body>
                                     <Link to={`${pathName.PROFILE}/${itemFriend.id}`}>

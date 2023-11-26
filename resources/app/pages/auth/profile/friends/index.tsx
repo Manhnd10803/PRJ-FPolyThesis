@@ -84,6 +84,12 @@ export const FriendsMyUserPage = () => {
                                     <div className="d-flex align-items-center gap-4">
                                       <Link to="#" style={{ width: '137px' }}>
                                         <img
+                                          style={{
+                                            width: '100%',
+                                            aspectRatio: '3/2',
+                                            objectFit: 'cover',
+                                            objectPosition: 'center',
+                                          }}
                                           loading="lazy"
                                           src={itemfriend?.friend?.avatar}
                                           alt="profile-img"
