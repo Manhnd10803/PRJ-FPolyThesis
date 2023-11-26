@@ -1,7 +1,7 @@
 import { AccountSettingPage } from '@/pages/auth/account-setting';
 import { BlogPage } from '@/pages/auth/blog';
 import { CreateBlogPage } from '@/pages/auth/blog-create';
-import { BlogDetailPage } from '@/pages/auth/blog/blog-detail';
+import { BlogDetailPage } from '@/pages/auth/blog-detail';
 import { EditProfilePage } from '@/pages/auth/edit-profile';
 import { FriendListPage } from '@/pages/auth/friend-list';
 import { FriendRequestPage } from '@/pages/auth/friend-request';

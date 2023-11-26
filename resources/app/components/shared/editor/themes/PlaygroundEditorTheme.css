@@ -16,6 +16,9 @@
   margin: 0;
   position: relative;
 }
+.PlaygroundEditorTheme__paragraph img {
+  max-width: 100%;
+}
 .PlaygroundEditorTheme__quote {
   margin: 0;
   margin-left: 20px;

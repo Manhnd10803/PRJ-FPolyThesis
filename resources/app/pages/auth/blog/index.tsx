@@ -5,6 +5,7 @@ import { BlogService } from '@/apis/services/blog.service';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { pathName } from '@/routes/path-name';
 import { useEffect, useState } from 'react';
+import { Loading } from '@/components/shared/loading';
 
 export const BlogPage = () => {
   const [totalPage, settotalPage] = useState(0);
@@ -55,9 +56,7 @@ export const BlogPage = () => {
             </div>
           </Col>
           {isLoading ? (
-            <Spinner animation="border" variant="primary" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </Spinner>
+            <Loading size={100} textStyle={{ fontSize: '30px' }} textLoading="Đang tải..." />
           ) : (
             <>
               <ListCard data={data?.pages.flatMap(page => page.blogs)} />
