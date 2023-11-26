@@ -14,14 +14,15 @@ export const FriendsMyUserPage = () => {
   };
   const FriendsMyUserQueryKey = ['friendmyuser'];
   const { data: friendsMyUser, isLoading } = useQuery(FriendsMyUserQueryKey, { queryFn: fetchAllFriendMyUser });
-  const addFriendMutation = useMutation(FriendService.unFriend, {
+  const unFriendMutation = useMutation(FriendService.unFriend, {
     onSettled: () => {
       queryClient.invalidateQueries(FriendsMyUserQueryKey); // Chỉnh sửa tên query nếu cần
     },
   });
+
   const HandleAddFriend = async (id: any) => {
     try {
-      const response = await addFriendMutation.mutateAsync(id);
+      const response = await unFriendMutation.mutateAsync(id);
       setShowDeleteFriend(false);
       return response;
     } catch (error) {

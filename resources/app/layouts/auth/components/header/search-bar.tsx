@@ -1,12 +1,11 @@
 import { SearchService } from '@/apis/services/search.service';
 import { useDebounce } from '@/hooks';
-import { formatDateFromCreatedAt } from '@/pages/auth/blog/components/format-date';
+import { formatDMYCreatedAt } from '@/pages/auth/blog/components/format-date';
 import { formatFullName } from '@/utilities/functions';
 import parse from 'html-react-parser';
-import { useEffect, useState } from 'react';
-import { Form, Image, Modal } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-
+import { useEffect, useRef, useState } from 'react';
+import { Form, Image, Modal, Spinner } from 'react-bootstrap';
+import { Link, useNavigate } from 'react-router-dom';
 type SearchBarProps = {};
 const Overlay: React.FC<{ onClick: () => void }> = ({ children, onClick }) => {
   const overlayStyles = {
@@ -49,37 +48,60 @@ const truncateTextStyle = {
   WebkitLineClamp: 1,
   WebkitBoxOrient: 'vertical',
 };
+
 export const SearchBar: React.FC<SearchBarProps> = () => {
+  const navigate = useNavigate();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [type, setType] = useState('default');
   const [searchValue, setSearchValue] = useState('');
   const [data, setData] = useState([]);
   const debouncedValue = useDebounce(searchValue, 500);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const handleToggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
-  };
 
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      }
+    }, 0);
+  };
   const handleOverlayClick = () => {
     setDropdownOpen(false);
+    setData([]);
   };
 
   useEffect(() => {
     if (!debouncedValue.trim()) {
-      setSearchValue('');
+      // Nếu trống, hiển thị thông báo "Không tìm thấy kết quả cho bất kỳ danh mục nào"
+      setData([]);
+      setLoading(false);
       return;
     }
     const fetchApi = async () => {
       setLoading(true);
       const result = await SearchService.getSearchEverything(type, debouncedValue);
-      console.log(result);
       setData(result.data);
       setLoading(false);
     };
     fetchApi();
-  }, [debouncedValue]);
+  }, [debouncedValue, type]);
 
-  console.log(data);
+  const handleFormSubmit = (event: any) => {
+    const newUrl = `/search?search=${searchValue}`;
+    navigate(newUrl);
+    event.preventDefault();
+    setData([]);
+    setSearchValue('');
+    setDropdownOpen(!isDropdownOpen);
+  };
+  const handleLinkClick = () => {
+    setDropdownOpen(false);
+    setSearchValue('');
+    setData([]);
+  };
+
   return (
     <>
       {isDropdownOpen && <Overlay onClick={handleOverlayClick} />}
@@ -92,6 +114,8 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
             type="text"
             className="text search-input form-control bg-soft-primary d-none d-lg-block"
             placeholder="Search here..."
+            value={searchValue}
+            disabled={isDropdownOpen}
           />
           <Link className="d-lg-none d-flex d-none d-lg-block" to="/" onClick={handleToggleDropdown}>
             <span className="material-symbols-outlined">search</span>
@@ -100,11 +124,20 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
 
         {isDropdownOpen && (
           <div className="custom-dropdown " style={calculateDropdownPosition(isDropdownOpen)}>
-            <form action="#" className="searchbox">
-              <Link className="search-link  d-lg-block" to="/">
-                <span className="material-symbols-outlined">search</span>
+            <form action="#" className="searchbox" onSubmit={handleFormSubmit}>
+              <Link as="button" className="search-link  d-lg-block" to="/">
+                {loading ? (
+                  <>
+                    <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
+                  </>
+                ) : (
+                  <>
+                    <span className="material-symbols-outlined">search</span>
+                  </>
+                )}
               </Link>
               <Form.Control
+                ref={inputRef}
                 type="text"
                 className="text search-input form-control bg-soft-primary d-lg-block"
                 placeholder="Search here..."
@@ -118,19 +151,21 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
                   <div className="mt-2">
                     <h4 className="px-3 py-2 bg-primary text-white">Bài viết</h4>
                     {data?.blog.map((item, index) => (
-                      <div className="suggestion-card px-3 d-flex search-hover" key={index}>
-                        <div>
-                          <h4>{item.title}</h4>
-                          <div className="d-flex flex-wrap-reverse gap-2">
-                            <div>{formatFullName(item.user)}</div>{' '}
-                            <span>{formatDateFromCreatedAt(item?.created_at)}</span>
-                          </div>
-                          <div className="p" style={truncateTextStyle}>
-                            {' '}
-                            {item?.content ? parse(JSON.parse(item?.content)) : 'Content not available'}
+                      <Link to={`blog/${item.id}`} onClick={handleLinkClick} key={index} className="text-black">
+                        <div className="suggestion-card px-3 d-flex search-hover border-bottom" key={index}>
+                          <div>
+                            <h4>{item.title}</h4>
+                            <div className="d-flex flex-wrap-reverse gap-2">
+                              <div className="text-black">{formatFullName(item.user)}</div>{' '}
+                              <span className="text-black">{formatDMYCreatedAt(item?.created_at)}</span>
+                            </div>
+                            <div className="p text-black" style={truncateTextStyle}>
+                              {' '}
+                              {item?.content ? parse(JSON.parse(item?.content)) : 'Content not available'}
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      </Link>
                     ))}
                   </div>
                 </>
@@ -143,19 +178,20 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
                   <div className="mt-2">
                     <h4 className="px-3 py-2 bg-primary text-white">Câu hỏi</h4>
                     {data?.qa.map((item, index) => (
-                      <div className="suggestion-card px-3 d-flex search-hover" key={index}>
-                        <div>
-                          <h4>{item.title}</h4>
-                          <div className="d-flex flex-wrap-reverse gap-2">
-                            <div>{formatFullName(item.user)}</div>{' '}
-                            <span>{formatDateFromCreatedAt(item?.created_at)}</span>
-                          </div>
-                          <div className="p" style={truncateTextStyle}>
-                            {' '}
-                            {item?.content ? parse(JSON.parse(item?.content)) : 'Content not available'}
+                      <Link to={`quests/${item.id}`} onClick={handleLinkClick} key={index} className="text-black">
+                        <div className="suggestion-card px-3 d-flex search-hover border-bottom" key={index}>
+                          <div>
+                            <h4>{item.title}</h4>
+                            <div className="d-flex flex-wrap-reverse gap-2">
+                              <div className="text-black">{formatFullName(item.user)}</div>{' '}
+                              <span className="text-black">{formatDMYCreatedAt(item?.created_at)}</span>
+                            </div>
+                            <div className="p text-black" style={truncateTextStyle}>
+                              {item?.content ? parse(JSON.parse(item?.content)) : 'Content not available'}
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      </Link>
                     ))}
                   </div>
                 </>
@@ -169,30 +205,38 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
 
                     <div className="">
                       {data?.user.map((item, index) => (
-                        <div className="d-flex align-items-center search-hover py-2 border-bottom">
-                          <div className="flex-shrink-0">
-                            <Image
-                              className="align-self-center img-fluid avatar-50 rounded-pill"
-                              src={item.avatar}
-                              alt=""
-                              loading="lazy"
-                            />
-                          </div>
+                        <Link to={`/profile/${item.id}`} onClick={handleLinkClick} key={index} className="text-black">
+                          <div className="d-flex align-items-center search-hover py-2 border-bottom">
+                            <div className="flex-shrink-0">
+                              <Image
+                                className="align-self-center img-fluid avatar-50 rounded-pill"
+                                src={item.avatar}
+                                alt=""
+                                loading="lazy"
+                              />
+                            </div>
 
-                          <div className="d-flex flex-column ms-3">
-                            <Link to="/" className="h5">
-                              {formatFullName(item)}
-                            </Link>
+                            <div className="d-flex flex-column ms-3">
+                              <Link to={`/profile/${item.id}`} className="h5">
+                                {formatFullName(item)}
+                              </Link>
 
-                            <span>@{item.username}</span>
+                              <span>@{item.username}</span>
+                            </div>
                           </div>
-                        </div>
+                        </Link>
                       ))}
                     </div>
                   </div>
                 </>
               ) : (
                 <></>
+              )}
+
+              {debouncedValue.trim() && !loading && !(data?.blog?.length || data?.qa?.length || data?.user?.length) && (
+                <div className="mt-2">
+                  <p className="text-center">No results found for any category.</p>
+                </div>
               )}
             </Modal.Body>
           </div>

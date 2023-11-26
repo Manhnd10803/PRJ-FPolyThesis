@@ -1,7 +1,7 @@
 import { SearchService } from '@/apis/services/search.service';
 import { useEffect, useState } from 'react';
 import { Badge, Card, Col, Container, Nav, Row, Tab } from 'react-bootstrap';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { formatFullName } from '@/utilities/functions';
 import { formatDateFromCreatedAt } from '../blog/components/format-date';
 import parse from 'html-react-parser';
@@ -14,6 +14,7 @@ export const SearchPage = () => {
     WebkitBoxOrient: 'vertical',
   };
   const location = useLocation();
+  const navigate = useNavigate();
   const [type, setType] = useState('blog');
   const searchParams = new URLSearchParams(location.search);
   const searchValueFromURL = searchParams.get('search') || '';
@@ -22,33 +23,41 @@ export const SearchPage = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (searchValueFromURL) {
-      handleSearchSubmit();
-    }
-    handleSearchSubmit();
-  }, [type, searchValueFromURL]); // This will re-run the effect when 'type' or 'searchValue' changes
+    setSearchValue(searchValueFromURL);
+  }, [searchValueFromURL]);
+  useEffect(() => {
+    setSearchValue(searchValueFromURL);
 
-  const handleSearchSubmit = () => {
     setLoading(true);
-    // Gọi hàm tìm kiếm từ Service
-    SearchService.getSearchEverything(type, searchValue)
+    SearchService.getSearchEverything(type, searchValueFromURL)
       .then(response => {
-        // Xử lý dữ liệu tìm kiếm ở đây
         console.log(response.data);
         setData(response.data);
       })
-      .catch(error => {
-        // Xử lý lỗi ở đây
-        console.error(error);
+      .finally(() => {
+        setLoading(false);
+      });
+
+    return () => {
+      setData([]);
+    };
+  }, [type, searchValueFromURL]);
+
+  const handleSearchSubmit = () => {
+    setLoading(true);
+    SearchService.getSearchEverything(type, searchValue)
+      .then(response => {
+        console.log(response.data);
+        setData(response.data);
       })
       .finally(() => {
-        setLoading(false); // Set loading to false when the search is complete (either success or failure)
+        setLoading(false);
       });
   };
-
+  console.log(data);
   const handleFormSubmit = (event: any) => {
     const newUrl = `/search?search=${searchValue}`;
-    window.history.pushState({ path: newUrl }, '', newUrl);
+    navigate(newUrl);
     event.preventDefault();
     handleSearchSubmit();
   };
@@ -116,79 +125,81 @@ export const SearchPage = () => {
                     ) : (
                       <>
                         {data && data.length > 0 && type == 'blog' ? (
-                          data.map(item => (
-                            <Row key={item.id}>
-                              <Card.Body className="p-3">
-                                <div className="borderbox1 mt-3 rounded d-flex rounded">
-                                  <div className="user-img me-2">
-                                    <img
-                                      loading="lazy"
-                                      src={item?.user?.avatar}
-                                      alt="userimg"
-                                      className="avatar-40 rounded-circle"
-                                    />
-                                  </div>
-                                  <div className="borderbox border rounded p-2">
-                                    <div className="d-flex flex-wrap mb-1">
-                                      <div>
+                          data.map((item, index) => (
+                            <Row key={index}>
+                              <Link to={`/blog/${item.id}`} className="text-black">
+                                <Card.Body className="p-3">
+                                  <div className="borderbox1 mt-3 rounded d-flex rounded">
+                                    <div className="user-img me-2">
+                                      <img
+                                        loading="lazy"
+                                        src={item?.user?.avatar}
+                                        alt="userimg"
+                                        className="avatar-40 rounded-circle"
+                                      />
+                                    </div>
+                                    <div className="borderbox border rounded p-2">
+                                      <div className="d-flex flex-wrap mb-1">
                                         <div>
-                                          {formatFullName(item?.user)} <p>@{item?.user?.username}</p>
+                                          <div>
+                                            {formatFullName(item?.user)} <p>@{item?.user?.username}</p>
+                                          </div>
                                         </div>
-                                      </div>
-                                      <span className="text-primary ms-1 d-flex  align-items-start">
-                                        <i className="material-symbols-outlined me-2 text-primary md-16">
-                                          check_circle
-                                        </i>
+                                        <span className="text-primary ms-1 d-flex  align-items-start">
+                                          <i className="material-symbols-outlined me-2 text-primary md-16">
+                                            check_circle
+                                          </i>
 
-                                        <Link to="#" className="mb-0">
-                                          {item?.major?.majors_name}
-                                        </Link>
-                                      </span>
-                                      <div className="ms-auto d-flex">
-                                        <div className="ms-auto d-flex ">
-                                          <>
-                                            <i className="material-symbols-outlined md-16"> thumb_up </i>
+                                          <Link to="#" className="mb-0">
+                                            {item?.major?.majors_name}
+                                          </Link>
+                                        </span>
+                                        <div className="ms-auto d-flex">
+                                          <div className="ms-auto d-flex ">
+                                            <>
+                                              <i className="material-symbols-outlined md-16"> thumb_up </i>
+                                              <span className="mx-1">
+                                                <small>{item?.likes_count}</small>
+                                              </span>
+                                            </>
+                                          </div>
+                                          <div className="ms-auto d-flex ">
+                                            <i className="material-symbols-outlined md-16"> chat_bubble_outline </i>
                                             <span className="mx-1">
-                                              <small>{item?.likes_count}</small>
+                                              <small>{item?.comments_count}</small>
                                             </span>
-                                          </>
-                                        </div>
-                                        <div className="ms-auto d-flex ">
-                                          <i className="material-symbols-outlined md-16"> chat_bubble_outline </i>
-                                          <span className="mx-1">
-                                            <small>{item?.comments_count}</small>
-                                          </span>
-                                        </div>
-                                        <div className="ms-auto d-flex ">
-                                          <i className="material-symbols-outlined md-16">schedule</i>
-                                          <span className="mx-1">
-                                            <small>{formatDateFromCreatedAt(item?.created_at)}</small>
-                                          </span>
+                                          </div>
+                                          <div className="ms-auto d-flex ">
+                                            <i className="material-symbols-outlined md-16">schedule</i>
+                                            <span className="mx-1">
+                                              <small>{formatDateFromCreatedAt(item?.created_at)}</small>
+                                            </span>
+                                          </div>
                                         </div>
                                       </div>
-                                    </div>
-                                    <Link to={'#'} className="h5">
-                                      {item?.title}
-                                    </Link>
-                                    <div style={truncateTextStyle}>
-                                      {' '}
-                                      {item?.content ? parse(JSON.parse(item?.content)) : 'Content not available'}
-                                    </div>
-                                    <Row className="mt-2"></Row>
-                                    {/* Hashtag */}
-                                    <div>
-                                      <Badge
-                                        as={Link}
-                                        bg=""
-                                        to="#"
-                                        className="badge border border-danger text-danger mt-2 h-1 ms-2 me-2"
-                                      >
-                                        {item?.hashtag}
-                                      </Badge>
+                                      <Link to={'#'} className="h5">
+                                        {item?.title}
+                                      </Link>
+                                      <div style={truncateTextStyle}>
+                                        {' '}
+                                        {item?.content ? parse(JSON.parse(item?.content)) : 'Content not available'}
+                                      </div>
+                                      <Row className="mt-2"></Row>
+                                      {/* Hashtag */}
+                                      <div>
+                                        <Badge
+                                          as={Link}
+                                          bg=""
+                                          to="#"
+                                          className="badge border border-danger text-danger mt-2 h-1 ms-2 me-2"
+                                        >
+                                          {item?.hashtag}
+                                        </Badge>
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                              </Card.Body>
+                                </Card.Body>
+                              </Link>
                             </Row>
                           ))
                         ) : (
@@ -206,75 +217,77 @@ export const SearchPage = () => {
                     ) : (
                       <>
                         {data && data.length > 0 && type == 'qa' ? (
-                          data.map(item => (
-                            <Row key={item.id}>
-                              <Card.Body className="p-3">
-                                <div className="borderbox1 mt-3 rounded d-flex rounded">
-                                  <div className="user-img me-2">
-                                    <img
-                                      loading="lazy"
-                                      src={item?.user?.avatar}
-                                      alt="userimg"
-                                      className="avatar-40 rounded-circle"
-                                    />
-                                  </div>
-                                  <div className="borderbox border rounded p-2">
-                                    <div className="d-flex flex-wrap mb-1">
-                                      <div>
+                          data.map((item, index) => (
+                            <Row key={index}>
+                              <Link to={`/quests/${item.id}`} className="text-black">
+                                <Card.Body className="p-3">
+                                  <div className="borderbox1 mt-3 rounded d-flex rounded">
+                                    <div className="user-img me-2">
+                                      <img
+                                        loading="lazy"
+                                        src={item?.user?.avatar}
+                                        alt="userimg"
+                                        className="avatar-40 rounded-circle"
+                                      />
+                                    </div>
+                                    <div className="borderbox border rounded p-2">
+                                      <div className="d-flex flex-wrap mb-1">
                                         <div>
-                                          {formatFullName(item?.user)} <p>@{item?.user?.username}</p>
+                                          <div>
+                                            {formatFullName(item?.user)} <p>@{item?.user?.username}</p>
+                                          </div>
                                         </div>
-                                      </div>
-                                      <span className="text-primary ms-1 d-flex  align-items-start">
-                                        <i className="material-symbols-outlined me-2 text-primary md-16">
-                                          check_circle
-                                        </i>
+                                        <span className="text-primary ms-1 d-flex  align-items-start">
+                                          <i className="material-symbols-outlined me-2 text-primary md-16">
+                                            check_circle
+                                          </i>
 
-                                        <Link to="#" className="mb-0">
-                                          {item?.major?.majors_name}
-                                        </Link>
-                                      </span>
-                                      <div className="ms-auto d-flex">
-                                        <div className="ms-auto d-flex ">
-                                          <>
-                                            <i className="material-symbols-outlined md-16"> thumb_up </i>
+                                          <Link to="#" className="mb-0">
+                                            {item?.major?.majors_name}
+                                          </Link>
+                                        </span>
+                                        <div className="ms-auto d-flex">
+                                          <div className="ms-auto d-flex ">
+                                            <>
+                                              <i className="material-symbols-outlined md-16"> thumb_up </i>
+                                              <span className="mx-1">
+                                                <small>{item?.likes_count}</small>
+                                              </span>
+                                            </>
+                                          </div>
+                                          <div className="ms-auto d-flex ">
+                                            <i className="material-symbols-outlined md-16"> chat_bubble_outline </i>
                                             <span className="mx-1">
-                                              <small>{item?.likes_count}</small>
+                                              <small>{item?.comments_count}</small>
                                             </span>
-                                          </>
-                                        </div>
-                                        <div className="ms-auto d-flex ">
-                                          <i className="material-symbols-outlined md-16"> chat_bubble_outline </i>
-                                          <span className="mx-1">
-                                            <small>{item?.comments_count}</small>
-                                          </span>
-                                        </div>
-                                        <div className="ms-auto d-flex ">
-                                          <i className="material-symbols-outlined md-16">schedule</i>
-                                          <span className="mx-1">
-                                            <small>{formatDateFromCreatedAt(item?.created_at)}</small>
-                                          </span>
+                                          </div>
+                                          <div className="ms-auto d-flex ">
+                                            <i className="material-symbols-outlined md-16">schedule</i>
+                                            <span className="mx-1">
+                                              <small>{formatDateFromCreatedAt(item?.created_at)}</small>
+                                            </span>
+                                          </div>
                                         </div>
                                       </div>
-                                    </div>
-                                    <Link to={'#'} className="h5">
-                                      {item?.title}
-                                    </Link>
-                                    <Row className="mt-2"></Row>
-                                    {/* Hashtag */}
-                                    <div>
-                                      <Badge
-                                        as={Link}
-                                        bg=""
-                                        to="#"
-                                        className="badge border border-danger text-danger mt-2 h-1 ms-2 me-2"
-                                      >
-                                        {item?.hashtag}
-                                      </Badge>
+                                      <Link to={'#'} className="h5">
+                                        {item?.title}
+                                      </Link>
+                                      <Row className="mt-2"></Row>
+                                      {/* Hashtag */}
+                                      <div>
+                                        <Badge
+                                          as={Link}
+                                          bg=""
+                                          to="#"
+                                          className="badge border border-danger text-danger mt-2 h-1 ms-2 me-2"
+                                        >
+                                          {item?.hashtag}
+                                        </Badge>
+                                      </div>
                                     </div>
                                   </div>
-                                </div>
-                              </Card.Body>
+                                </Card.Body>
+                              </Link>
                             </Row>
                           ))
                         ) : (
@@ -293,22 +306,22 @@ export const SearchPage = () => {
                       ) : (
                         <>
                           {data && data.length > 0 && type == 'user' ? (
-                            data.map(item => (
-                              <Col sm={3}>
-                                <Card className="mb-3">
-                                  <Link to={'#'}>
+                            data.map((item, index) => (
+                              <Col sm={3} key={index}>
+                                <Link to={`/profile/${item.id}`} className="text-black">
+                                  <Card className="mb-3">
                                     <Card.Img variant="top" src={item.avatar} alt="ảnh đại diện" />
-                                  </Link>
-                                  <Card.Body>
-                                    <Link to={'#'}>
+
+                                    <Card.Body>
                                       <Card.Title as="h5" className="card-title">
                                         {formatFullName(item)}
                                       </Card.Title>
-                                    </Link>
-                                    <Card.Text className="card-text">@{item.username}</Card.Text>
-                                    <div className="d-flex flex-column gap-2 mt-2 mt-md-0"></div>
-                                  </Card.Body>
-                                </Card>
+
+                                      <Card.Text className="card-text">@{item.username}</Card.Text>
+                                      <div className="d-flex flex-column gap-2 mt-2 mt-md-0"></div>
+                                    </Card.Body>
+                                  </Card>
+                                </Link>
                               </Col>
                             ))
                           ) : (
