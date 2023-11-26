@@ -197,7 +197,7 @@ class ProfileController extends Controller
                         ->where('user_id', $loggedInUser->id)
                         ->whereNotNull('qa_id')
                         ->with(['qa' => function ($query) {
-                            $query->select('id', 'title');
+                            $query->select('id', 'title', 'user_id','updated_at');
                         }])
                         ->orderBy('qa_id')
                         ->orderBy('created_at', 'ASC')
@@ -208,8 +208,14 @@ class ProfileController extends Controller
                         return [
                             'id' => $items->first()->qa_id,
                             'title' => $items->first()->qa->title,
+                            'user_id' => $items->first()->qa->user_id,
                             'updated_at' => $items->first()->qa->updated_at,
                         ];
+                    });
+
+                    $filteredQas = $uniqueQas->filter(function ($item) use ($loggedInUser) {
+                        $userIdOfQa = $item['user_id'];
+                        return $userIdOfQa !== $loggedInUser->id;
                     });
 
                     $qaData = [
@@ -219,7 +225,7 @@ class ProfileController extends Controller
                             'total' => $commentedQas->total(),
                             'last_page' => $commentedQas->lastPage(),
                         ],
-                        'data' => $uniqueQas->values()->all(),
+                        'data' => $filteredQas->values()->all(),
                     ];
 
                     $data = [
