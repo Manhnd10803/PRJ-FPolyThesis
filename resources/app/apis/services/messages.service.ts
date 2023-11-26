@@ -1,10 +1,11 @@
-import { GetListPrivateChannelResponseType, SendMessageResponseType } from '@/models/messages';
+import { GetListPrivateChannelResponseType, IMessages, SendMessageResponseType } from '@/models/messages';
 import httpRequest from '../axios-instance';
 import { ApiConstants } from '../endpoints';
+import { Paginate } from '@/models/pagination';
 
 // channel
-const getConversationOfChannel = (id: number | string) => {
-  return httpRequest.get(`${ApiConstants.PRIVATE_CHANNEL}/${id}`);
+const getConversationOfChannel = (id: number | string, quantity: number, page: number) => {
+  return httpRequest.get<Paginate<IMessages>>(`${ApiConstants.PRIVATE_CHANNEL}/${id}/${quantity}?page=${page}`);
 };
 
 const getListPrivateChannel = () => {

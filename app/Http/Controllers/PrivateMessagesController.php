@@ -112,7 +112,7 @@ class PrivateMessagesController extends Controller
                     $query->whereNull('deleted_by')
                         ->orWhereJsonDoesntContain('deleted_by', $user1Id);
                 });
-        })->orderBy('created_at', 'asc')->with(['sender:id,avatar', 'receiver:id,avatar,username']);
+        })->orderBy('created_at', 'desc')->with(['sender:id,avatar', 'receiver:id,avatar,username']);
         if ($quantity) {
             $messages = $messages->paginate($quantity);
         } else {
