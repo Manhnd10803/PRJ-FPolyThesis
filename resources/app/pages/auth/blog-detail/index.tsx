@@ -8,6 +8,7 @@ import { BlogService } from '@/apis/services/blog.service';
 import { useRef } from 'react';
 import { CommentService } from '@/apis/services/comment.service';
 import { LikeService } from '@/apis/services/like.service';
+import { Loading } from '@/components/shared/loading';
 
 export const BlogDetailPage = () => {
   const commentRef = useRef(null);
@@ -96,9 +97,7 @@ export const BlogDetailPage = () => {
         <Container>
           <Row>
             {isLoading ? (
-              <Spinner animation="border" variant="primary" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </Spinner>
+              <Loading size={100} textStyle={{ fontSize: '30px' }} textLoading="Đợi chút nè..." />
             ) : (
               <>
                 <ContentBlogDetail data={data} commentRef={commentRef} createLike={createLike} />

@@ -5,7 +5,7 @@ import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import ThumbDownOffAltOutlinedIcon from '@mui/icons-material/ThumbDownOffAltOutlined';
 import { useState } from 'react';
-import { formatDMYCreatedAt, formatDateFromCreatedAt } from '../../components/format-date';
+import { formatDMYCreatedAt, formatDateFromCreatedAt } from '../../blog/components/format-date';
 import { Link } from 'react-router-dom';
 import { formatFullName } from '@/utilities/functions';
 import { pathName } from '@/routes/path-name';

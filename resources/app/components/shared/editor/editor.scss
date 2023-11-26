@@ -894,7 +894,7 @@ i.page-break,
 }
 
 .editor-shell .editor-image img {
-  max-width: 100%;
+  max-width: 100% !important;
   cursor: default;
 }
 
@@ -905,6 +905,7 @@ i.page-break,
 
 .editor-shell .editor-image img.focused.draggable {
   cursor: grab;
+  max-width: 100% !important;
 }
 
 .editor-shell .editor-image img.focused.draggable:active {

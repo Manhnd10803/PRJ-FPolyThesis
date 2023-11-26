@@ -3,7 +3,7 @@ import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { useState } from 'react';
 import { Button, Col, Dropdown, Form, Image, Modal, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { formatDateFromCreatedAt } from '../../components/format-date';
+import { formatDateFromCreatedAt } from '../../blog/components/format-date';
 import { compileFunction } from 'vm';
 import { formatFullName } from '@/utilities/functions';
 import { pathName } from '@/routes/path-name';
