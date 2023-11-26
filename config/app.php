@@ -168,12 +168,14 @@ return [
         App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\TelescopeServiceProvider::class,
         Laravel\Passport\PassportServiceProvider::class,
         Laravel\Socialite\SocialiteServiceProvider::class,
         L5Swagger\L5SwaggerServiceProvider::class,
         App\Providers\SocialAuthServiceProvider::class,
         App\Providers\EmotionsServiceProvider::class,
         App\Providers\ReadMenuAdminProvider::class,
+        App\Providers\TelescopeServiceProvider::class,
     ])->toArray(),
     /*
     |--------------------------------------------------------------------------
