@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Card, Col, Nav, Row, Tab } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { formatTime } from '../components/format-time';
+import diacritics from 'diacritics';
 
 export const MyBlog = ({ listBlog, isLoading }) => {
   const [searchQueries, setSearchQueries] = useState({
@@ -18,9 +19,12 @@ export const MyBlog = ({ listBlog, isLoading }) => {
     setSearchQueries({ ...searchQueries, [tabKey]: '' });
   };
 
-  // Hàm chung để lọc danh sách blog
+  const normalizeText = text => diacritics.remove(text.toLowerCase());
+
+  // Shared function to filter blog list based on tabKey
   const filteredBlogListAbout = tabKey => {
-    return listBlog?.filter(item => item.title.toLowerCase().includes(searchQueries[tabKey].toLowerCase()));
+    const normalizedSearch = normalizeText(searchQueries[tabKey]);
+    return listBlog?.filter(item => normalizeText(item.title).includes(normalizedSearch));
   };
 
   return (

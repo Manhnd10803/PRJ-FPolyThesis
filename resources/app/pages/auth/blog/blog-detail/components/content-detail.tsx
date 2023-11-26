@@ -114,8 +114,8 @@ export const ContentBlogDetail = ({ data, commentRef, createLike }: any) => {
 
               <p>
                 {isContentExpanded
-                  ? parse(JSON.parse(data?.blog?.content))
-                  : parse(JSON.parse(data?.blog?.content).slice(0, 450))}
+                  ? data?.blog?.content && parse(JSON.parse(data?.blog?.content))
+                  : data?.blog?.content && parse(JSON.parse(data?.blog?.content).slice(0, 450))}
               </p>
               {data?.blog?.content.length > 200 && (
                 <div className="d-flex align-items-center text-primary" onClick={toggleContent} role="button">
