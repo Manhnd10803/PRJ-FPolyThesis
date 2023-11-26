@@ -4,6 +4,7 @@ import { Row, Col, Image, Button, Form, Dropdown, Modal } from 'react-bootstrap'
 import { Link } from 'react-router-dom';
 import { formatDateFromCreatedAt } from '../components/format-date';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
+import { formatFullName } from '@/utilities/functions';
 
 const imageUrl = 'https://picsum.photos/20';
 
@@ -16,14 +17,6 @@ export const CommentsQandA = ({ qAndAData, postComment, deleteComment, putCommen
   const [editedContent, setEditedContent] = useState('');
   // User ID
   const userId = StorageFunc.getUserId();
-  // Name :
-  function combineNames(data: any) {
-    if (qAndAData.first_name && qAndAData.last_name) {
-      return `${qAndAData.first_name} ${qAndAData.last_name}`;
-    } else {
-      return 'Unknown';
-    }
-  }
 
   const toggleReplyForm = (commentId: any) => {
     const currentVisibility = replyFormsVisible[commentId];
@@ -108,6 +101,7 @@ export const CommentsQandA = ({ qAndAData, postComment, deleteComment, putCommen
           <Card.Body>
             {qAndAData &&
               qAndAData.map((comment: any, index: any) => {
+                console.log(comment);
                 return (
                   <Row key={index}>
                     <Col lg="12">
@@ -119,7 +113,7 @@ export const CommentsQandA = ({ qAndAData, postComment, deleteComment, putCommen
                                 <Image className="avatar-80 rounded" src={comment?.user?.avatar} alt="#" />
                               </div>
                               <div className="ms-3">
-                                <h5>{comment?.user ? combineNames(comment?.user) : 'Chưa cập nhật'}</h5>
+                                <h5>{comment?.user ? formatFullName(comment?.user) : 'Chưa cập nhật'}</h5>
                                 <p>@{comment?.user?.username}</p>
                               </div>
                             </div>
@@ -264,7 +258,7 @@ export const CommentsQandA = ({ qAndAData, postComment, deleteComment, putCommen
                                       <Image className="avatar-80 rounded" src={reply?.user?.avatar} alt="#" />
                                     </div>
                                     <div className="ms-3">
-                                      <h5>{reply?.user ? combineNames(reply?.user) : 'Chưa cập nhật'}</h5>
+                                      <h5>{reply?.user ? formatFullName(reply?.user) : 'Chưa cập nhật'}</h5>
                                       <p>@{reply?.user?.username}</p>
                                     </div>
                                   </div>
