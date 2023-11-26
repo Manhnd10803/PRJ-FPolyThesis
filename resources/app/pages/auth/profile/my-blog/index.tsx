@@ -60,35 +60,35 @@ export const MyBlog = ({ listBlog, isLoading }) => {
                 <Tab.Content>
                   {['about1', 'about2', 'about3'].map(tabKey => (
                     <Tab.Pane eventKey={tabKey} key={tabKey}>
+                      <div className="d-flex justify-content-between">
+                        <h4>
+                          {tabKey === 'about1'
+                            ? 'Bài viết công khai'
+                            : tabKey === 'about2'
+                              ? 'Bài viết đang chờ xét duyệt'
+                              : 'Bài viết vi phạm'}
+                        </h4>
+                        <div className="d-flex align-items-center">
+                          <div className="form-outline">
+                            <input
+                              type="search"
+                              id="form1"
+                              style={{ height: '35px' }}
+                              className="form-control"
+                              value={searchQueries[tabKey]}
+                              placeholder="Tìm kiếm..."
+                              onChange={e => handleSearchInputChange(tabKey, e.target.value)}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <hr />
                       {isLoading ? (
                         <>
                           <h4>Loading...</h4>
                         </>
                       ) : (
                         <>
-                          <div className="d-flex justify-content-between">
-                            <h4>
-                              {tabKey === 'about1'
-                                ? 'Bài viết công khai'
-                                : tabKey === 'about2'
-                                  ? 'Bài viết đang chờ xét duyệt'
-                                  : 'Bài viết vi phạm'}
-                            </h4>
-                            <div className="d-flex align-items-center">
-                              <div className="form-outline">
-                                <input
-                                  type="search"
-                                  id="form1"
-                                  style={{ height: '35px' }}
-                                  className="form-control"
-                                  value={searchQueries[tabKey]}
-                                  placeholder="Tìm kiếm..."
-                                  onChange={e => handleSearchInputChange(tabKey, e.target.value)}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                          <hr />
                           {filteredBlogListAbout(tabKey)?.length > 0 ? (
                             <>
                               {filteredBlogListAbout(tabKey).map((item, index) => (
@@ -103,7 +103,7 @@ export const MyBlog = ({ listBlog, isLoading }) => {
                                     </Link>
                                   </div>
                                   <div className="col-12">
-                                    <p className="mb-0">Sửa lần cuối: {formatTime(item.updated_at)}</p>
+                                    <p className="mb-0">Cập nhật lần cuối: {formatTime(item.updated_at)}</p>
                                   </div>
                                   <hr />
                                 </Row>

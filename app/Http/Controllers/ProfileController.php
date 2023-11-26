@@ -8,6 +8,7 @@ use App\Models\Post;
 use App\Models\Qa;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Expr\FuncCall;
@@ -193,33 +194,55 @@ class ProfileController extends Controller
                     array_push($result, $qaData);
                     break;
                 case 'commentedQuestions':
+                    // Số lượng mục trên mỗi trang
+                    $perPage = 10;
+
+                    // Truy vấn ban đầu
                     $commentedQas = Comment::select('qa_id')
                         ->where('user_id', $loggedInUser->id)
                         ->whereNotNull('qa_id')
                         ->with(['qa' => function ($query) {
-                            $query->select('id', 'title');
+                            $query->select('id', 'title', 'user_id', 'updated_at');
                         }])
                         ->orderBy('qa_id')
                         ->orderBy('created_at', 'ASC')
-                        ->paginate(10);
+                        ->get();
 
                     $groupedQas = $commentedQas->groupBy('qa_id');
                     $uniqueQas = $groupedQas->map(function ($items) {
                         return [
                             'id' => $items->first()->qa_id,
                             'title' => $items->first()->qa->title,
+                            'user_id' => $items->first()->qa->user_id,
                             'updated_at' => $items->first()->qa->updated_at,
                         ];
                     });
 
+                    $filteredQas = $uniqueQas->filter(function ($item) use ($loggedInUser) {
+                        $userIdOfQa = $item['user_id'];
+                        return $userIdOfQa !== $loggedInUser->id;
+                    });
+
+                    // Phân trang cho kết quả đã lọc
+                    $page = request()->get('page', 1); // Lấy trang hiện tại từ request
+                    $paginatedQas = new LengthAwarePaginator(
+                        $filteredQas->forPage($page, $perPage),
+                        $filteredQas->count(),
+                        $perPage,
+                        $page,
+                        ['path' => request()->url(), 'query' => request()->query()]
+                    );
+
                     $qaData = [
+                        'data' => $paginatedQas->values()->all(),
                         'pagination' => [
-                            'current_page' => $commentedQas->currentPage(),
-                            'per_page' => $commentedQas->perPage(),
-                            'total' => $commentedQas->total(),
-                            'last_page' => $commentedQas->lastPage(),
+                            'total' => $paginatedQas->total(),
+                            'per_page' => $paginatedQas->perPage(),
+                            'current_page' => $paginatedQas->currentPage(),
+                            'last_page' => $paginatedQas->lastPage(),
+                            'from' => $paginatedQas->firstItem(),
+                            'to' => $paginatedQas->lastItem(),
                         ],
-                        'data' => $uniqueQas->values()->all(),
                     ];
 
                     $data = [

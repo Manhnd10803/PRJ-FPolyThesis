@@ -44,28 +44,34 @@ export const MyListQa = ({ listQa, isLoading }) => {
           </div>
         </div>
         <hr />
-        {filteredList && filteredList.length > 0 ? (
-          <>
-            {filteredList.map((item: any, index: number) => (
-              <Row className="mb-2" key={index}>
-                <div className="col-12">
-                  <Link
-                    className="text-dark font-bold"
-                    style={{ fontSize: '20px' }}
-                    to={`${pathName.QUESTS}/${item.id}`}
-                  >
-                    {item.title}
-                  </Link>
-                </div>
-                <div className="col-12">
-                  <p className="mb-0">Sửa lần cuối: {formatTime(item.updated_at)}</p>
-                </div>
-                <hr />
-              </Row>
-            ))}
-          </>
+        {isLoading ? (
+          <h4>Loading...</h4>
         ) : (
-          <h4>Không có data</h4>
+          <>
+            {filteredList && filteredList.length > 0 ? (
+              <>
+                {filteredList.map((item: any, index: number) => (
+                  <Row className="mb-2" key={index}>
+                    <div className="col-12">
+                      <Link
+                        className="text-dark font-bold"
+                        style={{ fontSize: '20px' }}
+                        to={`${pathName.QUESTS}/${item.id}`}
+                      >
+                        {item.title}
+                      </Link>
+                    </div>
+                    <div className="col-12">
+                      <p className="mb-0">Cập nhật lần cuối: {formatTime(item.updated_at)}</p>
+                    </div>
+                    <hr />
+                  </Row>
+                ))}
+              </>
+            ) : (
+              <h4>Không có data</h4>
+            )}
+          </>
         )}
       </>
     );
