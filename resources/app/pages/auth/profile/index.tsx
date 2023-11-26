@@ -83,7 +83,7 @@ export const ProfilePage = () => {
   const { data: detailUserProfile, isLoading: isUserLoading } = useQuery(queryKeyUser, getDetailUesrProfile);
   return (
     <>
-      <div id="content-page" className="content-page">
+      <div id="content-page" className="content-page" style={{ overflow: 'visible' }}>
         <Container>
           <Row>
             <Header detailUser={detailUserProfile} queryKey={queryKeyUser} isLoading={isUserLoading} isUser={isUser} />

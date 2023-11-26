@@ -4,15 +4,24 @@ import { Loading } from '@/components/shared/loading';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { chatActions } from '@/redux/slice';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
 import parse from 'html-react-parser';
 import moment from 'moment';
-import { useEffect, useRef } from 'react';
+import { ReactNode, forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { Dropdown } from 'react-bootstrap';
+import { useInView } from 'react-intersection-observer';
 import { Link } from 'react-router-dom';
 import { useChatContext } from '../context';
 
-export const ChatBox = () => {
+interface Props {
+  children?: ReactNode;
+}
+
+type ChatBoxRef = {
+  scrollToBottom: () => void;
+};
+
+export const ChatBox = forwardRef<ChatBoxRef, Props>((props, ref) => {
   // state
   const { chatId } = useChatContext();
 
@@ -20,44 +29,66 @@ export const ChatBox = () => {
 
   const dispatch = useAppDispatch();
 
-  const { conversation, isLoading } = useAppSelector(state => state.chat);
+  const { conversation, isLoading: _ } = useAppSelector(state => state.chat);
 
-  const queryClient = useQueryClient();
+  const totalPageRef = useRef<number>(0);
 
   //scroll to last message
   const messageEndRef = useRef<HTMLDivElement>(null);
 
-  // func
+  const { ref: startRef, inView: startInView } = useInView();
+
+  const { ref: endRef, inView: endInView } = useInView();
+
   const scrollToBottom = () => {
     messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
-  //======================================= get list message =======================================//
-  const getConversation = async () => {
-    const { data } = await MessagesService.getConversationOfChannel(chatId);
-    dispatch(chatActions.setConversation(data));
+
+  useImperativeHandle(
+    ref,
+    () => {
+      return {
+        scrollToBottom: scrollToBottom,
+      };
+    },
+    [],
+  );
+
+  //======================================= get list message =======================================/
+
+  const getConversation = async ({ quantity = 15, pageParam = 1 }) => {
+    const { data } = await MessagesService.getConversationOfChannel(chatId, quantity, pageParam);
+
+    totalPageRef.current = data.last_page;
+
     return data;
   };
 
-  const queryKeyConversation = ['conversation', chatId];
-
-  const { isError: _, isFetching } = useQuery({
-    queryKey: queryKeyConversation,
+  const { fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status, error, isLoading } = useInfiniteQuery({
+    queryKey: ['conversation', chatId],
     queryFn: getConversation,
     enabled: !!chatId,
+    getNextPageParam: (lastPage, _) => {
+      if (lastPage.current_page === lastPage.last_page) {
+        return undefined;
+      }
+      return lastPage.current_page + 1;
+    },
     onSuccess: data => {
-      dispatch(chatActions.setConversation(data));
+      const newConversation = data?.pages.flatMap(page => page.data);
+
+      dispatch(chatActions.setConversation(newConversation));
     },
   });
 
   //xoá 1 tin nhắn
-
   const deleteMessageItemMutation = useMutation(
     (messageId: number) => {
       return MessagesService.deleteMessage(messageId);
     },
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries(queryKeyConversation);
+      onSuccess: (_, id) => {
+        dispatch(chatActions.removeMessageFromConversation(id));
       },
     },
   );
@@ -70,19 +101,46 @@ export const ChatBox = () => {
 
   // effect
   useEffect(() => {
-    if (conversation && conversation.length > 0) {
+    console.log({ inView: startInView });
+    console.log({ endInView });
+
+    if (endInView && conversation && conversation.length > 0) {
       scrollToBottom();
     }
-  }, [conversation, isLoading]);
+  }, [conversation, startInView, endInView]);
+
+  useEffect(() => {
+    if (startInView && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [startInView, hasNextPage, fetchNextPage]);
 
   // render
+  if (isLoading) {
+    return (
+      <div className="chat-content scroller d-flex flex-column-reverse">
+        <Loading size={100} textStyle={{ fontSize: '30px' }} />;
+      </div>
+    );
+  }
+
+  if (status === 'error') {
+    // @ts-ignore
+    return <p>Error: {error?.message}</p>;
+  }
+
+  // render ngược lại vì dùng flex-column-reverse
   return (
-    <div className="chat-content scroller">
-      {isFetching ? (
-        <Loading size={100} textStyle={{ fontSize: '30px' }} />
-      ) : (
+    <div className="chat-content scroller d-flex flex-column-reverse">
+      {conversation?.length > 0 ? (
         <>
-          {conversation.map(item => {
+          <div ref={messageEndRef} />
+          <div
+            ref={endRef}
+            style={{ position: 'absolute', zIndex: -10, opacity: 0, height: '100%', width: '100%' }}
+          ></div>
+
+          {conversation?.map(item => {
             if (localUserId === item.sender_id) {
               return (
                 <div className="chat d-flex other-user" key={item.id}>
@@ -133,10 +191,16 @@ export const ChatBox = () => {
               );
             }
           })}
+          {/* <div>{isFetching && !isFetchingNextPage ? 'Background Updating...' : null}</div> */}
+          <div ref={startRef}>
+            {isFetchingNextPage ? (
+              <Loading size={60} textStyle={{ fontSize: '20px' }} textLoading="Đang tải tin nhắn cũ hơn ..." />
+            ) : (
+              <h4>Không còn tin nhắn cũ hơn</h4>
+            )}
+          </div>
         </>
-      )}
-
-      <div ref={messageEndRef} />
+      ) : null}
     </div>
   );
-};
+});

@@ -3,6 +3,7 @@ import sendMessageSound from '@/assets/mp3/send-message.mp3';
 import { IMessages } from '@/models/messages';
 import { useAppDispatch } from '@/redux/hook';
 import { chatActions } from '@/redux/slice';
+import { pathName } from '@/routes/path-name';
 import { useMutation } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { Card, Col, Row } from 'react-bootstrap';
@@ -13,37 +14,42 @@ import { HeaderChat } from './components/header-chat';
 import { PopUpDeleteChat } from './components/pop-up-delete-chat';
 import { SideBar } from './components/side-bar';
 import { ChatContextProvider } from './context';
-import { pathName } from '@/routes/path-name';
 
 const audioSend = new Promise<HTMLAudioElement>(resolve => {
   resolve(new Audio(sendMessageSound));
 });
 
 export const ChatPage = () => {
-  // hook
+  //state
   const { id: chatId } = useParams();
 
   const removeChannelId = useRef<number | null>(null);
+
+  // this will be inferred as `ChatBoxHandle`
+  type ChatBoxHandle = React.ElementRef<typeof ChatBox>;
+
+  const chatBoxRef = useRef<ChatBoxHandle>(null);
 
   const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
 
-  //state
   const [showModal, setShowModal] = useState(false);
 
   const socketID = window.Echo.socketId();
 
-  // func
-
   const sendMessageMutation = useMutation((messageText: string) => {
     return MessagesService.sendMessages(Number(chatId), { content: messageText }, socketID);
   });
+
   const handleSendMessage = (message: string) => {
     sendMessageMutation.mutate(message, {
       onSuccess: ({ data }) => {
         // play sound
         audioSend.then(audio => audio.play());
+
+        //scroll to bottom  chat box
+        chatBoxRef.current?.scrollToBottom();
 
         dispatch(chatActions.addMessageToConversation(data.data as IMessages));
       },
@@ -104,7 +110,7 @@ export const ChatPage = () => {
                           <div style={{ position: 'relative', minHeight: '100%' }}>
                             <HeaderChat />
 
-                            <ChatBox />
+                            <ChatBox ref={chatBoxRef} />
 
                             <ChatForm onSend={handleSendMessage} />
                           </div>

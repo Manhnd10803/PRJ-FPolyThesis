@@ -39,7 +39,7 @@ const chatSlice = createSlice({
     },
 
     addMessageToConversation: (state, { payload }: PayloadAction<IMessages>) => {
-      state.conversation.push(payload);
+      state.conversation.unshift(payload);
     },
 
     removeMessageFromConversation: (state, { payload }: PayloadAction<IMessages['id']>) => {
