@@ -128,12 +128,22 @@ class FriendController extends Controller
                     'status' => config('default.friend.status.accepted'),
                     'friendship_type' => config('default.friend.friendship_type.friend'),
                 ]);
-            Friend::create([
-                'user_id_1' => $user2,
-                'user_id_2' => $sender->id,
-                'status' => config('default.friend.status.accepted'),
-                'friendship_type' => config('default.friend.friendship_type.friend'),
-            ]);
+            $existingFriendship = Friend::where('user_id_1', $user2)
+                ->where('user_id_2', $sender->id)
+                ->first();
+            if ($existingFriendship) {
+                $existingFriendship->update([
+                    'status' => config('default.friend.status.accepted'),
+                    'friendship_type' => config('default.friend.friendship_type.friend'),
+                ]);
+            } elseif (!$existingFriendship) {
+                Friend::create([
+                    'user_id_1' => $user2,
+                    'user_id_2' => $sender->id,
+                    'status' => config('default.friend.status.accepted'),
+                    'friendship_type' => config('default.friend.friendship_type.friend'),
+                ]);
+            }
             $content = Auth::user()->username . ' đã đồng ý lời mời kết bạn.';
             $notification = Notification::create([
                 'sender' => Auth::id(),
@@ -255,22 +265,11 @@ class FriendController extends Controller
     public function FetchAllFriend($quantity = null)
     {
         $status = config('default.friend.status.accepted');
-        //TH người gửi là bản thân
-        $listFriend1 = Friend::where('user_id_1', Auth::id())->where('status', $status)->with('friend')->get();
-        //TH bản thân được nhận lời mời
-        $listFriend2 = Friend::where('user_id_2', Auth::id())->where('status', $status)->get();
-        foreach ($listFriend2 as $friend) {
-            $friend->friend = User::where('id', $friend->user_id_1)->first();
-        }
-        //Danh sách bạn bè 
-        $friends = $listFriend1->concat($listFriend2);
-
+        $friends = Friend::where('user_id_1', Auth::id())->where('status', $status)->with('friend')->get();
         if ($quantity != null) {
             $currentPage = LengthAwarePaginator::resolveCurrentPage();
             $perPage = $quantity;
-
             $currentPageFriends = $friends->slice(($currentPage - 1) * $perPage, $perPage)->all();
-
             $friendsPaginated = new LengthAwarePaginator(
                 $currentPageFriends,
                 count($friends),
@@ -383,6 +382,9 @@ class FriendController extends Controller
         DB::beginTransaction();
         try {
             $self = Auth::id();
+            if ($self == $friend) {
+                throw new \Exception('Bạn không thể tự unfriend chính mình.');
+            }
             $friendship = Friend::where(function ($query) use ($self, $friend) {
                 $query->where('user_id_1', $self)
                     ->where('user_id_2', $friend)
@@ -391,9 +393,11 @@ class FriendController extends Controller
                 $query->where('user_id_1', $friend)
                     ->where('user_id_2', $self)
                     ->where('status', 1);
-            })->first();
+            })->get();
+            $friendId1 = $friendship->pluck('user_id_1')->toArray();
+            $friendId2 = $friendship->pluck('user_id_2')->toArray();
             if ($friendship) {
-                $friendship->delete(); // Xóa bạn bè
+                Friend::whereIn('user_id_1', $friendId1)->whereIn('user_id_2', $friendId2)->delete();
                 DB::commit();
                 return response()->json(['message' => 'Đã hủy bạn bè'], 200);
             } else {
