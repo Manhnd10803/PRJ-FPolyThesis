@@ -284,7 +284,7 @@ class ProfileController extends Controller
             'image' => json_encode($cover_photo),
         ]);
         $post->save();
-        return response()->json(['data' => [$user, $post], 'message' => 'Thêm ảnh đại diện thành công'], 200);
+        return response()->json(['message' => 'Cập nhật ảnh bìa thành công'], 200);
     }
     public function updateProfile(Request $request)
     {
