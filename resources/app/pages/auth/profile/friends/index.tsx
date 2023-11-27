@@ -1,15 +1,20 @@
 import { FriendService } from '@/apis/services/friend.service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Card, Nav, Row, Tab } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { ModalRequest } from './components/modal';
 import { useState } from 'react';
+import { StorageFunc } from '@/utilities/local-storage/storage-func';
+import { formatFullName } from '@/utilities/functions';
 
 export const FriendsMyUserPage = () => {
   const queryClient = useQueryClient();
   const [showDeleteFriend, setShowDeleteFriend] = useState(false);
+
+  const { id } = useParams();
+  const idUser = id || StorageFunc.getUserId();
   const fetchAllFriendMyUser = async () => {
-    const { data } = await FriendService.showAllFriendMyUser();
+    const { data } = await FriendService.showAllFriendMyUser(idUser);
     return data;
   };
   const FriendsMyUserQueryKey = ['friendmyuser'];
@@ -82,7 +87,7 @@ export const FriendsMyUserPage = () => {
                                 <div className="iq-friendlist-block">
                                   <div className="d-flex align-items-center justify-content-between p-3">
                                     <div className="d-flex align-items-center gap-4">
-                                      <Link to="#" style={{ width: '137px' }}>
+                                      <div style={{ width: '137px' }}>
                                         <img
                                           style={{
                                             width: '100%',
@@ -95,10 +100,12 @@ export const FriendsMyUserPage = () => {
                                           alt="profile-img"
                                           className="img-fluid rounded-1"
                                         />
-                                      </Link>
+                                      </div>
                                       <div className="friend-info">
-                                        <h5>{itemfriend?.friend?.username}</h5>
-                                        <p className="mb-0">15 friends</p>
+                                        <Link to={`/profile/${itemfriend?.friend?.id}`} className="text-black">
+                                          <h5>{formatFullName(itemfriend?.friend)}</h5>
+                                          <p className="mb-0">{itemfriend?.friend?.username}</p>
+                                        </Link>
                                       </div>
                                     </div>
                                     <div className=" d-flex align-items-center justify-content-center">

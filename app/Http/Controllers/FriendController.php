@@ -262,10 +262,16 @@ class FriendController extends Controller
      *     security={{ "bearerAuth": {} }}
      * )
      */
-    public function FetchAllFriend($quantity = null)
+    public function FetchAllFriend(User $user, $quantity = null) 
     {
+        $idLoginUser = Auth::id();
         $status = config('default.friend.status.accepted');
-        $friends = Friend::where('user_id_1', Auth::id())->where('status', $status)->with('friend')->get();
+        if($idLoginUser == $user->id){
+            
+            $friends = Friend::where('user_id_1', $idLoginUser)->where('status', $status)->with('friend')->get();
+        }
+      
+        $friends = Friend::where('user_id_1', $user->id)->where('status', $status)->with('friend')->get();
         if ($quantity != null) {
             $currentPage = LengthAwarePaginator::resolveCurrentPage();
             $perPage = $quantity;

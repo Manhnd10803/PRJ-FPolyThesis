@@ -4,8 +4,8 @@ import { ApiConstants } from '../endpoints';
 const showAllFriendRequest = () => {
   return httpRequest.get(ApiConstants.SHOW_FRIEND_REQUEST);
 };
-const showAllFriendMyUser = () => {
-  return httpRequest.get(ApiConstants.SHOW_FRIEND_MY_USER);
+const showAllFriendMyUser = <T>(id: T) => {
+  return httpRequest.get(`${ApiConstants.SHOW_FRIEND_MY_USER}/${id}`);
 };
 const getSuggestFriends = () => {
   return httpRequest.get(ApiConstants.LIST_SUGGEST_FRIEND);

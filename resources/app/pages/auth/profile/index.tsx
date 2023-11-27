@@ -2,7 +2,7 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 import Navbar from './components/navbar';
 import { Header } from './components/header';
 import { Timeline } from './timeline';
-import { Row, Col, Container, Dropdown, Nav, Tab, OverlayTrigger, Tooltip, Card } from 'react-bootstrap';
+import { Row, Col, Container, Nav, Tab, OverlayTrigger, Tooltip, Card } from 'react-bootstrap';
 import { useState } from 'react';
 import { MyBlog } from './my-blog';
 import { ProfileService } from '@/apis/services/profile.service';
