@@ -135,12 +135,10 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
           />
         </Modal.Body>
         <Modal.Footer>
-          {!isLoadingUpdate && (
-            <Button className="bg-secondary" onClick={props.onHide}>
-              Close
-            </Button>
-          )}
-          <Button onClick={handleSaveImage}>{isLoadingUpdate ? 'Loading...' : 'Lưu'}</Button>
+          <Button className="bg-secondary" onClick={props.onHide}>
+            Close
+          </Button>
+          <Button onClick={handleSaveImage}>Lưu</Button>
         </Modal.Footer>
       </Modal>
     );
@@ -161,8 +159,8 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
   };
 
   const updateCoverPhotoMutation = useMutation(ProfileService.updateCoverPhoto);
-  const { isLoading: isLoadingUpdate, isSuccess, isError } = updateCoverPhotoMutation;
   const handleSaveImage = async () => {
+    setModalShowResizeImage(false);
     const canvas = imageCoverRef?.current?.getImage();
     const imageBase64 = canvas.toDataURL('image/jpeg'); // Chuyển canvas thành base64
 
@@ -170,29 +168,18 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
     const file = dataURLtoFile(imageBase64, 'my_cover_photo.jpg');
 
     const fileList = [file];
-
     const data = await CloudiaryService.uploadImages(fileList, 'cover');
     const dataForm = {
       cover_photo: data[0],
     };
-    await updateCoverPhotoMutation.mutateAsync(dataForm);
-    if (isSuccess) {
-      toast.success('Cập nhật ảnh bìa thành công');
-      setModalShowResizeImage(false);
-      queryClient.invalidateQueries(queryKey);
-    }
-    if (isError) {
-      toast.error('Cập nhật ảnh bìa thất bại');
-    }
-  };
-
-  const getStatusFriend = async () => {
     try {
-      const { data } = await FriendService.statusFriend(user?.id);
-      return data; // Assuming isFriend is a boolean value
+      await updateCoverPhotoMutation.mutateAsync(dataForm);
+      toast.success('Cập nhật ảnh bìa thành công');
+      queryClient.invalidateQueries(queryKey);
+      return;
     } catch (error) {
-      console.error(error);
-      return false; // Set to false in case of an error
+      toast.error('Cập nhật ảnh bìa thất bại');
+      return;
     }
   };
 
