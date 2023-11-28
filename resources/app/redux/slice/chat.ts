@@ -34,6 +34,11 @@ const chatSlice = createSlice({
       state.selectedUserInfo = state.listPrivateChannel.find(user => +user.id === +payload);
     },
 
+    setSelectedUserInfo: (state, { payload }: PayloadAction<IUser>) => {
+      state.selectedUserInfo = payload;
+      state.isLoading = false;
+    },
+
     setConversation: (state, { payload }: PayloadAction<ChatState['conversation']>) => {
       state.conversation = payload;
     },

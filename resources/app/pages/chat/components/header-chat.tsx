@@ -3,12 +3,16 @@ import { useAppSelector } from '@/redux/hook';
 import { Dropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useChatContext } from '../context';
+import { Loading } from '@/components/shared/loading';
 
 export const HeaderChat = () => {
-  const { selectedUserInfo } = useAppSelector(state => state.chat);
+  const { selectedUserInfo, isLoading } = useAppSelector(state => state.chat);
 
   const { onClickRemoveChat, chatId } = useChatContext();
 
+  if (isLoading) {
+    return <Loading size={30} textStyle={{ fontSize: '20px' }} />;
+  }
   // render
   return (
     <>
