@@ -2,42 +2,45 @@
 <html>
 
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="csrf-token" content="{{ csrf_token() }}">
-  <title>@yield('title') | {{ env('APP_NAME') }}</title>
-  <!-- Tell the browser to be responsive to screen width -->
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <!-- Bootstrap 3.3.7 -->
-  <link rel="stylesheet" href="{{ asset('bower_components/bootstrap/dist/css/bootstrap.min.css') }}">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="{{ asset('bower_components/font-awesome/css/font-awesome.min.css') }}">
-  <!-- Ionicons -->
-  <link rel="stylesheet" href="{{ asset('bower_components/Ionicons/css/ionicons.min.css') }}">
-  <!-- Theme style -->
-  <link rel="stylesheet" href="{{ asset('dist/css/AdminLTE.min.css') }}">
-  <!-- AdminLTE Skins. Choose a skin from the css/skins
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>@yield('title') | {{ env('APP_NAME') }}</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.7 -->
+    <link rel="stylesheet" href="{{ asset('bower_components/bootstrap/dist/css/bootstrap.min.css') }}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{{ asset('bower_components/font-awesome/css/font-awesome.min.css') }}">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="{{ asset('bower_components/Ionicons/css/ionicons.min.css') }}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{{ asset('dist/css/AdminLTE.min.css') }}">
+    <!-- AdminLTE Skins. Choose a skin from the css/skins
       folder instead of downloading all of them to reduce the load. -->
-  <link rel="stylesheet" href="{{ asset('dist/css/skins/_all-skins.min.css') }}">
-  <!-- Morris chart -->
-  <link rel="stylesheet" href="{{ asset('bower_components/morris.js/morris.css') }}">
-  <!-- jvectormap -->
-  <link rel="stylesheet" href="{{ asset('bower_components/jvectormap/jquery-jvectormap.css') }}">
-  <!-- Date Picker -->
-  <link rel="stylesheet" href="{{ asset('bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}">
-  <!-- Daterange picker -->
-  <link rel="stylesheet" href="{{ asset('bower_components/bootstrap-daterangepicker/daterangepicker.css') }}">
-  <!-- bootstrap wysihtml5 - text editor -->
-  <link rel="stylesheet" href="{{ asset('plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css') }}">
-  <link rel="icon" type="image/x-icon" href="{{ asset('dist/img/logo-bee.png') }}">
-  @stack('css')
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
-
+    <link rel="stylesheet" href="{{ asset('dist/css/skins/_all-skins.min.css') }}">
+    <!-- Morris chart -->
+    <link rel="stylesheet" href="{{ asset('bower_components/morris.js/morris.css') }}">
+    <!-- jvectormap -->
+    <link rel="stylesheet" href="{{ asset('bower_components/jvectormap/jquery-jvectormap.css') }}">
+    <!-- Date Picker -->
+    <link rel="stylesheet"
+        href="{{ asset('bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css') }}">
+    <!-- Daterange picker -->
+    <link rel="stylesheet" href="{{ asset('bower_components/bootstrap-daterangepicker/daterangepicker.css') }}">
+    <!-- bootstrap wysihtml5 - text editor -->
+    <link rel="stylesheet" href="{{ asset('plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('dist/img/logo-bee.png') }}">
+    @stack('css')
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="http://localhost:6001/socket.io/socket.io.js"></script>
+    @vite(['resources/js/app.js'])
     <!-- Google Font -->
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
@@ -60,7 +63,7 @@
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             <section class="content">
-              
+
                 @yield('content')
 
             </section>
@@ -307,14 +310,14 @@
 
     @stack('js')
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $.ajax({
                 url: '{{ route('admin.blogs.countPendingBlogs') }}',
                 type: 'GET',
-                success: function(response) {
+                success: function (response) {
                     $('#pendingBlogsCount').text(response);
                 },
-                error: function(error) {
+                error: function (error) {
                     console.log(error);
                 }
             });

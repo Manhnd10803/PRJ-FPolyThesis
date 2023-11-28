@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\NotificationAdminEvent;
 use App\Models\Blog;
 use App\Models\Comment;
 use App\Models\Like;
+use App\Models\Notification;
 use App\Models\Rating;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -227,6 +230,20 @@ class BlogController extends Controller
                 'status' => config('default.blog.status.pending'),
             ]);
             $blog->save();
+            //send noti admin
+            $admin = User::where('email', 'admin@gmail.com')->first();
+            $message = Auth::user()->username . ' đã tạo một blog mới.';
+            $notificationType = config('default.notification.notification_type.like_blog');
+            $notification = Notification::create([
+                'sender' => Auth::id(),
+                'recipient' => $admin->id,
+                'content' => $message,
+                'notification_type' => $notificationType,
+                'status' => config('default.notification.status.not_seen'),
+                'objet_id' => $blog->id,
+            ]);
+            $avatar_sender = Auth::user()->avatar;
+            broadcast(new NotificationAdminEvent($notification, $avatar_sender));
             DB::commit();
             return response()->json($blog, 200);
         } catch (\Exception $e) {

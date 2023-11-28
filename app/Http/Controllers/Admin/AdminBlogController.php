@@ -29,8 +29,8 @@ class AdminBlogController extends Controller
                 'status' => config('default.notification.status.not_seen'),
                 'objet_id' => $blog->id,
             ]);
-            $notification->avatar_sender = Auth::user()->avatar;
-            broadcast(new ReceiveNotification($notification))->toOthers();
+            $avatar_sender = Auth::user()->avatar;
+            broadcast(new ReceiveNotification($notification, $avatar_sender))->toOthers();
             DB::commit();
             return redirect()->route('admin.blogs.show', ['blog' => $blog->id])
                 ->with('success', 'Bài viết đã được duyệt thành công');
@@ -54,8 +54,8 @@ class AdminBlogController extends Controller
                 'status' => config('default.notification.status.not_seen'),
                 'objet_id' => $blog->id,
             ]);
-            $notification->avatar_sender = Auth::user()->avatar;
-            broadcast(new ReceiveNotification($notification))->toOthers();
+            $avatar_sender = Auth::user()->avatar;
+            broadcast(new ReceiveNotification($notification, $avatar_sender))->toOthers();
             DB::commit();
             return redirect()->route('admin.blogs.show', ['blog' => $blog->id])
                 ->with('success', 'Bài viết đã được hủy thành công');

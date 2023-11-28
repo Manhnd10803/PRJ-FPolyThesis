@@ -9,9 +9,8 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use App\Models\Notification;
 
-class ReceiveNotification implements ShouldBroadcast
+class NotificationAdminEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -29,16 +28,10 @@ class ReceiveNotification implements ShouldBroadcast
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
+     * @return \Illuminate\Broadcasting\Channel|array
      */
     public function broadcastOn(): array
     {
-        return [
-            new PrivateChannel('receive-notification-' . $this->notification->recipient),
-        ];
-    }
-    public function broadcastAs()
-    {
-        return 'ReceiveNotification';
+        return ['notification-admin'];
     }
 }

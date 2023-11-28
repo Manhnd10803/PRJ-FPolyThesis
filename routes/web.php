@@ -1,5 +1,7 @@
 <?php
 
+use App\Events\NotificationAdminEvent;
+use App\Events\ReceiveNotification;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
@@ -9,6 +11,8 @@ use App\Http\Controllers\Admin\AdminMajorController;
 use App\Http\Controllers\Admin\AdminPostController;
 use App\Http\Controllers\Admin\AdminQaController;
 use App\Http\Controllers\Admin\AdminEmotionController;
+use App\Http\Controllers\Admin\AdminNotificationController;
+use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 
 // Route dành cho trang quản trị
@@ -84,6 +88,9 @@ Route::group(['prefix' => 'admin', 'middleware' => 'authAdmin'], function () {
     Route::get('emotions/{emotion}/edit', [AdminEmotionController::class, 'edit'])->name('admin.emotions.edit');
     Route::put('emotions/{emotion}', [AdminEmotionController::class, 'update'])->name('admin.emotions.update');
     Route::delete('emotions/{emotion}', [AdminEmotionController::class, 'destroy'])->name('admin.emotions.destroy');
+
+    //Admin notification
+    Route::get('see-notification/{notification}', [AdminNotificationController::class, 'seeNotification'])->name('admin.see-notification');
 });
 
 // Route chung cho ứng dụng ReactJS

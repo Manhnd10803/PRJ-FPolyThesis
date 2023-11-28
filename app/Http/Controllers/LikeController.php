@@ -130,8 +130,8 @@ class LikeController extends Controller
                             'content' => $message,
                             'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
                         ]);
-                        $notification->avatar_sender = Auth::user()->avatar;
-                        broadcast(new ReceiveNotification($notification))->toOthers();
+                        $avatar_sender = Auth::user()->avatar;
+                        broadcast(new ReceiveNotification($notification, $avatar_sender))->toOthers();
                     } else {
                         //Tạo mới thông báo
                         $notification = Notification::create([
@@ -142,8 +142,8 @@ class LikeController extends Controller
                             'status' => config('default.notification.status.not_seen'),
                             'objet_id' => $item,
                         ]);
-                        $notification->avatar_sender = Auth::user()->avatar;
-                        broadcast(new ReceiveNotification($notification))->toOthers();
+                        $avatar_sender = Auth::user()->avatar;
+                        broadcast(new ReceiveNotification($notification, $avatar_sender))->toOthers();
                     }
                 } else {
                     if (!is_null($notification)) {
@@ -152,8 +152,8 @@ class LikeController extends Controller
                             'content' => $message,
                             'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
                         ]);
-                        $notification->avatar_sender = Auth::user()->avatar;
-                        broadcast(new ReceiveNotification($notification))->toOthers();
+                        $avatar_sender = Auth::user()->avatar;
+                        broadcast(new ReceiveNotification($notification, $avatar_sender))->toOthers();
                     } else {
                         //Tạo mới thông báo
                         $notification = Notification::create([
@@ -164,8 +164,8 @@ class LikeController extends Controller
                             'status' => config('default.notification.status.not_seen'),
                             'objet_id' => $item,
                         ]);
-                        $notification->avatar_sender = Auth::user()->avatar;
-                        broadcast(new ReceiveNotification($notification))->toOthers();
+                        $avatar_sender = Auth::user()->avatar;
+                        broadcast(new ReceiveNotification($notification, $avatar_sender))->toOthers();
                     }
                 }
             }
