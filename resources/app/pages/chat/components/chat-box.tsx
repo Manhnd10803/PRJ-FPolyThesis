@@ -21,7 +21,7 @@ type ChatBoxRef = {
   scrollToBottom: () => void;
 };
 
-export const ChatBox = forwardRef<ChatBoxRef, Props>((props, ref) => {
+export const ChatBox = forwardRef<ChatBoxRef, Props>((__, ref) => {
   // state
   const { chatId } = useChatContext();
 
@@ -64,7 +64,7 @@ export const ChatBox = forwardRef<ChatBoxRef, Props>((props, ref) => {
     return data;
   };
 
-  const { fetchNextPage, hasNextPage, isFetching, isFetchingNextPage, status, error, isLoading } = useInfiniteQuery({
+  const { fetchNextPage, hasNextPage, isFetchingNextPage, status, error, isLoading } = useInfiniteQuery({
     queryKey: ['conversation', chatId],
     queryFn: getConversation,
     enabled: !!chatId,
@@ -101,9 +101,6 @@ export const ChatBox = forwardRef<ChatBoxRef, Props>((props, ref) => {
 
   // effect
   useEffect(() => {
-    console.log({ inView: startInView });
-    console.log({ endInView });
-
     if (endInView && conversation && conversation.length > 0) {
       scrollToBottom();
     }
@@ -132,7 +129,7 @@ export const ChatBox = forwardRef<ChatBoxRef, Props>((props, ref) => {
   // render ngược lại vì dùng flex-column-reverse
   return (
     <div className="chat-content scroller d-flex flex-column-reverse">
-      {conversation?.length > 0 ? (
+      {conversation ? (
         <>
           <div ref={messageEndRef} />
           <div
@@ -196,7 +193,7 @@ export const ChatBox = forwardRef<ChatBoxRef, Props>((props, ref) => {
             {isFetchingNextPage ? (
               <Loading size={60} textStyle={{ fontSize: '20px' }} textLoading="Đang tải tin nhắn cũ hơn ..." />
             ) : (
-              <h4>Không còn tin nhắn cũ hơn</h4>
+              <h4>{conversation.length > 0 ? 'Không còn tin nhắn cũ hơn' : 'Chưa có tin nhắn nào'}</h4>
             )}
           </div>
         </>

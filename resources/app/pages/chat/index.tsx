@@ -1,7 +1,7 @@
 import { MessagesService } from '@/apis/services/messages.service';
 import sendMessageSound from '@/assets/mp3/send-message.mp3';
 import { IMessages } from '@/models/messages';
-import { useAppDispatch } from '@/redux/hook';
+import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { chatActions } from '@/redux/slice';
 import { pathName } from '@/routes/path-name';
 import { useMutation } from '@tanstack/react-query';
@@ -14,6 +14,8 @@ import { HeaderChat } from './components/header-chat';
 import { PopUpDeleteChat } from './components/pop-up-delete-chat';
 import { SideBar } from './components/side-bar';
 import { ChatContextProvider } from './context';
+import { IUser } from '@/models/user';
+import { AuthService } from '@/apis/services/auth.service';
 
 const audioSend = new Promise<HTMLAudioElement>(resolve => {
   resolve(new Audio(sendMessageSound));
@@ -24,6 +26,8 @@ export const ChatPage = () => {
   const { id: chatId } = useParams();
 
   const removeChannelId = useRef<number | null>(null);
+
+  const { listPrivateChannel, conversation } = useAppSelector(state => state.chat);
 
   // this will be inferred as `ChatBoxHandle`
   type ChatBoxHandle = React.ElementRef<typeof ChatBox>;
@@ -84,12 +88,24 @@ export const ChatPage = () => {
   // trường hợp nhập id từ url cũng phải lấy thông tin user
   useEffect(() => {
     if (chatId) {
-      dispatch(chatActions.getDetailUserChatById(+chatId));
+      const isNewSender = listPrivateChannel.findIndex((item: IUser) => +item.id === +chatId) === -1;
+
+      if (isNewSender) {
+        // iife
+        (async () => {
+          dispatch(chatActions.setLoading(true));
+          const { data } = await AuthService.GetUserDetailById(+chatId);
+          dispatch(chatActions.setSelectedUserInfo(data.user));
+          dispatch(chatActions.addPrivateChannel(data.user));
+        })();
+      } else {
+        dispatch(chatActions.getDetailUserChatById(+chatId));
+      }
     }
     return () => {
       dispatch(chatActions.clearConversation());
     };
-  }, [chatId]);
+  }, [chatId, listPrivateChannel]);
 
   // render
   return (

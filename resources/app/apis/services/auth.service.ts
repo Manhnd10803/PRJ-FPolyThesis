@@ -72,6 +72,10 @@ const GetUserDetail = () => {
   return httpRequest.get<GetUserDetailResponseType>(ApiConstants.USER_DETAIL);
 };
 
+const GetUserDetailById = (id: number) => {
+  return httpRequest.get<GetUserDetailResponseType>(`${ApiConstants.USER_DETAIL}/${id}`);
+};
+
 const Register = <T>(data: T) => {
   return httpRequest.post<RegisterResponseType>(ApiConstants.REGISTER, data);
 };
@@ -129,4 +133,5 @@ export const AuthService = {
   RefreshToken,
   GetUserDetail,
   Logout,
+  GetUserDetailById,
 };
