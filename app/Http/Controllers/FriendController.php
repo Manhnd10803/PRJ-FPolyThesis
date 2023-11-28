@@ -78,8 +78,8 @@ class FriendController extends Controller
                     'status' => config('default.notification.status.not_seen'),
                     'objet_id' => Auth::id(),
                 ]);
-                $notification->avatar_sender = Auth::user()->avatar;
-                broadcast(new ReceiveNotification($notification))->toOthers();
+                $avatar_sender = Auth::user()->avatar;
+                broadcast(new ReceiveNotification($notification, $avatar_sender))->toOthers();
                 DB::commit();
                 return response()->json(['message' => 'Đã gửi lời mời kết bạn', 'friend' => $friend], 200);
             }
@@ -153,8 +153,8 @@ class FriendController extends Controller
                 'status' => config('default.notification.status.not_seen'),
                 'objet_id' => Auth::id(),
             ]);
-            $notification->avatar_sender = Auth::user()->avatar;
-            broadcast(new ReceiveNotification($notification))->toOthers();
+            $avatar_sender = Auth::user()->avatar;
+            broadcast(new ReceiveNotification($notification, $avatar_sender))->toOthers();
             DB::commit();
             return response()->json(['message' => 'Đã chấp nhận'], 200);
         } catch (\Exception $e) {

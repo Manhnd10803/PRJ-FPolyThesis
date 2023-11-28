@@ -175,7 +175,6 @@ return [
         App\Providers\SocialAuthServiceProvider::class,
         App\Providers\EmotionsServiceProvider::class,
         App\Providers\ReadMenuAdminProvider::class,
-        App\Providers\TelescopeServiceProvider::class,
     ])->toArray(),
     /*
     |--------------------------------------------------------------------------
