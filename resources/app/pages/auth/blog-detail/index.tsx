@@ -101,15 +101,19 @@ export const BlogDetailPage = () => {
             ) : (
               <>
                 <ContentBlogDetail data={data} commentRef={commentRef} createLike={createLike} />
-                <FormComment postComment={postComment} />
-                <div ref={commentRef}>
-                  <Comments
-                    data={data?.comments}
-                    postComment={postComment}
-                    deleteComment={deleteComment}
-                    putComment={putComment}
-                  />
-                </div>
+                {data?.blog?.status === 1 && (
+                  <>
+                    <FormComment postComment={postComment} />
+                    <div ref={commentRef}>
+                      <Comments
+                        data={data?.comments}
+                        postComment={postComment}
+                        deleteComment={deleteComment}
+                        putComment={putComment}
+                      />
+                    </div>
+                  </>
+                )}
               </>
             )}
           </Row>

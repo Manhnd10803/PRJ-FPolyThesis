@@ -13,7 +13,7 @@ import { MajorService } from '@/apis/services/major.service';
 import { IMajors } from '@/models/major';
 import { CloudiaryService } from '@/apis/services/cloudinary.service';
 import { pathName } from '@/routes/path-name';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { SupperEditor } from '@/components/shared/editor';
 
 import { $generateHtmlFromNodes } from '@lexical/html';
@@ -34,11 +34,11 @@ export const CreateBlogPage = () => {
   const editorRef: any = useRef();
   const contentHtmlRef = useRef<string>();
 
+  const [previewImage, setPreviewImage] = useState('');
+
   const navigate = useNavigate();
 
-  const [files, setFiles] = useState<FileList | null>(null);
-
-  const { data } = useQuery({
+  const { data, isLoading: isMajorLoading } = useQuery({
     queryKey: ['majors'],
     queryFn: () => MajorService.getMajors(),
   });
@@ -66,7 +66,9 @@ export const CreateBlogPage = () => {
     if (contentEditor == '"<p class=\\"PlaygroundEditorTheme__paragraph\\"><br></p>"' || contentEditor == '""') {
       return toast.error('Nội dung không được để trống');
     }
-    const imageURL = await CloudiaryService.uploadImages(files, 'blog');
+    const file = [data.thumbnail];
+    const imageURL = await CloudiaryService.uploadImages(file, 'blog');
+
     const newData = {
       ...data,
       content: contentEditor,
@@ -77,19 +79,37 @@ export const CreateBlogPage = () => {
         onError: error => {
           console.log(error);
         },
-        onSuccess: () => {
-          toast.success('Tạo blog thành công');
-          navigate(pathName.BLOG);
+        onSuccess: ({ data }) => {
+          toast.success('Tạo blog thành công, hãy chờ duyệt');
+          navigate(`${pathName.BLOG}/${data.id}`);
         },
       });
     }
   };
-  const handleChange = ({ currentTarget: { files } }: React.FormEvent<HTMLInputElement>) => {
-    console.log('preparing files to upload', files);
-    if (files && files.length) {
-      setFiles(files);
+
+  const handleFileChange = (event: any) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        setPreviewImage(e.target.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
+  useEffect(() => {
+    const inputElement = document.getElementById('thumbnail');
+    if (inputElement) {
+      inputElement.addEventListener('change', handleFileChange);
+    }
+
+    return () => {
+      if (inputElement) {
+        inputElement.removeEventListener('change', handleFileChange);
+      }
+    };
+  }, [handleFileChange]);
+
   return (
     <div id="content-page" className="content-page">
       <Container>
@@ -107,7 +127,11 @@ export const CreateBlogPage = () => {
                     <Form.Label>Chuyên ngành:</Form.Label>
                     <Form.Select {...register('majors_id')} aria-label="Default select example">
                       <option value="0">Chọn chuyên ngành</option>
-                      {majors?.map((item: IMajors) => <option value={item.id}>{item.majors_name}</option>)}
+                      {isMajorLoading ? (
+                        <option value="0">Đang tải...</option>
+                      ) : (
+                        <> {majors?.map((item: IMajors) => <option value={item.id}>{item.majors_name}</option>)}</>
+                      )}
                     </Form.Select>
                     <p className="text-danger">{errors?.majors_id?.message}</p>
                   </Form.Group>
@@ -118,13 +142,14 @@ export const CreateBlogPage = () => {
                   </Form.Group>
                   <Form.Group className="form-group">
                     <Form.Label>Thumbnail:</Form.Label>
-                    {files && (
-                      <div className="mb-1">
+                    {previewImage && (
+                      <div>
                         <img
-                          width={413}
-                          height={236}
-                          src={files ? URL.createObjectURL(files[0]) : ''}
-                          alt="Selected Image"
+                          id="previewImg"
+                          src={previewImage}
+                          alt="Thumbnail Img"
+                          className="mb-2"
+                          style={{ maxWidth: '200px', maxHeight: '200px' }}
                         />
                       </div>
                     )}
@@ -134,12 +159,11 @@ export const CreateBlogPage = () => {
                         <VisuallyHiddenInput
                           type="file"
                           id="thumbnail"
-                          onChange={handleChange}
-                          multiple
                           accept="image/png, image/jpg, image/jpeg"
-                          required
+                          {...register('thumbnail')}
                         />
                       </MuiButton>
+                      <p className="text-danger">{errors?.thumbnail?.message}</p>
                     </div>
                   </Form.Group>
                   <Form.Group className="form-group">

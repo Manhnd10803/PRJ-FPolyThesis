@@ -23,6 +23,7 @@ export const pathName = {
   BLOG_DETAIL: '/blog/:id',
   PROFILE: '/profile',
   PROFILE_ID: '/profile/:id',
+  PROFILE_FRIEND_LIST: '/profile#pills-friends-tab',
   FRIEND_LIST: '/friend-list',
   FRIEND_REQUEST: '/friend-request',
   GROUP: '/group',
