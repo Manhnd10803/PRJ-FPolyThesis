@@ -3,6 +3,7 @@ import { Card, Col, Nav, Row, Tab } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { formatTime } from '../components/format-time';
 import diacritics from 'diacritics';
+import { pathName } from '@/routes/path-name';
 
 export const MyBlog = ({ listBlog, isLoading }) => {
   const [searchQueries, setSearchQueries] = useState({
@@ -97,7 +98,7 @@ export const MyBlog = ({ listBlog, isLoading }) => {
                                     <Link
                                       className="text-dark font-bold"
                                       style={{ fontSize: '20px' }}
-                                      to={`/blog-detail/${item.id}`}
+                                      to={`${pathName.BLOG}/${item.id}`}
                                     >
                                       {item.title}
                                     </Link>

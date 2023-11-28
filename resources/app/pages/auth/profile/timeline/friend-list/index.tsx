@@ -1,4 +1,5 @@
 import { IUser } from '@/models/user';
+import { pathName } from '@/routes/path-name';
 import { formatFullName } from '@/utilities/functions';
 import { Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -13,7 +14,7 @@ export const FriendList = ({ listFriend }) => {
           </div>
           <div className="card-header-toolbar d-flex align-items-center">
             <p className="m-0">
-              <Link to="#">More </Link>
+              <Link to={pathName.PROFILE_FRIEND_LIST}>More </Link>
             </p>
           </div>
         </div>
@@ -23,7 +24,7 @@ export const FriendList = ({ listFriend }) => {
               listFriend.map((item: IUser, index: number) => (
                 <li key={index}>
                   <Link to={`/profile/${item.id}`}>
-                    <img loading="lazy" width={80} height={80} src={item.avatar} alt="gallary" className="img-fluid" />
+                    <img loading="lazy" src={item.avatar} alt="gallary" className="img-fluid" />
                   </Link>
                   <h6 className="mt-2 text-center">{formatFullName(item)}</h6>
                 </li>

@@ -28,6 +28,7 @@ export const ProfilePage = () => {
   let { hash } = useLocation();
   let type = hash.split('#')[1];
   let status = '';
+  let activeTab = 'first';
   switch (type) {
     case 'timeline':
     case '':
@@ -35,24 +36,35 @@ export const ProfilePage = () => {
       break;
     case 'blog':
       type = 'blog';
+      activeTab = 'second';
       break;
     case 'blog-pending':
       type = 'blog';
       status = 'pending';
+      activeTab = 'second';
       break;
     case 'blog-reject':
       type = 'blog';
       status = 'reject';
+      activeTab = 'second';
       break;
     case 'qa':
       type = 'qa';
+      activeTab = 'five';
       break;
     case 'commentedQuestions':
       type = 'commentedQuestions';
+      activeTab = 'five';
       break;
-
+    case 'pills-friends-tab':
+      activeTab = 'third';
+      break;
+    case 'pills-photos-tab':
+      activeTab = 'forth';
+      break;
     default:
       type = 'post';
+      activeTab = 'first';
       break;
   }
 
@@ -87,7 +99,7 @@ export const ProfilePage = () => {
         <Container>
           <Row>
             <Header detailUser={detailUserProfile} queryKey={queryKeyUser} isLoading={isUserLoading} isUser={isUser} />
-            <Tab.Container id="left-tabs-example" defaultActiveKey="first">
+            <Tab.Container id="left-tabs-example" activeKey={activeTab}>
               <Navbar isUser={isUser} />
               <Col sm={12}>
                 <Tab.Content>

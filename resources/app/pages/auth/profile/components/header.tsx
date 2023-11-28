@@ -240,11 +240,6 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
                           photo_camera
                         </Link>
                       </li>
-                      <li>
-                        <Link to="#" className="material-symbols-outlined">
-                          settings
-                        </Link>
-                      </li>
                     </ul>
                   </div>
                   <div className="user-detail text-center mb-3">
