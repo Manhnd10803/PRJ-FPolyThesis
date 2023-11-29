@@ -3,7 +3,7 @@ import Navbar from './components/navbar';
 import { Header } from './components/header';
 import { Timeline } from './timeline';
 import { Row, Col, Container, Nav, Tab, OverlayTrigger, Tooltip, Card } from 'react-bootstrap';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { MyBlog } from './my-blog';
 import { ProfileService } from '@/apis/services/profile.service';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -27,6 +27,7 @@ export const ProfilePage = () => {
   }
   let { hash } = useLocation();
   let type = hash.split('#')[1];
+
   let status = '';
   let activeTab = 'first';
   switch (type) {
@@ -72,13 +73,14 @@ export const ProfilePage = () => {
   const { id } = useParams();
   const localUserId = StorageFunc.getUserId();
   const isUser = id == undefined || id == localUserId ? true : false;
+
   const getDetailProfile = async () => {
     const user_id = id || localUserId;
     const { data } = await ProfileService.getDetailProfile(user_id, type, status);
     return data;
   };
 
-  const queryKey = ['profile', type, status];
+  const queryKey = ['profile', type, status, id];
   const { data: detailProfile, isLoading } = useQuery(queryKey, getDetailProfile, {
     onSuccess: () => {
       queryClient.invalidateQueries([type, status]);
@@ -91,8 +93,14 @@ export const ProfilePage = () => {
     return data;
   };
 
-  const queryKeyUser = ['user'];
+  const queryKeyUser = ['user', id];
   const { data: detailUserProfile, isLoading: isUserLoading } = useQuery(queryKeyUser, getDetailUesrProfile);
+
+  // useEffect(() => {
+  //   queryClient.invalidateQueries(['profile', type, status, id]);
+  //   queryClient.invalidateQueries(['user', id]);
+  // }, [id, type, status, queryClient]);
+
   return (
     <>
       <div id="content-page" className="content-page" style={{ overflow: 'visible' }}>
@@ -117,7 +125,7 @@ export const ProfilePage = () => {
                     {type === 'blog' && <MyBlog listBlog={detailProfile?.data[0]?.blog?.data} isLoading={isLoading} />}
                   </Tab.Pane>
                   <Tab.Pane eventKey="third">
-                    <FriendsMyUserPage />
+                    <FriendsMyUserPage isUser={isUser} typeURL={type} />
                   </Tab.Pane>
                   <Tab.Pane eventKey="forth">
                     <Tab.Container id="left-tabs-example" defaultActiveKey="p1">

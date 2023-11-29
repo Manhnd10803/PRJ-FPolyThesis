@@ -205,6 +205,15 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
       console.error(error);
     }
   };
+  const getStatusFriend = async () => {
+    try {
+      const { data } = await FriendService.statusFriend(user?.id);
+      return data; // Assuming isFriend is a boolean value
+    } catch (error) {
+      console.error(error);
+      return false; // Set to false in case of an error
+    }
+  };
 
   // Fetch friend status when the component mounts
   useEffect(() => {
