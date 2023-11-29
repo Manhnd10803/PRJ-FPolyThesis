@@ -21,9 +21,12 @@ Route::group(['prefix' => 'admin', 'middleware' => 'authAdmin'], function () {
     Route::get('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
     //Admin user
     Route::get('user', [AdminUserController::class, 'listUser'])->name('admin.users.list');
-    Route::get('user/{user}', [AdminUserController::class, 'detailUser'])->name('admin.users.detail');
+    // Route::get('user/{user}', [AdminUserController::class, 'detailUser'])->name('admin.users.detail');
     Route::put('user/lock/{user}', [AdminUserController::class, 'lockUser'])->name('admin.users.lock');
     Route::put('user/unlock/{user}', [AdminUserController::class, 'unlockUser'])->name('admin.users.unlock');
+
+    Route::get('user/search', [AdminUserController::class, 'searchUser'])->name('admin.users.search');
+
     //Admin group member
     Route::get('group-member', [AdminUserController::class, 'listGroup'])->name('admin.groups.list');
     Route::get('group-member/create', [AdminUserController::class, 'createGroup'])->name('admin.groups.create');

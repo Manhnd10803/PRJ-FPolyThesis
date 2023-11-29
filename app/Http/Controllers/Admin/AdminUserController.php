@@ -7,18 +7,69 @@ use App\Models\Role;
 use App\Models\RolePermission;
 use App\Models\User;
 use App\Models\UserRole;
+use App\Models\Major;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Database\Eloquent\Builder;
 
 class AdminUserController extends Controller
 {
+    //Search User
+    public function searchUser(Request $request)
+    {
+        $majors = Major::all();
+        $query = User::whereIn('group_id', [config('default.user.groupID.student'), config('default.user.groupID.guest')])->orderByDesc('id');
+        if ($request->filled('full_name')) {
+            $full_name = $request->input('full_name');
+            $query->where(function (Builder $query) use ($full_name) {
+                $query->whereRaw('CONCAT(first_name, " ", last_name) LIKE ?', ["%$full_name%"])
+                    ->orWhere('first_name', 'like', "%$full_name%")
+                    ->orWhere('last_name', 'like', "%$full_name%");
+            });
+        }
+        
+        if ($request->filled('email')) {
+            $query->where('email', 'like', '%' . $request->input('email') . '%');
+        }
+        
+        if ($request->filled('major')) {
+            $query->where('major_id', $request->input('major'));
+        }
+
+        if ($request->filled('gender')) {
+            $query->where('gender', $request->input('gender'));
+        }
+
+        if ($request->filled('joined_from')) {
+            $query->whereDate('created_at', '>=', $request->input('joined_from'));
+        }
+        
+        if ($request->filled('joined_to')) {
+            $query->whereDate('created_at', '<=', $request->input('joined_to'));
+        }
+
+        if ($request->filled('user_group')) {
+            $query->where('group_id', $request->input('user_group'));
+        }
+        
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
+        }
+        
+        $users = $query->get();
+        
+        return view('admin.users.index', compact('users', 'majors'));
+    }
+
     //User
     public function listUser()
     {
+        $majors = Major::all();
+        // dd($majors);
         $users = User::whereIn('group_id', [config('default.user.groupID.student'), config('default.user.groupID.guest')])->orderByDesc('id')->get();
-        return view('admin.users.index', compact('users'));
+        return view('admin.users.index', compact('users', 'majors'));
     }
     public function lockUser(User $user)
     {

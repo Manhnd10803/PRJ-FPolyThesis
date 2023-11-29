@@ -47,60 +47,65 @@
                 <h3 class="box-title">Tìm kiếm</h3>
             </div>
             <div class="box-body">
-                <form action="" method="get">
+                <form action="{{ route('admin.users.search') }}" method="get">
                     <div class="box-body">
                         <div class="row">
                             <div class="col-xs-3">
-                                <label for="">Họ và tên</label>
-                                <input type="text" class="form-control" placeholder="">
+                                <label for="full_name">Họ và tên</label>
+                                <input type="text" class="form-control" name="full_name" placeholder="">
                             </div>
                             <div class="col-xs-3">
-                                <label for="">Email</label>
-                                <input type="text" class="form-control" placeholder="">
+                                <label for="email">Email</label>
+                                <input type="text" class="form-control" name="email" placeholder="">
                             </div>
                             <div class="col-xs-3">
-                                <label for="">Chuyên ngành</label>
-                                <select name="" id="" class="form-control">
+                                <label for="major">Chuyên ngành</label>
+                                <select name="major" class="form-control">
                                     <option value="">--Chọn chuyên ngành--</option>
+                                    @foreach($majors as $major)
+                                        <option value="{{ $major->id }}">{{ $major->majors_name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                             <div class="col-xs-3">
-                                <label for="">Giới tính</label>
-                                <select name="" id="" class="form-control">
+                                <label for="gender">Giới tính</label>
+                                <select name="gender" class="form-control">
                                     <option value="">--Chọn giới tính--</option>
+                                    <option value="{{ config('default.user.gender.male') }}">Nam</option>
+                                    <option value="{{ config('default.user.gender.female') }}">Nữ</option>
                                 </select>
                             </div>
                         </div>
                         <br>
                         <div class="row">
                             <div class="col-xs-3">
-                                <label for="">Thời gian gia nhập từ</label>
-                                <input type="date" class="form-control" placeholder="">
+                                <label for="joined_from">Thời gian gia nhập từ</label>
+                                <input type="date" class="form-control" name="joined_from" placeholder="">
                             </div>
                             <div class="col-xs-3">
-                                <label for="">Đến</label>
-                                <input type="date" class="form-control" placeholder="">
+                                <label for="joined_to">Đến</label>
+                                <input type="date" class="form-control" name="joined_to" placeholder="">
                             </div>
                             <div class="col-xs-2">
-                                <label for="">Nhóm người dùng</label>
-                                <select name="" id="" class="form-control">
+                                <label for="user_group">Nhóm người dùng</label>
+                                <select name="user_group" class="form-control">
                                     <option value="">--Chọn nhóm--</option>
-                                    <option value=""></option>
-                                    <option value=""></option>
+                                    <option value="{{ config('default.user.groupID.student') }}">Sinh viên</option>
+                                    <option value="{{ config('default.user.groupID.guest') }}">Khách</option>
                                 </select>
                             </div>
                             <div class="col-xs-2">
-                                <label for="">Trạng thái</label>
-                                <select name="" id="" class="form-control">
-                                    <option value="">Hoạt động</option>
-                                    <option value="">Đã khóa</option>
+                                <label for="status">Trạng thái</label>
+                                <select name="status" class="form-control">
+                                    <option value="{{ config('default.user.status.active') }}">Hoạt động</option>
+                                    <option value="{{ config('default.user.status.suspend') }}">Đã khóa</option>
                                 </select>
                             </div>
                         </div>
                         <br>
                         <button type="submit" class="btn btn-primary pull-right">Tìm kiếm</button>
                     </div>
-                </form>
+                </form>                
             </div>
         </div>
         <div class="box">
@@ -132,7 +137,7 @@
                         @foreach($users as $user)
                             <tr>
                                 <td>{{ $stt }}</td>
-                                <td>{{ $user->last_name . ' '. $user->first_name }}</td>
+                                <td>{{ $user->first_name . ' '. $user->last_name }}</td>
                                 <td>{{ $user->username }}</td>
                                 <td>
                                     @if ($user->gender == config('default.user.gender.male'))
