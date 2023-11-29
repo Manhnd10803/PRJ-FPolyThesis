@@ -1,24 +1,34 @@
 import { FriendService } from '@/apis/services/friend.service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Card, Nav, Row, Tab } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { ModalRequest } from './components/modal';
 import { useState } from 'react';
+import { StorageFunc } from '@/utilities/local-storage/storage-func';
+import { formatFullName } from '@/utilities/functions';
 
-export const FriendsMyUserPage = () => {
+export const FriendsMyUserPage = ({ isUser }) => {
   const queryClient = useQueryClient();
   const [showDeleteFriend, setShowDeleteFriend] = useState(false);
+
+  const { id } = useParams();
+  const idUser = id !== undefined ? id : StorageFunc.getUserId();
+
   const fetchAllFriendMyUser = async () => {
-    const { data } = await FriendService.showAllFriendMyUser();
+    const { data } = await FriendService.showAllFriendMyUser(idUser);
     return data;
   };
-  const FriendsMyUserQueryKey = ['friendmyuser'];
+  const FriendsMyUserQueryKey = ['friendmyuser', isUser];
+
   const { data: friendsMyUser, isLoading } = useQuery(FriendsMyUserQueryKey, { queryFn: fetchAllFriendMyUser });
+
   const unFriendMutation = useMutation(FriendService.unFriend, {
     onSettled: () => {
       queryClient.invalidateQueries(FriendsMyUserQueryKey); // Chỉnh sửa tên query nếu cần
     },
   });
+
+  console.log(friendsMyUser);
 
   const HandleAddFriend = async (id: any) => {
     try {
@@ -52,13 +62,11 @@ export const FriendsMyUserPage = () => {
                 </Nav.Item>
                 <Nav.Item>
                   <Nav.Link href="#pill-closefriends" eventKey="closefriends">
-                    {' '}
                     Close friends
                   </Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
                   <Nav.Link href="#pill-home" eventKey="home-town">
-                    {' '}
                     Home/Town
                   </Nav.Link>
                 </Nav.Item>
@@ -82,7 +90,7 @@ export const FriendsMyUserPage = () => {
                                 <div className="iq-friendlist-block">
                                   <div className="d-flex align-items-center justify-content-between p-3">
                                     <div className="d-flex align-items-center gap-4">
-                                      <Link to="#" style={{ width: '137px' }}>
+                                      <div style={{ width: '137px' }}>
                                         <img
                                           style={{
                                             width: '100%',
@@ -95,16 +103,21 @@ export const FriendsMyUserPage = () => {
                                           alt="profile-img"
                                           className="img-fluid rounded-1"
                                         />
-                                      </Link>
+                                      </div>
                                       <div className="friend-info">
-                                        <h5>{itemfriend?.friend?.username}</h5>
-                                        <p className="mb-0">15 friends</p>
+                                        <Link to={`/profile/${itemfriend?.friend?.id}`} className="text-black">
+                                          <h5>{formatFullName(itemfriend?.friend)}</h5>
+                                          <p className="mb-0">{itemfriend?.friend?.username}</p>
+                                        </Link>
                                       </div>
                                     </div>
                                     <div className=" d-flex align-items-center justify-content-center">
-                                      <Button className="btn btn-primary" onClick={() => setShowDeleteFriend(true)}>
-                                        Hủy kết bạn
-                                      </Button>
+                                      {isUser && (
+                                        <Button className="btn btn-primary" onClick={() => setShowDeleteFriend(true)}>
+                                          Hủy kết bạn
+                                        </Button>
+                                      )}
+
                                       <ModalRequest
                                         show={showDeleteFriend}
                                         onHide={() => setShowDeleteFriend(false)}

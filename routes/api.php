@@ -129,7 +129,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/send-request/{recipient}', [FriendController::class, 'SendFriendRequest'])->name('friend.send');
     Route::post('/confirm-request/{sender}', [FriendController::class, 'ConfirmFriendRequest'])->name('friend.confirm');
     Route::delete('/delete-request/{sender}', [FriendController::class, 'DeleteFriendRequest'])->name('friend.delete');
-    Route::get('/friend-list/{quantity?}', [FriendController::class, 'FetchAllFriend'])->name('friend.list');
+    Route::get('/friend-list/{user}/{quantity?}', [FriendController::class, 'FetchAllFriend'])->name('friend.list');
     Route::get('/friend-list-request/{quantity?}', [FriendController::class, 'listFriendRequest']);
     Route::get('/status-friend/{friend}', [FriendController::class, 'getFriendshipStatus']);
     Route::delete('/unfriend/{friend}', [FriendController::class, 'unfriend']);

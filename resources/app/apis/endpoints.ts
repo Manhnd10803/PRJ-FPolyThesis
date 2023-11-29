@@ -48,10 +48,10 @@ export const ApiConstants = {
   SHOW_FRIEND_REQUEST: '/friend-list-request',
   CONFIRM_FRIEND_REQUEST: '/confirm-request',
   DELETE_FRIEND_REQUEST: '/delete-request',
-  SHOW_FRIEND_MY_USER: `friend-list`,
-  ADD_FRIEND: `send-request`,
-  STATUS_FRIEND: `status-friend`,
-  UN_FRIEND: `unfriend`,
+  SHOW_FRIEND_MY_USER: `/friend-list`,
+  ADD_FRIEND: `/send-request`,
+  STATUS_FRIEND: `/status-friend`,
+  UN_FRIEND: `/unfriend`,
   LIST_SUGGEST_FRIEND: `/friend-suggest`,
 
   // profile

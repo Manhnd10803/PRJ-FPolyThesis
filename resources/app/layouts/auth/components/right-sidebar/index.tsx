@@ -1,6 +1,7 @@
 import { FriendService } from '@/apis/services/friend.service';
 import { pathName } from '@/routes/path-name';
 import { formatFullName } from '@/utilities/functions';
+import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { useQuery } from '@tanstack/react-query';
 import { Card, Image } from 'react-bootstrap';
 
@@ -12,11 +13,12 @@ export const RightSidebar = () => {
 
   const fetchAllFriendMyUser = async () => {
     // const {user} = TokenService.getUser()
-    const { data } = await FriendService.showAllFriendMyUser();
+    const idUser = StorageFunc.getUserId();
+    const { data } = await FriendService.showAllFriendMyUser(idUser);
     return data;
   };
 
-  const FriendsMyUserQueryKey = ['friendmyuser'];
+  const FriendsMyUserQueryKey = ['friendrightsidebar'];
   const { data: friendsMyUser, isLoading } = useQuery(FriendsMyUserQueryKey, { queryFn: fetchAllFriendMyUser });
 
   return (
