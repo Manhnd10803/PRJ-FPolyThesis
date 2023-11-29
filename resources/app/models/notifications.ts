@@ -7,14 +7,30 @@ export interface INotification {
   recipient: number;
   content: string;
   notification_type: NotificationTypeUnion;
-  status: string;
+  status: NotificationStatusType;
   objet_id: number;
   created_at: Date;
   updated_at: Date;
   user: IUser;
+  avatar_sender: string;
 }
 
-export type GetNotificationsResponseType = Array<INotification>;
+export const NotificationStatus = {
+  READ: '1',
+  UNREAD: '0',
+} as const;
+
+export type NotificationStatusType = (typeof NotificationStatus)[keyof typeof NotificationStatus];
+
+export type NotificationState = {
+  isLoading: boolean;
+  notifications: Array<INotification>;
+};
+
+export type GetSeeNotificationsResponseType = {
+  type: string;
+  objet_id: string;
+};
 
 export const NotificationType = {
   friend: 'friend',
@@ -44,10 +60,9 @@ export const NotificationIcon = {
   [NotificationType['reply_qa']]: 'chat_bubble_outline',
 } as const;
 
-// chưa xong còn fix dần =))
 export const NotificationLink = {
   [NotificationType['friend']]: pathName.FRIEND_REQUEST,
-  [NotificationType['like_post']]: pathName.POST, // sua lai thanh detail post
+  [NotificationType['like_post']]: pathName.POST,
   [NotificationType['comment_post']]: pathName.POST,
   [NotificationType['reply_post']]: pathName.POST,
   [NotificationType['like_blog']]: pathName.BLOG,
