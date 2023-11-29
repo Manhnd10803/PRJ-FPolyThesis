@@ -14,8 +14,8 @@ return [
             'suspend' => '2',
         ],
         'gender' => [
-            'male' => 1,
-            'female' => 2,
+            'male' => 'Nam',
+            'female' => 'Nữ',
         ],
         'avatar' => [
             'default' => 'http://res.cloudinary.com/dgl6vfxqw/image/upload/v1700270799/blog/wh2x5kgmo3zla8r7y5tr.jpg',
