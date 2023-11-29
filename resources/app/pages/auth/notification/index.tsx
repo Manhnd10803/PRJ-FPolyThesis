@@ -16,7 +16,7 @@ type NotificationItemProps = {
 const NotificationItem = ({ item }: NotificationItemProps) => {
   const navigate = useNavigate();
 
-  const { seeNotification } = useSeeNotification();
+  const { manuallySeeNotification: seeNotification } = useSeeNotification();
 
   const handleClickNotification = async () => {
     if (item.status === NotificationStatus.UNREAD) {

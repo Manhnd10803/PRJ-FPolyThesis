@@ -7,6 +7,7 @@ import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import notiImageDefault from '@/assets/images/notification-default.png';
+import { useAddNotification } from '@/hooks/useNotificationQuery';
 
 const audioReceiverNotification = () => {
   new Audio(mp3NotificationCommon).play();
@@ -73,6 +74,8 @@ showNotification({
 export const RealtimeNotification = () => {
   const navigate = useNavigate();
 
+  const { manuallyAddNotification } = useAddNotification();
+
   const { accessToken } = useAppSelector(state => state.auth);
 
   const localUserId = StorageFunc.getUserId();
@@ -88,14 +91,19 @@ export const RealtimeNotification = () => {
 
         console.log('handleReceiveNotification', event);
 
+        const { content, user } = event.notification;
+
         showNotification({
-          content: event.notification.content,
+          content,
           onClick: (id: string) => {
             navigate(formatNotificationLink(event.notification));
             toast.dismiss(id);
           },
-          avatarSender: event.notification.user.avatar || notiImageDefault,
+          avatarSender: user.avatar || notiImageDefault,
         });
+
+        // Thêm vào danh sách notification
+        manuallyAddNotification(event.notification);
       };
 
       window.Echo.private(`receive-notification-${localUserId}`).listen(

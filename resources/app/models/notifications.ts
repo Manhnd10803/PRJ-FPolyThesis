@@ -12,7 +12,7 @@ export interface INotification {
   created_at: Date;
   updated_at: Date;
   user: IUser;
-  avatar_sender: string;
+  avatar_sender?: string;
 }
 
 export const NotificationStatus = {

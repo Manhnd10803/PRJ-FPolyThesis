@@ -33,7 +33,7 @@ export default function useInfiniteNotifications() {
 export const useSeeNotification = () => {
   const queryClient = useQueryClient();
 
-  const seeNotification = async (id: INotification['id']) => {
+  const manuallySeeNotification = async (id: INotification['id']) => {
     await NotificationService.seeNotification(id);
 
     queryClient.setQueryData(queryKeyNotifications, (oldData: InfiniteData<Paginate<INotification>> | undefined) => {
@@ -52,6 +52,28 @@ export const useSeeNotification = () => {
   };
 
   return {
-    seeNotification,
+    manuallySeeNotification,
+  };
+};
+
+export const useAddNotification = () => {
+  const queryClient = useQueryClient();
+
+  const manuallyAddNotification = async (newNotify: INotification) => {
+    queryClient.setQueryData(queryKeyNotifications, (oldData: InfiniteData<Paginate<INotification>> | undefined) => {
+      if (!oldData) return oldData;
+
+      const [firstPage, ...rest] = oldData?.pages;
+      firstPage.data.unshift(newNotify);
+
+      return {
+        ...oldData,
+        pages: [{ ...firstPage }, ...rest],
+      };
+    });
+  };
+
+  return {
+    manuallyAddNotification,
   };
 };
