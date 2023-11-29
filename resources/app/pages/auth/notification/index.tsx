@@ -1,21 +1,33 @@
 import { NotificationService } from '@/apis/services/notification.service';
-import { INotification } from '@/models/notifications';
+import { Loading } from '@/components/shared/loading';
+import useInfiniteNotifications, { useSeeNotification } from '@/hooks/useNotificationQuery';
+import { INotification, NotificationStatus } from '@/models/notifications';
 import { formatNotificationLink, mappingNotificationIcon } from '@/utilities/functions';
-import { useQuery } from '@tanstack/react-query';
 import moment from 'moment';
-import { Card, Col, Container, Row, Spinner } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Card, Col, Container, Row } from 'react-bootstrap';
+import { useInView } from 'react-intersection-observer';
+import { Link, useNavigate } from 'react-router-dom';
 import { MoreAction } from './components/more-action';
-import styles from './notification.module.scss';
 
 type NotificationItemProps = {
   item: INotification;
 };
 const NotificationItem = ({ item }: NotificationItemProps) => {
+  const navigate = useNavigate();
+
+  const { manuallySeeNotification: seeNotification } = useSeeNotification();
+
+  const handleClickNotification = async () => {
+    if (item.status === NotificationStatus.UNREAD) {
+      seeNotification(item.id);
+    }
+    navigate(formatNotificationLink(item));
+  };
   return (
-    <Card>
-      <Card.Body key={item.id} className={item.status ? '' : styles.item}>
-        <Link to={formatNotificationLink(item)}>
+    <Card className={item.status === NotificationStatus.UNREAD ? 'bg-light' : 'bg-color cursor-pointer'}>
+      <Card.Body key={item.id}>
+        <div onClick={handleClickNotification} style={{ cursor: 'pointer' }}>
           <ul className="notification-list m-0 p-0">
             <li className="d-flex align-items-center justify-content-between">
               <div className="user-img img-fluid">
@@ -24,11 +36,8 @@ const NotificationItem = ({ item }: NotificationItemProps) => {
               <div className="w-100">
                 <div className="d-flex justify-content-between">
                   <div className=" ms-3">
-                    <h6>
-                      {/* {formatFullName(item.user)} {formatNotificationAction(item)} */}
-                      {item.content}
-                    </h6>
-                    <p className="mb-0">{moment(item.created_at).format('LT')}</p>
+                    <h6>{item.content}</h6>
+                    <p className="mb-0">{moment(item.created_at).fromNow()}</p>
                   </div>
                   <div className="d-flex align-items-center">
                     <Link to="#" className="me-3 iq-notify bg-soft-success rounded">
@@ -40,20 +49,27 @@ const NotificationItem = ({ item }: NotificationItemProps) => {
               </div>
             </li>
           </ul>
-        </Link>
+        </div>
       </Card.Body>
     </Card>
   );
 };
+
 export const NotificationPage = () => {
-  const fetchNotifications = async () => {
-    const { data } = await NotificationService.getListNotifications();
-    return data;
-  };
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isError, isLoading } = useInfiniteNotifications();
 
-  const { data, isLoading, error } = useQuery({ queryKey: ['notifications'], queryFn: fetchNotifications });
+  const { ref: endRef, inView: endInView } = useInView();
 
-  if (error) return <div>Error</div>;
+  // effect
+  useEffect(() => {
+    if (endInView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [endInView, isFetchingNextPage, hasNextPage, fetchNextPage]);
+
+  if (isError) {
+    return <span>Error...</span>;
+  }
 
   return (
     <>
@@ -64,14 +80,16 @@ export const NotificationPage = () => {
               <h4 className="card-title mb-3">Thông báo</h4>
             </Col>
             <Col sm="12">
-              {isLoading ? (
+              {isLoading && <Loading size={100} textStyle={{ fontSize: '30px' }} />}
+              {!isLoading && data && data?.map(item => <NotificationItem key={item.id} item={item} />)}
+              {isFetchingNextPage ? (
                 <div className="w-100 h-100 d-flex align-items-center justify-content-center">
-                  <Spinner animation="border" variant="primary" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </Spinner>
+                  <Loading size={60} textStyle={{ fontSize: '20px' }} textLoading="Đang tải thông báo cũ hơn ..." />
                 </div>
-              ) : null}
-              {data?.map(item => <NotificationItem item={item} />)}
+              ) : (
+                <h4>Không còn tin nhắn cũ hơn</h4>
+              )}
+              <div ref={endRef}></div>
             </Col>
           </Row>
         </Container>

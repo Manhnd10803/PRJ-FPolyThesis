@@ -72,4 +72,6 @@ export const ApiConstants = {
   SEARCH_EVERYTHING: '/search',
 
   NOTIFICATIONS: '/notifications',
+  NOTIFICATION: '/notification',
+  SEE_NOTIFICATION: '/see-notification',
 } as const;

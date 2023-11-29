@@ -76,6 +76,7 @@
     "emoji-mart": "^5.5.2",
     "fslightbox-react": "^1.7.6",
     "html-react-parser": "^5.0.6",
+    "immer": "^10.0.3",
     "katex": "^0.16.9",
     "laravel-echo": "^1.15.3",
     "lexical": "^0.12.2",
