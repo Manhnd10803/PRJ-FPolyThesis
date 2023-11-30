@@ -8,6 +8,8 @@ const fetchPostNewFeed = async () => {
   return data;
 };
 
+const imageUrlLoading = 'https://i.gifer.com/ZKZg.gif';
+
 export const PostList = () => {
   //state
   const { isLoading, error, isError, data } = useQuery({
@@ -39,6 +41,11 @@ export const PostList = () => {
             />
           );
         })}
+
+      {/*=========  loading more icon=========*/}
+      <div className="col-sm-12 text-center">
+        <img src={imageUrlLoading} alt="loader" style={{ height: '50px' }} />
+      </div>
     </>
   );
 };
