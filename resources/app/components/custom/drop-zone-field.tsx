@@ -1,7 +1,8 @@
-import { useDropzone, FileRejection, DropzoneOptions } from 'react-dropzone';
+import { useDropzone, FileRejection, DropzoneOptions, ErrorCode, FileError } from 'react-dropzone';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import styles from './drop-zone-field.module.scss';
+
 const baseStyle = {
   position: 'relative',
   flex: 1,
@@ -37,15 +38,27 @@ const rejectStyle = {
 type DropZoneFieldProps = {
   onChangeFiles?: (files: Array<File>) => void;
   onCloseAndRemoveAll?: () => void;
+  maxFiles?: number;
 } & DropzoneOptions;
 
-export const DropZoneField = ({ onChangeFiles, onCloseAndRemoveAll, multiple = true, ...rest }: DropZoneFieldProps) => {
+export const DropZoneField = ({
+  onChangeFiles,
+  onCloseAndRemoveAll,
+  multiple = true,
+  maxFiles = 0,
+  ...rest
+}: DropZoneFieldProps) => {
   //state
+  const [errorMessage, setErrorMessage] = useState<string>('');
+
   const [files, setFiles] = useState<Array<File & { preview: string }>>([]);
   const [rejected, setRejected] = useState<FileRejection[]>([]);
 
   const onDrop = useCallback((acceptedFiles: Array<File>, rejectedFiles: FileRejection[]) => {
     if (multiple) {
+      if (acceptedFiles?.length > maxFiles || rejectedFiles?.length > maxFiles) {
+        setErrorMessage(`Chỉ được chọn tối đa ${maxFiles} ảnh`);
+      }
       if (acceptedFiles?.length) {
         setFiles(previousFiles => [
           ...previousFiles,
@@ -72,6 +85,7 @@ export const DropZoneField = ({ onChangeFiles, onCloseAndRemoveAll, multiple = t
     useDropzone({
       onDrop,
       multiple,
+      maxFiles,
       ...rest,
     });
 
@@ -116,44 +130,96 @@ export const DropZoneField = ({ onChangeFiles, onCloseAndRemoveAll, multiple = t
           <i className="icon material-symbols-outlined">cancel</i>
         </div>
         <input {...getInputProps()} />
-        {isDragActive ? <p>Drop the files here ...</p> : <p>Drag 'n' drop some files here, or click to select files</p>}
+        {files.length ? <p>Kéo thả hoặc chọn ảnh vào đây ...</p> : <p>Kéo thả hoặc vào đây, hoặc click để chọn ảnh</p>}
+
+        {/*============= preview =============*/}
+        {files.length ? (
+          <div className={`d-grid col-auto grid-flow-col ${getClassNamePreview(files.length)}`}>
+            {files.map(file => {
+              return (
+                <div className={`${styles.imagePreviewItem} mb-4 w-100`} key={file.preview}>
+                  <img src={file.preview} alt="Upload preview" className="img-fluid" />
+                  <ButtonRemove onClick={() => removeFile(file.name)} />
+                </div>
+              );
+            })}
+          </div>
+        ) : null}
+
+        {/*============= error =============*/}
+        {rejected.length ? (
+          <ul className="mt-6 w-100">
+            {rejected.map(({ file, errors }) => (
+              <li key={file.name} className="flex items-start justify-between position-relative m-3">
+                <div className="d-flex flex-col align-items-center">
+                  <span className="">{file.name}</span>
+                  <ul className="text-danger">
+                    {errors.map(error => (
+                      <li key={error.code}>{mappingError(error)}</li>
+                    ))}
+                  </ul>
+                </div>
+                <ButtonRemove size={30} onClick={() => removeRejected(file.name)} />
+              </li>
+            ))}
+          </ul>
+        ) : null}
       </div>
-      {/* preview */}
-      {files.length ? (
-        <>
-          {files.map(file => {
-            return (
-              <div className={`${styles.imagePreviewItem} mb-4 w-100`} key={file.preview}>
-                <img src={file.preview} alt="Upload preview" className="img-fluid" />
-                <ButtonRemove onClick={() => removeFile(file.name)} />
-              </div>
-            );
-          })}
-        </>
+      {errorMessage ? (
+        <div className="mt-2" style={{ color: 'red' }}>
+          {errorMessage}
+        </div>
       ) : null}
-      <ul className="mt-6 flex flex-col">
-        {rejected.map(({ file, errors }) => (
-          <li key={file.name} className="flex items-start justify-between">
-            <div>
-              <p className="">{file.name}</p>
-              <ul className="text-danger">
-                {errors.map(error => (
-                  <li key={error.code}>{error.message}</li>
-                ))}
-              </ul>
-            </div>
-            <ButtonRemove onClick={() => removeRejected(file.name)} />
-          </li>
-        ))}
-      </ul>
     </>
   );
 };
 
-export const ButtonRemove = ({ onClick }: { onClick: () => void }) => {
+type ButtonRemoveProps = { onClick: () => void; size?: number };
+
+export const ButtonRemove = ({ onClick, size = 40 }: ButtonRemoveProps) => {
   return (
-    <div className={styles.buttonRemove} onClick={onClick}>
-      <i className="icon material-symbols-outlined">cancel</i>
+    <div
+      className={styles.buttonRemove}
+      onClick={e => {
+        e.stopPropagation();
+        onClick();
+      }}
+    >
+      <i style={{ fontSize: size }} className="icon material-symbols-outlined">
+        cancel
+      </i>
     </div>
   );
+};
+
+const getClassNamePreview = (length: number) => {
+  switch (length) {
+    case 1:
+      return 'grid-cols-1';
+    case 2:
+      return 'grid-cols-2';
+    case 3:
+      return 'grid-cols-2 grid-rows-2';
+    case 4:
+      return 'grid-cols-2 grid-rows-2';
+
+    default:
+      break;
+  }
+};
+
+const mappingError = (error: FileError) => {
+  switch (error.code) {
+    case ErrorCode.TooManyFiles:
+      return 'Quá nhiều ảnh';
+    case ErrorCode.FileTooLarge:
+      return 'Kích thước ảnh quá lớn';
+    case ErrorCode.FileInvalidType:
+      return 'Định dạng ảnh không được chấp nhận';
+    case ErrorCode.FileTooSmall:
+      return 'Kích thước ảnh quá nhỏ';
+
+    default:
+      return error.message;
+  }
 };

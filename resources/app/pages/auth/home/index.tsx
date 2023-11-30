@@ -6,8 +6,6 @@ import { ListBirthDay } from './components/list-birthday';
 import { ListEvent } from './components/list-event';
 import { ListSuggestedPages } from './components/list-suggested-pages';
 
-const imageUrlLoading = 'https://i.gifer.com/ZKZg.gif';
-
 export const HomePage = () => {
   //render
   return (
@@ -25,11 +23,6 @@ export const HomePage = () => {
             <ListBirthDay />
             <ListSuggestedPages />
           </Col>
-
-          {/*=========  loading more icon=========*/}
-          <div className="col-sm-12 text-center">
-            <img src={imageUrlLoading} alt="loader" style={{ height: '50px' }} />
-          </div>
         </Row>
       </Container>
     </div>

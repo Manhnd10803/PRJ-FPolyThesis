@@ -13,6 +13,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { CreateNewPostChoice } from './create-post-choice';
 import { CloudiaryService } from '@/apis/services/cloudinary.service';
+import { StorageFunc } from '@/utilities/local-storage/storage-func';
 
 type CreatePostModalProps = {
   handleClose: () => void;
@@ -21,7 +22,9 @@ type CreatePostModalProps = {
 
 export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => {
   //state
-  const [isHaveImage, setIsHaveImage] = useState(false);
+  const fullName = StorageFunc.getFullName();
+
+  const [isShowDrop, setShowDrop] = useState(false);
   const imagesRef = useRef<File[]>([]);
   const {
     register,
@@ -59,7 +62,7 @@ export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => 
     return (
       <Modal.Header className="d-flex justify-content-between">
         <Modal.Title id="post-modalLabel" className="text-center w-100">
-          Create Post
+          Đăng trạng thái
         </Modal.Title>
         <Link to="#" className="lh-1" onClick={handleClose}>
           <span className="material-symbols-outlined">close</span>
@@ -80,7 +83,7 @@ export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => 
               <div className="d-flex align-items-center mb-5">
                 <img src={imageUrl} alt="story-img" className="rounded-circle img-fluid avatar-60" />
                 <div className="stories-data ms-3">
-                  <h5>Hieu Minh</h5>
+                  <h5>{fullName}</h5>
                   <DropdownPrivacy />
                 </div>
               </div>
@@ -91,17 +94,17 @@ export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => 
                   {...register('content')}
                   type="text"
                   className="form-control rounded mb-3 p-0"
-                  placeholder="Write something here..."
+                  placeholder="Bạn đang nghĩ gì vậy..."
                   style={{ border: 'none' }}
                 />
 
                 {/* ======= drag zone ====== */}
 
-                {isHaveImage ? (
+                {isShowDrop ? (
                   <DropZoneField
-                    onCloseAndRemoveAll={() => setIsHaveImage(false)}
+                    onCloseAndRemoveAll={() => setShowDrop(false)}
                     onChangeFiles={handleChangeFiles}
-                    maxFiles={3}
+                    maxFiles={5}
                     accept={{ 'image/*': [] }}
                   />
                 ) : null}
@@ -109,11 +112,11 @@ export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => 
             </div>
             <hr />
             <div className="d-flex justify-content-between align-items-center borderbox border rounded p-2 px-3">
-              <div>Add to your post</div>
-              <CreateNewPostChoice onClickAddPhoto={() => setIsHaveImage(p => !p)} />
+              <div>Thêm vào bài viết của bạn</div>
+              <CreateNewPostChoice onClickAddPhoto={() => setShowDrop(p => !p)} />
             </div>
             <button disabled={isSubmitting} type="submit" className="btn btn-primary d-block w-100 mt-3">
-              Post
+              Đăng
             </button>
           </form>
         </>
