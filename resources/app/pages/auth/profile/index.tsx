@@ -106,7 +106,13 @@ export const ProfilePage = () => {
       <div id="content-page" className="content-page" style={{ overflow: 'visible' }}>
         <Container>
           <Row>
-            <Header detailUser={detailUserProfile} queryKey={queryKeyUser} isLoading={isUserLoading} isUser={isUser} />
+            <Header
+              detailUser={detailUserProfile}
+              queryKey={queryKeyUser}
+              isLoading={isUserLoading}
+              isUser={isUser}
+              idUser={id}
+            />
             <Tab.Container id="left-tabs-example" activeKey={activeTab}>
               <Navbar isUser={isUser} />
               <Col sm={12}>
