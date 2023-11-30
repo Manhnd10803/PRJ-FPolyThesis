@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\AdminPostController;
 use App\Http\Controllers\Admin\AdminQaController;
 use App\Http\Controllers\Admin\AdminEmotionController;
 use App\Http\Controllers\Admin\AdminNotificationController;
+use App\Http\Controllers\Admin\AdminReportController;
 use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 
@@ -94,6 +95,14 @@ Route::group(['prefix' => 'admin', 'middleware' => 'authAdmin'], function () {
 
     //Admin notification
     Route::get('see-notification/{notification}', [AdminNotificationController::class, 'seeNotification'])->name('admin.see-notification');
+    //Admin report
+    Route::prefix('report')->group(function () {
+        Route::get('/', [AdminReportController::class, 'index'])->name('admin.report.index');;
+        Route::get('/{report}', [AdminReportController::class, 'show'])->name('admin.report.show');
+        Route::put('/resolved/{report}', [AdminReportController::class, 'ResolvedReport'])->name('admin.report.statusResolved');
+        Route::put('/dismissed/{report}', [AdminReportController::class, 'DismissedReport'])->name('admin.report.statusDismissed');
+        Route::delete('/delete/{report}', [AdminReportController::class, 'DeleteReport'])->name('admin.report.delete');
+    });
 });
 
 // Route chung cho ứng dụng ReactJS
