@@ -22,7 +22,7 @@ export const CreateNewPost = () => {
       <Card id="post-modal-data" className="card-block card-stretch card-height">
         <div className="card-header d-flex justify-content-between">
           <div className="header-title">
-            <h4 className="card-title">Create Post</h4>
+            <h4 className="card-title">Đăng trạng thái</h4>
           </div>
         </div>
         <Card.Body>
@@ -34,7 +34,7 @@ export const CreateNewPost = () => {
               <input
                 type="text"
                 className="form-control rounded"
-                placeholder="Write something here..."
+                placeholder="Bạn đang nghĩ gì vậy..."
                 style={{ border: 'none' }}
               />
             </form>
@@ -43,17 +43,17 @@ export const CreateNewPost = () => {
           <ul className="post-opt-block d-flex list-inline m-0 p-0 flex-wrap">
             <li className="me-3 mb-md-0 mb-2">
               <div onClick={handleShow} className="btn btn-soft-primary">
-                <img src={addImageUrl} alt="icon" className="img-fluid me-2" /> Photo/Video
+                <img src={addImageUrl} alt="icon" className="img-fluid me-2" /> Ảnh/Video
               </div>
             </li>
             <li className="me-3 mb-md-0 mb-2">
               <div onClick={handleShow} className="btn btn-soft-primary">
-                <img src={tagFriendUrl} alt="icon" className="img-fluid me-2" /> Tag Friend
+                <img src={tagFriendUrl} alt="icon" className="img-fluid me-2" /> Tag Bạn Bè
               </div>
             </li>
             <li className="me-3">
               <div onClick={handleShow} className="btn btn-soft-primary">
-                <img src={feelingUrl} alt="icon" className="img-fluid me-2" /> Feeling/Activity
+                <img src={feelingUrl} alt="icon" className="img-fluid me-2" /> Cảm Xúc/Hoạt động
               </div>
             </li>
             <li>

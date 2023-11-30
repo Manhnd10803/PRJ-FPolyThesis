@@ -47,7 +47,7 @@ export const PostItem = ({
         {imageList && imageList.length > 0 ? (
           <div className="user-post">
             {imageList.length > 1 ? (
-              <div className=" d-grid grid-cols-2 grid-flow-col gap-3">
+              <div className="d-grid grid-cols-2 grid-flow-col gap-3">
                 {/* Image list */}
                 {imageList?.map((imageUrl: string, index: number) => (
                   <div key={imageUrl} className="col-span-1">
