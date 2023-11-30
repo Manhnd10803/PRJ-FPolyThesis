@@ -477,4 +477,9 @@ class FriendController extends Controller
 
         return response()->json($friendSuggestions);
     }
+    public function countFriendRequest()
+    {
+        $count = count(Friend::where('user_id_2', Auth::id())->where('status', 0)->get());
+        return response()->json(['count' => $count]);
+    }
 }

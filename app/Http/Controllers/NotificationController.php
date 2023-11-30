@@ -35,4 +35,9 @@ class NotificationController extends Controller
         }
         return response()->json(['message' => 'Không có quyền truy cập'], 403);
     }
+    public function countNotificationNotSeen()
+    {
+        $count = count(Notification::where('recipient', Auth::id())->where('status', 0)->get());
+        return response()->json(['count' => $count]);
+    }
 }

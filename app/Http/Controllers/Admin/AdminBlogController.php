@@ -90,7 +90,7 @@ class AdminBlogController extends Controller
                 $blogs = $blogs->where('blogs.created_at', '>=', $params['dateFrom'])->where('blogs.created_at', '<', $params['dateTo']);
             }
         };
-        $blogs = $blogs->orderByDesc('blogs.id')->get();
+        $blogs = $blogs->orderByDesc('blogs.created_at')->get();
         foreach ($blogs as $blog) {
             $dislikeCount = $blog->likes->where('emotion', 'dislike')->count();
             if ($dislikeCount > 100) {

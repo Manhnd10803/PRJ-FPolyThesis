@@ -67,7 +67,7 @@
                 @endforeach
               </ul>
           </li>
-          <li class="footer"><a href="#">View all</a></li>
+          <li class="footer"><a href="{{ route('admin.list-notification') }}">Xem tất cả</a></li>
         </ul>
       </li>
       <!-- User Account: style can be found in dropdown.less -->
