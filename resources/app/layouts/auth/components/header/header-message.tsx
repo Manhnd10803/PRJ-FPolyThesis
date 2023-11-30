@@ -4,19 +4,19 @@ import { Link } from 'react-router-dom';
 
 const imageUrl = 'https://picsum.photos/50';
 
-export const NotiMessage = () => {
+export const HeaderMessage = () => {
   return (
     <>
       <Dropdown as="li" className="nav-item">
         <Dropdown.Toggle href="#" as={CustomToggle} variant="d-flex align-items-center">
           <i className="material-symbols-outlined">mail</i>
-          <span className="mobile-text d-none ms-3">Message</span>
+          <span className="mobile-text d-none ms-3">Tin Nhắn</span>
         </Dropdown.Toggle>
         <Dropdown.Menu className="sub-drop">
           <Card className="shadow-none m-0">
             <Card.Header className="d-flex justify-content-between bg-primary">
               <div className="header-title bg-primary">
-                <h5 className="mb-0 text-white">All Message</h5>
+                <h5 className="mb-0 text-white">Tin Nhắn</h5>
               </div>
               <small className="badge bg-light text-dark">4</small>
             </Card.Header>

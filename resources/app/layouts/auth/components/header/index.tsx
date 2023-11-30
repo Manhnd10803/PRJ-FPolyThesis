@@ -6,8 +6,8 @@ import { Container, Nav } from 'react-bootstrap';
 import { FriendRequest } from './friend-request';
 import { HomeItem } from './home-item';
 import { LogoAndMenu } from './logo-and-menu';
-import { NotiMessage } from './noti-message';
-import { Notification } from './notification';
+import { HeaderMessage } from './header-message';
+import { HeaderNotification } from './header-notification';
 import { SearchBar } from './search-bar';
 import { SearchBarMobile } from './search-bar-mobile';
 import { UserDropdown } from './user-dropdown';
@@ -30,8 +30,8 @@ export const Header = () => {
               <HomeItem />
               {/* <SearchBarMobile show={show} handleClose={handleClose} handleShow={handleShow} /> */}
               <FriendRequest />
-              <Notification />
-              <NotiMessage />
+              <HeaderNotification />
+              <HeaderMessage />
               <UserDropdown />
             </ul>
           </Container>
