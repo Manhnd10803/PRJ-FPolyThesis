@@ -117,7 +117,7 @@ export const FriendRequest = () => {
 
             <div className="text-center">
               <Link to="#" className=" btn text-primary">
-                View More Request
+                Xem thêm
               </Link>
             </div>
           </Card.Body>

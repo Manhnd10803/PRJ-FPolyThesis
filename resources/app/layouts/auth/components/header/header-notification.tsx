@@ -44,7 +44,7 @@ const NotificationItem = ({ item }: NotificationItemProps) => {
     </div>
   );
 };
-export const Notification = () => {
+export const HeaderNotification = () => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isError, isLoading } = useInfiniteNotifications();
 
   const { ref: endRef, inView: endInView } = useInView();
@@ -61,15 +61,15 @@ export const Notification = () => {
       <Dropdown.Toggle href="#" as={CustomToggle} variant="search-toggle d-flex align-items-center">
         <i className="material-symbols-outlined">notifications</i>
       </Dropdown.Toggle>
-      <Dropdown.Menu className="sub-drop">
+      <Dropdown.Menu className="sub-drop sub-drop-large">
         <Card className="shadow-none m-0">
           <Card.Header className="d-flex justify-content-between bg-primary">
             <div className="header-title bg-primary">
-              <h5 className="mb-0 text-white">All Notifications</h5>
+              <h5 className="mb-0 text-white">Thông báo</h5>
             </div>
             <small className="badge  bg-light text-dark">4</small>
           </Card.Header>
-          <Card.Body className="p-0 scroller" style={{ maxHeight: 280 }}>
+          <Card.Body className="p-0 scroller border-bottom" style={{ maxHeight: 280 }}>
             {isError ? <span>Error...</span> : null}
             {isLoading && <Loading size={100} textStyle={{ fontSize: '30px' }} />}
             {!isLoading &&
@@ -83,7 +83,9 @@ export const Notification = () => {
                 <Loading size={40} textStyle={{ fontSize: '16px' }} textLoading="Đang tải thông báo cũ hơn ..." />
               </div>
             ) : (
-              <h4>Không còn tin nhắn cũ hơn</h4>
+              <div className="d-flex align-items-center justify-content-center mt-2 py-4">
+                <h6 className="mb-0">Không còn tin nhắn cũ hơn</h6>
+              </div>
             )}
             <div ref={endRef}></div>
           </Card.Body>

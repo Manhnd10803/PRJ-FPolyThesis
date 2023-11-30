@@ -103,7 +103,18 @@ export const FriendRequestPage = () => {
                               <Col key={itemFriend.id} sm={3}>
                                 <Card className="mb-3">
                                   <Link to={`${pathName.PROFILE}/${itemFriend.id}`}>
-                                    <Card.Img variant="top" src={itemFriend.friend.avatar} alt="ảnh đại diện" />
+                                    <Card.Img
+                                      style={{
+                                        width: '100%',
+                                        aspectRatio: '4/3',
+                                        objectFit: 'cover',
+                                        objectPosition: 'center',
+                                      }}
+                                      className="img-fluid"
+                                      variant="top"
+                                      src={itemFriend.friend.avatar}
+                                      alt="ảnh đại diện"
+                                    />
                                   </Link>
                                   <Card.Body>
                                     <Link to={`${pathName.PROFILE}/${itemFriend.id}`}>
@@ -170,7 +181,7 @@ export const FriendRequestPage = () => {
                                     <Card.Img
                                       style={{
                                         width: '100%',
-                                        aspectRatio: '1/1',
+                                        aspectRatio: '4/3',
                                         objectFit: 'cover',
                                         objectPosition: 'center',
                                       }}
