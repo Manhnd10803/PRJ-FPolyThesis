@@ -197,7 +197,14 @@ return [
         'order' => 1,
         'route' => 'admin.report.index',
         'permission' => 'admin.report.index',
-        'text' => 'Danh sách vi phạm'
+        'text' => 'Danh sách ( Đã duyệt )'
+      ],
+      'list_reports_pending' => [
+        'order' => 2,
+        'route' => 'admin.report.pending',
+        'permission' => 'admin.report.pending',
+        'count1' => true,
+        'text' => 'Danh sách ( Chờ duyệt )',
       ],
     ],
   ],

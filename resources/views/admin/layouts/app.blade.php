@@ -324,6 +324,18 @@
                 }
             });
         });
+        $(document).ready(function () {
+            $.ajax({
+                url: '{{ route('admin.report.countPendingReport') }}',
+                type: 'GET',
+                success: function (response) {
+                    $('#pendingReportCount').text(response);
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        });
     </script>
     
 </body>

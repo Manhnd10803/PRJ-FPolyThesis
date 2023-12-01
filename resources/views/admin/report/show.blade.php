@@ -191,4 +191,13 @@
             </ul>
         </div>
     </div>
+    <script>
+        var redirectUrl = "{{ session('redirect') }}";
+        if (redirectUrl) {
+            setTimeout(function () {
+                window.location.href = redirectUrl;
+            }, 3000);
+        }
+    </script>
+    
 @endsection

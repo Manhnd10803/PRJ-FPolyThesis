@@ -46,8 +46,8 @@
                             <th>Người bị tố cáo</th>
                             <th>Tiêu đề</th>
                             <th>Nội dung</th>
-                            <th>Loại bài viết</th>
-                            <th>ID bài viết</th>
+                            <th>Loại tố cáo</th>
+                            <th>ID loại tố cao</th>
                             <th>Trạng thái báo cáo</th>
                             <th>Ngày tạo</th>
                             <th>Thao tác</th>
