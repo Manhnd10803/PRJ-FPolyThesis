@@ -1,16 +1,16 @@
 import { CustomToggle } from '@/components/custom';
 import { Dropdown } from 'react-bootstrap';
+import { usePostDetailContext } from '../../contexts';
 
-type TotalLikePostProps = {
-  totalLike: number;
-};
+export const TotalLikePost = () => {
+  const { like_counts_by_emotion } = usePostDetailContext();
 
-export const TotalLikePost = ({ totalLike }: TotalLikePostProps) => {
+  // notdone
   return (
     <div className="total-like-block ms-2 me-3">
       <Dropdown>
         <Dropdown.Toggle as={CustomToggle} id="post-option">
-          {totalLike} Likes
+          {like_counts_by_emotion.total_likes} Thích
         </Dropdown.Toggle>
         <Dropdown.Menu>
           <Dropdown.Item href="#">Max Emum</Dropdown.Item>
