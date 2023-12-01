@@ -21,14 +21,17 @@
         <!-- small box -->
         <div class="small-box bg-aqua">
           <div class="inner">
-            <h3>150</h3>
+            @php
+              $countUsers = App\Models\User::count();
+            @endphp
+            <h3>{{$countUsers}}</h3>
 
-            <p>New Orders</p>
+            <p>Người đã đăng ký hệ thống</p>
           </div>
           <div class="icon">
             <i class="ion ion-bag"></i>
           </div>
-          <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          <a href="{{route('admin.users.list')}}" class="small-box-footer">Xem danh sách <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
       <!-- ./col -->
@@ -36,14 +39,17 @@
         <!-- small box -->
         <div class="small-box bg-green">
           <div class="inner">
-            <h3>53<sup style="font-size: 20px">%</sup></h3>
+            @php
+              $countBlogs = App\Models\Blog::where('status', 0)->count();
+            @endphp
+            <h3>{{$countBlogs}}</h3>
 
-            <p>Bounce Rate</p>
+            <p>Blog đang chờ duyệt</p>
           </div>
           <div class="icon">
             <i class="ion ion-stats-bars"></i>
           </div>
-          <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          <a href="{{route('admin.blogs.index')}}" class="small-box-footer">Xem danh sách <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
       <!-- ./col -->
@@ -58,7 +64,7 @@
           <div class="icon">
             <i class="ion ion-person-add"></i>
           </div>
-          <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          <a href="#" class="small-box-footer">Xem danh sách <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
       <!-- ./col -->
@@ -66,14 +72,17 @@
         <!-- small box -->
         <div class="small-box bg-red">
           <div class="inner">
-            <h3>65</h3>
+            @php
+              $countAdmin = App\Models\User::where('group_id', 2)->count();
+            @endphp
+            <h3>{{$countAdmin}}</h3>
 
-            <p>Unique Visitors</p>
+            <p>Nhân viên quản trị</p>
           </div>
           <div class="icon">
             <i class="ion ion-pie-graph"></i>
           </div>
-          <a href="#" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+          <a href="{{route('admin.members.list')}}" class="small-box-footer">Xem danh sách <i class="fa fa-arrow-circle-right"></i></a>
         </div>
       </div>
       <!-- ./col -->
@@ -104,7 +113,7 @@
           <div class="box-header">
             <i class="fa fa-comments-o"></i>
 
-            <h3 class="box-title">Chat</h3>
+            <h3 class="box-title">Thông báo</h3>
 
             <div class="box-tools pull-right" data-toggle="tooltip" title="Status">
               <div class="btn-group" data-toggle="btn-toggle">
@@ -187,7 +196,7 @@
         <!-- /.box (chat box) -->
 
         <!-- TO DO List -->
-        <div class="box box-primary">
+        {{-- <div class="box box-primary">
           <div class="box-header">
             <i class="ion ion-clipboard"></i>
 
@@ -296,11 +305,11 @@
           <div class="box-footer clearfix no-border">
             <button type="button" class="btn btn-default pull-right"><i class="fa fa-plus"></i> Add item</button>
           </div>
-        </div>
+        </div> --}}
         <!-- /.box -->
 
         <!-- quick email widget -->
-        <div class="box box-info">
+        {{-- <div class="box box-info">
           <div class="box-header">
             <i class="fa fa-envelope"></i>
 
@@ -331,7 +340,7 @@
             <button type="button" class="pull-right btn btn-default" id="sendEmail">Send
               <i class="fa fa-arrow-circle-right"></i></button>
           </div>
-        </div>
+        </div> --}}
 
       </section>
       <!-- /.Left col -->
@@ -339,7 +348,7 @@
       <section class="col-lg-5 connectedSortable">
 
         <!-- Map box -->
-        <div class="box box-solid bg-light-blue-gradient">
+        {{-- <div class="box box-solid bg-light-blue-gradient">
           <div class="box-header">
             <!-- tools box -->
             <div class="pull-right box-tools">
@@ -382,7 +391,7 @@
             </div>
             <!-- /.row -->
           </div>
-        </div>
+        </div> --}}
         <!-- /.box -->
 
         <!-- solid sales graph -->
@@ -438,7 +447,7 @@
           <div class="box-header">
             <i class="fa fa-calendar"></i>
 
-            <h3 class="box-title">Calendar</h3>
+            <h3 class="box-title">Lịch</h3>
             <!-- tools box -->
             <div class="pull-right box-tools">
               <!-- button with a dropdown -->

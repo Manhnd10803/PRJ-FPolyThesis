@@ -29,11 +29,9 @@ class AdminUserController extends Controller
                     ->orWhere('last_name', 'like', "%$full_name%");
             });
         }
-        
         if ($request->filled('email')) {
             $query->where('email', 'like', '%' . $request->input('email') . '%');
         }
-        
         if ($request->filled('major')) {
             $query->where('major_id', $request->input('major'));
         }
@@ -45,7 +43,6 @@ class AdminUserController extends Controller
         if ($request->filled('joined_from')) {
             $query->whereDate('created_at', '>=', $request->input('joined_from'));
         }
-        
         if ($request->filled('joined_to')) {
             $query->whereDate('created_at', '<=', $request->input('joined_to'));
         }
@@ -53,13 +50,10 @@ class AdminUserController extends Controller
         if ($request->filled('user_group')) {
             $query->where('group_id', $request->input('user_group'));
         }
-        
         if ($request->filled('status')) {
             $query->where('status', $request->input('status'));
         }
-        
         $users = $query->get();
-        
         return view('admin.users.index', compact('users', 'majors'));
     }
 
