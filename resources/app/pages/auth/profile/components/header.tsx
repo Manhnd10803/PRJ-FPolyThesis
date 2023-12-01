@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import AvatarEditor from 'react-avatar-editor';
 import React, { useEffect, useRef, useState } from 'react';
 import { FriendService } from '@/apis/services/friend.service';
-import { Button, Card, Col, Dropdown, Modal } from 'react-bootstrap';
+import { Button, Card, Col, Dropdown, ListGroup, Modal } from 'react-bootstrap';
 import backgroundImage from '../../../../assets/images/profile-bg1.jpg';
 import { CloudiaryService } from '@/apis/services/cloudinary.service';
 import { ProfileService } from '@/apis/services/profile.service';
@@ -13,13 +13,18 @@ import MuiButton from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { formatFullName } from '@/utilities/functions';
-
+import { DropZoneField } from '@/components/custom/drop-zone-field';
+import { CustomListItem } from '@/utilities/funcReport/listItem';
+import { CustomModal } from '@/utilities/funcReport/modalReport';
+import { ReportService } from '@/apis/services/report.service';
+import { StorageFunc } from '@/utilities/local-storage/storage-func';
 const imageUrl = 'https://picsum.photos/20';
 
 type Props = {
   detailUser: IProfileUser;
   isLoading: boolean;
   isUser: boolean;
+  idUser: number;
   queryKey: Array<string>;
 };
 
@@ -35,7 +40,7 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
+export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Props) => {
   const [modalShowUploadImage, setModalShowUplodaImage] = React.useState(false);
   const [modalShowResizeImage, setModalShowResizeImage] = React.useState(false);
   const [modalShowNoti, setModalShowNoti] = React.useState(false);
@@ -44,6 +49,70 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
   const [checkAddFriend, setCheckAddFriend] = useState('');
   const [showFriendDropdown, setShowFriendDropdown] = useState(false);
   const queryClient = useQueryClient();
+  const [contentReport, setContentReport] = useState('');
+  const imagesRef = useRef<File[]>([]);
+
+  const [showModalReport, setShowModalReport] = useState(false);
+  const handleCloseModalReport = () => setShowModalReport(false);
+  const handleShowModalReport = () => setShowModalReport(true);
+
+  const [showModal, setShowModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+
+  const handleClose = () => {
+    setShowModal(false);
+  };
+
+  const handleShow = (title: any) => {
+    setModalTitle(title);
+    setShowModal(true);
+    handleCloseModalReport();
+  };
+
+  const listItems = [
+    { title: 'Giả mạo người khác', onClick: () => handleShow('Giả mạo người khác') },
+    { title: 'Tài khoản giả mạo', onClick: () => handleShow('Tài khoản giả mạo') },
+    { title: 'Tên giả mạo', onClick: () => handleShow('Tên giả mạo') },
+    { title: 'Đăng nội dung không khù hợp', onClick: () => handleShow('Đăng nội dung không khù hợp') },
+    { title: 'Vấn đề khác', onClick: () => handleShow('Vấn đề khác') },
+  ];
+  const handleChangeFiles = (files: File[]) => {
+    imagesRef.current = files;
+  };
+  const handleContentChange = (event: any) => {
+    const content = event.target.value;
+    setContentReport(content);
+  };
+  const QueryKey = ['reportUser'];
+  const createReportMutation = useMutation(ReportService.postReport, {
+    onSettled: () => {
+      queryClient.invalidateQueries(QueryKey); // Chỉnh sửa tên query nếu cần
+    },
+  });
+  const idUserStorage = StorageFunc.getUserId();
+  const postReport = async (idfriend, title, idUserReport) => {
+    try {
+      if (imagesRef.current.length && contentReport) {
+        const imageURL = await CloudiaryService.uploadImages(imagesRef.current, 'blog');
+        const formData = {
+          reporter_id: idUserStorage,
+          reported_id: idfriend,
+          report_title: title,
+          report_content: contentReport,
+          report_type: 'user',
+          report_type_id: idUserReport,
+          report_image: imageURL[0],
+        };
+        await createReportMutation.mutateAsync(formData);
+        handleClose();
+        toast.success('Bạn đã thực hiện báo cáo thành công');
+      } else {
+        toast.error('Bạn cần nhập đủ dữ liệu');
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
 
   const NotiModal = (props: any) => {
     return (
@@ -215,7 +284,6 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
     }
   };
 
-  // Fetch friend status when the component mounts
   useEffect(() => {
     if (!isUser && user?.id) {
       getStatusFriend().then(isFriend => {
@@ -335,7 +403,14 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
                 </div>
                 <div className="social-links">
                   {isUser === false && (
-                    <>
+                    <div className="d-flex gap-3">
+                      <Link
+                        to={`/chat/${user.id}`}
+                        target="_blank"
+                        className="btn btn-primary d-flex align-items-center gap-1"
+                      >
+                        <span className="material-symbols-outlined">chat</span> Nhắn tin
+                      </Link>
                       {checkAddFriend === 'Đã gửi lời mời kết bạn' ? (
                         <button className="btn btn-dark px-5" onClick={() => HandleAddFriend(user?.id)}>
                           Hủy lời mời
@@ -348,9 +423,14 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
                         )
                       )}
                       {checkAddFriend === 'Bạn bè' && (
-                        <div>
+                        <div className="card-header-toolbar d-flex align-items-center justify-content-center">
                           <Dropdown show={showFriendDropdown} onToggle={setShowFriendDropdown}>
-                            <Dropdown.Toggle variant="primary" id="dropdown-friend">
+                            <Dropdown.Toggle
+                              variant="secondary"
+                              id="dropdown-friend"
+                              className="d-flex align-items-center gap-1"
+                            >
+                              <span className="material-symbols-outlined">person_check</span>
                               Bạn bè
                             </Dropdown.Toggle>
                             <Dropdown.Menu>
@@ -359,7 +439,81 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey }: Props) => {
                           </Dropdown>
                         </div>
                       )}
-                    </>
+                      <div className="card-header-toolbar d-flex align-items-center justify-content-center">
+                        <Dropdown>
+                          <Dropdown.Toggle
+                            as="span"
+                            className="material-symbols-outlined text-dark"
+                            style={{ cursor: 'pointer' }}
+                          >
+                            more_vert
+                          </Dropdown.Toggle>
+                          <Dropdown.Menu className="dropdown-menu-right">
+                            <Dropdown.Item
+                              eventKey="five"
+                              className="d-flex align-items-center"
+                              onClick={handleShowModalReport}
+                            >
+                              <span className="material-symbols-outlined">report</span>Tìm hỗ trợ hoặc báo cáo
+                            </Dropdown.Item>
+                          </Dropdown.Menu>
+                        </Dropdown>
+                        {/* Modal  */}
+                        <Modal centered show={showModalReport} onHide={handleCloseModalReport}>
+                          <Modal.Header closeButton>
+                            <Modal.Title>Báo cáo</Modal.Title>
+                          </Modal.Header>
+                          <Modal.Body>
+                            <p className="py-2">
+                              Nếu bạn nhận thấy ai đó đang gặp nguy hiểm, đừng chần chừ mà hãy tìm ngay sự giúp đỡ trước
+                              khi báo cáo.
+                            </p>
+
+                            <ListGroup>
+                              {listItems.map((item, index) => (
+                                <CustomListItem key={index} title={item.title} onClick={item.onClick} />
+                              ))}
+                            </ListGroup>
+                          </Modal.Body>
+                          <Modal.Footer></Modal.Footer>
+                        </Modal>
+
+                        {/* Modal item  */}
+                        <CustomModal show={showModal} onHide={handleClose} title={modalTitle}>
+                          <div className="mb-3">
+                            <label htmlFor="fileInput" className="form-label">
+                              Bạn hãy đính kèm hình ảnh
+                            </label>
+                            {/* <input type="file" className="form-control" id="fileInput" onChange={handleFileChange} /> */}
+
+                            <DropZoneField
+                              // onCloseAndRemoveAll={() => setIsHaveImage(false)}
+                              onChangeFiles={handleChangeFiles}
+                              maxFiles={1}
+                              accept={{ 'image/*': [] }}
+                            />
+                          </div>
+                          <div className="mb-3">
+                            <label htmlFor="commentTextarea" className="form-label">
+                              Nhận xét (tối đa 225 kí tự)
+                            </label>
+                            <textarea
+                              className="form-control"
+                              id="commentTextarea"
+                              name="contentReport"
+                              onChange={handleContentChange}
+                              cols="10"
+                              rows="3"
+                            ></textarea>
+                          </div>
+                          <Modal.Footer>
+                            <button className="btn btn-info" onClick={() => postReport(idUser, modalTitle, idUser)}>
+                              Báo cáo
+                            </button>
+                          </Modal.Footer>
+                        </CustomModal>
+                      </div>
+                    </div>
                   )}
                 </div>
               </div>
