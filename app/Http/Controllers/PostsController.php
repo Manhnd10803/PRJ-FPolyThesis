@@ -144,6 +144,19 @@ class PostsController extends Controller
             $friendIds[] = $user->id;
             if ($quantity) {
                 $posts = Post::whereIn('user_id', $friendIds)->latest()->paginate($quantity);
+                $pagination = [
+                    'first_page_url' => $posts->url(1),
+                    'from' => $posts->firstItem(),
+                    'last_page' => $posts->lastPage(),
+                    'last_page_url' => $posts->url($posts->lastPage()),
+                    'links' =>  $posts->toArray()['links'],
+                    'next_page_url' => $posts->nextPageUrl(),
+                    'path' => $posts->path(),
+                    'per_page' => $posts->perPage(),
+                    'prev_page_url' => $posts->previousPageUrl(),
+                    'to' => $posts->lastItem(),
+                    'total' => $posts->total(),
+                ];
             } else {
                 $posts = Post::whereIn('user_id', $friendIds)->latest()->get();
             }
@@ -183,7 +196,11 @@ class PostsController extends Controller
                 array_push($result, $postData);
             }
             DB::commit();
-            return response()->json($result, 200);
+            if ($quantity) {
+                return response()->json(['data' => $result, 'pagination' => $pagination], 200);
+            } else {
+                return response()->json($result, 200);
+            }
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()], 400);
