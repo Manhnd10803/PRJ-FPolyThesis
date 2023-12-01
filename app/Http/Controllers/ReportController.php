@@ -22,14 +22,8 @@ class ReportController extends Controller
         DB::rollBack();
         return response()->json(['message' => 'người dùng không tồn tại hoặc bạn đang tự tố cáo chính mình '], 400);
       }
-      $existingReport = Report::where('reporter_id', Auth::id())
-        ->where('reported_id', $reported_id)
-        ->where('report_status', config('default.report.status.pending'))->first();
-
-      if ($existingReport) {
-        DB::rollBack();
-        return response()->json(['message' => 'Bạn đã báo cáo người này trước đó'], 400);
-      }
+      
+      
       $report_title = $request->input('report_title');
       $report_content = $request->input('report_content');
       $report_image = $request->input('report_image');
@@ -49,6 +43,15 @@ class ReportController extends Controller
           break;
         default:
           break;
+      }
+      $existingReport = Report::where('reporter_id', Auth::id())
+        ->where('reported_id', $reported_id)
+        ->where('report_type', $modelName)
+        ->where('report_type_id', $item)
+        ->where('report_status', config('default.report.status.pending'))->first();
+      if ($existingReport) {
+        DB::rollBack();
+        return response()->json(['message' => 'Bạn đã báo cáo người này trước đó'], 400);
       }
       $report = Report::create([
         'reporter_id' =>  Auth::id(),

@@ -95,7 +95,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'authAdmin'], function () {
 
     //Admin notification
     Route::get('see-notification/{notification}', [AdminNotificationController::class, 'seeNotification'])->name('admin.see-notification');
-    //Admin report
+    Route::get('list-notification', [AdminNotificationController::class, 'listNotification'])->name('admin.list-notification');
+   //Admin report
     Route::prefix('report')->group(function () {
         Route::get('/', [AdminReportController::class, 'index'])->name('admin.report.index');;
         Route::get('/{report}', [AdminReportController::class, 'show'])->name('admin.report.show');

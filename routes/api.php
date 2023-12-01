@@ -66,11 +66,10 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/private-channel/{user}', [PrivateMessagesController::class, 'SendMessages'])->where('user', '[0-9]+');
         //XÓa đoạn chat ( private channel chat) id user thêm chat tránh trường hợp messages/{id} bị trùng với bên trên
         Route::delete('/private-channel/{user}', [PrivateMessagesController::class, 'DeleteMessagesBetweenUsers']);
-        
+
         Route::put('/{privateMessage}', [PrivateMessagesController::class, 'UpdateMessage']);
         //Xóa  tin nhắn (Xóa 1 tin nhắn) id tin nhắn
         Route::delete('/{privateMessage}', [PrivateMessagesController::class, 'DeleteMessage']);
-        
     });
 
     //post
@@ -134,10 +133,12 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/status-friend/{friend}', [FriendController::class, 'getFriendshipStatus']);
     Route::delete('/unfriend/{friend}', [FriendController::class, 'unfriend']);
     Route::get('/friend-suggest/{quantity?}', [FriendController::class, 'getFriendSuggestions']);
+    Route::get('/friend/count-friend-request', [FriendController::class, 'countFriendRequest']);
     //notification
     Route::get('/notifications/{quantity?}', [NotificationController::class, 'listNotification']);
     Route::get('/see-notification/{notification}', [NotificationController::class, 'seeNotification']);
     Route::delete('/notification/{notification}', [NotificationController::class, 'deleteNotification']);
+    Route::get('/notification/count-not-seen', [NotificationController::class, 'countNotificationNotSeen']);
     //activity 
     Route::post('/activity', [AuthController::class, 'CheckActivityUser']);
     //user

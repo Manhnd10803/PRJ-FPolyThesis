@@ -1,5 +1,5 @@
+import { useRef, useState } from 'react';
 import { Card, Dropdown, Nav } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 
 export const Navbar = ({ isUser }) => {
   return (
@@ -67,12 +67,12 @@ export const Navbar = ({ isUser }) => {
                   variant="pills"
                   className="d-flex align-items-center justify-content-center profile-feed-items p-0 m-0"
                 >
-                  <Nav.Item as="li" className=" col-12 col-sm-4 p-0 ">
-                    <Nav.Link href="#timeline" eventKey="first" role="button" className=" text-center p-4">
+                  <Nav.Item as="li" className="col-12 col-sm-4 p-0 ">
+                    <Nav.Link href="#timeline" eventKey="first" role="button" className=" text-center p-3">
                       Timeline
                     </Nav.Link>
                   </Nav.Item>
-                  <Nav.Item as="li" className=" col-12 col-sm-4 p-0">
+                  <Nav.Item as="li" className="col-12 col-sm-4 p-0">
                     <Nav.Link href="#pills-friends-tab" eventKey="third" role="button" className="text-center p-3">
                       Friends
                     </Nav.Link>

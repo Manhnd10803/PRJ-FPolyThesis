@@ -1,7 +1,20 @@
 import { QandAService } from '@/apis/services/qanda.service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
-import { Container, Col, Button, ButtonGroup, Row, Card, Badge, Modal, Form, Dropdown, Spinner } from 'react-bootstrap';
+import {
+  Container,
+  Col,
+  Button,
+  ButtonGroup,
+  Row,
+  Card,
+  Badge,
+  Modal,
+  Form,
+  Dropdown,
+  Spinner,
+  ListGroup,
+} from 'react-bootstrap';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
@@ -17,6 +30,11 @@ import { CommentService } from '@/apis/services/comment.service';
 import { LikeService } from '@/apis/services/like.service';
 import parse from 'html-react-parser';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
+import { CustomListItem } from '@/utilities/funcReport/listItem';
+import { CustomModal } from '@/utilities/funcReport/modalReport';
+import { DropZoneField } from '@/components/custom/drop-zone-field';
+import { CloudiaryService } from '@/apis/services/cloudinary.service';
+import { ReportService } from '@/apis/services/report.service';
 
 export const DetailQandAPage = () => {
   const commentRef = useRef(null);
@@ -161,6 +179,73 @@ export const DetailQandAPage = () => {
       console.error('Lỗi khi sửa câu hỏi:', error);
     }
   };
+
+  const [contentReport, setContentReport] = useState('');
+  const imagesRef = useRef<File[]>([]);
+
+  const [showModalReport, setShowModalReport] = useState(false);
+  const handleCloseModalReport = () => setShowModalReport(false);
+  const handleShowModalReport = () => setShowModalReport(true);
+
+  const [showModal, setShowModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+
+  const handleClose = () => {
+    setShowModal(false);
+  };
+
+  const handleShow = (title: any) => {
+    setModalTitle(title);
+    setShowModal(true);
+    handleCloseModalReport();
+  };
+
+  const listItems = [
+    { title: 'Spam', onClick: () => handleShow('Spam') },
+    { title: 'Vi phạm điều khoản', onClick: () => handleShow('Vi phạm điều khoản') },
+    { title: 'Quấy rối', onClick: () => handleShow('Quấy rối') },
+    { title: 'Bản dịch kém chất lượng', onClick: () => handleShow('Bản dịch kém chất lượng') },
+    { title: 'Vi phạm bản quyền', onClick: () => handleShow('Vi phạm bản quyền') },
+  ];
+  const handleChangeFiles = (files: File[]) => {
+    imagesRef.current = files;
+  };
+  const handleContentChange = (event: any) => {
+    const content = event.target.value;
+    setContentReport(content);
+  };
+  const QueryKey = ['reportQa'];
+  const createReportMutation = useMutation(ReportService.postReport, {
+    onSettled: () => {
+      queryClient.invalidateQueries(QueryKey); // Chỉnh sửa tên query nếu cần
+    },
+  });
+  const postReport = async (idfriend, title, idqa) => {
+    try {
+      const idUser = StorageFunc.getUserId();
+
+      if (imagesRef.current.length && contentReport) {
+        const imageURL = await CloudiaryService.uploadImages(imagesRef.current, 'qa');
+        const formData = {
+          reporter_id: idUser,
+          reported_id: idfriend,
+          report_title: title,
+          report_content: contentReport,
+          report_type: 'qa',
+          report_type_id: idqa,
+          report_image: imageURL[0],
+        };
+        await createReportMutation.mutateAsync(formData);
+        handleClose();
+        toast.success('Bạn đã thực hiện báo cáo thành công');
+      } else {
+        toast.error('Bạn cần nhập đủ dữ liệu');
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <>
       <div id="content-page" className="content-page">
@@ -306,35 +391,121 @@ export const DetailQandAPage = () => {
 
                           {/* Icon like cmt */}
                           <br />
-                          <ButtonGroup aria-label="Basic example">
-                            <Button
-                              className="d-flex align-items-center gap-2 "
-                              variant="light"
-                              onClick={handleLikeClick}
-                            >
-                              {likeStatus === 'like' ? (
-                                <ThumbUpIcon className="text-primary" sx={{ fontSize: 20 }} />
-                              ) : (
-                                <ThumbUpOutlinedIcon className="text-primary" sx={{ fontSize: 20 }} />
-                              )}
-                              <Badge bg="primary" className=" text-white ml-2">
-                                {qAndAData?.emotion?.like || '0'}
-                              </Badge>
-                            </Button>
+                          <div className="d-flex gap-3">
+                            <ButtonGroup aria-label="Basic example">
+                              <Button
+                                className="d-flex align-items-center gap-2 "
+                                variant="light"
+                                onClick={handleLikeClick}
+                              >
+                                {likeStatus === 'like' ? (
+                                  <ThumbUpIcon className="text-primary" sx={{ fontSize: 20 }} />
+                                ) : (
+                                  <ThumbUpOutlinedIcon className="text-primary" sx={{ fontSize: 20 }} />
+                                )}
+                                <Badge bg="primary" className=" text-white ml-2">
+                                  {qAndAData?.emotion?.like || '0'}
+                                </Badge>
+                              </Button>
 
-                            <Button
-                              className="d-flex align-items-center"
-                              variant="light"
-                              onClick={handleDislikeClick}
-                              data-bs-placement="bottom"
-                            >
-                              {likeStatus === 'dislike' ? (
-                                <ThumbDownIcon className="text-primary" sx={{ fontSize: 20 }} />
-                              ) : (
-                                <ThumbDownOffAltOutlinedIcon className="text-primary" sx={{ fontSize: 20 }} />
-                              )}
-                            </Button>
-                          </ButtonGroup>
+                              <Button
+                                className="d-flex align-items-center"
+                                variant="light"
+                                onClick={handleDislikeClick}
+                                data-bs-placement="bottom"
+                              >
+                                {likeStatus === 'dislike' ? (
+                                  <ThumbDownIcon className="text-primary" sx={{ fontSize: 20 }} />
+                                ) : (
+                                  <ThumbDownOffAltOutlinedIcon className="text-primary" sx={{ fontSize: 20 }} />
+                                )}
+                              </Button>
+                            </ButtonGroup>
+                            {user_id !== qAndAData?.qa?.user_id && (
+                              <div className="bg-soft-primary rounded p-2 pointer text-center p-0">
+                                <div className="card-header-toolbar d-flex align-items-center">
+                                  <Dropdown className="d-flex align-items-center">
+                                    <Dropdown.Toggle
+                                      as="span"
+                                      className="material-symbols-outlined "
+                                      style={{ cursor: 'pointer' }}
+                                    >
+                                      more_horiz
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu className="dropdown-menu-right">
+                                      <Dropdown.Item
+                                        eventKey="five"
+                                        className="d-flex align-items-center"
+                                        onClick={handleShowModalReport}
+                                      >
+                                        <span className="material-symbols-outlined">report</span>Tìm hỗ trợ hoặc báo cáo
+                                      </Dropdown.Item>
+                                    </Dropdown.Menu>
+                                  </Dropdown>
+
+                                  {/* Modal  */}
+                                  <Modal centered show={showModalReport} onHide={handleCloseModalReport}>
+                                    <Modal.Header closeButton>
+                                      <Modal.Title>Báo cáo</Modal.Title>
+                                    </Modal.Header>
+                                    <Modal.Body>
+                                      <p className="py-2">
+                                        Nếu bạn nhận thấy ai đó đang gặp nguy hiểm, đừng chần chừ mà hãy tìm ngay sự
+                                        giúp đỡ trước khi báo cáo.
+                                      </p>
+
+                                      <ListGroup>
+                                        {listItems.map((item, index) => (
+                                          <CustomListItem key={index} title={item.title} onClick={item.onClick} />
+                                        ))}
+                                      </ListGroup>
+                                    </Modal.Body>
+                                    <Modal.Footer></Modal.Footer>
+                                  </Modal>
+
+                                  {/* Modal item  */}
+                                  <CustomModal show={showModal} onHide={handleClose} title={modalTitle}>
+                                    <div className="mb-3">
+                                      <label htmlFor="fileInput" className="form-label">
+                                        Bạn hãy đính kèm hình ảnh
+                                      </label>
+                                      {/* <input type="file" className="form-control" id="fileInput" onChange={handleFileChange} /> */}
+
+                                      <DropZoneField
+                                        // onCloseAndRemoveAll={() => setIsHaveImage(false)}
+                                        onChangeFiles={handleChangeFiles}
+                                        maxFiles={1}
+                                        accept={{ 'image/*': [] }}
+                                      />
+                                    </div>
+                                    <div className="mb-3">
+                                      <label htmlFor="commentTextarea" className="form-label">
+                                        Nhận xét (tối đa 225 kí tự)
+                                      </label>
+                                      <textarea
+                                        className="form-control"
+                                        id="commentTextarea"
+                                        name="contentReport"
+                                        onChange={handleContentChange}
+                                        cols="10"
+                                        rows="3"
+                                      ></textarea>
+                                    </div>
+                                    <Modal.Footer>
+                                      <button
+                                        className="btn btn-info"
+                                        onClick={() =>
+                                          postReport(qAndAData?.qa?.user?.id, modalTitle, qAndAData?.qa?.id)
+                                        }
+                                      >
+                                        Báo cáo
+                                      </button>
+                                    </Modal.Footer>
+                                  </CustomModal>
+                                </div>
+                              </div>
+                            )}
+                          </div>
 
                           {/* Câu trả lời */}
 

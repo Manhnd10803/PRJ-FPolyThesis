@@ -1,19 +1,104 @@
-import { Badge, Button, ButtonGroup, Col, Image, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import {
+  Badge,
+  Button,
+  ButtonGroup,
+  Col,
+  Dropdown,
+  Image,
+  ListGroup,
+  Modal,
+  Nav,
+  OverlayTrigger,
+  Tooltip,
+} from 'react-bootstrap';
 import { Card } from '@/components/custom';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import ThumbDownOffAltOutlinedIcon from '@mui/icons-material/ThumbDownOffAltOutlined';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { formatDMYCreatedAt, formatDateFromCreatedAt } from '../../blog/components/format-date';
 import { Link } from 'react-router-dom';
 import { formatFullName } from '@/utilities/functions';
 import { pathName } from '@/routes/path-name';
 import parse from 'html-react-parser';
+import { CustomModal } from '../../../../utilities/funcReport/modalReport';
+import { CustomListItem } from '../../../../utilities/funcReport/listItem';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { ReportService } from '@/apis/services/report.service';
+import { StorageFunc } from '@/utilities/local-storage/storage-func';
+import { CloudiaryService } from '@/apis/services/cloudinary.service';
+import toast from 'react-hot-toast';
+import { DropZoneField } from '@/components/custom/drop-zone-field';
 
 export const ContentBlogDetail = ({ data, commentRef, createLike }: any) => {
   const [likeStatus, setLikeStatus] = useState(data?.user_like?.emotion || null);
   const [isContentExpanded, setContentExpanded] = useState(false);
+  const queryClient = useQueryClient();
+  const [contentReport, setContentReport] = useState('');
+  const imagesRef = useRef<File[]>([]);
+
+  const [showModalReport, setShowModalReport] = useState(false);
+  const handleCloseModalReport = () => setShowModalReport(false);
+  const handleShowModalReport = () => setShowModalReport(true);
+
+  const [showModal, setShowModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+
+  const handleClose = () => {
+    setShowModal(false);
+  };
+
+  const handleShow = (title: any) => {
+    setModalTitle(title);
+    setShowModal(true);
+    handleCloseModalReport();
+  };
+
+  const listItems = [
+    { title: 'Spam', onClick: () => handleShow('Spam') },
+    { title: 'Vi phạm điều khoản', onClick: () => handleShow('Vi phạm điều khoản') },
+    { title: 'Quấy rối', onClick: () => handleShow('Quấy rối') },
+    { title: 'Bản dịch kém chất lượng', onClick: () => handleShow('Bản dịch kém chất lượng') },
+    { title: 'Vi phạm bản quyền', onClick: () => handleShow('Vi phạm bản quyền') },
+  ];
+  const handleChangeFiles = (files: File[]) => {
+    imagesRef.current = files;
+  };
+  const handleContentChange = (event: any) => {
+    const content = event.target.value;
+    setContentReport(content);
+  };
+  const QueryKey = ['reportBlog'];
+  const createReportMutation = useMutation(ReportService.postReport, {
+    onSettled: () => {
+      queryClient.invalidateQueries(QueryKey); // Chỉnh sửa tên query nếu cần
+    },
+  });
+  const idUser = StorageFunc.getUserId();
+  const postReport = async (idfriend, title, idblog) => {
+    try {
+      if (imagesRef.current.length && contentReport) {
+        const imageURL = await CloudiaryService.uploadImages(imagesRef.current, 'blog');
+        const formData = {
+          reporter_id: idUser,
+          reported_id: idfriend,
+          report_title: title,
+          report_content: contentReport,
+          report_type: 'blog',
+          report_type_id: idblog,
+          report_image: imageURL[0],
+        };
+        await createReportMutation.mutateAsync(formData);
+        handleClose();
+        toast.success('Bạn đã thực hiện báo cáo thành công');
+      } else {
+        toast.error('Bạn cần nhập đủ dữ liệu');
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
   const toggleContent = () => {
     setContentExpanded(!isContentExpanded);
   };
@@ -51,7 +136,6 @@ export const ContentBlogDetail = ({ data, commentRef, createLike }: any) => {
       commentRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
-  console.log(data);
 
   return (
     <>
@@ -59,16 +143,96 @@ export const ContentBlogDetail = ({ data, commentRef, createLike }: any) => {
         <Card className="card-block card-stretch card-height blog blog-detail">
           <Card.Body>
             <div className="blog-description mt-3">
-              <div className="d-flex align-items-center">
-                <div className="user-image mb-3">
-                  <Image className="avatar-80 rounded" src={data?.blog?.user.avatar} alt="Ảnh đại diện" />
+              <div className="d-flex align-items-center justify-content-between">
+                <div className="d-flex align-items-center">
+                  <div className="user-image mb-3">
+                    <Image className="avatar-80 rounded" src={data?.blog?.user.avatar} alt="Ảnh đại diện" />
+                  </div>
+                  <div className="ms-3">
+                    <Link to={`${pathName.PROFILE}/${data?.blog?.user.id}`}>
+                      <h5>{formatFullName(data?.blog?.user)}</h5>
+                      <p className="text-black">{data?.blog?.major?.majors_name}</p>
+                    </Link>
+                  </div>
                 </div>
-                <div className="ms-3">
-                  <Link to={`${pathName.PROFILE}/${data?.blog?.user.id}`}>
-                    <h5>{formatFullName(data?.blog?.user)}</h5>
-                    <p className="text-black">{data?.blog?.major?.majors_name}</p>
-                  </Link>
-                </div>
+                {idUser !== data?.blog?.user.id && (
+                  <div className="bg-soft-primary rounded p-2 pointer text-center p-0">
+                    <div className="card-header-toolbar d-flex align-items-center">
+                      <Dropdown className="d-flex align-items-center">
+                        <Dropdown.Toggle as="span" className="material-symbols-outlined " style={{ cursor: 'pointer' }}>
+                          more_horiz
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu className="dropdown-menu-right">
+                          <Dropdown.Item
+                            eventKey="five"
+                            className="d-flex align-items-center"
+                            onClick={handleShowModalReport}
+                          >
+                            <span className="material-symbols-outlined">report</span>Tìm hỗ trợ hoặc báo cáo
+                          </Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown>
+
+                      {/* Modal  */}
+                      <Modal centered show={showModalReport} onHide={handleCloseModalReport}>
+                        <Modal.Header closeButton>
+                          <Modal.Title>Báo cáo</Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          <p className="py-2">
+                            Nếu bạn nhận thấy ai đó đang gặp nguy hiểm, đừng chần chừ mà hãy tìm ngay sự giúp đỡ trước
+                            khi báo cáo.
+                          </p>
+
+                          <ListGroup>
+                            {listItems.map((item, index) => (
+                              <CustomListItem key={index} title={item.title} onClick={item.onClick} />
+                            ))}
+                          </ListGroup>
+                        </Modal.Body>
+                        <Modal.Footer></Modal.Footer>
+                      </Modal>
+
+                      {/* Modal item  */}
+                      <CustomModal show={showModal} onHide={handleClose} title={modalTitle}>
+                        <div className="mb-3">
+                          <label htmlFor="fileInput" className="form-label">
+                            Bạn hãy đính kèm hình ảnh
+                          </label>
+                          {/* <input type="file" className="form-control" id="fileInput" onChange={handleFileChange} /> */}
+
+                          <DropZoneField
+                            // onCloseAndRemoveAll={() => setIsHaveImage(false)}
+                            onChangeFiles={handleChangeFiles}
+                            maxFiles={1}
+                            accept={{ 'image/*': [] }}
+                          />
+                        </div>
+                        <div className="mb-3">
+                          <label htmlFor="commentTextarea" className="form-label">
+                            Nhận xét (tối đa 225 kí tự)
+                          </label>
+                          <textarea
+                            className="form-control"
+                            id="commentTextarea"
+                            name="contentReport"
+                            onChange={handleContentChange}
+                            cols="10"
+                            rows="3"
+                          ></textarea>
+                        </div>
+                        <Modal.Footer>
+                          <button
+                            className="btn btn-info"
+                            onClick={() => postReport(data?.blog?.user?.id, modalTitle, data?.blog?.id)}
+                          >
+                            Báo cáo
+                          </button>
+                        </Modal.Footer>
+                      </CustomModal>
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="blog-meta d-flex align-items-center  gap-4 mb-3 position-right-side flex-wrap">
                 <div className="date date  d-flex align-items-center">

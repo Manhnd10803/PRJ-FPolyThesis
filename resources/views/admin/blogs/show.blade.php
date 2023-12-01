@@ -72,7 +72,7 @@
                         </h3>
                         <div class="timeline-body ">
                             <h2>{{ $blog->title }}</h2>
-                            {{ $blog->content }}
+                            {!! str_replace(['"', "'"], '', $blog->content) !!}
                         </div>
                         <div class="timeline-footer">
 
