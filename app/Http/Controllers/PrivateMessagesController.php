@@ -12,44 +12,51 @@ use Illuminate\Support\Facades\DB;
 class PrivateMessagesController extends Controller
 {
     public function ShowListUserChat($quantity = null)
-{
-    $user_id = Auth::id();
+    {
+        $user_id = Auth::id();
+        // Danh sách người gửi tin nhắn đến người dùng hiện tại
+        $sentMessages = PrivateMessage::where('sender_id', $user_id)
+            ->where(function ($query) use ($user_id) {
+                $query->whereNull('deleted_by')
+                    ->orWhereJsonDoesntContain('deleted_by', $user_id);
+            })
+            ->pluck('receiver_id');
+        // Danh sách người nhận tin nhắn từ người dùng hiện tại
+        $receivedMessages = PrivateMessage::where('receiver_id', $user_id)
+            ->where(function ($query) use ($user_id) {
+                $query->whereNull('deleted_by')
+                    ->orWhereJsonDoesntContain('deleted_by', $user_id);
+            })
+            ->pluck('sender_id');
+        $listUserIds = $sentMessages->merge($receivedMessages)->unique();
+        $listUserChat = User::whereIn('id', $listUserIds)
+            ->with(['major' => function ($query) {
+                $query->select('id', 'majors_name'); // Chọn các trường cần lấy từ bảng Major
+            }])
+            ->when($quantity, function ($query) use ($quantity) {
+                return $query->paginate($quantity);
+            }, function ($query) {
+                return $query->get();
+            })
+            ->map(function ($user) use ($user_id) {
+                $unreadMessagesCount = PrivateMessage::where('sender_id', $user->id)
+                    ->where('receiver_id', $user_id)
+                    ->where('status', '!=', config('default.private_messages.status.read'))
+                    ->count();
 
-    // Danh sách người gửi tin nhắn đến người dùng hiện tại
-    $sentMessages = PrivateMessage::where('sender_id', $user_id)
-        ->where(function ($query) use ($user_id) {
-            $query->whereNull('deleted_by')
-                ->orWhereJsonDoesntContain('deleted_by', $user_id);
-        })
-        ->pluck('receiver_id');
+                unset($user['major']); // Xóa trường major
+                return array_merge($user->toArray(), [
+                    'majors_name' => $user->major->majors_name,
+                    'unread_messages_count' => $unreadMessagesCount,
+                ]);
+            });
+        $totalunreadMessagesCount = PrivateMessage::where('receiver_id', $user_id)
+            ->where('status', '!=', config('default.private_messages.status.read'))
+            ->count();
+        return response()->json(['data' => $listUserChat, 'total_mess_count' => $totalunreadMessagesCount]);
+    }
 
-    // Danh sách người nhận tin nhắn từ người dùng hiện tại
-    $receivedMessages = PrivateMessage::where('receiver_id', $user_id)
-        ->where(function ($query) use ($user_id) {
-            $query->whereNull('deleted_by')
-                ->orWhereJsonDoesntContain('deleted_by', $user_id);
-        })
-        ->pluck('sender_id');
 
-    // Kết hợp danh sách người gửi và người nhận tin nhắn, loại bỏ trùng lặp và lấy thông tin người dùng
-    $listUserIds = $sentMessages->merge($receivedMessages)->unique();
-
-    $listUserChat = User::whereIn('id', $listUserIds)
-        ->with(['major' => function ($query) {
-            $query->select('id', 'majors_name'); // Chọn các trường cần lấy từ bảng Major
-        }])
-        ->when($quantity, function ($query) use ($quantity) {
-            return $query->paginate($quantity);
-        }, function ($query) {
-            return $query->get();
-        })
-        ->map(function ($user) {
-            unset($user['major']); // Xóa trường major
-            return array_merge($user->toArray(), ['majors_name' => $user->major->majors_name]);
-        });
-
-    return response()->json($listUserChat);
-}
 
     /**
      * @OA\Get(
@@ -202,19 +209,13 @@ class PrivateMessagesController extends Controller
             ]);
             $message->save();
             DB::commit();
-            
             // relationship to take major_name of sender
             $messageWithSender = $message->load(['sender.major' => function ($query) {
                 $query->select('id', 'majors_name');
             }]);
-            
-
             $messageWithSender->sender->majors_name = $messageWithSender->sender->major->majors_name;
-
             unset($messageWithSender->sender->major);
-
             broadcast(new PrivateMessageSent($messageWithSender))->toOthers();
-            
             return response()->json(['message' => 'Tin nhắn đã được gửi', 'data' => $message->load('sender')], 200);
         } catch (\Exception $e) {
             DB::rollBack();
@@ -353,5 +354,17 @@ class PrivateMessagesController extends Controller
         } else {
             return response()->json(['message' => 'Xóa tất cả tin nhắn thất bại'], 400);
         }
+    }
+    public function changestatus(User $user)
+    {
+        $loginUser = Auth::id();
+        $senderId = $user->id;
+        $messages = PrivateMessage::where('sender_id', $senderId)->where('receiver_id', $loginUser)->get();
+        foreach ($messages as $message) {
+            $message->update([
+                'status' => config('default.private_messages.status.read')
+            ]);
+        }
+        return response()->json(['messages' => 'ok rồi']);
     }
 }

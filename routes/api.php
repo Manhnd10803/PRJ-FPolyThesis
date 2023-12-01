@@ -158,4 +158,5 @@ Route::middleware('auth:api')->group(function () {
 
     //Report
     Route::post('/report/{user}/{model}/{item}', [ReportController::class, 'CreateReport']);
+    Route::put('/changestatus/{user}', [PrivateMessagesController::class, 'changestatus']);
 });
