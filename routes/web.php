@@ -94,6 +94,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'authAdmin'], function () {
 
     //Admin notification
     Route::get('see-notification/{notification}', [AdminNotificationController::class, 'seeNotification'])->name('admin.see-notification');
+    Route::get('list-notification', [AdminNotificationController::class, 'listNotification'])->name('admin.list-notification');
 });
 
 // Route chung cho ứng dụng ReactJS
