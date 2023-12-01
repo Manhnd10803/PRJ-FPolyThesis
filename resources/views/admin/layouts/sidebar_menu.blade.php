@@ -77,6 +77,11 @@
                           <span class="pull-right-container">
                             <span class="label label-primary pull-right" id="pendingBlogsCount">...</span>
                           </span></a> </li>
+                      @elseif(isset($menu_lv2['count1']))
+                      <li class="{{ $active ? 'active' : ''}}"><a href="{{ route($menu_lv2['route']) }}"><i class="fa fa-circle-o"></i><span>{{ $menu_lv2['text'] }}</span>
+                        <span class="pull-right-container">
+                          <span class="label label-primary pull-right" id="pendingReportCount">...</span>
+                        </span></a> </li>
                       @else
                         <li class="{{ $active ? 'active' : ''}}"><a href="{{ route($menu_lv2['route']) }}"><i class="fa fa-circle-o"></i>{{ $menu_lv2['text'] }}</a></li>
                       @endif
