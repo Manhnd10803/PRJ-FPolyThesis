@@ -4,7 +4,6 @@ import { Offcanvas } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 // image
-const imageUrl = 'https://picsum.photos/50';
 
 export const ShareOffCanvas = () => {
   const [show, setShow] = useState(false);
@@ -16,11 +15,11 @@ export const ShareOffCanvas = () => {
       <div className="d-flex align-items-center feather-icon mt-2 mt-md-0">
         <Link to="#" onClick={handleShow} className="d-flex align-items-center">
           <span className="material-symbols-outlined md-18">share</span>
-          <span className="ms-1">99 Share</span>
+          <span className="ms-1">Share</span>
         </Link>
       </div>
       <Offcanvas show={show} onHide={handleClose} placement="bottom">
-        <Offcanvas.Header closeButton>
+        {/* <Offcanvas.Header closeButton>
           <Offcanvas.Title>Share</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>
@@ -50,7 +49,10 @@ export const ShareOffCanvas = () => {
               <h6>YouTube</h6>
             </div>
           </div>
-        </Offcanvas.Body>
+        </Offcanvas.Body> */}
+        <div className="d-flex justify-content-center align-items-center h-100 bg-light">
+          <h3>Chúng tôi đang phát triển chức năng này...</h3>
+        </div>
       </Offcanvas>
     </>
   );

@@ -1,49 +1,108 @@
 import { ShareOffCanvas } from '@/components/custom';
+import { GetNewPostResponseType } from '@/models/post';
+import moment from 'moment';
 import { Card, Col } from 'react-bootstrap';
-import { CommentItemProps } from '../comment/comment-item';
+import { Link } from 'react-router-dom';
 import { CommentList } from '../comment/comment-list';
 import { CreateComment } from '../comment/create-comment';
-import { ChosePostEmotion } from './post-emotion';
 import { MoreActionDropdown } from './post-more-action-dropdown';
 import { TotalCommentPost } from './post-total-comment';
 import { TotalLikePost } from './post-total-like';
-import { Link } from 'react-router-dom';
-import moment from 'moment';
+import { PostDetailContextProvider, usePostDetailContext } from '../../contexts';
+import { ChosePostEmotion, EmotionType } from '@/components/shared/choose-emotion';
 
 type PostItemProps = {
-  avatar?: string;
-  content: string;
-  authorName: string;
-  createdAt: Date;
-  updatedAt: Date;
-  actionType?: string;
-  images: string;
-  commentList: CommentItemProps[];
-  totalLike: number;
+  item: GetNewPostResponseType;
 };
 
-//image
+export const PostItem = ({ item }: PostItemProps) => {
+  // state
 
-export const PostItem = ({
-  avatar,
-  content,
-  authorName,
-  createdAt,
-  actionType = 'Add new post',
-  images: imagesEncoded,
-  commentList,
-  totalLike,
-}: PostItemProps) => {
-  //func
-  const renderContent = () => {
-    const images = JSON.parse(imagesEncoded);
+  const handleChangeEmotion = (emotion: EmotionType) => {
+    console.log('emotion', emotion);
+  };
+  //render
+  return (
+    <PostDetailContextProvider
+      value={{
+        post: item.post,
+        like_counts_by_emotion: item.like_counts_by_emotion,
+        comments: item.comments,
+      }}
+    >
+      <Col sm={12}>
+        <Card className=" card-block card-stretch card-height">
+          <Card.Body>
+            <PostItemHeader />
+            <PostItemContent />
+            <div className="comment-area mt-3">
+              <div className="d-flex justify-content-between align-items-center flex-wrap">
+                <div className="like-block position-relative d-flex align-items-center">
+                  <div className="d-flex align-items-center">
+                    <ChosePostEmotion onChange={handleChangeEmotion} />
 
-    const imageList = Array.isArray(images) ? images : [images];
+                    <TotalLikePost />
+                  </div>
+                  <TotalCommentPost />
+                </div>
+                <ShareOffCanvas />
+              </div>
+              <hr />
+              <CommentList />
+              <CreateComment />
+            </div>
+          </Card.Body>
+        </Card>
+      </Col>
+    </PostDetailContextProvider>
+  );
+};
+//======================== Component PostItemHeader ========================//
+const PostItemHeader = () => {
+  const { post } = usePostDetailContext();
+  const actionType = 'Add new post';
 
-    return (
-      <>
-        <div className="my-3">{content}</div>
+  return (
+    <div className="user-post-data">
+      <div className="d-flex justify-content-between">
+        <div className="me-3">
+          <img className="avatar-50 rounded-circle" src={post?.user?.avatar} alt="avatar" />
+        </div>
+        <div className="w-100">
+          <div className="d-flex justify-content-between">
+            <div>
+              <h5 className="mb-0 d-inline-block">{post?.user?.username}</h5>
+              <span className="mb-0 ps-1 d-inline-block">{actionType}</span>
+              <p className="mb-0 text-primary">
+                {moment(post?.created_at)
+                  .startOf('day')
+                  .fromNow()}
+              </p>
+            </div>
+            <MoreActionDropdown />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
+const PostItemContent = () => {
+  const { post } = usePostDetailContext();
+
+  const images = JSON.parse(post.image);
+
+  const imageList = Array.isArray(images) ? images : [images];
+
+  return (
+    <>
+      <div className="my-3">{post?.content}</div>
+
+      <div
+        onClick={() => {
+          console.log('open detail');
+        }}
+      >
         {imageList && imageList.length > 0 ? (
           <div className="user-post">
             {imageList.length > 1 ? (
@@ -64,49 +123,7 @@ export const PostItem = ({
             )}
           </div>
         ) : null}
-      </>
-    );
-  };
-  //render
-  return (
-    <Col sm={12}>
-      <Card className=" card-block card-stretch card-height">
-        <Card.Body>
-          <div className="user-post-data">
-            <div className="d-flex justify-content-between">
-              <div className="me-3">
-                <img className="avatar-50 rounded-circle" src={avatar} alt="avatar" />
-              </div>
-              <div className="w-100">
-                <div className="d-flex justify-content-between">
-                  <div>
-                    <h5 className="mb-0 d-inline-block">{authorName}</h5>
-                    <span className="mb-0 ps-1 d-inline-block">{actionType}</span>
-                    <p className="mb-0 text-primary">{moment(createdAt).startOf('day').fromNow()}</p>
-                  </div>
-                  <MoreActionDropdown />
-                </div>
-              </div>
-            </div>
-          </div>
-          {renderContent()}
-          <div className="comment-area mt-3">
-            <div className="d-flex justify-content-between align-items-center flex-wrap">
-              <div className="like-block position-relative d-flex align-items-center">
-                <div className="d-flex align-items-center">
-                  <ChosePostEmotion />
-                  <TotalLikePost totalLike={totalLike} />
-                </div>
-                <TotalCommentPost />
-              </div>
-              <ShareOffCanvas />
-            </div>
-            <hr />
-            <CommentList commentList={commentList} />
-            <CreateComment />
-          </div>
-        </Card.Body>
-      </Card>
-    </Col>
+      </div>
+    </>
   );
 };
