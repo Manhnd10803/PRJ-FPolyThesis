@@ -138,12 +138,12 @@ return [
           ],
           [
             'name' => 'Chỉnh sửa chuyên ngành',
-            'icon'=>'fa fa-edit',
+            'icon' => 'fa fa-edit',
             'permission' => 'admin.majors.edit'
           ],
           [
             'name' => 'Xóa chuyên ngành',
-            'icon'=>'fa fa-trash-o',
+            'icon' => 'fa fa-trash-o',
             'permission' => 'admin.majors.destroy'
           ],
         ],
@@ -179,12 +179,26 @@ return [
         'sub_permission' => [
           [
             'name' => 'Xóa câu hỏi',
-            'icon'=>'fa fa-trash-o',
+            'icon' => 'fa fa-trash-o',
             'permission' => 'admin.qa.destroy'
           ],
         ],
         'text' => 'Danh sách câu hỏi',
       ],
     ]
+  ],
+  'reportfolio' => [
+    'order' => 8,
+    'text' => 'Quản lý vi phạm',
+    'permission' => 'admin.report',
+    'icon' => 'fa fa-fw fa-warning',
+    'sub' => [
+      'list_reports' => [
+        'order' => 1,
+        'route' => 'admin.report.index',
+        'permission' => 'admin.report.index',
+        'text' => 'Danh sách vi phạm'
+      ],
+    ],
   ],
 ];
