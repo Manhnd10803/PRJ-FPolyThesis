@@ -16,10 +16,6 @@ export const CustomToggle = React.forwardRef(
         e.preventDefault();
         onClick(e);
       }}
-      onMouseOver={e => {
-        e.preventDefault();
-        onClick(e);
-      }}
       className={variant}
     >
       {children}

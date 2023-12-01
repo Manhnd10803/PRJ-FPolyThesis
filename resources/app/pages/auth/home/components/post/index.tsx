@@ -1,22 +1,35 @@
+import useInfinitePosts from '@/hooks/usePostQuery';
+import { useEffect } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { PostContextProvider } from '../../contexts';
 import { PostList } from './post-list';
-import { useQuery } from '@tanstack/react-query';
-import { PostService } from '@/apis/services/post.service';
 
 const imageUrlLoading = 'https://i.gifer.com/ZKZg.gif';
 
-const fetchPostNewFeed = async () => {
-  const { data } = await PostService.getPostNewFeed();
-  return data;
-};
-
 export const PostContainer = () => {
-  const { isLoading, error, isError, data } = useQuery({
-    queryKey: ['postNewFeeds'],
-    queryFn: fetchPostNewFeed,
-  });
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isError, isLoading } = useInfinitePosts();
+
+  const { ref: endRef, inView: endInView } = useInView();
+
+  // effect
+  useEffect(() => {
+    if (endInView && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [endInView, isFetchingNextPage, hasNextPage, fetchNextPage]);
+
+  if (isError) {
+    return <span>Error...</span>;
+  }
 
   if (!data) return null;
+
+  if (isLoading)
+    return (
+      <div className="col-sm-12 text-center">
+        <img src={imageUrlLoading} alt="loader" style={{ height: '50px' }} />
+      </div>
+    );
 
   return (
     <>
@@ -27,9 +40,17 @@ export const PostContainer = () => {
       >
         <PostList />
         {/*=========  loading more icon=========*/}
-        <div className="col-sm-12 text-center">
-          <img src={imageUrlLoading} alt="loader" style={{ height: '50px' }} />
-        </div>
+
+        {isFetchingNextPage ? (
+          <div className="col-sm-12 text-center">
+            <img src={imageUrlLoading} alt="loader" style={{ height: '50px' }} />
+          </div>
+        ) : (
+          <div className="col-sm-12 text-center p-2 pb-4">
+            <h4>Không còn bài viết cũ hơn</h4>
+          </div>
+        )}
+        <div ref={endRef}></div>
       </PostContextProvider>
     </>
   );

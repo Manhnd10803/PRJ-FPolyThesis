@@ -144,19 +144,22 @@ class PostsController extends Controller
             $friendIds[] = $user->id;
             if ($quantity) {
                 $posts = Post::whereIn('user_id', $friendIds)->latest()->paginate($quantity);
-                $pagination = [
-                    'first_page_url' => $posts->url(1),
-                    'from' => $posts->firstItem(),
-                    'last_page' => $posts->lastPage(),
-                    'last_page_url' => $posts->url($posts->lastPage()),
-                    'links' =>  $posts->toArray()['links'],
-                    'next_page_url' => $posts->nextPageUrl(),
-                    'path' => $posts->path(),
-                    'per_page' => $posts->perPage(),
-                    'prev_page_url' => $posts->previousPageUrl(),
-                    'to' => $posts->lastItem(),
-                    'total' => $posts->total(),
-                ];
+                $last_page = $posts->lastPage();
+                $current_page = $posts->currentPage();
+
+                // $pagination = [
+                //     'first_page_url' => $posts->url(1),
+                //     'from' => $posts->firstItem(),
+                //     'last_page' => $posts->lastPage(),
+                //     'last_page_url' => $posts->url($posts->lastPage()),
+                //     'links' =>  $posts->toArray()['links'],
+                //     'next_page_url' => $posts->nextPageUrl(),
+                //     'path' => $posts->path(),
+                //     'per_page' => $posts->perPage(),
+                //     'prev_page_url' => $posts->previousPageUrl(),
+                //     'to' => $posts->lastItem(),
+                //     'total' => 
+                // ];
             } else {
                 $posts = Post::whereIn('user_id', $friendIds)->latest()->get();
             }
@@ -197,7 +200,7 @@ class PostsController extends Controller
             }
             DB::commit();
             if ($quantity) {
-                return response()->json(['data' => $result, 'pagination' => $pagination], 200);
+                return response()->json(['data' => $result, 'last_page' => $last_page, 'current_page'=> $current_page], 200);
             } else {
                 return response()->json($result, 200);
             }

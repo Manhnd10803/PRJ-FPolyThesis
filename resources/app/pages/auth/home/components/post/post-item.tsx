@@ -33,8 +33,9 @@ export const PostItem = ({ item }: PostItemProps) => {
       <Col sm={12}>
         <Card className=" card-block card-stretch card-height">
           <Card.Body>
-            <PostItemHeader />
-            <PostItemContent />
+            <Header />
+            <Content />
+
             <div className="comment-area mt-3">
               <div className="d-flex justify-content-between align-items-center flex-wrap">
                 <div className="like-block position-relative d-flex align-items-center">
@@ -58,7 +59,7 @@ export const PostItem = ({ item }: PostItemProps) => {
   );
 };
 //======================== Component PostItemHeader ========================//
-const PostItemHeader = () => {
+const Header = () => {
   const { post } = usePostDetailContext();
   const actionType = 'Add new post';
 
@@ -87,7 +88,7 @@ const PostItemHeader = () => {
   );
 };
 
-const PostItemContent = () => {
+const Content = () => {
   const { post } = usePostDetailContext();
 
   const images = JSON.parse(post.image);

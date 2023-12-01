@@ -134,10 +134,10 @@ export const DropZoneField = ({
 
         {/*============= preview =============*/}
         {files.length ? (
-          <div className={`d-grid col-auto grid-flow-col ${getClassNamePreview(files.length)}`}>
+          <div className={`d-grid col-auto grid-flow-col gap-2 ${getClassNamePreview(files.length)}`}>
             {files.map(file => {
               return (
-                <div className={`${styles.imagePreviewItem} mb-4 w-100`} key={file.preview}>
+                <div className={`${styles.imagePreviewItem} m2-4 w-100`} key={file.preview}>
                   <img src={file.preview} alt="Upload preview" className="img-fluid" />
                   <ButtonRemove onClick={() => removeFile(file.name)} />
                 </div>

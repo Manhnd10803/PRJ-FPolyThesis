@@ -16,6 +16,7 @@
 .imagePreviewItem {
   position: relative;
   overflow: hidden;
+  border: 1px dashed var(--bs-light);
   img {
     width: 100%;
     height: 100%;
