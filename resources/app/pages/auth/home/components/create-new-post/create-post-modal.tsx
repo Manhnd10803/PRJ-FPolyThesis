@@ -5,8 +5,6 @@ import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import { DropdownPrivacy } from './dropdown-privacy';
 
-const imageUrl = 'https://picsum.photos/20';
-
 import { PostService } from '@/apis/services/post.service';
 import { TCreateNewPostSchema, createNewPostSchema } from '@/validation/zod/post';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -23,6 +21,7 @@ type CreatePostModalProps = {
 export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => {
   //state
   const fullName = StorageFunc.getFullName();
+  const userInfo = StorageFunc.getUser();
 
   const [isShowDrop, setShowDrop] = useState(false);
   const imagesRef = useRef<File[]>([]);
@@ -81,7 +80,7 @@ export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => 
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="d-flex flex-column align-items-start">
               <div className="d-flex align-items-center mb-5">
-                <img src={imageUrl} alt="story-img" className="rounded-circle img-fluid avatar-60" />
+                <img src={userInfo?.avatar} alt="story-img" className="rounded-circle img-fluid avatar-60" />
                 <div className="stories-data ms-3">
                   <h5>{fullName}</h5>
                   <DropdownPrivacy />

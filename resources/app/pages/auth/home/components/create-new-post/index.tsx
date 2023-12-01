@@ -1,15 +1,15 @@
 import { useState } from 'react';
-import { Card, Col, Dropdown } from 'react-bootstrap';
+import { Card, Col } from 'react-bootstrap';
 import { CreatePostModal } from './create-post-modal';
-
-const imageUrl = 'https://picsum.photos/20';
 
 import addImageUrl from '@/assets/images/add-image.png';
 import feelingUrl from '@/assets/images/feeling.png';
 import tagFriendUrl from '@/assets/images/tag-friend.png';
+import { StorageFunc } from '@/utilities/local-storage/storage-func';
 
 export const CreateNewPost = () => {
   // state
+  const userInfo = StorageFunc.getUser();
   const [showModal, setShowModal] = useState(false);
 
   // func
@@ -28,7 +28,7 @@ export const CreateNewPost = () => {
         <Card.Body>
           <div className="d-flex align-items-center">
             <div className="user-img">
-              <img src={imageUrl} alt="user1" className="avatar-60 rounded-circle" />
+              <img src={userInfo?.avatar} alt="user1" className="avatar-60 rounded-circle" />
             </div>
             <form className="post-text ms-3 w-100 " onClick={handleShow}>
               <input
@@ -55,34 +55,6 @@ export const CreateNewPost = () => {
               <div onClick={handleShow} className="btn btn-soft-primary">
                 <img src={feelingUrl} alt="icon" className="img-fluid me-2" /> Cảm Xúc/Hoạt động
               </div>
-            </li>
-            <li>
-              <button className=" btn btn-soft-primary">
-                <div className="card-header-toolbar d-flex align-items-center">
-                  <Dropdown>
-                    <Dropdown.Toggle as="div" className="lh-1">
-                      <span className="material-symbols-outlined">more_horiz</span>
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                      <Dropdown.Item onClick={handleShow} href="#">
-                        Check in
-                      </Dropdown.Item>
-                      <Dropdown.Item onClick={handleShow} href="#">
-                        Live Video
-                      </Dropdown.Item>
-                      <Dropdown.Item onClick={handleShow} href="#">
-                        Gif
-                      </Dropdown.Item>
-                      <Dropdown.Item onClick={handleShow} href="#">
-                        Watch Party
-                      </Dropdown.Item>
-                      <Dropdown.Item onClick={handleShow} href="#">
-                        Play with Friend
-                      </Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
-                </div>
-              </button>
             </li>
           </ul>
         </Card.Body>

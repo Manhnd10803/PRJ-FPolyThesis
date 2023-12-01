@@ -12,17 +12,19 @@ export const HomePage = () => {
     <div id="content-page" className="content-page">
       <Container>
         <Row>
+          <Col lg={2} />
           {/* ==== render left content ==== */}
           <Col lg={8} className="row m-0 p-0">
             <CreateNewPost />
             <PostContainer />
           </Col>
           {/* ==== render right content ==== */}
-          <Col lg={4}>
+          {/* <Col lg={4}>
             <ListEvent />
             <ListBirthDay />
             <ListSuggestedPages />
-          </Col>
+          </Col> */}
+          <Col lg={2} />
         </Row>
       </Container>
     </div>
