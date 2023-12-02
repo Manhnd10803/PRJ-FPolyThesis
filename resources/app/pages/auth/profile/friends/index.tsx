@@ -1,11 +1,12 @@
 import { FriendService } from '@/apis/services/friend.service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Card, Nav, Row, Tab } from 'react-bootstrap';
+import { Button, Card, Col, Nav, Row, Tab } from 'react-bootstrap';
 import { Link, useParams } from 'react-router-dom';
 import { ModalRequest } from './components/modal';
 import { useState } from 'react';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { formatFullName } from '@/utilities/functions';
+import { pathName } from '@/routes/path-name';
 
 export const FriendsMyUserPage = ({ isUser }) => {
   const queryClient = useQueryClient();
@@ -30,7 +31,7 @@ export const FriendsMyUserPage = ({ isUser }) => {
 
   console.log(friendsMyUser);
 
-  const HandleAddFriend = async (id: any) => {
+  const HandleUnFriend = async (id: any) => {
     try {
       const response = await unFriendMutation.mutateAsync(id);
       setShowDeleteFriend(false);
@@ -44,38 +45,8 @@ export const FriendsMyUserPage = ({ isUser }) => {
       <Tab.Container id="left-tabs-example" defaultActiveKey="all-friends">
         <Card>
           <Card.Body>
-            <h2>Friends</h2>
+            <h4>Bạn bè</h4>
             <div className="friend-list-tab mt-2">
-              <Nav
-                variant="pills"
-                className=" d-flex align-items-center justify-content-left friend-list-items p-0 mb-2"
-              >
-                <Nav.Item>
-                  <Nav.Link href="#pill-all-friends" eventKey="all-friends">
-                    All Friends
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link href="#pill-recently-add" eventKey="recently-add">
-                    Recently Added
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link href="#pill-closefriends" eventKey="closefriends">
-                    Close friends
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link href="#pill-home" eventKey="home-town">
-                    Home/Town
-                  </Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link href="#pill-following" eventKey="following">
-                    Following
-                  </Nav.Link>
-                </Nav.Item>
-              </Nav>
               <Tab.Content>
                 <Tab.Pane eventKey="all-friends">
                   <Card.Body className="p-0">
@@ -83,58 +54,60 @@ export const FriendsMyUserPage = ({ isUser }) => {
                       {isLoading ? (
                         <></>
                       ) : (
-                        <>
+                        <Row>
                           {friendsMyUser && friendsMyUser.length > 0 ? (
-                            friendsMyUser.map((itemfriend: any) => (
-                              <div className="col-md-6 col-lg-6 mb-3" key={itemfriend.id}>
-                                <div className="iq-friendlist-block">
-                                  <div className="d-flex align-items-center justify-content-between p-3">
-                                    <div className="d-flex align-items-center gap-4">
-                                      <div style={{ width: '137px' }}>
-                                        <img
+                            <>
+                              {friendsMyUser.map((itemFriend: any) => {
+                                return (
+                                  <Col key={itemFriend.id} sm={3}>
+                                    <Card className="mb-3">
+                                      <Link to={`${pathName.PROFILE}/${itemFriend.id}`}>
+                                        <Card.Img
                                           style={{
                                             width: '100%',
-                                            aspectRatio: '3/2',
+                                            aspectRatio: '4/3',
                                             objectFit: 'cover',
                                             objectPosition: 'center',
                                           }}
-                                          loading="lazy"
-                                          src={itemfriend?.friend?.avatar}
-                                          alt="profile-img"
-                                          className="img-fluid rounded-1"
+                                          className="img-fluid"
+                                          variant="top"
+                                          src={itemFriend.friend.avatar}
+                                          alt="ảnh đại diện"
                                         />
-                                      </div>
-                                      <div className="friend-info">
-                                        <Link to={`/profile/${itemfriend?.friend?.id}`} className="text-black">
-                                          <h5>{formatFullName(itemfriend?.friend)}</h5>
-                                          <p className="mb-0">{itemfriend?.friend?.username}</p>
+                                      </Link>
+                                      <Card.Body>
+                                        <Link to={`${pathName.PROFILE}/${itemFriend.id}`}>
+                                          <Card.Title as="h5" className="card-title">
+                                            {formatFullName(itemFriend.friend)}
+                                          </Card.Title>
                                         </Link>
-                                      </div>
-                                    </div>
-                                    <div className=" d-flex align-items-center justify-content-center">
-                                      {isUser && (
-                                        <Button className="btn btn-primary" onClick={() => setShowDeleteFriend(true)}>
-                                          Hủy kết bạn
-                                        </Button>
-                                      )}
+                                        <Card.Text className="card-text">@{itemFriend.friend.username}</Card.Text>
+                                        <div className="d-flex flex-column gap-2 mt-2 mt-md-0">
+                                          <Link
+                                            to="#"
+                                            onClick={() => setShowDeleteFriend(true)}
+                                            className="btn btn-primary rounded confirm-btn"
+                                          >
+                                            Hủy bạn bè
+                                          </Link>
 
-                                      <ModalRequest
-                                        show={showDeleteFriend}
-                                        onHide={() => setShowDeleteFriend(false)}
-                                        onConfirm={() => HandleAddFriend(itemfriend?.friend?.id)}
-                                        title={`Bạn có chắc chắn muốn hủy kết bạn với ${itemfriend?.friend?.username}?`}
-                                      />
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            ))
-                          ) : (
-                            <>
-                              <p>Chưa có bạn bè</p>
+                                          <ModalRequest
+                                            show={showDeleteFriend}
+                                            onHide={() => setShowDeleteFriend(false)}
+                                            onConfirm={() => HandleUnFriend(itemFriend?.friend?.id)}
+                                            title={`Bạn có chắc chắn muốn hủy kết bạn với ${itemFriend?.friend?.username}?`}
+                                          />
+                                        </div>
+                                      </Card.Body>
+                                    </Card>
+                                  </Col>
+                                );
+                              })}
                             </>
+                          ) : (
+                            <Card.Body>Không có yêu cầu mới</Card.Body>
                           )}
-                        </>
+                        </Row>
                       )}
                     </Row>
                   </Card.Body>

@@ -1,5 +1,6 @@
 import { FriendService } from '@/apis/services/friend.service';
 import { CustomToggle } from '@/components/custom';
+import { pathName } from '@/routes/path-name';
 import { formatFullName } from '@/utilities/functions';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -10,7 +11,7 @@ import { Link } from 'react-router-dom';
 export const FriendRequest = () => {
   const queryClient = useQueryClient();
   const fetchAllFriendRequest = async () => {
-    const { data } = await FriendService.showAllFriendRequest();
+    const { data } = await FriendService.showAllFriendRequest(5);
     const FriendRequestData = data;
     return FriendRequestData;
   };
@@ -108,18 +109,19 @@ export const FriendRequest = () => {
                         </div>
                       );
                     })}
+                    <div className="text-center">
+                      <Link to={`${pathName.FRIEND_REQUEST}`} className=" btn text-primary">
+                        Xem thêm
+                      </Link>
+                    </div>
                   </>
                 ) : (
-                  <></>
+                  <>
+                    <p className="text-center">Không có yêu cầu mới</p>
+                  </>
                 )}
               </>
             )}
-
-            <div className="text-center">
-              <Link to="#" className=" btn text-primary">
-                Xem thêm
-              </Link>
-            </div>
           </Card.Body>
         </Card>
       </Dropdown.Menu>
