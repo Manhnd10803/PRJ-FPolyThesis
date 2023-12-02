@@ -43,29 +43,25 @@ const NAVBAR_SOCIAL_CONFIGS = [
     pathname: pathName.CHAT,
   },
   {
+    title: 'Thông báo',
+    icon: <i className="icon material-symbols-outlined">notifications</i>,
+    pathname: pathName.NOTIFICATION,
+  },
+  {
     title: 'Trang cá nhân',
     icon: <i className="icon material-symbols-outlined">person</i>,
     pathname: pathName.PROFILE,
   },
   {
-    title: 'Bạn bè',
+    title: 'Lời mời kết bạn',
+    pathname: pathName.FRIEND_REQUEST,
+    icon: <i className="icon material-symbols-outlined">group_add</i>,
+    miniTitle: 'F1',
+  },
+  {
+    title: 'Danh sách bạn bè',
     icon: <i className="icon material-symbols-outlined">people</i>,
     pathname: pathName.FRIEND_LIST,
-    eventKey: 'friend-menu',
-    subNav: [
-      {
-        title: 'Danh sách bạn bè',
-        pathname: pathName.FRIEND_LIST,
-        icon: circleIcon,
-        miniTitle: 'F',
-      },
-      {
-        title: 'Lời mời kết bạn',
-        pathname: pathName.FRIEND_REQUEST,
-        icon: circleIcon,
-        miniTitle: 'F1',
-      },
-    ],
   },
 ];
 

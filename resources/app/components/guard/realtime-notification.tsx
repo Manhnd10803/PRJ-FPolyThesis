@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import notiImageDefault from '@/assets/images/notification-default.png';
-import { useAddNotification } from '@/hooks/useNotificationQuery';
+import { useAddNotification, useSeeNotification } from '@/hooks/useNotificationQuery';
 
 const audioReceiverNotification = () => {
   new Audio(mp3NotificationCommon).play();
@@ -29,8 +29,13 @@ const showNotification = ({
         className="me-4 d-flex justify-content-center align-items-center rounded"
         style={{ cursor: 'pointer' }}
       >
-        <div className="me-2 rounded-circle p-2" style={{ background: avatarSender ? 'transparent' : 'red' }}>
-          <img className="avatar-40 " style={{ objectFit: 'cover' }} src={avatarSender || notiImageDefault} alt="" />
+        <div className="me-2 p-2">
+          <img
+            className="rounded-circle avatar-50"
+            style={{ objectFit: 'cover' }}
+            src={avatarSender || notiImageDefault}
+            alt=""
+          />
         </div>
         <div>
           <span>{content}</span>
@@ -57,7 +62,7 @@ const showNotification = ({
     ),
     {
       position: 'top-right',
-      duration: 1000000,
+      duration: 10000,
     },
   );
 };
@@ -82,7 +87,8 @@ export const RealtimeNotification = () => {
 
         console.log('handleReceiveNotification', event);
 
-        const { content, user } = event.notification;
+        const { content } = event.notification;
+        const { avatar_sender } = event;
 
         showNotification({
           content,
@@ -90,11 +96,17 @@ export const RealtimeNotification = () => {
             navigate(formatNotificationLink(event.notification));
             toast.dismiss(id);
           },
-          avatarSender: user.avatar || notiImageDefault,
+          avatarSender: avatar_sender || notiImageDefault,
         });
 
         // Thêm vào danh sách notification
-        manuallyAddNotification(event.notification);
+        const newNotification: INotification = {
+          ...event.notification,
+          user: {
+            avatar: avatar_sender || notiImageDefault,
+          },
+        };
+        manuallyAddNotification(newNotification);
       };
 
       window.Echo.private(`receive-notification-${localUserId}`).listen(

@@ -4,6 +4,7 @@ import useInfiniteNotifications, { useSeeNotification } from '@/hooks/useNotific
 import { INotification, NotificationStatus } from '@/models/notifications';
 import { pathName } from '@/routes/path-name';
 import { formatNotificationLink } from '@/utilities/functions';
+import { momentVi } from '@/utilities/functions/moment-locale';
 import moment from 'moment';
 import { useEffect } from 'react';
 import { Card, Dropdown, Image } from 'react-bootstrap';
@@ -15,11 +16,11 @@ type NotificationItemProps = {
 };
 const NotificationItem = ({ item }: NotificationItemProps) => {
   const navigate = useNavigate();
-  const { manuallySeeNotification: seeNotification } = useSeeNotification();
+  const { manuallySeeNotification } = useSeeNotification();
 
   const handleClickNotification = async () => {
     if (item.status === NotificationStatus.UNREAD) {
-      seeNotification(item.id);
+      manuallySeeNotification(item.id);
     }
     navigate(formatNotificationLink(item));
   };
@@ -37,7 +38,7 @@ const NotificationItem = ({ item }: NotificationItemProps) => {
         <div className="ms-3 w-100">
           <h6 className="mb-0 ">{item.content}</h6>
           <div className="d-flex justify-content-between align-items-center">
-            <small className="float-right font-size-12">{moment(item.created_at).fromNow()}</small>
+            <small className="float-right font-size-12 text-primary mt-1">{momentVi(item.created_at).fromNow()}</small>
           </div>
         </div>
       </div>
