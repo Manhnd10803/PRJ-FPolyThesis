@@ -15,7 +15,7 @@ export const ShareOffCanvas = () => {
       <div className="d-flex align-items-center feather-icon mt-2 mt-md-0">
         <Link to="#" onClick={handleShow} className="d-flex align-items-center">
           <span className="material-symbols-outlined md-18">share</span>
-          <span className="ms-1">Share</span>
+          <span className="ms-1">Chia sẻ</span>
         </Link>
       </div>
       <Offcanvas show={show} onHide={handleClose} placement="bottom">

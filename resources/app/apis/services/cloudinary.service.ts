@@ -27,7 +27,7 @@ const uploadImages = async (images: FileList | Array<File>, folder: folderType) 
     try {
       if (!validateSize(image, 2 * 1024 * 1024)) {
         throw new Error('Kích thước ảnh tối đa 2MB');
-      } else if (!validateExtension(image, ['image/jpeg', 'image/png', 'image/jpg'])) {
+      } else if (!validateExtension(image, ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'])) {
         throw new Error('Định dạng ảnh không được chấp nhận');
       }
 

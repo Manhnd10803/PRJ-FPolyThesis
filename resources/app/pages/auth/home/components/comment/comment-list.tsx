@@ -4,6 +4,8 @@ import moment from 'moment';
 
 export const CommentList = () => {
   const { comments } = usePostDetailContext();
+  if (!comments || comments.length === 0) return <></>;
+
   // notdone
   return (
     <ul className="post-comments list-inline p-0 m-0">

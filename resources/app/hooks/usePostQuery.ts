@@ -1,6 +1,6 @@
 import { PostService } from '@/apis/services/post.service';
 import { Paginate } from '@/models/pagination';
-import { IPost } from '@/models/post';
+import { GetNewPostResponseType, IPost } from '@/models/post';
 import { InfiniteData, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 
 export const queryKeyPosts = ['posts'];
@@ -32,8 +32,8 @@ export default function useInfinitePosts() {
 export const useAddPost = () => {
   const queryClient = useQueryClient();
 
-  const manuallyAddPost = async (newPost: IPost) => {
-    queryClient.setQueryData(queryKeyPosts, (oldData: InfiniteData<Paginate<IPost>> | undefined) => {
+  const manuallyAddPost = async (newPost: GetNewPostResponseType) => {
+    queryClient.setQueryData(queryKeyPosts, (oldData: InfiniteData<Paginate<GetNewPostResponseType>> | undefined) => {
       if (!oldData) return oldData;
 
       const [firstPage, ...rest] = oldData?.pages;

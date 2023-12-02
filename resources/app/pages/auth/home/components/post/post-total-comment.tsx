@@ -6,7 +6,7 @@ export const TotalCommentPost = () => {
     <div className="total-comment-block">
       <Dropdown>
         <Dropdown.Toggle as={CustomToggle} id="post-option">
-          20 Comment
+          20 Bình luận
         </Dropdown.Toggle>
         <Dropdown.Menu>
           <Dropdown.Item href="#">Max Emum</Dropdown.Item>

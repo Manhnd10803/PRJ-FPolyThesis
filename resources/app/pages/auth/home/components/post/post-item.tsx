@@ -1,6 +1,6 @@
 import { ShareOffCanvas } from '@/components/custom';
 import { GetNewPostResponseType } from '@/models/post';
-import moment from 'moment';
+
 import { Card, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { CommentList } from '../comment/comment-list';
@@ -10,11 +10,14 @@ import { TotalCommentPost } from './post-total-comment';
 import { TotalLikePost } from './post-total-like';
 import { PostDetailContextProvider, usePostDetailContext } from '../../contexts';
 import { ChosePostEmotion, EmotionType } from '@/components/shared/choose-emotion';
+//@ts-ignore
+import moment from 'moment/min/moment-with-locales';
+import 'moment/locale/vi';
+moment.locale('vi');
 
 type PostItemProps = {
   item: GetNewPostResponseType;
 };
-
 export const PostItem = ({ item }: PostItemProps) => {
   // state
 
@@ -61,7 +64,7 @@ export const PostItem = ({ item }: PostItemProps) => {
 //======================== Component PostItemHeader ========================//
 const Header = () => {
   const { post } = usePostDetailContext();
-  const actionType = 'Add new post';
+  const actionType = 'đã thêm một bài viết';
 
   return (
     <div className="user-post-data">
@@ -75,8 +78,8 @@ const Header = () => {
               <h5 className="mb-0 d-inline-block">{post?.user?.username}</h5>
               <span className="mb-0 ps-1 d-inline-block">{actionType}</span>
               <p className="mb-0 text-primary">
-                {moment(post?.created_at)
-                  .startOf('day')
+                {moment(post?.updated_at)
+                  .locale('vi')
                   .fromNow()}
               </p>
             </div>
@@ -88,43 +91,83 @@ const Header = () => {
   );
 };
 
+const ContentImages = () => {
+  const { post } = usePostDetailContext();
+
+  const { newImages, originalImages } = formatImagesToRender(post?.image);
+
+  if (newImages.length === 0) return null;
+
+  return (
+    <div onClick={() => {}}>
+      <div className="user-post">
+        {newImages.length > 1 ? (
+          <div className={`d-grid gap-3 ${getClassImages(newImages.length)}`}>
+            {/* Image list */}
+            {newImages?.map((imageUrl: string, index: number) => (
+              <div
+                key={imageUrl}
+                className="col-span-1 rounded"
+                style={{ position: 'relative', border: '1px  #ececec', borderStyle: 'dotted' }}
+              >
+                <img
+                  style={{ objectFit: 'cover', aspectRatio: '1/1' }}
+                  src={imageUrl}
+                  alt={`post${index}`}
+                  className="img-fluid rounded w-100"
+                />
+                {/* last image */}
+                {originalImages.length > 4 && index === 3 && (
+                  <div
+                    className="d-flex flex-column align-items-center justify-content-center h-100"
+                    style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backdropFilter: 'blur(10px)' }}
+                  >
+                    <span style={{ fontSize: '40px', color: 'white' }} className="material-symbols-outlined">
+                      add
+                    </span>
+                    <span style={{ fontSize: '20px' }}>Xem thêm...</span>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="user-post text-center">
+            <Link to="#">
+              <img src={newImages[0]} alt="post1" className="img-fluid rounded w-100 mt-3" />
+            </Link>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const Content = () => {
   const { post } = usePostDetailContext();
 
-  const images = JSON.parse(post.image);
-
-  const imageList = Array.isArray(images) ? images : [images];
-
+  // render
   return (
     <>
       <div className="my-3">{post?.content}</div>
 
-      <div
-        onClick={() => {
-          console.log('open detail');
-        }}
-      >
-        {imageList && imageList.length > 0 ? (
-          <div className="user-post">
-            {imageList.length > 1 ? (
-              <div className="d-grid grid-cols-2 grid-flow-col gap-3">
-                {/* Image list */}
-                {imageList?.map((imageUrl: string, index: number) => (
-                  <div key={imageUrl} className="col-span-1">
-                    <img src={imageUrl} alt={`post${index}`} className="img-fluid rounded w-100" />
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="user-post text-center">
-                <Link to="#">
-                  <img src={imageList[0]} alt="post1" className="img-fluid rounded w-100 mt-3" />
-                </Link>
-              </div>
-            )}
-          </div>
-        ) : null}
-      </div>
+      <ContentImages />
     </>
   );
+};
+
+const getClassImages = (length: number) => {
+  if (length >= 3) return 'grid-cols-2 grid-rows-2 grid-flow-col gap-3';
+  return 'grid-cols-2 grid-flow-col gap-3';
+};
+
+const formatImagesToRender = (imagesJson: string) => {
+  const images: string | string[] = JSON.parse(imagesJson);
+
+  const imageList = Array.isArray(images) ? images : [images];
+
+  return {
+    originalImages: imageList,
+    newImages: imageList.length > 4 ? imageList.slice(0, 4) : imageList,
+  };
 };
