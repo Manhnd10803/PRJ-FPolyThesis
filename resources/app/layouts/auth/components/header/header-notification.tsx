@@ -5,7 +5,6 @@ import { INotification, NotificationStatus } from '@/models/notifications';
 import { pathName } from '@/routes/path-name';
 import { formatNotificationLink } from '@/utilities/functions';
 import { momentVi } from '@/utilities/functions/moment-locale';
-import moment from 'moment';
 import { useEffect } from 'react';
 import { Card, Dropdown, Image } from 'react-bootstrap';
 import { useInView } from 'react-intersection-observer';
@@ -18,7 +17,7 @@ const NotificationItem = ({ item }: NotificationItemProps) => {
   const navigate = useNavigate();
   const { manuallySeeNotification } = useSeeNotification();
 
-  const handleClickNotification = async () => {
+  const handleClickNotification = () => {
     if (item.status === NotificationStatus.UNREAD) {
       manuallySeeNotification(item.id);
     }
@@ -27,7 +26,9 @@ const NotificationItem = ({ item }: NotificationItemProps) => {
 
   return (
     <div
-      className={`iq-sub-card ${item.status === NotificationStatus.UNREAD ? 'bg-light' : 'bg-color cursor-pointer'}`}
+      className={`iq-sub-card ${
+        item.status === NotificationStatus.UNREAD ? 'bg-light' : 'bg-color'
+      } hover-bg-sort-primary`}
       onClick={handleClickNotification}
       style={{ cursor: 'pointer' }}
     >
@@ -85,7 +86,7 @@ export const HeaderNotification = () => {
               </div>
             ) : (
               <div className="d-flex align-items-center justify-content-center mt-2 py-4">
-                <h6 className="mb-0">Không còn tin nhắn cũ hơn</h6>
+                <h6 className="mb-0">Không còn thông báo cũ hơn</h6>
               </div>
             )}
             <div ref={endRef}></div>

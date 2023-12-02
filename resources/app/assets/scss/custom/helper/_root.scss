@@ -1,4 +1,20 @@
 // Do not forget to update getting-started/theming.md!
 :root {
 }
-  
+
+.bg-light.hover-bg-sort-primary {
+  cursor: pointer;
+  color: $body-color;
+  // transition: all 100ms ease;
+  &:hover {
+    background: rgba(var(--#{$variable-prefix}primary-rgb), 0.4) !important;
+  }
+}
+.bg-color.hover-bg-sort-primary {
+  cursor: pointer;
+  // transition: all 100ms ease;
+  color: $body-color;
+  &:hover {
+    background: rgba(var(--#{$variable-prefix}primary-rgb), 0.4) !important;
+  }
+}

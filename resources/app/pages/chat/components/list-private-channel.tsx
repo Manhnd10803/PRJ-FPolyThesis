@@ -40,7 +40,7 @@ export const ListPrivateChannel = ({ search }: ListPrivateChannelProps) => {
                   <div className="chat-sidebar-name">
                     <h6 className="mb-0">{item?.username}</h6>
                     <h6 className="mb-0">{item?.majors_name ?? ''}</h6>
-                    <span>Đang hoạt động</span>
+                    <span className="text-primary">Đang hoạt động</span>
                   </div>
 
                   <div className="chat-meta float-right text-center mt-2 me-1">
