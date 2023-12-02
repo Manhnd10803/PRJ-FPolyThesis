@@ -2,6 +2,7 @@ import { MajorService } from '@/apis/services/major.service';
 import { QandAService } from '@/apis/services/qanda.service';
 import { IMajors } from '@/models/major';
 import { formatDateFromCreatedAt } from '@/pages/auth/blog/components/format-date';
+import { momentVi } from '@/utilities/functions/moment-locale';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Badge, Row, Col, Card, Nav, Dropdown, Container } from 'react-bootstrap';
@@ -220,9 +221,9 @@ export const ListQAndAsByMajorId = () => {
                           </span>
                         </div>
 
-                        <i className="material-symbols-outlined md-16">schedule</i>
-                        <span className="mx-1">
-                          <small>{formatDateFromCreatedAt(qandA.qa.created_at)}</small>
+                        <i className="material-symbols-outlined md-16 text-primary">schedule</i>
+                        <span className="mx-1 text-primary">
+                          <small>{momentVi(qandA.qa.created_at).fromNow()}</small>
                         </span>
                       </div>
                     </div>

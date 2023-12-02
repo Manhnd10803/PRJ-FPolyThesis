@@ -12,6 +12,7 @@ import icon6 from '../../../../../../assets/images/icon/06.png';
 import icon7 from '../../../../../../assets/images/icon/07.png';
 import { formatTimeFromCreatedAt } from '../../../components/format-time';
 import { formatFullName } from '@/utilities/functions';
+import { momentVi } from '@/utilities/functions/moment-locale';
 export const PostItem = ({ data, index, aboutUser }) => {
   return (
     <>
@@ -30,7 +31,7 @@ export const PostItem = ({ data, index, aboutUser }) => {
                         <Link to="#">{formatFullName(aboutUser)}</Link>
                       </h5>
                       <p className="ms-1 mb-0 d-inline-block">{data?.post?.feeling}</p>
-                      <p className="mb-0">{formatTimeFromCreatedAt(data?.post?.created_at)}</p>
+                      <p className="mb-0 text-primary">{momentVi(data?.post?.created_at).fromNow()}</p>
                     </div>
                     <div className="card-post-toolbar">
                       <div className="card-header-toolbar d-flex align-items-center justify-content-center">

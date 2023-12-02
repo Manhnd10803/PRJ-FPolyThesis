@@ -10,10 +10,7 @@ import { TotalCommentPost } from './post-total-comment';
 import { TotalLikePost } from './post-total-like';
 import { PostDetailContextProvider, usePostDetailContext } from '../../contexts';
 import { ChosePostEmotion, EmotionType } from '@/components/shared/choose-emotion';
-//@ts-ignore
-import moment from 'moment/min/moment-with-locales';
-import 'moment/locale/vi';
-moment.locale('vi');
+import { momentVi } from '@/utilities/functions/moment-locale';
 
 type PostItemProps = {
   item: GetNewPostResponseType;
@@ -77,11 +74,7 @@ const Header = () => {
             <div>
               <h5 className="mb-0 d-inline-block">{post?.user?.username}</h5>
               <span className="mb-0 ps-1 d-inline-block">{actionType}</span>
-              <p className="mb-0 text-primary">
-                {moment(post?.updated_at)
-                  .locale('vi')
-                  .fromNow()}
-              </p>
+              <p className="mb-0 text-primary">{momentVi(post?.updated_at).fromNow()}</p>
             </div>
             <MoreActionDropdown />
           </div>

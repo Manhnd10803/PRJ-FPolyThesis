@@ -1,14 +1,13 @@
-import { NotificationService } from '@/apis/services/notification.service';
 import { Loading } from '@/components/shared/loading';
 import useInfiniteNotifications, { useSeeNotification } from '@/hooks/useNotificationQuery';
 import { INotification, NotificationStatus } from '@/models/notifications';
 import { formatNotificationLink, mappingNotificationIcon } from '@/utilities/functions';
-import moment from 'moment';
 import { useEffect } from 'react';
 import { Card, Col, Container, Row } from 'react-bootstrap';
 import { useInView } from 'react-intersection-observer';
 import { Link, useNavigate } from 'react-router-dom';
 import { MoreAction } from './components/more-action';
+import { momentVi } from '@/utilities/functions/moment-locale';
 
 type NotificationItemProps = {
   item: INotification;
@@ -16,11 +15,11 @@ type NotificationItemProps = {
 const NotificationItem = ({ item }: NotificationItemProps) => {
   const navigate = useNavigate();
 
-  const { manuallySeeNotification: seeNotification } = useSeeNotification();
+  const { manuallySeeNotification } = useSeeNotification();
 
   const handleClickNotification = async () => {
     if (item.status === NotificationStatus.UNREAD) {
-      seeNotification(item.id);
+      manuallySeeNotification(item.id);
     }
     navigate(formatNotificationLink(item));
   };
@@ -37,7 +36,7 @@ const NotificationItem = ({ item }: NotificationItemProps) => {
                 <div className="d-flex justify-content-between">
                   <div className=" ms-3">
                     <h6>{item.content}</h6>
-                    <p className="mb-0">{moment(item.created_at).fromNow()}</p>
+                    <p className="mb-0 text-primary">{momentVi(item.created_at).fromNow()}</p>
                   </div>
                   <div className="d-flex align-items-center">
                     <Link to="#" className="me-3 iq-notify bg-soft-success rounded">
