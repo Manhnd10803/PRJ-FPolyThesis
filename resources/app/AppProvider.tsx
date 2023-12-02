@@ -23,7 +23,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
     <QueryClientProvider client={queryClient}>
       <ReduxProvider store={store}>
         <PersistGate loading={null} persistor={persistor}>
-          <ReactQueryDevtools position="bottom-left" />
+          <ReactQueryDevtools position="bottom-right" />
           {children}
         </PersistGate>
       </ReduxProvider>
