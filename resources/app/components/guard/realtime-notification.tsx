@@ -62,15 +62,6 @@ const showNotification = ({
   );
 };
 
-showNotification({
-  content:
-    'event. notification .content event.n otificatio n.content event. notification .content event.n otificatio n.conten',
-  onClick: (id: string) => {
-    console.log(id);
-  },
-  avatarSender: '',
-});
-
 export const RealtimeNotification = () => {
   const navigate = useNavigate();
 
