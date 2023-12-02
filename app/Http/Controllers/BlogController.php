@@ -164,9 +164,9 @@ class BlogController extends Controller
                 $blogData = [
                     'blog' => $blog,
                     'like_counts_by_emotion' => $likeCountsByEmotion,
-                    'like' => $likers,
+                    // 'like' => $likers,
                     'total_comments' => $totalComment,
-                    'comment' => $commentDemos,
+                    // 'comment' => $commentDemos,
                 ];
                 array_push($result, $blogData);
             }

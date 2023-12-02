@@ -1,24 +1,37 @@
-import { Container, Col, Spinner } from 'react-bootstrap';
+import { useCallback, useEffect, useState } from 'react';
+import { Container, Col, Form } from 'react-bootstrap';
 import { ListCard } from './components/list-card';
 import { Link } from 'react-router-dom';
 import { BlogService } from '@/apis/services/blog.service';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 import { pathName } from '@/routes/path-name';
-import { useEffect, useState } from 'react';
 import { Loading } from '@/components/shared/loading';
+import { MajorService } from '@/apis/services/major.service';
+import { IMajors } from '@/models/major';
 
 export const BlogPage = () => {
-  const [totalPage, settotalPage] = useState(0);
+  const [totalPage, setTotalPage] = useState(0);
+  const [selectedMajor, setSelectedMajor] = useState('');
+  const queryClient = useQueryClient();
+
   const fetchBlogs = async ({ pageParam = 1 }) => {
-    const { data } = await BlogService.showAllBlog(pageParam);
-    settotalPage(data?.pagination.total_pages);
-    return data;
+    try {
+      const { data } = await BlogService.showAllBlog(pageParam, selectedMajor);
+      setTotalPage(data?.pagination.total_pages);
+      return data;
+    } catch (error) {
+      console.error('Error fetching blogs:', error);
+      throw error;
+    }
   };
 
-  const { isLoading, data, fetchNextPage, isFetching, hasNextPage } = useInfiniteQuery(['colors'], fetchBlogs, {
-    getNextPageParam: (lastPage, pages) => {
-      return lastPage.pagination.current_page + 1;
-    },
+  const handleMajorChange = useCallback(newMajor => {
+    setSelectedMajor(newMajor === '' ? '' : newMajor);
+  }, []);
+
+  const queryKey = ['blogs', selectedMajor];
+  const { isLoading, data, fetchNextPage, isFetching, hasNextPage } = useInfiniteQuery(queryKey, fetchBlogs, {
+    getNextPageParam: (lastPage, pages) => lastPage.pagination.current_page + 1,
   });
 
   useEffect(() => {
@@ -28,24 +41,58 @@ export const BlogPage = () => {
         fetchNextPage();
       }
     };
+
     window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
-  }, [isFetching, hasNextPage]);
+  }, [isFetching, hasNextPage, selectedMajor]);
 
+  const { data: majors, isLoading: isMajorLoading } = useQuery({
+    queryKey: ['majorsearch'],
+    queryFn: () => MajorService.getMajors(),
+  });
   return (
     <>
       <div id="content-page" className="content-page">
         <Container>
           <Col sm={12}>
             <div
-              className="bg-primary d-flex justify-content-between align-items-center px-3 mb-3 rounded-2"
+              className="bg-primary d-flex justify-content-between align-items-center flex-flex-wrap-reverse px-3 mb-3 rounded-2"
               style={{ height: '150px' }}
             >
               <div className="">
                 <h3 className="text-white">Blog</h3>
                 <p className="text-white">Welcome to Blog</p>
+              </div>
+              <div className="w-50">
+                <Form.Group className="form-group mb-0">
+                  <select
+                    className="form-select form-select-ml"
+                    data-trigger
+                    name="choices-single-default"
+                    id="choices-single-default"
+                    onChange={e => {
+                      const newMajor = e.target.value;
+                      handleMajorChange(newMajor);
+                      // Manually refetch the data with the updated major
+                      queryClient.refetchQueries(queryKey, { active: true, exact: true });
+                    }}
+                  >
+                    <option value="">Tất cả chuyên ngành</option>
+                    {isMajorLoading ? (
+                      <option value="0">Đang tải...</option>
+                    ) : (
+                      <>
+                        {majors?.data.map((item: IMajors) => (
+                          <option key={item.id} value={item.id}>
+                            {item.majors_name}
+                          </option>
+                        ))}
+                      </>
+                    )}
+                  </select>
+                </Form.Group>
               </div>
               <Link
                 to={pathName.BLOG_CREATE}
