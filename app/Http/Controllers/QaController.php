@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Comment;
 use App\Models\Like;
 use App\Models\Qa;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -1212,6 +1213,11 @@ class QaController extends Controller
                 $qa->hashtag = implode(',', $hashtags);
             }
             $qa->save();
+            $user_id = Auth::id();
+            $user = User::find($user_id);
+            $score = config('default.user.score.create_qa');
+            $user->score += $score;
+            $user->save();
             DB::commit();
             return response()->json($qa, 200);
         } catch (\Exception $e) {

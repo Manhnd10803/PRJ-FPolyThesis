@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use App\Models\Major;
 use App\Models\Notification;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +19,15 @@ class AdminBlogController extends Controller
     {
         DB::beginTransaction();
         try {
+            $score = config('default.user.score.create_blog');
+            $user_id = $blog->user->id;
+            $user = User::find($user_id);
+            if ($user) {
+                $user->score += $score;
+                $user->save();
+            }
             $blog->update(['status' => config('default.blog.status.approved')]);
+
             $notificationType = config('default.notification.notification_type.comment_blog');
             $message = "Blog " . $blog->title . " của bạn đã được duyệt.";
             $notification = Notification::create([
@@ -117,6 +126,13 @@ class AdminBlogController extends Controller
     }
     public function destroy(Blog $blog)
     {
+        // $score = config('default.user.score.reject_blog');
+        // $user_id = $blog->user->id;
+        // $user = User::find($user_id);
+        // if ($user) {
+        //     $user->score += $score;
+        //     $user->save();
+        // }
         $blog->delete();
         return redirect()->route('admin.blogs.index')
             ->with('success', 'Xóa blog thành công. ');
