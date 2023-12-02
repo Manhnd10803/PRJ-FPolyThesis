@@ -1,7 +1,12 @@
 import httpRequest from '../axios-instance';
 import { ApiConstants } from '../endpoints';
 
-const showAllFriendRequest = () => {
+const showAllFriendRequest = (quantity?: number) => {
+  // Kiểm tra xem quantity đã được chuyển hay không
+  if (quantity !== undefined) {
+    return httpRequest.get(`${ApiConstants.SHOW_FRIEND_REQUEST}/${quantity}`);
+  }
+  // Gửi yêu cầu HTTP mà không có quantity
   return httpRequest.get(ApiConstants.SHOW_FRIEND_REQUEST);
 };
 const showAllFriendMyUser = <T>(id: T) => {
