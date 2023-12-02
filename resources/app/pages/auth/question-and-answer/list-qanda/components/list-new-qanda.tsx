@@ -1,5 +1,6 @@
 import { QandAService } from '@/apis/services/qanda.service';
 import { formatDateFromCreatedAt } from '@/pages/auth/blog/components/format-date';
+import { momentVi } from '@/utilities/functions/moment-locale';
 import { Badge, Row } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -68,9 +69,9 @@ export const ListNewQAndAs = ({ data }: any) => {
                     </span>
                   </div>
 
-                  <i className="material-symbols-outlined md-16">schedule</i>
-                  <span className="mx-1">
-                    <small>{formatDateFromCreatedAt(qandA.qa.created_at)}</small>
+                  <i className="material-symbols-outlined md-16 text-primary">schedule</i>
+                  <span className="mx-1 text-primary">
+                    <small>{momentVi(qandA.qa.created_at).fromNow()}</small>
                   </span>
                 </div>
               </div>

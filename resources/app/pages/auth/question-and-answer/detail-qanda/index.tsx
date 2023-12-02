@@ -35,6 +35,7 @@ import { CustomModal } from '@/utilities/funcReport/modalReport';
 import { DropZoneField } from '@/components/custom/drop-zone-field';
 import { CloudiaryService } from '@/apis/services/cloudinary.service';
 import { ReportService } from '@/apis/services/report.service';
+import { momentVi } from '@/utilities/functions/moment-locale';
 
 export const DetailQandAPage = () => {
   const commentRef = useRef(null);
@@ -349,9 +350,9 @@ export const DetailQandAPage = () => {
                                 </span>
                               </div>
 
-                              <i className="material-symbols-outlined md-16">schedule</i>
-                              <span className="mx-1">
-                                <small>{formatDateFromCreatedAt(qAndAData?.qa?.created_at)}</small>
+                              <i className="material-symbols-outlined md-16 text-primary">schedule</i>
+                              <span className="mx-1 text-primary">
+                                <small>{momentVi(qAndAData?.qa?.created_at).fromNow()}</small>
                               </span>
                             </div>
                           </div>

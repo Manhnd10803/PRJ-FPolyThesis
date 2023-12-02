@@ -4,7 +4,7 @@ import useInfiniteNotifications, { useSeeNotification } from '@/hooks/useNotific
 import { INotification, NotificationStatus } from '@/models/notifications';
 import { pathName } from '@/routes/path-name';
 import { formatNotificationLink } from '@/utilities/functions';
-import moment from 'moment';
+import { momentVi } from '@/utilities/functions/moment-locale';
 import { useEffect } from 'react';
 import { Card, Dropdown, Image } from 'react-bootstrap';
 import { useInView } from 'react-intersection-observer';
@@ -15,18 +15,20 @@ type NotificationItemProps = {
 };
 const NotificationItem = ({ item }: NotificationItemProps) => {
   const navigate = useNavigate();
-  const { manuallySeeNotification: seeNotification } = useSeeNotification();
+  const { manuallySeeNotification } = useSeeNotification();
 
-  const handleClickNotification = async () => {
+  const handleClickNotification = () => {
     if (item.status === NotificationStatus.UNREAD) {
-      seeNotification(item.id);
+      manuallySeeNotification(item.id);
     }
     navigate(formatNotificationLink(item));
   };
 
   return (
     <div
-      className={`iq-sub-card ${item.status === NotificationStatus.UNREAD ? 'bg-light' : 'bg-color cursor-pointer'}`}
+      className={`iq-sub-card ${
+        item.status === NotificationStatus.UNREAD ? 'bg-light' : 'bg-color'
+      } hover-bg-sort-primary`}
       onClick={handleClickNotification}
       style={{ cursor: 'pointer' }}
     >
@@ -37,7 +39,7 @@ const NotificationItem = ({ item }: NotificationItemProps) => {
         <div className="ms-3 w-100">
           <h6 className="mb-0 ">{item.content}</h6>
           <div className="d-flex justify-content-between align-items-center">
-            <small className="float-right font-size-12">{moment(item.created_at).fromNow()}</small>
+            <small className="float-right font-size-12 text-primary mt-1">{momentVi(item.created_at).fromNow()}</small>
           </div>
         </div>
       </div>
@@ -84,7 +86,7 @@ export const HeaderNotification = () => {
               </div>
             ) : (
               <div className="d-flex align-items-center justify-content-center mt-2 py-4">
-                <h6 className="mb-0">Không còn tin nhắn cũ hơn</h6>
+                <h6 className="mb-0">Không còn thông báo cũ hơn</h6>
               </div>
             )}
             <div ref={endRef}></div>

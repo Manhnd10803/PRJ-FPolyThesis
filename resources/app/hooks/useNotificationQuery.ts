@@ -1,8 +1,9 @@
 import { NotificationService } from '@/apis/services/notification.service';
 import { INotification, NotificationStatus } from '@/models/notifications';
 import { Paginate } from '@/models/pagination';
-import { InfiniteData, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { InfiniteData, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { produce } from 'immer';
+import toast from 'react-hot-toast';
 
 export const queryKeyNotifications = ['notifications'];
 
@@ -33,8 +34,8 @@ export default function useInfiniteNotifications() {
 export const useSeeNotification = () => {
   const queryClient = useQueryClient();
 
-  const manuallySeeNotification = async (id: INotification['id']) => {
-    await NotificationService.seeNotification(id);
+  const manuallySeeNotification = (id: INotification['id']) => {
+    NotificationService.seeNotification(id);
 
     queryClient.setQueryData(queryKeyNotifications, (oldData: InfiniteData<Paginate<INotification>> | undefined) => {
       if (!oldData) return oldData;
@@ -75,5 +76,42 @@ export const useAddNotification = () => {
 
   return {
     manuallyAddNotification,
+  };
+};
+
+export const useDeleteNotification = () => {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: (id: number) => {
+      return NotificationService.deleteNotification(id);
+    },
+  });
+
+  const manuallyDeleteNotification = (id: INotification['id']) => {
+    mutation.mutate(id, {
+      onSuccess: () => {
+        queryClient.setQueryData(
+          queryKeyNotifications,
+          (oldData: InfiniteData<Paginate<INotification>> | undefined) => {
+            if (!oldData) return oldData;
+
+            return produce(oldData, draft => {
+              draft.pages.forEach(page => {
+                page.data = page.data.filter(notification => notification.id !== id);
+              });
+            });
+          },
+        );
+      },
+      onError(error, variables, context) {
+        toast.error('Có lỗi xảy ra khi xóa thông báo');
+        console.log('onError - DeleteNotification', error, variables, context);
+      },
+    });
+  };
+
+  return {
+    manuallyDeleteNotification,
   };
 };

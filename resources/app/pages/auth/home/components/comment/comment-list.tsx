@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { usePostDetailContext } from '../../contexts';
-import moment from 'moment';
+import { momentVi } from '@/utilities/functions/moment-locale';
 
 export const CommentList = () => {
   const { comments } = usePostDetailContext();
@@ -23,7 +23,7 @@ export const CommentList = () => {
                 <Link to="#">like</Link>
                 <Link to="#">reply</Link>
                 <Link to="#">translate</Link>
-                <span> {moment(comment.createdAt)} </span>
+                <span> {momentVi(comment.createdAt).fromNow()} </span>
               </div>
             </div>
           </div>

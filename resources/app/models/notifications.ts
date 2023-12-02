@@ -12,7 +12,6 @@ export interface INotification {
   created_at: Date;
   updated_at: Date;
   user: IUser;
-  avatar_sender?: string;
 }
 
 export const NotificationStatus = {
@@ -47,17 +46,31 @@ export const NotificationType = {
 
 export type NotificationTypeUnion = (typeof NotificationType)[keyof typeof NotificationType];
 
+export const NotificationIconColor = {
+  favorite_border: 'text-info',
+  chat_bubble_outline: 'text-warning',
+  group_add: 'text-success',
+  question_answer: 'text-danger',
+} as const;
+
+export const NotificationIconClass = {
+  group_add: 'group_add',
+  favorite_border: 'favorite_border',
+  chat_bubble_outline: 'chat_bubble_outline',
+  question_answer: 'question_answer',
+} as const;
+
 export const NotificationIcon = {
-  [NotificationType['friend']]: 'military_tech',
-  [NotificationType['like_post']]: 'favorite_border',
-  [NotificationType['comment_post']]: 'chat_bubble_outline',
-  [NotificationType['reply_post']]: 'chat_bubble_outline',
-  [NotificationType['like_blog']]: 'favorite_border',
-  [NotificationType['comment_blog']]: 'chat_bubble_outline',
-  [NotificationType['reply_blog']]: 'chat_bubble_outline',
-  [NotificationType['like_qa']]: 'favorite_border',
-  [NotificationType['comment_qa']]: 'chat_bubble_outline',
-  [NotificationType['reply_qa']]: 'chat_bubble_outline',
+  [NotificationType['friend']]: NotificationIconClass.group_add,
+  [NotificationType['like_post']]: NotificationIconClass.favorite_border,
+  [NotificationType['comment_post']]: NotificationIconClass.chat_bubble_outline,
+  [NotificationType['reply_post']]: NotificationIconClass.question_answer,
+  [NotificationType['like_blog']]: NotificationIconClass.favorite_border,
+  [NotificationType['comment_blog']]: NotificationIconClass.chat_bubble_outline,
+  [NotificationType['reply_blog']]: NotificationIconClass.question_answer,
+  [NotificationType['like_qa']]: NotificationIconClass.favorite_border,
+  [NotificationType['comment_qa']]: NotificationIconClass.chat_bubble_outline,
+  [NotificationType['reply_qa']]: NotificationIconClass.question_answer,
 } as const;
 
 export const NotificationLink = {

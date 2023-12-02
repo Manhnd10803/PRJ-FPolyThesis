@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { formatDateFromCreatedAt } from '../components/format-date';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { formatFullName } from '@/utilities/functions';
+import { momentVi } from '@/utilities/functions/moment-locale';
 
 const imageUrl = 'https://picsum.photos/20';
 
@@ -217,7 +218,7 @@ export const CommentsQandA = ({ qAndAData, postComment, deleteComment, putCommen
                                       <span>{comment?.replies?.length}</span> comment
                                     </div>
                                   </Link>
-                                  <span>{formatDateFromCreatedAt(comment?.created_at)}</span>
+                                  <span>{momentVi(comment?.created_at).fromNow()}</span>
                                 </div>
                               </div>
                               {replyFormsVisible[comment?.id] && (
@@ -357,7 +358,7 @@ export const CommentsQandA = ({ qAndAData, postComment, deleteComment, putCommen
                                           <span className="material-symbols-outlined">reply</span>
                                           reply
                                         </Link>
-                                        <span>{formatDateFromCreatedAt(reply?.created_at)}</span>
+                                        <span>{momentVi(reply?.created_at).fromNow()}</span>
                                       </div>
                                     </div>
                                     {replyFormsVisible[reply?.id] && (

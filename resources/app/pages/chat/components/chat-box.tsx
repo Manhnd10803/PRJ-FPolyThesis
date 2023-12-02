@@ -3,10 +3,10 @@ import { CustomToggle } from '@/components/custom';
 import { Loading } from '@/components/shared/loading';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { chatActions } from '@/redux/slice';
+import { momentVi } from '@/utilities/functions/moment-locale';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
 import parse from 'html-react-parser';
-import moment from 'moment';
 import { ReactNode, forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { useInView } from 'react-intersection-observer';
@@ -145,14 +145,14 @@ export const ChatBox = forwardRef<ChatBoxRef, Props>((__, ref) => {
                     <Link className="avatar m-0" to="">
                       <img loading="lazy" src={item.sender.avatar} alt="avatar" className="avatar-35 " />
                     </Link>
-                    <span className="chat-time mt-1">{moment(item.created_at).format('LT')}</span>
+                    <span className="chat-time mt-1 text-success">{momentVi(item.created_at).fromNow()}</span>
                   </div>
                   <div className="chat-detail" style={{ maxWidth: '60%' }}>
                     <div>
                       <Dropdown className="d-flex justify-content-center align-items-center" as="span">
                         <Dropdown.Toggle
                           as={CustomToggle}
-                          variant="material-symbols-outlined cursor-pointer md-18 nav-hide-arrow pe-0 show"
+                          variant="material-symbols-outlined cursor-pointer md-18 nav-hide-arrow pe-0 show text-dark"
                         >
                           more_vert
                         </Dropdown.Toggle>
@@ -177,7 +177,7 @@ export const ChatBox = forwardRef<ChatBoxRef, Props>((__, ref) => {
                     <Link className="avatar m-0" to="">
                       <img loading="lazy" src={item.sender.avatar} alt="avatar" className="avatar-35 " />
                     </Link>
-                    <span className="chat-time mt-1">{moment(item.created_at).format('LT')}</span>
+                    <span className="chat-time mt-1 text-success">{momentVi(item.created_at).fromNow()}</span>
                   </div>
                   <div className="chat-detail" style={{ maxWidth: '50%' }}>
                     <div className="chat-message">

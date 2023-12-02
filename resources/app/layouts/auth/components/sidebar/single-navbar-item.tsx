@@ -20,7 +20,7 @@ export const SingleNavbarItem = ({ title, icon, pathname }: SingleNavbarItemProp
   //   </li>
   // );
   return (
-    <Nav.Item as="li">
+    <Nav.Item as="li" className="py-1">
       <Link className={`${location.pathname === pathname ? 'active' : ''} nav-link `} aria-current="page" to={pathname}>
         <OverlayTrigger placement="right" overlay={<Tooltip>{title}</Tooltip>}>
           {icon}
