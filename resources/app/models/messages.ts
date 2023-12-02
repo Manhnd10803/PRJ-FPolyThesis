@@ -31,7 +31,10 @@ export type ChatState = {
   selectedUserInfo: IUser | undefined;
 };
 
-export type GetListPrivateChannelResponseType = Array<IUser>;
+export type GetListPrivateChannelResponseType = {
+  data: Array<IUser>;
+  total_mess_count: number;
+};
 
 export type SendMessageResponseType = {
   message: string;
