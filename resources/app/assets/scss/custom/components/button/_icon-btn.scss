@@ -55,7 +55,8 @@
 .btn-setting {
     padding: $spacer * .5;
     z-index: $zindex-general + 100;
-    top: 50%;
+    bottom: 8px;
+    left: 8px;
 }
 .btn-fixed-end {
     position: fixed;
@@ -130,7 +131,7 @@ $btn-icon-height-lg:      3rem !default;
 .btn-setting {
     padding: $spacer * .5;
     z-index: $zindex-general + 100;
-    top: 50%;
+    bottom: 8px;
 }
 
 .customizer-btn{
@@ -139,6 +140,6 @@ $btn-icon-height-lg:      3rem !default;
 
 @include media-breakpoint-down(lg) {
     .btn-setting {
-        top: 75%;
+        bottom: 5%;
     } 
 }

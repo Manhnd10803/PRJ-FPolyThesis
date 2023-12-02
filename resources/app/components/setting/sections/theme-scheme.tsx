@@ -8,7 +8,7 @@ type ThemeSchemeProps = {
 export const ThemeScheme = memo((props: ThemeSchemeProps) => {
   return (
     <Fragment>
-      <h5 className="mb-3">Theme</h5>
+      <h5 className="mb-3">Chủ đề</h5>
       <RadioBtn
         btnName="theme_scheme"
         id="color-mode-auto"
@@ -18,7 +18,7 @@ export const ThemeScheme = memo((props: ThemeSchemeProps) => {
         defaultChecked={props.themeScheme}
         value="auto"
       >
-        <span>Auto</span>
+        <span>Hệ thống</span>
         <svg width="60" height="27" viewBox="0 0 60 27" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="0.375" y="0.375" width="59.25" height="26.25" rx="4.125" fill="white"></rect>
           <circle cx="9.75" cy="9.75" r="3.75" fill="#80868B"></circle>
@@ -36,7 +36,7 @@ export const ThemeScheme = memo((props: ThemeSchemeProps) => {
         defaultChecked={props.themeScheme}
         value="dark"
       >
-        Dark
+        Tối
         <svg width="60" height="27" viewBox="0 0 60 27" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="0.375" y="0.375" width="59.25" height="26.25" rx="4.125" fill="#1E2745"></rect>
           <circle cx="9.75" cy="9.75" r="3.75" fill="#80868B"></circle>
@@ -63,7 +63,7 @@ export const ThemeScheme = memo((props: ThemeSchemeProps) => {
         defaultChecked={props.themeScheme}
         value="light"
       >
-        Light
+        Sáng
         <svg
           className="rounded"
           width="60"

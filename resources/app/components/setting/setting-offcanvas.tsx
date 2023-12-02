@@ -74,28 +74,25 @@ export const SettingOffCanvas = memo((props: SettingOffCanvasProps) => {
       <Offcanvas
         show={show}
         onHide={() => setShow(false)}
-        placement={`${themeSchemeDirection === 'rtl' ? 'start' : 'end'}`}
+        placement={`${themeSchemeDirection === 'rtl' ? 'end' : 'start'}`}
         backdrop={false}
         scroll={true}
         className="live-customizer"
       >
         <Offcanvas.Header closeButton className="pb-0">
           <div className="d-flex align-items-center">
-            <h4 className="offcanvas-title" id="live-customizer-label">
-              Live Customizer
+            <h4 className="offcanvas-title text-center" id="live-customizer-label">
+              Tuỳ chỉnh giao diện
             </h4>
           </div>
         </Offcanvas.Header>
-        <Offcanvas.Body>
+        <Offcanvas.Body className="mt-4">
           <Row>
             <Col lg={12}>
               <div>
-                <div className="text-center">
-                  <h5 className="d-inline-block">Style Setting</h5>
-                </div>
                 <div>
                   <ThemeScheme themeScheme={themeScheme}></ThemeScheme>
-                  {props.name === true ? (
+                  {/* {props.name === true ? (
                     ''
                   ) : (
                     <Fragment>
@@ -104,11 +101,11 @@ export const SettingOffCanvas = memo((props: SettingOffCanvasProps) => {
                       <hr className="hr-horizontal" />
                       <MenuActiveStyle sidebarMenuStyle={sidebarMenuStyle}></MenuActiveStyle>
                     </Fragment>
-                  )}
+                  )} */}
                   <hr className="hr-horizontal" />
                   <ColorCustomizer themeColor={themeColor}></ColorCustomizer>
-                  <hr className="hr-horizontal" />
-                  <Direction themeSchemeDirection={themeSchemeDirection}></Direction>
+                  {/* <hr className="hr-horizontal" />
+                  <Direction themeSchemeDirection={themeSchemeDirection}></Direction> */}
                 </div>
               </div>
             </Col>

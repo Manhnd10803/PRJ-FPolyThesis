@@ -3,10 +3,10 @@ import { SettingDefaultState, SettingState } from '@/models/setting';
 // Initial Setting State
 export const initialSettingState: SettingState = {
   saveLocal: 'sessionStorage',
-  storeKey: 'socialvsetting-react',
+  storeKey: 'fpolyzonesetting-react',
   setting: {
     app_name: {
-      value: 'SocialV',
+      value: 'FpolyZone',
     },
     theme_scheme_direction: {
       value: 'ltr',
@@ -19,10 +19,10 @@ export const initialSettingState: SettingState = {
     },
     theme_color: {
       colors: {
-        '--{{prefix}}primary': '#50b5ff',
-        '--{{prefix}}info': '#d592ff',
+        '--{{prefix}}primary': '#f26f21',
+        '--{{prefix}}info': '#1A73E8',
       },
-      value: 'theme-color-default',
+      value: 'theme-color-orange',
     },
     theme_transition: {
       value: null,
@@ -43,10 +43,10 @@ export const initialSettingState: SettingState = {
       value: 'sidebar-white',
     },
     sidebar_type: {
-      value: ['sidebar-soft'],
+      value: ['sidebar-hover'],
     },
     sidebar_menu_style: {
-      value: 'navs-rounded-all',
+      value: 'navs-pill-all',
     },
     footer: {
       value: 'default',
@@ -63,13 +63,13 @@ export const initialSettingState: SettingState = {
 // Default Setting State
 export const defaultSettingState: SettingDefaultState = {
   saveLocal: 'sessionStorage',
-  storeKey: 'socialvsetting-react',
+  storeKey: 'fpolyzonesetting-react',
   setting: {
     app_name: {
       target: '[data-setting="app_name"]',
       choices: [],
       type: 'text',
-      value: 'SocialV',
+      value: 'FpolyZone',
     },
     theme_scheme_direction: {
       target: 'html',
@@ -98,13 +98,14 @@ export const defaultSettingState: SettingDefaultState = {
         'theme-color-purple',
         'theme-color-green',
         'theme-color-default',
+        'theme-color-orange',
       ],
       type: 'default',
       colors: {
-        '--{{prefix}}primary': '#50b5ff',
-        '--{{prefix}}info': '#d592ff',
+        '--{{prefix}}primary': '#f26f21',
+        '--{{prefix}}info': '#1A73E8',
       },
-      value: 'theme-color-default',
+      value: 'theme-color-orange',
     },
     theme_transition: {
       target: 'body',
@@ -152,7 +153,7 @@ export const defaultSettingState: SettingDefaultState = {
       target: '[data-toggle="main-sidebar"]',
       choices: ['sidebar-hover', 'sidebar-mini', 'sidebar-soft'],
       type: 'layout_design',
-      value: ['sidebar-soft'],
+      value: ['sidebar-hover'],
     },
     // sidebar_show: {
     //   target: '[data-toggle="main-sidebar"]',
@@ -170,7 +171,7 @@ export const defaultSettingState: SettingDefaultState = {
       target: '[data-toggle="main-sidebar"]',
       choices: ['navs-rounded', 'navs-rounded-all', 'navs-pill', 'navs-pill-all'],
       type: 'layout_design',
-      value: 'navs-rounded-all',
+      value: 'navs-pill-all',
     },
     footer: {
       target: '.footer',

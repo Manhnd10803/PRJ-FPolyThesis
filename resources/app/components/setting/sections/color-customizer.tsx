@@ -44,7 +44,7 @@ export const ColorCustomizer = memo((props: ColorCustomizerProps) => {
   return (
     <Fragment>
       <div className="d-flex align-items-center justify-content-between">
-        <h5 className="mt-4 mb-3">Color Customizer</h5>
+        <h5 className="mt-4 mb-3">Thay đổi màu giao diện</h5>
         <div className="d-flex align-items-center">
           <div data-setting="radio">
             <input
@@ -62,7 +62,10 @@ export const ColorCustomizer = memo((props: ColorCustomizerProps) => {
               title="Reset Color"
               data-bs-original-title="Reset color"
             >
-              <OverlayTrigger placement="top" overlay={<Tooltip>Reset Color</Tooltip>}>
+              <OverlayTrigger
+                placement="top"
+                overlay={<Tooltip style={{ zIndex: 10000 }}>Khôi phục màu mặc định</Tooltip>}
+              >
                 <div
                   data-value="theme-color-default"
                   data-bs-toggle="tooltip"
@@ -71,8 +74,8 @@ export const ColorCustomizer = memo((props: ColorCustomizerProps) => {
                   data-bs-original-title="Default"
                   onClick={() => {
                     colorChange('theme-color-default', {
-                      '--{{prefix}}primary': '#50b5ff',
-                      '--{{prefix}}info': '#4bc7d2',
+                      '--{{prefix}}primary': '#f26f21',
+                      '--{{prefix}}info': '#1A73E8',
                     });
                   }}
                 >
@@ -92,8 +95,8 @@ export const ColorCustomizer = memo((props: ColorCustomizerProps) => {
           </div>
         </div>
       </div>
-      <div className="grid-cols-5 mb-4 d-grid gap-3">
-        <OverlayTrigger placement="top" overlay={<Tooltip>Gmail</Tooltip>}>
+      <div className="grid-cols-5 mb-4 mt-4 d-grid gap-3">
+        <OverlayTrigger placement="top" overlay={<Tooltip style={{ zIndex: 10000 }}>Gmail</Tooltip>}>
           <div>
             <input
               type="radio"
@@ -126,7 +129,7 @@ export const ColorCustomizer = memo((props: ColorCustomizerProps) => {
             </label>
           </div>
         </OverlayTrigger>
-        <OverlayTrigger placement="top" overlay={<Tooltip>Reddit</Tooltip>}>
+        <OverlayTrigger placement="top" overlay={<Tooltip style={{ zIndex: 10000 }}>Reddit</Tooltip>}>
           <div>
             <input
               type="radio"
@@ -159,7 +162,7 @@ export const ColorCustomizer = memo((props: ColorCustomizerProps) => {
             </label>
           </div>
         </OverlayTrigger>
-        <OverlayTrigger placement="top" overlay={<Tooltip>Twitch</Tooltip>}>
+        <OverlayTrigger placement="top" overlay={<Tooltip style={{ zIndex: 10000 }}>Twitch</Tooltip>}>
           <div>
             <input
               type="radio"
@@ -192,7 +195,7 @@ export const ColorCustomizer = memo((props: ColorCustomizerProps) => {
             </label>
           </div>
         </OverlayTrigger>
-        <OverlayTrigger placement="top" overlay={<Tooltip>Linkdin</Tooltip>}>
+        {/* <OverlayTrigger placement="top" overlay={<Tooltip>Linkdin</Tooltip>}>
           <div>
             <input
               type="radio"
@@ -224,8 +227,8 @@ export const ColorCustomizer = memo((props: ColorCustomizerProps) => {
               </svg>
             </label>
           </div>
-        </OverlayTrigger>
-        <OverlayTrigger placement="top" overlay={<Tooltip>Spotify</Tooltip>}>
+        </OverlayTrigger> */}
+        <OverlayTrigger placement="top" overlay={<Tooltip style={{ zIndex: 10000 }}>Spotify</Tooltip>}>
           <div>
             <input
               type="radio"
@@ -254,6 +257,39 @@ export const ColorCustomizer = memo((props: ColorCustomizerProps) => {
               >
                 <circle cx="12" cy="12" r="10" fill="#0B9D43"></circle>
                 <path d="M2,12 a1,1 1 1,0 20,0" fill="#000000"></path>
+              </svg>
+            </label>
+          </div>
+        </OverlayTrigger>
+        <OverlayTrigger placement="top" overlay={<Tooltip style={{ zIndex: 10000 }}>FPT Polytechnic</Tooltip>}>
+          <div>
+            <input
+              type="radio"
+              value="theme-color-orange"
+              className="btn-check"
+              name="theme_color"
+              id="theme-color-6"
+              onClick={() => {
+                colorChange('theme-color-orange', { '--{{prefix}}info': '#1A73E8', '--{{prefix}}primary': '#f26f21' });
+              }}
+              defaultChecked={colorValue.value === 'theme-color-orange'}
+            />
+            <label
+              className={`btn btn-border d-block bg-transparent`}
+              htmlFor="theme-color-6"
+              data-bs-toggle="tooltip"
+              data-bs-placement="top"
+              data-bs-original-title="Theme-6"
+            >
+              <svg
+                className="customizer-btn"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="26"
+                height="26"
+              >
+                <circle cx="12" cy="12" r="10" fill="#f26f21"></circle>
+                <path d="M2,12 a1,1 1 1,0 20,0" fill="#1A73E8"></path>
               </svg>
             </label>
           </div>

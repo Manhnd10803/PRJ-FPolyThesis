@@ -13,6 +13,10 @@ $box-color-shadow-shade:        .35!default;
 $colors-name: ('primary', 'info') !default;
 
 $custom-colors: (
+  "theme-color-orange": map-merge($colors,(
+    "primary": #f26f21,
+    "info": #1A73E8,
+  )),
   "theme-color-blue": map-merge($colors,(
     "primary": #4285F4,
     "info": #EA4335 ,
