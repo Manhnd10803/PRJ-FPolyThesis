@@ -2,10 +2,10 @@ import { IUser } from './user';
 
 export interface GetNewPostResponseType {
   post: IPost;
-  like_counts_by_emotion: LikeCountsByEmotion;
-  like: any[];
-  total_comments: number;
-  comments: any[];
+  like_counts_by_emotion?: LikeCountsByEmotion;
+  like?: any[];
+  total_comments?: number;
+  comments?: any[];
 }
 
 export interface LikeCountsByEmotion {
