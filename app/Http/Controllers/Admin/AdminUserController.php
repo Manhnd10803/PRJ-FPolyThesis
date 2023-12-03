@@ -17,13 +17,16 @@ use Illuminate\Database\Eloquent\Builder;
 
 class AdminUserController extends Controller
 {
+
     public function __construct()
     {
         $this->middleware('authAdmin');
     }
     //Search User
+
     public function searchUser(Request $request)
     {
+        $request->flash();
         $majors = Major::all();
         $query = User::whereIn('group_id', [config('default.user.groupID.student'), config('default.user.groupID.guest')])->orderByDesc('id');
         if ($request->filled('full_name')) {
