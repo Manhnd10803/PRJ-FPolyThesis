@@ -9,10 +9,6 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminAuthController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('authAdmin');
-    }
     public function viewLogin()
     {
         return view('admin.auth.login');
