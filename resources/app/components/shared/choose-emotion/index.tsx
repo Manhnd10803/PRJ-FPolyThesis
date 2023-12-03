@@ -72,7 +72,7 @@ export const ChosePostEmotion = ({ onChange }: ChosePostEmotionProps) => {
         <Dropdown.Menu className=" py-2">
           {emotionData.map(e => {
             return (
-              <OverlayTrigger placement="top" overlay={<Tooltip>{e.name}</Tooltip>}>
+              <OverlayTrigger key={e.id} placement="top" overlay={<Tooltip>{e.name}</Tooltip>}>
                 <Link to="#" onClick={() => handleChangeEmotion(e)}>
                   <img src={e.emotion} className="img-fluid me-2" alt="" />
                 </Link>

@@ -5,12 +5,13 @@ import { Card, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { CommentList } from '../comment/comment-list';
 import { CreateComment } from '../comment/create-comment';
-import { MoreActionDropdown } from './post-more-action-dropdown';
+import { MoreActionDropdown } from '../more-action-dropdown';
 import { TotalCommentPost } from './post-total-comment';
 import { TotalLikePost } from './post-total-like';
-import { PostDetailContextProvider, usePostDetailContext } from '../../contexts';
+import { PostItemContextProvider, usePostContext, usePostItemContext } from '../../contexts';
 import { ChosePostEmotion, EmotionType } from '@/components/shared/choose-emotion';
 import { momentVi } from '@/utilities/functions/moment-locale';
+import { formatImagesToRender, getClassImages } from '../../constants';
 
 type PostItemProps = {
   item: GetNewPostResponseType;
@@ -23,8 +24,9 @@ export const PostItem = ({ item }: PostItemProps) => {
   };
   //render
   return (
-    <PostDetailContextProvider
+    <PostItemContextProvider
       value={{
+        item: item,
         post: item.post,
         like_counts_by_emotion: item.like_counts_by_emotion,
         comments: item.comments,
@@ -55,12 +57,12 @@ export const PostItem = ({ item }: PostItemProps) => {
           </Card.Body>
         </Card>
       </Col>
-    </PostDetailContextProvider>
+    </PostItemContextProvider>
   );
 };
 //======================== Component PostItemHeader ========================//
 const Header = () => {
-  const { post } = usePostDetailContext();
+  const { post } = usePostItemContext();
   const actionType = 'đã thêm một bài viết';
 
   return (
@@ -85,14 +87,16 @@ const Header = () => {
 };
 
 const ContentImages = () => {
-  const { post } = usePostDetailContext();
+  const { post: post, item } = usePostItemContext();
+
+  const { handleShowDetail } = usePostContext();
 
   const { newImages, originalImages } = formatImagesToRender(post?.image);
 
   if (newImages.length === 0) return null;
 
   return (
-    <div onClick={() => {}}>
+    <div onClick={() => handleShowDetail(item)} style={{ cursor: 'pointer' }}>
       <div className="user-post">
         {newImages.length > 1 ? (
           <div className={`d-grid gap-3 ${getClassImages(newImages.length)}`}>
@@ -137,8 +141,7 @@ const ContentImages = () => {
 };
 
 const Content = () => {
-  const { post } = usePostDetailContext();
-
+  const { post } = usePostItemContext();
   // render
   return (
     <>
@@ -147,20 +150,4 @@ const Content = () => {
       <ContentImages />
     </>
   );
-};
-
-const getClassImages = (length: number) => {
-  if (length >= 3) return 'grid-cols-2 grid-rows-2 grid-flow-col gap-3';
-  return 'grid-cols-2 grid-flow-col gap-3';
-};
-
-const formatImagesToRender = (imagesJson: string) => {
-  const images: string | string[] = JSON.parse(imagesJson);
-
-  const imageList = Array.isArray(images) ? images : [images];
-
-  return {
-    originalImages: imageList,
-    newImages: imageList.length > 4 ? imageList.slice(0, 4) : imageList,
-  };
 };

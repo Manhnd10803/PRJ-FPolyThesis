@@ -1,9 +1,9 @@
 import { CustomToggle } from '@/components/custom';
 import { Dropdown } from 'react-bootstrap';
-import { usePostDetailContext } from '../../contexts';
+import { usePostItemContext } from '../../contexts';
 
 export const TotalLikePost = () => {
-  const { like_counts_by_emotion } = usePostDetailContext();
+  const { like_counts_by_emotion } = usePostItemContext();
 
   // notdone
   return (
