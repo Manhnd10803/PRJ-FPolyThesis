@@ -29,6 +29,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'authAdmin'], function () {
     // Route::get('user/{user}', [AdminUserController::class, 'detailUser'])->name('admin.users.detail');
     Route::put('user/lock/{user}', [AdminUserController::class, 'lockUser'])->name('admin.users.lock');
     Route::put('user/unlock/{user}', [AdminUserController::class, 'unlockUser'])->name('admin.users.unlock');
+    Route::get('/user/getChartUserData', [AdminUserController::class, 'getChartUserData']);
 
     Route::get('user/search', [AdminUserController::class, 'searchUser'])->name('admin.users.search');
 
@@ -96,6 +97,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'authAdmin'], function () {
     //Admin notification
     Route::get('see-notification/{notification}', [AdminNotificationController::class, 'seeNotification'])->name('admin.see-notification');
     Route::get('list-notification', [AdminNotificationController::class, 'listNotification'])->name('admin.list-notification');
+    Route::delete('delete-notification/{notification}', [AdminNotificationController::class, 'deleteNotification'])->name('admin.delete-notification');
     //Admin report
     Route::prefix('report')->group(function () {
         Route::get('/', [AdminReportController::class, 'index'])->name('admin.report.index');;

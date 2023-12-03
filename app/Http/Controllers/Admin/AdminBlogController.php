@@ -41,7 +41,7 @@ class AdminBlogController extends Controller
             $avatar_sender = Auth::user()->avatar;
             broadcast(new ReceiveNotification($notification, $avatar_sender))->toOthers();
             DB::commit();
-            return redirect()->route('admin.blogs.show', ['blog' => $blog->id])
+            return redirect()->route('admin.blogs.approve')
                 ->with('success', 'Bài viết đã được duyệt thành công');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -66,7 +66,7 @@ class AdminBlogController extends Controller
             $avatar_sender = Auth::user()->avatar;
             broadcast(new ReceiveNotification($notification, $avatar_sender))->toOthers();
             DB::commit();
-            return redirect()->route('admin.blogs.show', ['blog' => $blog->id])
+            return redirect()->route('admin.blogs.approve')
                 ->with('success', 'Bài viết đã được hủy thành công');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -84,6 +84,7 @@ class AdminBlogController extends Controller
             'users.username as username',
             'majors.majors_code as majorCode',
             'blogs.created_at as created_at',
+            'blogs.status as status',
         ])->where('blogs.status', $status);
         if (!empty($params['title'])) {
             $blogs = $blogs->where('blogs.title', 'like', '%' . $params['title'] . '%');

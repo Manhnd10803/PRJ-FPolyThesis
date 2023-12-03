@@ -9,7 +9,7 @@ return [
   ],
   'user' => [
     'order' => 2,
-    'text'       => 'Quản lý User',
+    'text'       => 'Quản lý Người dùng',
     'permission' => 'admin.users',
     'icon' => 'fa fa-fw fa-users',
     'sub'        => [
@@ -84,7 +84,7 @@ return [
   ],
   'blog' => [
     'order' => 5,
-    'text'       => 'Quản lý Blog',
+    'text'       => 'Quản lý Bài viết',
     'permission' => 'admin.blogs',
     'icon' => 'fa fa-fw fa-newspaper-o',
     'sub'        => [
@@ -123,7 +123,7 @@ return [
   ],
   'major' => [
     'order' => 4,
-    'text'       => 'Quản lý chuyên ngành',
+    'text'       => 'Quản lý Chuyên ngành',
     'permission' => 'admin.majors',
     'icon' => 'fa fa-fw fa-briefcase',
     'sub'        => [
@@ -154,7 +154,7 @@ return [
   ],
   'post' => [
     'order' => 6,
-    'text'       => 'Quản lý bài post',
+    'text'       => 'Quản lý Bảng tin',
     'permission' => 'admin.posts',
     'icon' => 'fa fa-fw fa-book',
     'sub'        => [
@@ -168,7 +168,7 @@ return [
   ],
   'question_answers' => [
     'order' => 7,
-    'text'       => 'Quản lý câu hỏi',
+    'text'       => 'Quản lý Câu hỏi',
     'permission' => 'admin.qa',
     'icon' => 'fa fa-fw fa-question',
     'sub'        => [
@@ -189,7 +189,7 @@ return [
   ],
   'reportfolio' => [
     'order' => 8,
-    'text' => 'Quản lý vi phạm',
+    'text' => 'Quản lý Vi phạm',
     'permission' => 'admin.report',
     'icon' => 'fa fa-fw fa-warning',
     'sub' => [
