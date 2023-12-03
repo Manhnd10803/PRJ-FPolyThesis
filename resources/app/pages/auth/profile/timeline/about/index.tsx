@@ -7,7 +7,7 @@ export const About = ({ aboutUser, isLoading }) => {
       <Card>
         <div className="card-header d-flex justify-content-between">
           <div className="header-title">
-            <h4 className="card-title">About</h4>
+            <h4 className="card-title">Giới thiệu</h4>
           </div>
         </div>
         <Card.Body>

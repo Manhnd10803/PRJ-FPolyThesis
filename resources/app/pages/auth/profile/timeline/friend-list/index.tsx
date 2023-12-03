@@ -10,11 +10,11 @@ export const FriendList = ({ listFriend }) => {
       <Card>
         <div className="card-header d-flex justify-content-between">
           <div className="header-title">
-            <h4 className="card-title">Friends</h4>
+            <h4 className="card-title">Bạn bè</h4>
           </div>
           <div className="card-header-toolbar d-flex align-items-center">
             <p className="m-0">
-              <Link to={pathName.PROFILE_FRIEND_LIST}>More </Link>
+              <Link to={pathName.PROFILE_FRIEND_LIST}>Xem thêm</Link>
             </p>
           </div>
         </div>

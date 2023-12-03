@@ -30,6 +30,7 @@ import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { CloudiaryService } from '@/apis/services/cloudinary.service';
 import toast from 'react-hot-toast';
 import { DropZoneField } from '@/components/custom/drop-zone-field';
+import StarsIcon from '@mui/icons-material/Stars';
 
 export const ContentBlogDetail = ({ data, commentRef, createLike }: any) => {
   const [likeStatus, setLikeStatus] = useState(data?.user_like?.emotion || null);
@@ -136,7 +137,6 @@ export const ContentBlogDetail = ({ data, commentRef, createLike }: any) => {
       commentRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
-
   return (
     <>
       <Col lg="12">
@@ -150,7 +150,18 @@ export const ContentBlogDetail = ({ data, commentRef, createLike }: any) => {
                   </div>
                   <div className="ms-3">
                     <Link to={`${pathName.PROFILE}/${data?.blog?.user.id}`}>
-                      <h5>{formatFullName(data?.blog?.user)}</h5>
+                      <div className="d-flex gap-2 align-items-center">
+                        <h5>{formatFullName(data?.blog?.user)}</h5>
+                        <OverlayTrigger
+                          placement="bottom"
+                          overlay={<Tooltip>Reputations: {data?.blog?.user?.score}</Tooltip>}
+                        >
+                          <div className="d-flex gap-1 align-items-center">
+                            <StarsIcon />
+                            <div>{data?.blog?.user?.score}</div>
+                          </div>
+                        </OverlayTrigger>
+                      </div>
                       <p className="text-black">{data?.blog?.major?.majors_name}</p>
                     </Link>
                   </div>

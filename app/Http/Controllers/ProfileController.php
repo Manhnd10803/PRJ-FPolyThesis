@@ -111,8 +111,6 @@ class ProfileController extends Controller
                         }
                     }
 
-                    // Lấy 9 URL đầu tiên từ danh sách
-                    $firstNineImages = array_slice($allImageUrls, 0, 9);
                     $posts = $postsQuery->paginate(10);
                     $listPost = [];
                     foreach ($posts as $post) {
@@ -156,7 +154,7 @@ class ProfileController extends Controller
                             'avatar' => $user->avatar,
                         ],
                         'friend_details' => $friendDetails,
-                        'images' => $firstNineImages,
+                        'images' => $allImageUrls,
                     ];
                     DB::commit();
                     return response()->json(['listPost' => $listPost, 'detailTimeline' => $detailTimeline], 200);

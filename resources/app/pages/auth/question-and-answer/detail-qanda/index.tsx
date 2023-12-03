@@ -14,16 +14,15 @@ import {
   Dropdown,
   Spinner,
   ListGroup,
+  OverlayTrigger,
+  Tooltip,
 } from 'react-bootstrap';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import ThumbDownOffAltOutlinedIcon from '@mui/icons-material/ThumbDownOffAltOutlined';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { formatDateFromCreatedAt } from '../../blog/components/format-date';
-import { MajorService } from '@/apis/services/major.service';
 import toast from 'react-hot-toast';
-import { UpdateQandA } from '../update-qanda';
 import { FormComment } from '../comments/form-cmt';
 import { CommentsQandA } from '../comments/CommentsQandA';
 import { CommentService } from '@/apis/services/comment.service';
@@ -36,6 +35,8 @@ import { DropZoneField } from '@/components/custom/drop-zone-field';
 import { CloudiaryService } from '@/apis/services/cloudinary.service';
 import { ReportService } from '@/apis/services/report.service';
 import { momentVi } from '@/utilities/functions/moment-locale';
+import StarsIcon from '@mui/icons-material/Stars';
+import { formatFullName } from '@/utilities/functions';
 
 export const DetailQandAPage = () => {
   const commentRef = useRef(null);
@@ -251,6 +252,20 @@ export const DetailQandAPage = () => {
     <>
       <div id="content-page" className="content-page">
         <Container>
+          <Modal centered size="sm" show={show} onHide={() => setShow(false)}>
+            <Modal.Header closeButton>
+              <Modal.Title>Modal heading</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>Bạn có chắc chắn muốn xóa bình luận này?</Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setShow(false)}>
+                Hủy bỏ
+              </Button>
+              <Button variant="primary" onClick={handleDelete}>
+                Đồng ý
+              </Button>
+            </Modal.Footer>
+          </Modal>
           <Card>
             <Card.Body>
               {isQaLoading || !qAndAData ? (
@@ -275,47 +290,23 @@ export const DetailQandAPage = () => {
 
                         <div className="borderbox border rounded p-2">
                           <div className="d-flex align-items-center flex-wrap">
-                            <h5>{qAndAData?.qa?.user?.username}</h5>
-                            <span className="text-primary ms-1 d-flex align-items-center">
-                              <i className="material-symbols-outlined me-2 text-primary md-16">check_circle</i>
-                            </span>
-                            <Link to="#" className="mb-0">
-                              {qAndAData?.qa?.major?.majors_name}
-                            </Link>
-                            {user_id === qAndAData?.qa?.user_id && (
-                              <button className=" btn">
-                                <div className="card-header-toolbar d-flex align-items-center">
-                                  <Dropdown>
-                                    <Dropdown.Toggle as="div" className="lh-1">
-                                      <span className="material-symbols-outlined">more_horiz</span>
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu>
-                                      <Dropdown.Item href="#" onClick={handleEdit}>
-                                        Sửa câu hỏi
-                                      </Dropdown.Item>
-                                      <Dropdown.Item href="#" onClick={() => setShow(true)}>
-                                        Xóa câu hỏi
-                                      </Dropdown.Item>
-
-                                      <Modal centered size="sm" show={show} onHide={() => setShow(false)}>
-                                        <Modal.Header closeButton>
-                                          <Modal.Title>Modal heading</Modal.Title>
-                                        </Modal.Header>
-                                        <Modal.Body>Bạn có chắc chắn muốn xóa bình luận này?</Modal.Body>
-                                        <Modal.Footer>
-                                          <Button variant="secondary" onClick={() => setShow(false)}>
-                                            Hủy bỏ
-                                          </Button>
-                                          <Button variant="primary" onClick={handleDelete}>
-                                            Đồng ý
-                                          </Button>
-                                        </Modal.Footer>
-                                      </Modal>
-                                    </Dropdown.Menu>
-                                  </Dropdown>
-                                </div>
-                              </button>
-                            )}
+                            <div>
+                              <div className="d-flex gap-2 align-items-center">
+                                <h5>{formatFullName(qAndAData?.qa?.user)}</h5>
+                                <OverlayTrigger
+                                  placement="bottom"
+                                  overlay={<Tooltip>Reputations: {qAndAData?.qa?.user?.score}</Tooltip>}
+                                >
+                                  <Link to="#" className="text-warning">
+                                    <div className="d-flex gap-1 align-items-center">
+                                      <StarsIcon />
+                                      <div>{qAndAData?.qa?.user?.score}</div>
+                                    </div>
+                                  </Link>
+                                </OverlayTrigger>
+                              </div>
+                              <p>{qAndAData?.qa?.major?.majors_name}</p>
+                            </div>
 
                             <div className="ms-auto d-flex align-items-center">
                               <div className="ms-auto d-flex align-items-center">
@@ -355,6 +346,22 @@ export const DetailQandAPage = () => {
                                 <small>{momentVi(qAndAData?.qa?.created_at).fromNow()}</small>
                               </span>
                             </div>
+                            {user_id === qAndAData?.qa?.user_id && (
+                              <button className=" btn">
+                                <div className="card-header-toolbar d-flex align-items-center">
+                                  <Dropdown>
+                                    <Dropdown.Toggle as="div" className="lh-1">
+                                      <span className="material-symbols-outlined">more_horiz</span>
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                      <Dropdown.Item href="#" onClick={() => setShow(true)}>
+                                        Xóa câu hỏi
+                                      </Dropdown.Item>
+                                    </Dropdown.Menu>
+                                  </Dropdown>
+                                </div>
+                              </button>
+                            )}
                           </div>
 
                           <h3 style={{ fontWeight: '600', marginBottom: '15px' }}>{qAndAData?.qa?.title}</h3>

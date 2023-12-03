@@ -61,7 +61,7 @@ export const FriendsMyUserPage = ({ isUser }) => {
                                 return (
                                   <Col key={itemFriend.id} sm={3}>
                                     <Card className="mb-3">
-                                      <Link to={`${pathName.PROFILE}/${itemFriend.id}`}>
+                                      <Link to={`${pathName.PROFILE}/${itemFriend.friend.id}`}>
                                         <Card.Img
                                           style={{
                                             width: '100%',
@@ -76,7 +76,7 @@ export const FriendsMyUserPage = ({ isUser }) => {
                                         />
                                       </Link>
                                       <Card.Body>
-                                        <Link to={`${pathName.PROFILE}/${itemFriend.id}`}>
+                                        <Link to={`${pathName.PROFILE}/${itemFriend.friend.id}`}>
                                           <Card.Title as="h5" className="card-title">
                                             {formatFullName(itemFriend.friend)}
                                           </Card.Title>

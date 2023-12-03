@@ -32,7 +32,9 @@ export const Timeline = ({ about, listPost, isLoading, friend_id, listImage, lis
   return (
     <Card.Body className="p-0">
       <Row>
-        <Col lg={4} className={`${isSticky ? 'sticky-col-4' : ''}`}>
+        {/* scroller */}
+        {/* <Col lg={4} className={`${isSticky ? 'sticky-col-4' : ''}`}> */}
+        <Col lg={4}>
           <About aboutUser={about} isLoading={isLoading} />
           <MyPhoto listPhoto={listImage} />
           <FriendList listFriend={listFriend} />
