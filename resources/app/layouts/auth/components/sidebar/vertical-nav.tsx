@@ -75,7 +75,8 @@ export const VerticalNavbar = React.memo(() => {
     <>
       <Accordion as="ul" className="navbar-nav iq-main-menu" id="sidebar-menu">
         {/* ========= render a block of sidebar ====== */}
-        <StaticItemTitle title="Social" />
+        {/* <StaticItemTitle title="Social" /> */}
+        <div className="mt-4 pt-2"></div>
 
         {NAVBAR_SOCIAL_CONFIGS.map((item, index) => {
           if (item.subNav) {
