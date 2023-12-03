@@ -111,6 +111,7 @@
                     <table id="example1" class="table table-bordered table-striped">
                         <thead>
                             <tr>
+                                <th>STT</th>
                                 <th>Tiêu đề</th>
                                 <th>Người tạo</th>
                                 <th>Chuyên ngành</th>
@@ -122,8 +123,12 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @php
+                                $stt = 1;
+                            @endphp
                             @foreach ($blogs as $blog)
                                 <tr>
+                                    <td>{{ $stt }}</td>
                                     <td>{{ $blog->title }}</td>
                                     <td>{{ $blog->username }}</td>
                                     <td>
@@ -140,7 +145,6 @@
                                     <td>
                                         <a href="{{ route('admin.blogs.show', $blog->id) }}" class="btn btn-info btn-sm"><i
                                                 class="fa fa-eye"></i></a>
-
                                         @if ($blog->status == config('default.blog.status.approved'))
                                             @if ($isSPAdmin || in_array('admin.blogs.statusApprove', $userPermission))
                                                 <button type="submit" class="btn btn-danger btn-sm" data-toggle="modal"
@@ -178,6 +182,9 @@
                                         </div>
                                     </td>
                                 </tr>
+                                @php
+                                    $stt ++;
+                                @endphp
                             @endforeach
                         </tbody>
                     </table>

@@ -22,7 +22,7 @@
                     <span class="bg-red">
                         {{ $blog->created_at->format('d M. Y') }}
                     </span>
-
+                    <span class="btn btn-aqua pull-right"><a href="/blog/{{ $blog->id }}">Xem tại phía người dùng</a></span>
                 </li>
                 @if ($blog->status == config('default.blog.status.reject'))
                     <li>

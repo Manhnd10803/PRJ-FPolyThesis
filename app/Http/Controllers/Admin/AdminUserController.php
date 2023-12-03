@@ -8,6 +8,7 @@ use App\Models\RolePermission;
 use App\Models\User;
 use App\Models\UserRole;
 use App\Models\Major;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -16,6 +17,10 @@ use Illuminate\Database\Eloquent\Builder;
 
 class AdminUserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('authAdmin');
+    }
     //Search User
     public function searchUser(Request $request)
     {
@@ -29,11 +34,15 @@ class AdminUserController extends Controller
                     ->orWhere('last_name', 'like', "%$full_name%");
             });
         }
-        
+
         if ($request->filled('email')) {
             $query->where('email', 'like', '%' . $request->input('email') . '%');
         }
-        
+
+        if ($request->filled('username')) {
+            $query->where('username', 'like', '%' . $request->input('username') . '%');
+        }
+
         if ($request->filled('major')) {
             $query->where('major_id', $request->input('major'));
         }
@@ -45,7 +54,7 @@ class AdminUserController extends Controller
         if ($request->filled('joined_from')) {
             $query->whereDate('created_at', '>=', $request->input('joined_from'));
         }
-        
+
         if ($request->filled('joined_to')) {
             $query->whereDate('created_at', '<=', $request->input('joined_to'));
         }
@@ -53,13 +62,13 @@ class AdminUserController extends Controller
         if ($request->filled('user_group')) {
             $query->where('group_id', $request->input('user_group'));
         }
-        
+
         if ($request->filled('status')) {
             $query->where('status', $request->input('status'));
         }
-        
+
         $users = $query->get();
-        
+
         return view('admin.users.index', compact('users', 'majors'));
     }
 
@@ -239,5 +248,29 @@ class AdminUserController extends Controller
             dd($e);
             return redirect()->route('admin.members.list')->with('error', 'Có lỗi xảy ra');
         }
+    }
+    public function getChartUserData()
+    {
+        $data = User::select(
+            DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month"),
+            DB::raw('count(*) as user_count')
+        )
+            ->where('group_id', '<>', 1)
+            ->groupBy('month')
+            ->orderBy('month') // Sắp xếp theo thứ tự tăng dần theo tháng
+            ->get();
+        // return $data;
+        $accumulatedData = [];
+        $totalUsers = 0;
+
+        foreach ($data as $item) {
+            $totalUsers += $item->user_count;
+            $accumulatedData[] = [
+                'y' => $item->month,
+                'item1' => $totalUsers,
+            ];
+        }
+
+        return response()->json($accumulatedData);
     }
 }

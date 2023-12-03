@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 
 class AdminReportController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('authAdmin');
+    }
     public function index()
     {
         $reports = Report::with('reporter:id,first_name,last_name', 'reported:id,first_name,last_name')

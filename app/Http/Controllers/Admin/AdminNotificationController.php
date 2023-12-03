@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\DB;
 
 class AdminNotificationController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('authAdmin');
+    }
     public function seeNotification(Notification $notification)
     {
         if ($notification->notification_type == 'like_blog' || $notification->notification_type == 'comment_blog' || $notification->notification_type == 'reply_blog') {
@@ -26,5 +30,10 @@ class AdminNotificationController extends Controller
             ->orderByDesc('date')
             ->get();
         return view('admin.notification.list', compact('dates', 'idAdmin'));
+    }
+    public function deleteNotification(Notification $notification)
+    {
+        $notification->delete();
+        return redirect()->back();
     }
 }

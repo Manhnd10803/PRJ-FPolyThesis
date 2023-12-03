@@ -87,6 +87,7 @@ class AuthController extends Controller
                         'group_id' => $groupId,
                         'status' => config('default.user.status.lock'),
                         'verification_code' => $codeVerify,
+                        'created_at' => Carbon::now(),
                     ]
                 );
                 Mail::to($request->email)->send(new VerifyAccount($codeVerify));
