@@ -8,6 +8,10 @@ use App\Models\Qa;
 
 class AdminQaController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('authAdmin');
+    }
     public function index()
     {
         $qas = Qa::all();

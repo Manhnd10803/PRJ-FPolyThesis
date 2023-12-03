@@ -1,7 +1,7 @@
 import { Image } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-import logo from '@/assets/images/logo-bee.png';
+import logo from '@/assets/images/logo.png';
 
 export const LogoAndMenu = () => {
   const minisidebar = () => {
@@ -12,10 +12,10 @@ export const LogoAndMenu = () => {
   return (
     <div className="d-flex align-items-center gap-3  pb-2 pb-lg-0">
       <Link to="/" className="d-flex align-items-center gap-2 iq-header-logo">
-        <Image src={logo} width={70} />
+        <Image src={logo} width={50} className="p-1" />
 
         <h3 className="logo-title d-none d-sm-block" data-setting="app_name">
-          FpolyZone
+          Fpoly<span className="text-primary">Zone</span>
         </h3>
       </Link>
 

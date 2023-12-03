@@ -32,7 +32,11 @@
                     <h3 class="timeline-header">{{ $notification->content }}</h3>
                     <div class="timeline-footer">
                         <a class="btn btn-primary btn-xs" href="{{ route('admin.see-notification', $notification->id) }}">Xem chi tiết</a>
-                        <a class="btn btn-danger btn-xs">Xóa</a>
+                        <form action="{{ route('admin.delete-notification', $notification->id) }}" method="post" class="pull-right">
+                          @csrf
+                          @method('DELETE')
+                          <button class="btn btn-danger btn-xs">Xóa</button>
+                        </form>
                     </div>
                 </div>
             </li>

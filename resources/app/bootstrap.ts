@@ -11,7 +11,7 @@ declare global {
 }
 
 window.Echo = new Echo({
-  host: 'http://localhost:6001',
+  host: window.location.hostname + ':6001',
   broadcaster: 'socket.io',
   wsPort: 6001,
   client: socketio,
