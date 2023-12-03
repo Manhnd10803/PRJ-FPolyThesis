@@ -62,8 +62,7 @@ export const BlogPage = () => {
               style={{ height: '150px' }}
             >
               <div className="">
-                <h3 className="text-white">Blog</h3>
-                <p className="text-white">Welcome to Blog</p>
+                <h3 className="text-white fw-bold">BLOG</h3>
               </div>
               <div className="w-50">
                 <Form.Group className="form-group mb-0">
@@ -96,9 +95,9 @@ export const BlogPage = () => {
               </div>
               <Link
                 to={pathName.BLOG_CREATE}
-                className="bg-white px-3 py-2 d-flex align-items-center rounded-2 d-block"
+                className="bg-white px-3 py-2 d-flex align-items-center rounded-2 d-block fw-bold"
               >
-                <i className="material-symbols-outlined me-1">lightbulb</i>Create Blog
+                <i className="material-symbols-outlined me-1">lightbulb</i>TẠO BÀI VIẾT
               </Link>
             </div>
           </Col>

@@ -14,17 +14,6 @@ import { FriendsMyUserPage } from './friends';
 const imageUrl = 'https://picsum.photos/20';
 
 export const ProfilePage = () => {
-  const [imageController, setImageController] = useState({
-    toggler: false,
-    slide: 1,
-  });
-
-  function imageOnSlide(number: any) {
-    setImageController({
-      toggler: !imageController.toggler,
-      slide: number,
-    });
-  }
   let { hash } = useLocation();
   let type = hash.split('#')[1];
 
@@ -49,18 +38,15 @@ export const ProfilePage = () => {
       status = 'reject';
       activeTab = 'second';
       break;
-    case 'qa':
-      type = 'qa';
-      activeTab = 'five';
-      break;
-    case 'commentedQuestions':
-      type = 'commentedQuestions';
-      activeTab = 'five';
-      break;
     case 'pills-friends-tab':
       activeTab = 'third';
       break;
-    case 'pills-photos-tab':
+    case 'qa':
+      type = 'qa';
+      activeTab = 'forth';
+      break;
+    case 'commentedQuestions':
+      type = 'commentedQuestions';
       activeTab = 'forth';
       break;
     default:
@@ -96,11 +82,6 @@ export const ProfilePage = () => {
   const queryKeyUser = ['user', id];
   const { data: detailUserProfile, isLoading: isUserLoading } = useQuery(queryKeyUser, getDetailUesrProfile);
 
-  // useEffect(() => {
-  //   queryClient.invalidateQueries(['profile', type, status, id]);
-  //   queryClient.invalidateQueries(['user', id]);
-  // }, [id, type, status, queryClient]);
-
   return (
     <>
       <div id="content-page" className="content-page" style={{ overflow: 'visible' }}>
@@ -134,144 +115,6 @@ export const ProfilePage = () => {
                     <FriendsMyUserPage isUser={isUser} typeURL={type} />
                   </Tab.Pane>
                   <Tab.Pane eventKey="forth">
-                    <Tab.Container id="left-tabs-example" defaultActiveKey="p1">
-                      <Card>
-                        <Card.Body>
-                          <h2>Photos</h2>
-                          <div className="friend-list-tab mt-2">
-                            <Nav
-                              variant="pills"
-                              className=" d-flex align-items-center justify-content-left friend-list-items p-0 mb-2"
-                            >
-                              <li>
-                                <Nav.Link eventKey="p1" href="#pill-photosofyou">
-                                  Photos of You
-                                </Nav.Link>
-                              </li>
-                              <li>
-                                <Nav.Link eventKey="p2" href="#pill-your-photos">
-                                  Your Photos
-                                </Nav.Link>
-                              </li>
-                            </Nav>
-                            <Tab.Content>
-                              <Tab.Pane eventKey="p1">
-                                <Card.Body className="p-0">
-                                  <div className="d-grid gap-2 d-grid-template-1fr-13">
-                                    <div>
-                                      <div className="user-images position-relative overflow-hidden">
-                                        <Link onClick={() => imageOnSlide(10)} to="#">
-                                          <img
-                                            loading="lazy"
-                                            src={imageUrl}
-                                            className="img-fluid rounded"
-                                            alt="Responsive"
-                                          />
-                                        </Link>
-                                        <div className="image-hover-data">
-                                          <div className="product-elements-icon">
-                                            <ul className="d-flex align-items-center m-0 p-0 list-inline">
-                                              <li>
-                                                <Link to="#" className="pe-3 text-white d-flex align-items-center">
-                                                  {' '}
-                                                  60 <i className="material-symbols-outlined md-14 ms-1">
-                                                    thumb_up
-                                                  </i>{' '}
-                                                </Link>
-                                              </li>
-                                              <li>
-                                                <Link to="#" className="pe-3 text-white d-flex align-items-center">
-                                                  {' '}
-                                                  30{' '}
-                                                  <span className="material-symbols-outlined  md-14 ms-1">
-                                                    chat_bubble_outline
-                                                  </span>{' '}
-                                                </Link>
-                                              </li>
-                                              <li>
-                                                <Link to="#" className="pe-3 text-white d-flex align-items-center">
-                                                  {' '}
-                                                  10{' '}
-                                                  <span className="material-symbols-outlined md-14 ms-1">
-                                                    forward
-                                                  </span>{' '}
-                                                </Link>
-                                              </li>
-                                            </ul>
-                                          </div>
-                                        </div>
-                                        <OverlayTrigger placement="top" overlay={<Tooltip>Edit or Remove</Tooltip>}>
-                                          <Link to="#" className="image-edit-btn material-symbols-outlined md-16">
-                                            drive_file_rename_outline
-                                          </Link>
-                                        </OverlayTrigger>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </Card.Body>
-                              </Tab.Pane>
-                              <Tab.Pane eventKey="p2">
-                                <div className="card-body p-0">
-                                  <div className="d-grid gap-2 d-grid-template-1fr-13 ">
-                                    <div>
-                                      <div className="user-images position-relative overflow-hidden">
-                                        <Link onClick={() => imageOnSlide(33)} to="#">
-                                          <img
-                                            loading="lazy"
-                                            src={imageUrl}
-                                            className="img-fluid rounded"
-                                            alt="Responsive"
-                                          />
-                                        </Link>
-                                        <div className="image-hover-data">
-                                          <div className="product-elements-icon">
-                                            <ul className="d-flex align-items-center m-0 p-0 list-inline">
-                                              <li>
-                                                <Link to="#" className="pe-3 text-white d-flex align-items-center">
-                                                  {' '}
-                                                  60 <i className="material-symbols-outlined md-14 ms-1">
-                                                    thumb_up
-                                                  </i>{' '}
-                                                </Link>
-                                              </li>
-                                              <li>
-                                                <Link to="#" className="pe-3 text-white d-flex align-items-center">
-                                                  {' '}
-                                                  30{' '}
-                                                  <span className="material-symbols-outlined  md-14 ms-1">
-                                                    chat_bubble_outline
-                                                  </span>{' '}
-                                                </Link>
-                                              </li>
-                                              <li>
-                                                <Link to="#" className="pe-3 text-white d-flex align-items-center">
-                                                  {' '}
-                                                  10{' '}
-                                                  <span className="material-symbols-outlined md-14 ms-1">
-                                                    forward
-                                                  </span>{' '}
-                                                </Link>
-                                              </li>
-                                            </ul>
-                                          </div>
-                                        </div>
-                                        <OverlayTrigger placement="top" overlay={<Tooltip>Edit or Remove</Tooltip>}>
-                                          <Link to="#" className="image-edit-btn material-symbols-outlined md-16">
-                                            drive_file_rename_outline
-                                          </Link>
-                                        </OverlayTrigger>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                              </Tab.Pane>
-                            </Tab.Content>
-                          </div>
-                        </Card.Body>
-                      </Card>
-                    </Tab.Container>
-                  </Tab.Pane>
-                  <Tab.Pane eventKey="five">
                     {(type === 'qa' || type === 'commentedQuestions') && (
                       <MyListQa
                         listQa={type === 'qa' ? detailProfile?.data[0]?.qa?.data : detailProfile?.data[0]?.qa?.data}

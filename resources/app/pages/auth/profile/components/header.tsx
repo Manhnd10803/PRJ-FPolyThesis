@@ -346,11 +346,6 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
                           photo_camera
                         </Link>
                       </li>
-                      <li>
-                        <Link to="#" className="material-symbols-outlined">
-                          settings
-                        </Link>
-                      </li>
                     </ul>
                   </div>
                   <div className="user-detail text-center mb-3">
@@ -405,7 +400,7 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
                   {isUser === false && (
                     <div className="d-flex gap-3">
                       <Link
-                        to={`/chat/${user.id}`}
+                        to={`/chat/${user?.id}`}
                         target="_blank"
                         className="btn btn-primary d-flex align-items-center gap-1"
                       >
