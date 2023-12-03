@@ -8,8 +8,10 @@ use Illuminate\Http\Request;
 
 class AdminMajorController extends Controller
 {
-
-
+    public function __construct()
+    {
+        $this->middleware('authAdmin');
+    }
     //Admin web
     public function index()
     {

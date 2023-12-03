@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Redis;
 
 class AdminBlogController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('authAdmin');
+    }
     public function approveBlog(Blog $blog)
     {
         DB::beginTransaction();

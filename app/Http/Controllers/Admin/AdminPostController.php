@@ -9,6 +9,10 @@ use App\Traits\FormatsCreatedAt;
 
 class AdminPostController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('authAdmin');
+    }
     // use FormatsCreatedAt;
     public function index()
     {
@@ -17,20 +21,20 @@ class AdminPostController extends Controller
     }
     public function show(Post $post)
     {
-    $likes = $post->likes;
-    $comments = $post->comments;
+        $likes = $post->likes;
+        $comments = $post->comments;
 
-    $emotionCounts = [];
-    $validEmotions = ['dislike', 'like', 'love', 'haha', 'wow', 'sad', 'angry'];
-    // Đếm số lượng từng trạng thái lượt thích
-    foreach ($validEmotions as $emotion) {
-        $emotionCounts[$emotion] = $likes->where('emotion', $emotion)->count();
-    }
-    return view('admin.posts.show', [
-        'post' => $post,
-        'likeCounts' => $emotionCounts,
-        'commentCount' => $comments->count(),
-    ]);
+        $emotionCounts = [];
+        $validEmotions = ['dislike', 'like', 'love', 'haha', 'wow', 'sad', 'angry'];
+        // Đếm số lượng từng trạng thái lượt thích
+        foreach ($validEmotions as $emotion) {
+            $emotionCounts[$emotion] = $likes->where('emotion', $emotion)->count();
+        }
+        return view('admin.posts.show', [
+            'post' => $post,
+            'likeCounts' => $emotionCounts,
+            'commentCount' => $comments->count(),
+        ]);
     }
     public function edit(Post $post)
     {

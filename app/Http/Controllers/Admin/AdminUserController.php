@@ -17,6 +17,10 @@ use Illuminate\Database\Eloquent\Builder;
 
 class AdminUserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('authAdmin');
+    }
     //Search User
     public function searchUser(Request $request)
     {
