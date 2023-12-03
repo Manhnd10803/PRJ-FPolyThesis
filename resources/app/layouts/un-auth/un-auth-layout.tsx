@@ -2,13 +2,13 @@ import { Row, Col, Container, Image } from 'react-bootstrap';
 import { Link, Outlet } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
-// @ts-ignore
-import SwiperCore, { Navigation, Autoplay } from 'swiper';
+import { Navigation, Autoplay } from 'swiper/modules';
+
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 // Import Swiper styles
-import 'swiper/swiper-bundle.min.css';
-// import 'swiper/components/navigation/navigation.scss';
+import 'swiper/css';
+import 'swiper/css/navigation';
 
 import logo from '@/assets/images/logo-bee-full.png';
 import login1 from '@/assets/images/login/1.png';
@@ -16,7 +16,7 @@ import login2 from '@/assets/images/login/2.png';
 import login3 from '@/assets/images/login/3.png';
 
 // install Swiper modules
-SwiperCore.use([Navigation, Autoplay]);
+
 export const UnAuthLayout = () => {
   return (
     <>
@@ -39,10 +39,12 @@ export const UnAuthLayout = () => {
                   <Swiper
                     spaceBetween={30}
                     centeredSlides={true}
+                    loop={true}
                     autoplay={{
                       delay: 2000,
                       disableOnInteraction: false,
                     }}
+                    modules={[Navigation, Autoplay]}
                     className="list-inline m-0 p-0 "
                   >
                     <SwiperSlide>
