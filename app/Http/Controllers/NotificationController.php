@@ -40,4 +40,15 @@ class NotificationController extends Controller
         $count = count(Notification::where('recipient', Auth::id())->where('status', 0)->get());
         return response()->json(['count' => $count]);
     }
+
+    public function MarkHasBeenRead()
+    {
+        $notifications = Notification::where('recipient', Auth::id())->get();
+        foreach ($notifications as $noti) {
+            $noti->update([
+                'status' => config('default.notification.status.seen'),
+            ]);
+        }
+        return response()->json(['message' => 'tất cả thông báo đã được đánh dấu là đã đọc'], 200);
+    }
 }

@@ -15,4 +15,8 @@ const deleteNotification = (id: number) => {
   return httpRequest.delete<{ message: string }>(`${ApiConstants.NOTIFICATION}/${id}`);
 };
 
-export const NotificationService = { getListNotifications, seeNotification, deleteNotification };
+const seeAllNotification = () => {
+  return httpRequest.put<{ message: string }>(`${ApiConstants.SEE_ALL_NOTIFICATION}`);
+};
+
+export const NotificationService = { getListNotifications, seeNotification, deleteNotification, seeAllNotification };

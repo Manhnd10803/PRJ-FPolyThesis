@@ -1,11 +1,11 @@
 import { CustomToggle } from '@/components/custom';
 import { Loading } from '@/components/shared/loading';
-import useInfiniteNotifications, { useSeeNotification } from '@/hooks/useNotificationQuery';
+import useInfiniteNotifications, { useSeeAllNotification, useSeeNotification } from '@/hooks/useNotificationQuery';
 import { INotification, NotificationStatus } from '@/models/notifications';
 import { pathName } from '@/routes/path-name';
 import { formatNotificationLink } from '@/utilities/functions';
 import { momentVi } from '@/utilities/functions/moment-locale';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, Dropdown, Image } from 'react-bootstrap';
 import { useInView } from 'react-intersection-observer';
 import { Link, useNavigate } from 'react-router-dom';
@@ -51,6 +51,22 @@ export const HeaderNotification = () => {
 
   const { ref: endRef, inView: endInView } = useInView();
 
+  const [notificationIcon, setNotificationIcon] = useState<string>('notifications');
+
+  const { manuallySeeAllNotification } = useSeeAllNotification();
+
+  const handleClickSeeAllNotification = () => {
+    manuallySeeAllNotification();
+  };
+
+  useEffect(() => {
+    if (data) {
+      data.filter(item => item.status === NotificationStatus.UNREAD).length > 0
+        ? setNotificationIcon('notifications_unread')
+        : setNotificationIcon('notifications');
+    }
+  }, [data]);
+
   // effect
   useEffect(() => {
     if (endInView && hasNextPage && !isFetchingNextPage) {
@@ -61,7 +77,7 @@ export const HeaderNotification = () => {
   return (
     <Dropdown as="li" className="nav-item">
       <Dropdown.Toggle href="#" as={CustomToggle} variant="search-toggle d-flex align-items-center">
-        <i className="material-symbols-outlined">notifications</i>
+        <i className="material-symbols-outlined">{notificationIcon}</i>
       </Dropdown.Toggle>
       <Dropdown.Menu className="sub-drop sub-drop-large">
         <Card className="shadow-none m-0">
@@ -69,7 +85,28 @@ export const HeaderNotification = () => {
             <div className="header-title bg-primary">
               <h5 className="mb-0 text-white">Thông báo</h5>
             </div>
-            <small className="badge  bg-light text-dark">4</small>
+            <div className="d-flex align-items-center gap-2">
+              {/* <small className="badge  bg-light text-dark">4</small> */}
+              <div>
+                <Dropdown className="bg-soft-primary d-flex justify-content-center align-items-center" as="span">
+                  <Dropdown.Toggle
+                    as={CustomToggle}
+                    variant="material-symbols-outlined cursor-pointer md-18 nav-hide-arrow pe-0 show"
+                  >
+                    <i className="material-symbols-outlined text-white">more_horiz</i>
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu className="dropdown-menu-right">
+                    <Dropdown.Item
+                      onClick={handleClickSeeAllNotification}
+                      className="d-flex align-items-center"
+                      href="#"
+                    >
+                      <i className="material-symbols-outlined md-18 me-1">done</i>Đánh dấu tất cả là đã đọc
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
+            </div>
           </Card.Header>
           <Card.Body className="p-0 scroller border-bottom" style={{ maxHeight: 280 }}>
             {isError ? <span>Error...</span> : null}

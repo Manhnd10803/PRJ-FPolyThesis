@@ -139,6 +139,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/see-notification/{notification}', [NotificationController::class, 'seeNotification']);
     Route::delete('/notification/{notification}', [NotificationController::class, 'deleteNotification']);
     Route::get('/notification/count-not-seen', [NotificationController::class, 'countNotificationNotSeen']);
+    Route::put('/notification/mark-as-read', [NotificationController::class, 'MarkHasBeenRead']);
     //activity 
     Route::post('/activity', [AuthController::class, 'CheckActivityUser']);
     //user

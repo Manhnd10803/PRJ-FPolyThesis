@@ -74,6 +74,7 @@ export const ApiConstants = {
   NOTIFICATION: '/notification',
   NOTIFICATIONS: '/notifications',
   SEE_NOTIFICATION: '/see-notification',
+  SEE_ALL_NOTIFICATION: '/notification/mark-as-read',
   // report
   REPORT: '/report',
 } as const;
