@@ -20,7 +20,7 @@ export const Header = () => {
 
   return (
     <>
-      <div className="iq-top-navbar">
+      <div className="iq-top-navbar" id="header-navbar">
         <Nav expand="lg" variant="light" className="nav navbar navbar-expand-lg navbar-light iq-navbar p-lg-0">
           <Container fluid className="navbar-inner">
             <LogoAndMenu />

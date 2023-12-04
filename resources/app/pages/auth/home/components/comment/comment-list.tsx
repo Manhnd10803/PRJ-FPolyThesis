@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
-import { usePostDetailContext } from '../../contexts';
+import { usePostItemContext } from '../../contexts';
 import { momentVi } from '@/utilities/functions/moment-locale';
 
 export const CommentList = () => {
-  const { comments } = usePostDetailContext();
+  const { comments } = usePostItemContext();
   if (!comments || comments.length === 0) return <></>;
 
   // notdone
