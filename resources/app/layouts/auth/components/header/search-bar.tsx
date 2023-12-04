@@ -1,7 +1,7 @@
 import { SearchService } from '@/apis/services/search.service';
 import { useDebounce } from '@/hooks';
-import { formatDMYCreatedAt } from '@/pages/auth/blog/components/format-date';
 import { formatFullName } from '@/utilities/functions';
+import { momentVi } from '@/utilities/functions/moment-locale';
 import parse from 'html-react-parser';
 import { useEffect, useRef, useState } from 'react';
 import { Form, Image, Modal, Spinner } from 'react-bootstrap';
@@ -157,10 +157,9 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
                             <h4>{item.title}</h4>
                             <div className="d-flex flex-wrap-reverse gap-2">
                               <div className="text-black">{formatFullName(item.user)}</div>{' '}
-                              <span className="text-black">{formatDMYCreatedAt(item?.created_at)}</span>
+                              <span className="text-black">{momentVi(item?.created_at).fromNow()}</span>
                             </div>
                             <div className="p text-black" style={truncateTextStyle}>
-                              {' '}
                               {item?.content ? parse(JSON.parse(item?.content)) : 'Content not available'}
                             </div>
                           </div>
@@ -184,7 +183,7 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
                             <h4>{item.title}</h4>
                             <div className="d-flex flex-wrap-reverse gap-2">
                               <div className="text-black">{formatFullName(item.user)}</div>{' '}
-                              <span className="text-black">{formatDMYCreatedAt(item?.created_at)}</span>
+                              <span className="text-black">{momentVi(item?.created_at).fromNow()}</span>
                             </div>
                             <div className="p text-black" style={truncateTextStyle}>
                               {item?.content ? parse(JSON.parse(item?.content)) : 'Content not available'}

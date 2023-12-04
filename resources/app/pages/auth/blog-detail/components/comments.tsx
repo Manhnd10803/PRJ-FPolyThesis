@@ -3,10 +3,10 @@ import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { useState } from 'react';
 import { Button, Col, Dropdown, Form, Image, Modal, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { formatDateFromCreatedAt } from '../../blog/components/format-date';
 import { compileFunction } from 'vm';
 import { formatFullName } from '@/utilities/functions';
 import { pathName } from '@/routes/path-name';
+import { momentVi } from '@/utilities/functions/moment-locale';
 
 export const Comments = ({ data, postComment, deleteComment, putComment }: any) => {
   const [replyFormsVisible, setReplyFormsVisible] = useState({});
@@ -215,7 +215,7 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
                                       <span>{comment?.replies?.length}</span> comment
                                     </div>
                                   </Link>
-                                  <span>{formatDateFromCreatedAt(comment?.created_at)}</span>
+                                  <span>{momentVi(comment?.created_at).fromNow()}</span>
                                 </div>
                               </div>
                               {replyFormsVisible[comment?.id] && (
@@ -355,7 +355,7 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
                                           <span className="material-symbols-outlined">reply</span>
                                           reply
                                         </Link>
-                                        <span>{formatDateFromCreatedAt(reply?.created_at)}</span>
+                                        <span>{momentVi(reply?.created_at).fromNow()}</span>
                                       </div>
                                     </div>
                                     {replyFormsVisible[reply?.id] && (

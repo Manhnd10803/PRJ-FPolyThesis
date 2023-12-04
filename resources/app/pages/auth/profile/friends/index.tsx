@@ -28,9 +28,6 @@ export const FriendsMyUserPage = ({ isUser }) => {
       queryClient.invalidateQueries(FriendsMyUserQueryKey); // Chỉnh sửa tên query nếu cần
     },
   });
-
-  console.log(friendsMyUser);
-
   const HandleUnFriend = async (id: any) => {
     try {
       const response = await unFriendMutation.mutateAsync(id);
@@ -61,7 +58,7 @@ export const FriendsMyUserPage = ({ isUser }) => {
                                 return (
                                   <Col key={itemFriend.id} sm={3}>
                                     <Card className="mb-3">
-                                      <Link to={`${pathName.PROFILE}/${itemFriend.friend.id}`}>
+                                      <Link to={`${pathName.PROFILE}/${itemFriend?.friend?.id}`}>
                                         <Card.Img
                                           style={{
                                             width: '100%',
@@ -76,7 +73,7 @@ export const FriendsMyUserPage = ({ isUser }) => {
                                         />
                                       </Link>
                                       <Card.Body>
-                                        <Link to={`${pathName.PROFILE}/${itemFriend.friend.id}`}>
+                                        <Link to={`${pathName.PROFILE}/${itemFriend?.friend?.id}`}>
                                           <Card.Title as="h5" className="card-title">
                                             {formatFullName(itemFriend.friend)}
                                           </Card.Title>

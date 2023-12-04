@@ -29,8 +29,6 @@ export const FriendListPage = () => {
     },
   });
 
-  console.log(friendsMyUser);
-
   const HandleUnFriend = async (id: any) => {
     try {
       const response = await unFriendMutation.mutateAsync(id);
@@ -40,6 +38,7 @@ export const FriendListPage = () => {
       throw error;
     }
   };
+  console.log(friendsMyUser);
   return (
     <>
       <div id="content-page" className="content-page">
@@ -67,7 +66,7 @@ export const FriendListPage = () => {
                             return (
                               <Col key={itemFriend.id} sm={3}>
                                 <Card className="mb-3">
-                                  <Link to={`${pathName.PROFILE}/${itemFriend.id}`}>
+                                  <Link to={`${pathName.PROFILE}/${itemFriend?.friend?.id}`}>
                                     <Card.Img
                                       style={{
                                         width: '100%',
@@ -82,7 +81,7 @@ export const FriendListPage = () => {
                                     />
                                   </Link>
                                   <Card.Body>
-                                    <Link to={`${pathName.PROFILE}/${itemFriend.id}`}>
+                                    <Link to={`${pathName.PROFILE}/${itemFriend?.friend?.id}`}>
                                       <Card.Title as="h5" className="card-title">
                                         {formatFullName(itemFriend.friend)}
                                       </Card.Title>

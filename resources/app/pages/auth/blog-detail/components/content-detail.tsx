@@ -17,7 +17,6 @@ import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import ThumbDownOffAltOutlinedIcon from '@mui/icons-material/ThumbDownOffAltOutlined';
 import { useRef, useState } from 'react';
-import { formatDMYCreatedAt, formatDateFromCreatedAt } from '../../blog/components/format-date';
 import { Link } from 'react-router-dom';
 import { formatFullName } from '@/utilities/functions';
 import { pathName } from '@/routes/path-name';
@@ -31,6 +30,7 @@ import { CloudiaryService } from '@/apis/services/cloudinary.service';
 import toast from 'react-hot-toast';
 import { DropZoneField } from '@/components/custom/drop-zone-field';
 import StarsIcon from '@mui/icons-material/Stars';
+import { momentVi } from '@/utilities/functions/moment-locale';
 
 export const ContentBlogDetail = ({ data, commentRef, createLike }: any) => {
   const [likeStatus, setLikeStatus] = useState(data?.user_like?.emotion || null);
@@ -248,7 +248,7 @@ export const ContentBlogDetail = ({ data, commentRef, createLike }: any) => {
               <div className="blog-meta d-flex align-items-center  gap-4 mb-3 position-right-side flex-wrap">
                 <div className="date date  d-flex align-items-center">
                   <i className="material-symbols-outlined pe-2 md-18 text-primary">calendar_month</i> Đă đăng vào{' '}
-                  {formatDMYCreatedAt(data?.blog?.created_at)} {formatDateFromCreatedAt(data?.blog?.created_at)}
+                  {momentVi(data?.blog?.created_at).fromNow()}
                 </div>
                 <ButtonGroup aria-label="Basic example">
                   <Button className="d-flex align-items-center gap-2 " variant="light" onClick={handleLikeClick}>

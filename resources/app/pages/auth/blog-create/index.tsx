@@ -1,4 +1,4 @@
-import { Row, Col, Form, Button, Container, Card } from 'react-bootstrap';
+import { Row, Col, Form, Modal, Nav, Button, Container, Card } from 'react-bootstrap';
 import { styled } from '@mui/material/styles';
 import MuiButton from '@mui/material/Button';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -15,9 +15,8 @@ import { CloudiaryService } from '@/apis/services/cloudinary.service';
 import { pathName } from '@/routes/path-name';
 import { useEffect, useRef, useState } from 'react';
 import { SupperEditor } from '@/components/shared/editor';
-
+import AvatarEditor from 'react-avatar-editor';
 import { $generateHtmlFromNodes } from '@lexical/html';
-
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
   clipPath: 'inset(50%)',
@@ -33,9 +32,11 @@ const VisuallyHiddenInput = styled('input')({
 export const CreateBlogPage = () => {
   const editorRef: any = useRef();
   const contentHtmlRef = useRef<string>();
-
-  const [previewImage, setPreviewImage] = useState('');
-
+  const [modalShow, setModalShow] = useState(false);
+  const [modalShow2, setModalShow2] = useState(false);
+  const [imageCoverPhoto, setImageCoverPhoto] = useState('');
+  const [image, setImage] = useState('');
+  const [file, setFile] = useState('');
   const navigate = useNavigate();
 
   const { data, isLoading: isMajorLoading } = useQuery({
@@ -66,9 +67,8 @@ export const CreateBlogPage = () => {
     if (contentEditor == '"<p class=\\"PlaygroundEditorTheme__paragraph\\"><br></p>"' || contentEditor == '""') {
       return toast.error('Nội dung không được để trống');
     }
-    const file = [data.thumbnail];
-    const imageURL = await CloudiaryService.uploadImages(file, 'blog');
-
+    const fileType = [file];
+    const imageURL = await CloudiaryService.uploadImages(fileType, 'blog');
     const newData = {
       ...data,
       content: contentEditor,
@@ -87,31 +87,122 @@ export const CreateBlogPage = () => {
     }
   };
 
-  const handleFileChange = (event: any) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        setPreviewImage(e.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-  useEffect(() => {
-    const inputElement = document.getElementById('thumbnail');
-    if (inputElement) {
-      inputElement.addEventListener('change', handleFileChange);
-    }
-
-    return () => {
-      if (inputElement) {
-        inputElement.removeEventListener('change', handleFileChange);
+  const UploadImage = (props: any) => {
+    const handleImageUpload = (e: any) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = event => {
+          const image = new Image();
+          image.onload = () => {
+            const base64String: string | null = event.target?.result as string;
+            if (base64String) {
+              setImageCoverPhoto(base64String);
+              setModalShow(false);
+              setModalShow2(true);
+            }
+          };
+          image.src = event.target?.result as string;
+        };
+        reader.readAsDataURL(file);
       }
     };
-  }, [handleFileChange]);
+
+    return (
+      <Modal {...props} size="md" aria-labelledby="contained-modal-title-vcenter" centered animation={false}>
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">Cập nhật Thumbnai</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <input
+            type="file"
+            id="thumbnail"
+            multiple
+            accept="image/png, image/jpg, image/jpeg"
+            onChange={handleImageUpload}
+            style={{ display: 'none' }}
+          />
+          <Nav fill variant="pills" className="stepwizard-row" id="nav-tab" role="tablist">
+            <Nav.Link
+              className="active done btn"
+              id="bank-tab"
+              data-toggle="tab"
+              onClick={() => document.getElementById('thumbnail').click()}
+            >
+              <i className="material-symbols-outlined bg-soft-success text-success">photo_camera</i>
+              <span>Tải ảnh lên</span>
+            </Nav.Link>
+          </Nav>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={props.onHide}>Close</Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  };
+
+  const ResizeImage = (props: any) => {
+    return (
+      <Modal {...props} size="md" aria-labelledby="contained-modal-title-vcenter" centered animation={false}>
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">Chỉnh sửa ảnh ảnh đại diện</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="text-center">
+          <AvatarEditor
+            ref={imageCoverRef}
+            image={imageCoverPhoto}
+            width={250}
+            height={250}
+            border={30}
+            color={[255, 255, 255, 0.6]} // RGBA
+            scale={1.2}
+            rotate={0}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button className="bg-secondary" onClick={props.onHide}>
+            Hủy
+          </Button>
+          <Button onClick={handleSaveImage}>Lưu</Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  };
+
+  const imageCoverRef = useRef(null);
+
+  const dataURLtoFile = (dataurl: any, filename: string) => {
+    const arr = dataurl.split(',');
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    let n = bstr.length;
+    const u8arr = new Uint8Array(n);
+    while (n--) {
+      u8arr[n] = bstr.charCodeAt(n);
+    }
+    return new File([u8arr], filename, { type: mime });
+  };
+
+  const handleSaveImage = () => {
+    const canvas = imageCoverRef?.current?.getImage();
+    const imageBase64 = canvas.toDataURL('image/jpeg'); // Chuyển canvas thành base64
+
+    // Chuyển đổi base64 thành File
+    const file = dataURLtoFile(imageBase64, 'my_cover_photo.jpg');
+    const fileList = [file];
+    const selectedImage = file; // Chọn File cụ thể từ fileList
+    console.log(selectedImage);
+
+    const imageUrl = selectedImage ? URL.createObjectURL(selectedImage) : noImage;
+    setImage(imageUrl);
+    setFile(fileList);
+    setModalShow2(false);
+  };
 
   return (
     <div id="content-page" className="content-page">
+      <UploadImage show={modalShow} onHide={() => setModalShow(false)} />
+      <ResizeImage show={modalShow2} onHide={() => setModalShow2(false)} />
       <Container>
         <Row>
           <Col sm="12" lg="12">
@@ -142,11 +233,11 @@ export const CreateBlogPage = () => {
                   </Form.Group>
                   <Form.Group className="form-group">
                     <Form.Label>Thumbnail:</Form.Label>
-                    {previewImage && (
+                    {image && (
                       <div>
                         <img
                           id="previewImg"
-                          src={previewImage}
+                          src={image}
                           alt="Thumbnail Img"
                           className="mb-2"
                           style={{ maxWidth: '200px', maxHeight: '200px' }}
@@ -154,15 +245,15 @@ export const CreateBlogPage = () => {
                       </div>
                     )}
                     <div>
-                      <MuiButton component="label" variant="contained" startIcon={<CloudUploadIcon />}>
+                      <MuiButton
+                        component="label"
+                        variant="contained"
+                        startIcon={<CloudUploadIcon />}
+                        onClick={() => setModalShow(true)}
+                      >
                         Tải ảnh lên
-                        <VisuallyHiddenInput
-                          type="file"
-                          id="thumbnail"
-                          accept="image/png, image/jpg, image/jpeg"
-                          {...register('thumbnail')}
-                        />
                       </MuiButton>
+
                       <p className="text-danger">{errors?.thumbnail?.message}</p>
                     </div>
                   </Form.Group>

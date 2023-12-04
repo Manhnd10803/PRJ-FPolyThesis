@@ -1,9 +1,9 @@
 import { Row, Col, Image, Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import { icon1, icon2, icon3, icon4 } from './icon';
 import { Card } from '@/components/custom';
-import { formatDateFromCreatedAt } from './format-date';
 import parse from 'html-react-parser';
+// import moment from 'moment';
+import { momentVi } from '@/utilities/functions/moment-locale';
 export const ListCard = ({ data }: any) => {
   const navigate = useNavigate();
   const truncateTextStyle = {
@@ -13,7 +13,6 @@ export const ListCard = ({ data }: any) => {
     WebkitLineClamp: 4,
     WebkitBoxOrient: 'vertical',
   };
-
   // Handle blog detail
   const handleDetailsClick = (id: number) => {
     navigate(`/blog/${id}`);
@@ -39,7 +38,7 @@ export const ListCard = ({ data }: any) => {
                   <Col md="6">
                     <div className="blog-description rounded p-2">
                       <div className="date">
-                        <Link to="#">{formatDateFromCreatedAt(itemblog.blog.created_at)}</Link>
+                        <Link to="#">{momentVi(itemblog?.blog?.created_at).fromNow()}</Link>
                       </div>
                       <h5 className="mb-2">{itemblog.blog.title}</h5>
                       <div style={truncateTextStyle}>{parse(JSON.parse(itemblog.blog.content))}</div>
@@ -50,20 +49,7 @@ export const ListCard = ({ data }: any) => {
                         Read More <i className="material-symbols-outlined md-14 filled">arrow_forward_ios</i>
                       </Button>
                       <div className="group-smile mt-4 d-flex flex-wrap align-items-center justify-content-between position-right-side">
-                        <div className="iq-media-group">
-                          <Link to="#" className="iq-media">
-                            <Image className="img-fluid rounded-circle" src={icon1} alt="" />
-                          </Link>
-                          <Link to="#" className="iq-media">
-                            <Image className="img-fluid rounded-circle" src={icon2} alt="" />
-                          </Link>
-                          <Link to="#" className="iq-media">
-                            <Image className="img-fluid rounded-circle" src={icon3} alt="" />
-                          </Link>
-                          <Link to="#" className="iq-media">
-                            <Image className="img-fluid rounded-circle" src={icon4} alt="" />
-                          </Link>
-                        </div>
+                        <div></div>
                         <div className="d-flex">
                           <div className="like date me-4 d-flex align-items-center">
                             {itemblog.like_counts_by_emotion.total_likes > 0 ? (

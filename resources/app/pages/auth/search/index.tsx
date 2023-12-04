@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { Badge, Card, Col, Container, Nav, Row, Tab } from 'react-bootstrap';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { formatFullName } from '@/utilities/functions';
-import { formatDateFromCreatedAt } from '../blog/components/format-date';
 import parse from 'html-react-parser';
+import { momentVi } from '@/utilities/functions/moment-locale';
 export const SearchPage = () => {
   const truncateTextStyle = {
     overflow: 'hidden',
@@ -172,7 +172,7 @@ export const SearchPage = () => {
                                           <div className="ms-auto d-flex ">
                                             <i className="material-symbols-outlined md-16">schedule</i>
                                             <span className="mx-1">
-                                              <small>{formatDateFromCreatedAt(item?.created_at)}</small>
+                                              <small>{momentVi(item?.created_at).fromNow()}</small>
                                             </span>
                                           </div>
                                         </div>
@@ -264,7 +264,7 @@ export const SearchPage = () => {
                                           <div className="ms-auto d-flex ">
                                             <i className="material-symbols-outlined md-16">schedule</i>
                                             <span className="mx-1">
-                                              <small>{formatDateFromCreatedAt(item?.created_at)}</small>
+                                              <small>{momentVi(item?.created_at).fromNow()}</small>
                                             </span>
                                           </div>
                                         </div>
