@@ -16,5 +16,14 @@ const createBlog = <T>(data: T) => {
     },
   });
 };
+const deleteBlog = async (blogId: number) => {
+  const url = `${ApiConstants.DELETE_BLOG}/${blogId}`;
+  try {
+    const response = await httpRequest.delete(url);
+    return response;
+  } catch (error) {
+    throw new Error('Lỗi khi xóa bài viết');
+  }
+};
 
-export const BlogService = { createBlog, showAllBlog, showDetailBlog };
+export const BlogService = { createBlog, showAllBlog, showDetailBlog, deleteBlog };

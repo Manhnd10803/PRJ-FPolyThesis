@@ -174,13 +174,6 @@ export const DetailQandAPage = () => {
       console.error('Lỗi khi xóa câu hỏi:', error);
     }
   };
-  const handleEdit = () => {
-    try {
-      navigate(`/quests/update/${id}`);
-    } catch (error) {
-      console.error('Lỗi khi sửa câu hỏi:', error);
-    }
-  };
 
   const [contentReport, setContentReport] = useState('');
   const imagesRef = useRef<File[]>([]);

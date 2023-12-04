@@ -100,7 +100,12 @@ export const BlogDetailPage = () => {
               <Loading size={100} textStyle={{ fontSize: '30px' }} textLoading="Đợi chút nè..." />
             ) : (
               <>
-                <ContentBlogDetail data={data} commentRef={commentRef} createLike={createLike} />
+                <ContentBlogDetail
+                  data={data}
+                  commentRef={commentRef}
+                  createLike={createLike}
+                  BlogsQueryKey={BlogsQueryKey}
+                />
                 {data?.blog?.status === 1 && (
                   <>
                     <FormComment postComment={postComment} />
