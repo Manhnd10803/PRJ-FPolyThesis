@@ -115,3 +115,29 @@ export const useDeleteNotification = () => {
     manuallyDeleteNotification,
   };
 };
+
+export const useSeeAllNotification = () => {
+  const queryClient = useQueryClient();
+
+  const manuallySeeAllNotification = () => {
+    NotificationService.seeAllNotification();
+
+    queryClient.setQueryData(queryKeyNotifications, (oldData: InfiniteData<Paginate<INotification>> | undefined) => {
+      if (!oldData) return oldData;
+
+      return produce(oldData, draft => {
+        draft.pages.forEach(page => {
+          page.data.forEach(notification => {
+            if (notification.status === NotificationStatus.UNREAD) {
+              notification.status = NotificationStatus.READ;
+            }
+          });
+        });
+      });
+    });
+  };
+
+  return {
+    manuallySeeAllNotification,
+  };
+};
