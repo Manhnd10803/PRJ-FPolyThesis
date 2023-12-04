@@ -86,7 +86,7 @@ export const HeaderNotification = () => {
               <h5 className="mb-0 text-white">Thông báo</h5>
             </div>
             <div className="d-flex align-items-center gap-2">
-              {/* <small className="badge  bg-light text-dark">4</small> */}
+              <small className="badge  bg-light text-dark">4</small>
               <div>
                 <Dropdown className="bg-soft-primary d-flex justify-content-center align-items-center" as="span">
                   <Dropdown.Toggle

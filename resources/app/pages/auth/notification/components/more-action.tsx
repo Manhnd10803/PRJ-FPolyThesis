@@ -4,8 +4,9 @@ import { Link } from 'react-router-dom';
 type MoreActionProps = {
   onDetail: () => void;
   onDelete: () => void;
+  onSee: () => void;
 };
-export const MoreAction = ({ onDetail, onDelete }: MoreActionProps) => {
+export const MoreAction = ({ onDetail, onDelete, onSee }: MoreActionProps) => {
   return (
     <div className="card-header-toolbar d-flex align-items-center justify-content-center">
       <Dropdown>
@@ -15,11 +16,14 @@ export const MoreAction = ({ onDetail, onDelete }: MoreActionProps) => {
           </Dropdown.Toggle>
         </Link>
         <Dropdown.Menu className="dropdown-menu-right">
-          <Dropdown.Item href="#" onClick={onDetail}>
-            <i className="ri-eye-fill me-2"></i>Xem chi tiết
+          <Dropdown.Item href="#" onClick={onSee} className="d-flex align-items-center gap-1">
+            <span className="material-symbols-outlined">done</span>Đánh dấu là đã đọc
           </Dropdown.Item>
-          <Dropdown.Item href="#" onClick={onDelete}>
-            <i className="ri-delete-bin-6-fill me-2"></i>Xoá thông báo
+          <Dropdown.Item href="#" onClick={onDetail} className="d-flex align-items-center gap-1">
+            <span className="material-symbols-outlined">visibility</span>Xem chi tiết
+          </Dropdown.Item>
+          <Dropdown.Item href="#" onClick={onDelete} className="d-flex align-items-center gap-1">
+            <span className="material-symbols-outlined">delete</span>Xoá thông báo
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
