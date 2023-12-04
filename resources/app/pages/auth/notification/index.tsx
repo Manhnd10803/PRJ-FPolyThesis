@@ -1,13 +1,18 @@
 import { Loading } from '@/components/shared/loading';
-import useInfiniteNotifications, { useDeleteNotification, useSeeNotification } from '@/hooks/useNotificationQuery';
+import useInfiniteNotifications, {
+  useDeleteNotification,
+  useSeeAllNotification,
+  useSeeNotification,
+} from '@/hooks/useNotificationQuery';
 import { INotification, NotificationStatus } from '@/models/notifications';
 import { formatNotificationLink, getColorClassIconNotification, mappingNotificationIcon } from '@/utilities/functions';
 import { useEffect } from 'react';
-import { Card, Col, Container, Row } from 'react-bootstrap';
+import { Card, Col, Container, Dropdown, Row } from 'react-bootstrap';
 import { useInView } from 'react-intersection-observer';
 import { Link, useNavigate } from 'react-router-dom';
 import { MoreAction } from './components/more-action';
 import { momentVi } from '@/utilities/functions/moment-locale';
+import { CustomToggle } from '@/components/custom';
 
 type NotificationItemProps = {
   item: INotification;
@@ -24,6 +29,12 @@ const NotificationItem = ({ item }: NotificationItemProps) => {
       manuallySeeNotification(item.id);
     }
     navigate(formatNotificationLink(item));
+  };
+
+  const handleClickSeeNotification = () => {
+    if (item.status === NotificationStatus.UNREAD) {
+      manuallySeeNotification(item.id);
+    }
   };
 
   // func
@@ -71,7 +82,11 @@ const NotificationItem = ({ item }: NotificationItemProps) => {
                         e.stopPropagation();
                       }}
                     >
-                      <MoreAction onDetail={handleClickNotification} onDelete={handleDeleteNotification} />
+                      <MoreAction
+                        onDetail={handleClickNotification}
+                        onDelete={handleDeleteNotification}
+                        onSee={handleClickSeeNotification}
+                      />
                     </div>
                   </div>
                 </div>
@@ -89,6 +104,12 @@ export const NotificationPage = () => {
 
   const { ref: endRef, inView: endInView } = useInView();
 
+  const { manuallySeeAllNotification } = useSeeAllNotification();
+
+  const handleClickSeeAllNotification = () => {
+    manuallySeeAllNotification();
+  };
+
   // effect
   useEffect(() => {
     if (endInView && hasNextPage && !isFetchingNextPage) {
@@ -105,8 +126,27 @@ export const NotificationPage = () => {
       <div id="content-page" className="content-page">
         <Container>
           <Row>
-            <Col sm="12">
-              <h4 className="card-title mb-3">Thông báo</h4>
+            <Col sm="12" className="d-flex justify-content-between">
+              <h3 className="card-title mb-3">Thông báo</h3>
+              <div>
+                <Dropdown className="d-flex justify-content-center align-items-center" as="span">
+                  <Dropdown.Toggle
+                    as={CustomToggle}
+                    variant="material-symbols-outlined cursor-pointer md-18 nav-hide-arrow pe-0 show"
+                  >
+                    <i className="material-symbols-outlined text-dark fs-2">more_horiz</i>
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu className="dropdown-menu-right">
+                    <Dropdown.Item
+                      onClick={handleClickSeeAllNotification}
+                      className="d-flex align-items-center"
+                      href="#"
+                    >
+                      <i className="material-symbols-outlined md-18 me-1">done</i>Đánh dấu tất cả là đã đọc
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
             </Col>
             <Col sm="12">
               {isLoading && <Loading size={100} textStyle={{ fontSize: '30px' }} />}
