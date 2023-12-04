@@ -1,11 +1,11 @@
-import { Row, Col, Image, Button } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
+import { Row, Col, Image } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { Card } from '@/components/custom';
 import parse from 'html-react-parser';
 // import moment from 'moment';
 import { momentVi } from '@/utilities/functions/moment-locale';
+import { pathName } from '@/routes/path-name';
 export const ListCard = ({ data }: any) => {
-  const navigate = useNavigate();
   const truncateTextStyle = {
     overflow: 'hidden',
     textOverflow: 'ellipsis',
@@ -14,10 +14,6 @@ export const ListCard = ({ data }: any) => {
     WebkitBoxOrient: 'vertical',
   };
   // Handle blog detail
-  const handleDetailsClick = (id: number) => {
-    navigate(`/blog/${id}`);
-    console.log(`View details of user with ID ${id}`);
-  };
 
   return (
     <Row>
@@ -40,14 +36,11 @@ export const ListCard = ({ data }: any) => {
                       <div className="date">
                         <Link to="#">{momentVi(itemblog?.blog?.created_at).fromNow()}</Link>
                       </div>
-                      <h5 className="mb-2">{itemblog.blog.title}</h5>
-                      <div style={truncateTextStyle}>{parse(JSON.parse(itemblog.blog.content))}</div>
-                      <Button
-                        onClick={() => handleDetailsClick(itemblog.blog.id)}
-                        className="d-flex align-items-center"
-                      >
-                        Read More <i className="material-symbols-outlined md-14 filled">arrow_forward_ios</i>
-                      </Button>
+                      <Link to={`${pathName.BLOG}/${itemblog.blog.id}`} style={{ textDecoration: 'none' }}>
+                        <h5 className="mb-2">{itemblog.blog.title}</h5>
+                        <h6 style={truncateTextStyle}>{parse(JSON.parse(itemblog.blog.content))}</h6>
+                      </Link>
+
                       <div className="group-smile mt-4 d-flex flex-wrap align-items-center justify-content-between position-right-side">
                         <div></div>
                         <div className="d-flex">
