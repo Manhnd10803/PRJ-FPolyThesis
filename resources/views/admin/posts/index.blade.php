@@ -43,9 +43,10 @@
                         <thead>
                             <tr>
                                 <th>STT</th>
-                                <th>ID</th>
-                                <th>Tên người dùng</th>
-                                <th>Nội dung</th>
+                                <th>Người tạo</th>
+                                <th>Số lượt xem</th>
+                                <th>Số bình luận</th>
+                                <th>Ngày tạo</th>
                                 <th>Thao tác</th>
                             </tr>
                         </thead>
@@ -53,7 +54,6 @@
                             @foreach ($posts as $index => $post)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
-                                    <td>{{ $post->id }}</td>
                                     <td>
                                         @if ($post->user && $post->user->username)
                                             {{ $post->user->username }}
@@ -61,16 +61,21 @@
                                             Chưa có
                                         @endif
                                     </td>
-                                    <td>{{ $post->content }}</td>
+                                    <td>{{ $post->views }}</td>
+                                    <td>{{ $post->comments->count() }}<i class="fa fa-fw fa-comments-o"></i></td>
+                                    <td>{{ $post->created_at }}</td>
                                     <td>
                                         <a href="{{ route('admin.posts.show', $post->id) }}" class="btn btn-info btn-sm"><i
                                                 class="fa fa-eye"></i></a>
-                                        @if ($post->status == config('default.post.status.approved'))
+                                        {{-- @if ($post->status == config('default.post.status.approved'))
                                             <button type="submit" class="btn btn-danger btn-sm" data-toggle="modal"
                                                 data-target="#modal-danger-{{ $post->id }}"><i
                                                     class="fa fa-trash-o"></i></button>
-                                        @endif
-
+                                        @endif --}}
+                                        @if ($isSPAdmin || in_array('admin.posts.destroy', $userPermission))
+                                        <button type="submit" class="btn btn-danger btn-sm" data-toggle="modal"
+                                                data-target="#modal-danger-{{ $post->id }}"><i
+                                                    class="fa fa-trash-o"></i></button>
                                         <div class="modal modal-danger fade" id="modal-danger-{{ $post->id }}">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
@@ -98,6 +103,8 @@
                                             </div>
                                             <!-- /.modal-dialog -->
                                         </div>
+                                        @endif
+                                        
                                     </td>
                                 </tr>
                             @endforeach

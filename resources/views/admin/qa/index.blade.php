@@ -54,11 +54,11 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Tiêu đề</th>
-                                <th>Nội dung</th>
-                                <th>Tên người dùng</th>
-                                <th>Mã chuyên ngành</th>
+                                <th>Người tạo</th>
+                                <th>Chuyên ngành</th>
                                 <th>Hashtag</th>
                                 <th>Lượt xem</th>
+                                <th>Số bình luận</th>
                                 <th>Thao tác</th>
                             </tr>
                         </thead>
@@ -67,7 +67,6 @@
                                 <tr>
                                     <td>{{ $qa->id }}</td>
                                     <td>{{ $qa->title }}</td>
-                                    <td>{{ $qa->content }}</td>
                                     <td>
                                         @if ($qa->user && $qa->user->username)
                                             {{ $qa->user->username }}
@@ -84,6 +83,7 @@
                                     </td>
                                     <td>{{ $qa->hashtag }}</td>
                                     <td>{{ $qa->views }}</td>
+                                    <td>{{ $qa->comments->count() }}<i class="fa fa-fw fa-comments-o"></i></td>
                                     <td>
                                         <a href="{{ route('admin.qa.show', $qa->id) }}" class="btn btn-info btn-sm"><i
                                                 class="fa fa-eye"></i></a>

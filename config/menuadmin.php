@@ -197,12 +197,24 @@ return [
         'order' => 1,
         'route' => 'admin.report.index',
         'permission' => 'admin.report.index',
+        'sub_permission' => [
+          [
+            'name' => 'Xóa',
+            'permission' => 'admin.reports.delete'
+          ],
+        ],
         'text' => 'Danh sách ( Đã duyệt )'
       ],
       'list_reports_pending' => [
         'order' => 2,
         'route' => 'admin.report.pending',
         'permission' => 'admin.report.pending',
+        'sub_permission' => [
+          [
+            'name' => 'Xóa',
+            'permission' => 'admin.reports.delete'
+          ],
+        ],
         'count1' => true,
         'text' => 'Danh sách ( Chờ duyệt )',
       ],

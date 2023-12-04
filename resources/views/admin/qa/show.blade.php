@@ -42,7 +42,7 @@
                         </h3>
                         <div class="timeline-body ">
                             <h2>{{ $qa->title }}</h2>
-                            {{ $qa->content }}
+                            {!! str_replace(['"', "'"], '', $qa->content) !!}
                         </div>
                     </div>
                 </li>
