@@ -1,8 +1,10 @@
 import { z } from 'zod';
 
 const containsNumberOrSymbol = (value: any) => {
-  // Kiểm tra xem chuỗi có chứa ký tự hoặc số không
   return !/[0-9!@#$%^&*()_+|~=`{}\[\]:";'<>?,./\\]/.test(value);
+};
+const noSpaces = (value: any) => {
+  return !/\s{2,}/.test(value); // Check if the string contains only non-whitespace characters
 };
 export const signInSchema = z.object({
   email: z.string().min(1, 'Email is required').email(),
@@ -15,18 +17,33 @@ export const signUpSchema = z
       .string()
       .min(1, 'Tên không được để trống')
       .refine(value => containsNumberOrSymbol(value), {
-        message: 'Tên không được chứa ký tự hoặc số',
+        message: 'Không chứa ký tự hoặc số',
+      })
+      .refine(value => noSpaces(value), {
+        message: 'Không được chứa khoảng trắng',
       }),
     last_name: z
       .string()
       .min(1, 'Họ không được để trống')
       .refine(value => containsNumberOrSymbol(value), {
-        message: 'Họ không được chứa ký tự hoặc số',
+        message: 'Không chứa ký tự hoặc số',
+      })
+      .refine(value => noSpaces(value), {
+        message: 'Không chứa khoảng trắng',
       }),
-    email: z.string().min(1, 'Bạn chưa nhập địa chỉ email').email('Bạn chưa nhập đúng email'),
+    email: z.string().min(1, 'Email không được để trống').email('Bạn chưa nhập đúng email'),
     major_id: z.string().min(1, 'Chuyên ngành không được để trống'),
-    password: z.string().min(1, 'Không được để trống').min(8, 'Mật khẩu đủ 8 kí tự'),
-    confirmPassword: z.string().min(1, 'Không được để trống'),
+    password: z
+      .string()
+      .min(1, 'Mật khẩu không được để trống')
+      .min(8, { message: 'Ít nhất 8 ký tự' })
+      .refine(value => /^[^\s]+$/.test(value), {
+        message: 'Không được chứa khoảng trắng',
+      })
+      .refine(value => /[A-Za-z]/.test(value) && /\d/.test(value), {
+        message: 'Chứa ít nhất một chữ cái và một số',
+      }),
+    confirmPassword: z.string(),
   })
   .refine(data => data.password === data.confirmPassword, {
     message: 'Không khớp mật khẩu',
@@ -34,7 +51,7 @@ export const signUpSchema = z
   });
 
 export const verifyRegisterSchema = z.object({
-  verification_code: z.string().min(1, 'Code is required'),
+  verification_code: z.string().min(1, 'Bạn cần nhập mã'),
   email: z.string().nullable(),
 });
 
@@ -45,7 +62,16 @@ export const forgotPasswordSchema = z.object({
 export const confirmPasswordSchema = z
   .object({
     email: z.string().min(1, 'Bạn chưa nhập địa chỉ email').email(),
-    password: z.string().min(1, 'Bạn chưa nhập mật khẩu').min(8, 'Mật khẩu phải có ít nhất 8 ký tự'),
+    password: z
+      .string()
+      .min(1, 'Mật khẩu không được để trống')
+      .min(8, { message: 'Ít nhất 8 ký tự' })
+      .refine(value => /^[^\s]+$/.test(value), {
+        message: 'Không được chứa khoảng trắng',
+      })
+      .refine(value => /[A-Za-z]/.test(value) && /\d/.test(value), {
+        message: 'Chứa ít nhất một chữ cái và một số',
+      }),
     confirmPassword: z.string().min(1, 'Bạn chưa xác nhận mật khẩu'),
   })
   .refine(data => data.password === data.confirmPassword, {
@@ -62,9 +88,13 @@ export const resetPasswordSchema = z.object({
     }),
   password: z
     .string()
-    .min(8, { message: 'Mật khẩu phải có ít nhất 8 ký tự' })
+    .min(1, 'Mật khẩu không được để trống')
+    .min(8, { message: 'Ít nhất 8 ký tự' })
+    .refine(value => /^[^\s]+$/.test(value), {
+      message: 'Không được chứa khoảng trắng',
+    })
     .refine(value => /[A-Za-z]/.test(value) && /\d/.test(value), {
-      message: 'Mật khẩu phải chứa ít nhất một chữ cái và một số',
+      message: 'Chứa ít nhất một chữ cái và một số',
     }),
 });
 
@@ -78,9 +108,13 @@ export const resetNewPasswordSchema = z
       }),
     password: z
       .string()
-      .min(8, { message: 'Mật khẩu phải có ít nhất 8 ký tự' })
+      .min(1, 'Mật khẩu không được để trống')
+      .min(8, { message: 'Ít nhất 8 ký tự' })
+      .refine(value => /^[^\s]+$/.test(value), {
+        message: 'Không được chứa khoảng trắng',
+      })
       .refine(value => /[A-Za-z]/.test(value) && /\d/.test(value), {
-        message: 'Mật khẩu phải chứa ít nhất một chữ cái và một số',
+        message: 'Chứa ít nhất một chữ cái và một số',
       }),
     confirmPassword: z.string().min(1, 'Bạn chưa xác nhận mật khẩu'),
   })

@@ -34,6 +34,7 @@ import { BlogService } from '@/apis/services/blog.service';
 
 export const ContentBlogDetail = ({ data, commentRef, createLike, BlogsQueryKey }: any) => {
   const [likeStatus, setLikeStatus] = useState(data?.user_like?.emotion || null);
+  const [isLoadingReport, setIsLoadingReport] = useState(false);
   const queryClient = useQueryClient();
   const [contentReport, setContentReport] = useState('');
   const imagesRef = useRef<File[]>([]);
@@ -79,23 +80,19 @@ export const ContentBlogDetail = ({ data, commentRef, createLike, BlogsQueryKey 
   const idUser = StorageFunc.getUserId();
   const postReport = async (idfriend, title, idblog) => {
     try {
-      if (imagesRef.current.length && contentReport) {
-        const imageURL = await CloudiaryService.uploadImages(imagesRef.current, 'blog');
-        const formData = {
-          reporter_id: idUser,
-          reported_id: idfriend,
-          report_title: title,
-          report_content: contentReport,
-          report_type: 'blog',
-          report_type_id: idblog,
-          report_image: imageURL[0],
-        };
-        await createReportMutation.mutateAsync(formData);
-        handleClose();
-        toast.success('Bạn đã thực hiện báo cáo thành công');
-      } else {
-        toast.error('Bạn cần nhập đủ dữ liệu');
-      }
+      setIsLoadingReport(true);
+      const imageURL = await CloudiaryService.uploadImages(imagesRef.current, 'blog');
+      const formData = {
+        reporter_id: idUser,
+        reported_id: idfriend,
+        report_title: title,
+        report_content: contentReport,
+        report_type: 'blog',
+        report_type_id: idblog,
+        report_image: imageURL[0] || '',
+      };
+      await createReportMutation.mutateAsync(formData);
+      handleClose();
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -259,16 +256,9 @@ export const ContentBlogDetail = ({ data, commentRef, createLike, BlogsQueryKey 
                     <CustomModal show={showModal} onHide={handleClose} title={modalTitle}>
                       <div className="mb-3">
                         <label htmlFor="fileInput" className="form-label">
-                          Bạn hãy đính kèm hình ảnh
+                          Bạn có thể đính kèm hình ảnh (tối đa 1 ảnh)
                         </label>
-                        {/* <input type="file" className="form-control" id="fileInput" onChange={handleFileChange} /> */}
-
-                        <DropZoneField
-                          // onCloseAndRemoveAll={() => setIsHaveImage(false)}
-                          onChangeFiles={handleChangeFiles}
-                          maxFiles={1}
-                          accept={{ 'image/*': [] }}
-                        />
+                        <DropZoneField onChangeFiles={handleChangeFiles} maxFiles={1} accept={{ 'image/*': [] }} />
                       </div>
                       <div className="mb-3">
                         <label htmlFor="commentTextarea" className="form-label">
@@ -287,8 +277,9 @@ export const ContentBlogDetail = ({ data, commentRef, createLike, BlogsQueryKey 
                         <button
                           className="btn btn-info"
                           onClick={() => postReport(data?.blog?.user?.id, modalTitle, data?.blog?.id)}
+                          disabled={isLoadingReport}
                         >
-                          Báo cáo
+                          {isLoadingReport ? 'Đang báo cáo...' : 'Báo cáo'}
                         </button>
                       </Modal.Footer>
                     </CustomModal>
