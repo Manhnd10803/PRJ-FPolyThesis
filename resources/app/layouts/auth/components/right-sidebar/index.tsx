@@ -1,6 +1,5 @@
 import { FriendService } from '@/apis/services/friend.service';
 import { pathName } from '@/routes/path-name';
-import { formatFullName } from '@/utilities/functions';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { useQuery } from '@tanstack/react-query';
 import { Card, Image } from 'react-bootstrap';
@@ -53,8 +52,8 @@ export const RightSidebar = () => {
                                 />
                               </div>
                               <div className="ms-3">
-                                <h6 className="mb-0">{formatFullName(itemfriend?.friend)}</h6>
-                                <p className="mb-0">Just Now</p>
+                                <h6 className="mb-0">{itemfriend?.friend?.username}</h6>
+                                <p className="mb-0">Đang hoạt động</p>
                               </div>
                             </div>
                           </a>

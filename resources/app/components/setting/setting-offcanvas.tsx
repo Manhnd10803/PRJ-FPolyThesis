@@ -43,7 +43,7 @@ export const SettingOffCanvas = memo((props: SettingOffCanvasProps) => {
   return (
     <Fragment>
       <div
-        className="btn btn-fixed-end btn-danger btn-icon btn-setting"
+        className="bg-primary text-white btn btn-fixed-end btn-icon btn-setting"
         onClick={e => {
           e.stopPropagation();
           setShow(true);

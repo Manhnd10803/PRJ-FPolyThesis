@@ -10,7 +10,6 @@ import { Link, useNavigate } from 'react-router-dom';
 export const UserDropdown = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const fullName = StorageFunc.getFullName();
   const userInfo = StorageFunc.getUser();
 
   // func
@@ -32,27 +31,27 @@ export const UserDropdown = () => {
     return [
       {
         icon: 'account_circle',
-        title: 'My Profile',
+        title: 'Trang cá nhân',
         link: pathName.PROFILE,
       },
       {
         icon: 'edit_note',
-        title: 'Edit Profile',
+        title: 'Chỉnh sửa trang cá nhân',
         link: pathName.EDIT_PROFILE,
       },
       {
         icon: 'manage_accounts',
-        title: 'Account settings',
+        title: 'Cài đặt tài khoản',
         link: pathName.ACCOUNT_SETTING,
       },
       {
         icon: 'lock',
-        title: 'Privacy & Security',
+        title: 'Điều khoản và bảo mật',
         link: pathName.PRIVACY_SECURITY,
       },
       {
         icon: 'login',
-        title: 'Sign out',
+        title: 'Đăng xuất',
         // Muốn dùng sự kiện thì link phải là #
         link: '#',
         onClick: handleLogout,
@@ -64,22 +63,22 @@ export const UserDropdown = () => {
     return [
       {
         icon: 'circle',
-        title: 'Online',
+        title: 'Đang hoạt động',
         classColor: 'text-success',
       },
       {
         icon: 'circle',
-        title: 'Away',
+        title: 'Bận',
         classColor: 'text-warning',
       },
       {
         icon: 'circle',
-        title: 'Disconnected',
+        title: 'Ngoại tuyến',
         classColor: 'text-danger',
       },
       {
         icon: 'circle',
-        title: 'Invisible',
+        title: 'Ẩn',
         classColor: 'text-gray',
       },
     ];
@@ -95,14 +94,14 @@ export const UserDropdown = () => {
       <Dropdown.Toggle href="#" as={CustomToggle} variant="d-flex align-items-center">
         <Image src={userInfo?.avatar} className="img-fluid rounded-circle me-3" alt="user" loading="lazy" />
         <div className="caption d-none d-lg-block">
-          <h6 className="mb-0 line-height">{fullName}</h6>
+          <h6 className="mb-0 line-height">{userInfo?.username}</h6>
         </div>
       </Dropdown.Toggle>
       <Dropdown.Menu className="sub-drop caption-menu">
         <Card className="shadow-none m-0">
           <Card.Header>
             <div className="header-title">
-              <h5 className="mb-0 ">Hi - {fullName}</h5>
+              <h5 className="mb-0 ">Chào 👋 - {userInfo?.username}</h5>
             </div>
           </Card.Header>
 
@@ -118,7 +117,7 @@ export const UserDropdown = () => {
               );
             })}
             <div className=" iq-sub-card">
-              <h5>Chat Settings</h5>
+              <h5>Cài đặt trạng thái</h5>
             </div>
 
             {listActivity.map((item, index) => {
