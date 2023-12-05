@@ -71,6 +71,7 @@ return [
             'reply_post' => 'reply_post',
             'reply_blog' => 'reply_blog',
             'reply_qa' => 'reply_qa',
+            'message' => 'message',
         ],
         'status' => [
             'not_seen' => 0,

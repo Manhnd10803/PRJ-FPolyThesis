@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Events\PrivateMessageSent;
+use App\Events\ReceiveNotification;
+use App\Models\Notification;
 use App\Models\PrivateMessage;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -216,6 +219,28 @@ class PrivateMessagesController extends Controller
             $messageWithSender->sender->majors_name = $messageWithSender->sender->major->majors_name;
             unset($messageWithSender->sender->major);
             broadcast(new PrivateMessageSent($messageWithSender))->toOthers();
+            //Thông báo
+            $content = Auth::user()->username . ' đã gửi cho bạn tin nhắn mới.';
+            $notification = Notification::where('notification_type', config('default.notification.notification_type.message'))->where('sender', Auth::id())->where('recipient', $receiverId)->where('objet_id', Auth::id())->orderByDesc('id')->first();
+            if (!is_null($notification)) {
+                //Update thông báo
+                $notification->update([
+                    'content' => $content,
+                    'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
+                    'status' => config('default.notification.status.not_seen'),
+                ]);
+            } else {
+                $notification = Notification::create([
+                    'sender' => Auth::id(),
+                    'recipient' => $receiverId,
+                    'content' => $content,
+                    'notification_type' => config('default.notification.notification_type.message'),
+                    'status' => config('default.notification.status.not_seen'),
+                    'objet_id' => Auth::id(),
+                ]);
+            }
+            $avatar_sender = Auth::user()->avatar;
+            broadcast(new ReceiveNotification($notification, $avatar_sender))->toOthers();
             return response()->json(['message' => 'Tin nhắn đã được gửi', 'data' => $message->load('sender')], 200);
         } catch (\Exception $e) {
             DB::rollBack();

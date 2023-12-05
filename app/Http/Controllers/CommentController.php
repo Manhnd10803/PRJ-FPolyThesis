@@ -150,6 +150,7 @@ class CommentController extends Controller
                             $notification->update([
                                 'content' => $message,
                                 'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
+                                'status' => config('default.notification.status.not_seen'),
                             ]);
                             $avatar_sender = Auth::user()->avatar;
                             broadcast(new ReceiveNotification($notification, $avatar_sender))->toOthers();
@@ -172,6 +173,7 @@ class CommentController extends Controller
                             $notification->update([
                                 'content' => $message,
                                 'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
+                                'status' => config('default.notification.status.not_seen'),
                             ]);
                             $avatar_sender = Auth::user()->avatar;
                             broadcast(new ReceiveNotification($notification, $avatar_sender))->toOthers();
@@ -240,6 +242,7 @@ class CommentController extends Controller
                             $notification->update([
                                 'content' => $message,
                                 'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
+                                'status' => config('default.notification.status.not_seen'),
                             ]);
                             $avatar_sender = Auth::user()->avatar;
                             broadcast(new ReceiveNotification($notification, $avatar_sender))->toOthers();
@@ -262,6 +265,7 @@ class CommentController extends Controller
                             $notification->update([
                                 'content' => $message,
                                 'updated_at' => Carbon::now('Asia/Ho_Chi_Minh'),
+                                'status' => config('default.notification.status.not_seen'),
                             ]);
                             $avatar_sender = Auth::user()->avatar;
                             broadcast(new ReceiveNotification($notification, $avatar_sender))->toOthers();
