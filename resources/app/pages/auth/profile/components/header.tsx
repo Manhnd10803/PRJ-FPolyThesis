@@ -51,7 +51,7 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
   const queryClient = useQueryClient();
   const [contentReport, setContentReport] = useState('');
   const imagesRef = useRef<File[]>([]);
-
+  const [isLoadingReport, setIsLoadingReport] = useState(false);
   const [showModalReport, setShowModalReport] = useState(false);
   const handleCloseModalReport = () => setShowModalReport(false);
   const handleShowModalReport = () => setShowModalReport(true);
@@ -68,12 +68,12 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
     setShowModal(true);
     handleCloseModalReport();
   };
-
   const listItems = [
     { title: 'Giả mạo người khác', onClick: () => handleShow('Giả mạo người khác') },
     { title: 'Tài khoản giả mạo', onClick: () => handleShow('Tài khoản giả mạo') },
     { title: 'Tên giả mạo', onClick: () => handleShow('Tên giả mạo') },
     { title: 'Đăng nội dung không khù hợp', onClick: () => handleShow('Đăng nội dung không khù hợp') },
+    { title: 'Quấy rầy', onClick: () => handleShow('Quấy rầy') },
     { title: 'Vấn đề khác', onClick: () => handleShow('Vấn đề khác') },
   ];
   const handleChangeFiles = (files: File[]) => {
@@ -92,23 +92,19 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
   const idUserStorage = StorageFunc.getUserId();
   const postReport = async (idfriend, title, idUserReport) => {
     try {
-      if (imagesRef.current.length && contentReport) {
-        const imageURL = await CloudiaryService.uploadImages(imagesRef.current, 'blog');
-        const formData = {
-          reporter_id: idUserStorage,
-          reported_id: idfriend,
-          report_title: title,
-          report_content: contentReport,
-          report_type: 'user',
-          report_type_id: idUserReport,
-          report_image: imageURL[0],
-        };
-        await createReportMutation.mutateAsync(formData);
-        handleClose();
-        toast.success('Bạn đã thực hiện báo cáo thành công');
-      } else {
-        toast.error('Bạn cần nhập đủ dữ liệu');
-      }
+      setIsLoadingReport(true);
+      const imageURL = await CloudiaryService.uploadImages(imagesRef.current, 'blog');
+      const formData = {
+        reporter_id: idUserStorage,
+        reported_id: idfriend,
+        report_title: title,
+        report_content: contentReport,
+        report_type: 'user',
+        report_type_id: idUserReport,
+        report_image: imageURL[0],
+      };
+      await createReportMutation.mutateAsync(formData);
+      handleClose();
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -477,16 +473,9 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
                         <CustomModal show={showModal} onHide={handleClose} title={modalTitle}>
                           <div className="mb-3">
                             <label htmlFor="fileInput" className="form-label">
-                              Bạn hãy đính kèm hình ảnh
+                              Bạn có thể đính kèm hình ảnh (tối đa 1 ảnh)
                             </label>
-                            {/* <input type="file" className="form-control" id="fileInput" onChange={handleFileChange} /> */}
-
-                            <DropZoneField
-                              // onCloseAndRemoveAll={() => setIsHaveImage(false)}
-                              onChangeFiles={handleChangeFiles}
-                              maxFiles={1}
-                              accept={{ 'image/*': [] }}
-                            />
+                            <DropZoneField onChangeFiles={handleChangeFiles} maxFiles={1} accept={{ 'image/*': [] }} />
                           </div>
                           <div className="mb-3">
                             <label htmlFor="commentTextarea" className="form-label">
@@ -502,8 +491,12 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
                             ></textarea>
                           </div>
                           <Modal.Footer>
-                            <button className="btn btn-info" onClick={() => postReport(idUser, modalTitle, idUser)}>
-                              Báo cáo
+                            <button
+                              className="btn btn-info"
+                              onClick={() => postReport(idUser, modalTitle, idUser)}
+                              disabled={isLoadingReport}
+                            >
+                              {isLoadingReport ? 'Đang báo cáo...' : 'Báo cáo'}
                             </button>
                           </Modal.Footer>
                         </CustomModal>
