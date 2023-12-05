@@ -58,7 +58,7 @@ export const FriendRequest = () => {
             <div className="header-title">
               <h5 className="mb-0 text-white">Lời mời kết bạn</h5>
             </div>
-            <small className="badge  bg-light text-dark ">{friendRequest?.length}</small>
+            <small className="badge bg-white text-primary ">{friendRequest?.length}</small>
           </Card.Header>
           <Card.Body className="p-0">
             {isLoadingRequestFriend ? (

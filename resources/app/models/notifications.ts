@@ -47,10 +47,10 @@ export const NotificationType = {
 export type NotificationTypeUnion = (typeof NotificationType)[keyof typeof NotificationType];
 
 export const NotificationIconColor = {
-  favorite_border: 'text-info',
-  chat_bubble_outline: 'text-warning',
+  favorite_border: 'text-primary',
+  chat_bubble_outline: 'text-info',
   group_add: 'text-success',
-  question_answer: 'text-danger',
+  question_answer: 'text-info',
 } as const;
 
 export const NotificationIconClass = {
