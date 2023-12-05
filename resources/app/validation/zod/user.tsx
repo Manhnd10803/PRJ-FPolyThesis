@@ -8,22 +8,29 @@ const isVietnamesePhoneNumber = (value: string): boolean => {
   return vietnamesePhoneNumberRegex.test(value);
 };
 
+const noSpaces = (value: any) => {
+  return !/\s{2,}/.test(value); // Check if the string contains only non-whitespace characters
+};
 export const ValidateUserUpdateSchema = z.object({
   first_name: z
     .string()
     .min(1, 'Tên không được để trống')
     .refine(value => containsNumberOrSymbol(value), {
-      message: 'Tên không được chứa ký tự hoặc số',
+      message: 'Không chứa ký tự hoặc số',
+    })
+    .refine(value => noSpaces(value), {
+      message: 'Không được chứa khoảng trắng',
     }),
   last_name: z
     .string()
     .min(1, 'Họ không được để trống')
     .refine(value => containsNumberOrSymbol(value), {
-      message: 'Họ không được chứa ký tự hoặc số',
+      message: 'Không chứa ký tự hoặc số',
+    })
+    .refine(value => noSpaces(value), {
+      message: 'Không chứa khoảng trắng',
     }),
   major_id: z.string().min(1, 'Chuyên ngành không được để trống'),
-});
-export const ValidatePhoneSchema = z.object({
   phone: z
     .string()
     .min(1, 'Số điện thoại không được để trống')
