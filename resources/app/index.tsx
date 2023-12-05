@@ -2,14 +2,14 @@ import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouteObject, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import App from './App';
-import { RootAuthRouter, RootUnAuthRouter, RootChatRouter } from './routes';
+import { RootAuthRouter, RootUnAuthRouter, RootChatRouter, OthersRouter } from './routes';
 import { AppProvider } from './AppProvider';
 import { Toaster } from 'react-hot-toast';
 import { ErrorBoundary } from 'react-error-boundary';
 import { Fallback } from './Fallback';
 
 //Define all routes here
-const routes: RouteObject[] = [...RootAuthRouter, ...RootUnAuthRouter, ...RootChatRouter];
+const routes: RouteObject[] = [...RootAuthRouter, ...RootUnAuthRouter, ...RootChatRouter, ...OthersRouter];
 
 const router = createBrowserRouter(routes, {
   // basename: process.env.PUBLIC_URL,

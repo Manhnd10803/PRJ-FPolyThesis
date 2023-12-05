@@ -38,4 +38,6 @@ export const pathName = {
   CHAT: '/chat',
   CHAT_DETAIL: '/chat/:id',
   SEARCH: '/search',
+
+  ERROR_500: '/error-500',
 } as const;

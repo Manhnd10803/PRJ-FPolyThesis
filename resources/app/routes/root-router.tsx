@@ -4,6 +4,9 @@ import { AuthRouteType } from '@/models/routes';
 import { ChatRouter } from './chat-route';
 import { AuthRouter as AuthRouterConfig } from './auth-router';
 import { UnAuthRouter } from './un-auth-router';
+import Error404 from '@/layouts/others/error-404';
+import Error500 from '@/layouts/others/error-500';
+import { pathName } from './path-name';
 
 //Can add more auth router here
 export const RootAuthRouter = (() => {
@@ -52,5 +55,17 @@ export const RootUnAuthRouter = [
     path: '/',
     element: <UnAuthLayout />,
     children: [...UnAuthRouter],
+  },
+];
+
+// Can add more router start with / here
+export const OthersRouter = [
+  {
+    path: pathName.ERROR_500,
+    element: <Error500 />,
+  },
+  {
+    path: '/*',
+    element: <Error404 />,
   },
 ];

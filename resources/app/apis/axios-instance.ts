@@ -96,6 +96,10 @@ httpRequest.interceptors.response.use(
         }
         return;
       }
+      case 500: {
+        Promise.reject(error.response.data);
+        return window.location.replace(pathName.ERROR_500);
+      }
       default: {
         toast.error('Có lỗi xảy ra, vui lòng thử lại sau!');
         return Promise.reject(error.response.data);
