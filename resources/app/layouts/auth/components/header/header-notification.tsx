@@ -1,6 +1,11 @@
 import { CustomToggle } from '@/components/custom';
 import { Loading } from '@/components/shared/loading';
-import useInfiniteNotifications, { useSeeAllNotification, useSeeNotification } from '@/hooks/useNotificationQuery';
+import useInfiniteNotifications, {
+  useCountNotificationsNotSeen,
+  useSeeAllNotification,
+  useSeeNotification,
+  useSetAmountNotificationsNotSeen,
+} from '@/hooks/useNotificationQuery';
 import { INotification, NotificationStatus } from '@/models/notifications';
 import { pathName } from '@/routes/path-name';
 import { formatNotificationLink } from '@/utilities/functions';
@@ -54,6 +59,7 @@ export const HeaderNotification = () => {
   const [notificationIcon, setNotificationIcon] = useState<string>('notifications');
 
   const { manuallySeeAllNotification } = useSeeAllNotification();
+  const countNotificationsNotSeen = useCountNotificationsNotSeen();
 
   const handleClickSeeAllNotification = () => {
     manuallySeeAllNotification();
@@ -86,7 +92,7 @@ export const HeaderNotification = () => {
               <h5 className="mb-0 text-white">Thông báo</h5>
             </div>
             <div className="d-flex align-items-center gap-2">
-              <small className="badge  bg-light text-dark">4</small>
+              <small className="badge  bg-light text-dark">{countNotificationsNotSeen}</small>
               <div>
                 <Dropdown className="bg-soft-primary d-flex justify-content-center align-items-center" as="span">
                   <Dropdown.Toggle

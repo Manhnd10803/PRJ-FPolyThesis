@@ -19,4 +19,14 @@ const seeAllNotification = () => {
   return httpRequest.put<{ message: string }>(`${ApiConstants.SEE_ALL_NOTIFICATION}`);
 };
 
-export const NotificationService = { getListNotifications, seeNotification, deleteNotification, seeAllNotification };
+const getAmountNotificationNotSeen = () => {
+  return httpRequest.get<{ count: number }>(`${ApiConstants.COUNT_NOTIFICATIONS}`);
+};
+
+export const NotificationService = {
+  getListNotifications,
+  seeNotification,
+  deleteNotification,
+  seeAllNotification,
+  getAmountNotificationNotSeen,
+};
