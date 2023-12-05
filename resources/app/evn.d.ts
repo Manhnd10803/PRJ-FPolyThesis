@@ -21,7 +21,7 @@ interface ImportMetaEnv {
   readonly PASSPORT_PASSWORD_GRANT_CLIENT_ID: number;
   readonly PASSPORT_PASSWORD_GRANT_CLIENT_SECRET: string;
   readonly PASSPORT_AUTH_GRANT_PASSWORD: boolean;
-
+  readonly VITE_GOOGLE_CLIENT_ID: string;
   //add more env variables here...
 }
 

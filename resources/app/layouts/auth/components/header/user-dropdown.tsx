@@ -17,10 +17,10 @@ export const UserDropdown = () => {
     if (loading) return;
     try {
       setLoading(true);
+      navigate(pathName.LOGIN);
       await AuthService.Logout();
       toast.success('Đăng xuất thành công');
       setLoading(false);
-      navigate(pathName.LOGIN);
     } catch (error) {
       setLoading(false);
       console.log(error);
