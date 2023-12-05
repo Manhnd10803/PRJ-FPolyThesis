@@ -26,17 +26,17 @@ export const Footer = () => {
             <Col lg="6">
               <ul className="list-inline mb-0">
                 <li className="list-inline-item">
-                  <Link to="/dashboard/extrapages/privacy-policy">Privacy Policy</Link>
+                  <Link to="/dashboard/extrapages/privacy-policy">Chính sách bảo mật</Link>
                 </li>{' '}
                 <li className="list-inline-item">
-                  <Link to="/dashboard/extrapages/terms-of-service">Terms of Use</Link>
+                  <Link to="/dashboard/extrapages/terms-of-service">Điều khoản sử dụng</Link>
                 </li>
               </ul>
             </Col>
             <Col lg="6" className="d-flex justify-content-end">
               <span>
-                Copyright {new Date().getFullYear()}
-                <Link to="#"> Fpoly Zone </Link> All Rights Reserved.
+                Bản quyền {new Date().getFullYear()}
+                <Link to="#"> Fpoly Zone </Link> .
               </span>
             </Col>
           </Row>
