@@ -23,13 +23,13 @@ class UpdateActivityUser implements ShouldBroadcast
     }
     public function broadcastOn()
     {
-        return new PrivateChannel('user.' . $this->user->id);
+        return new PrivateChannel('activity.' . $this->user->id);
     }
     public function broadcastWith()
     {
         return [
             'user_id' => $this->user->id,
-            'activity' => $this->activity,
+            'activity_user' => $this->activity,
         ];
     }
     public function broadcastAs()

@@ -15,6 +15,7 @@ export const ApiConstants = {
   // user
   USER: '/users',
   USER_DETAIL: '/get-user',
+  USER_ACTIVITY: '/activity',
 
   // question and answer
   QANDA: '/quests',

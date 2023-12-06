@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Events\UpdateActivityUser;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;

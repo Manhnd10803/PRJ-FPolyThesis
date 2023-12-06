@@ -1,7 +1,5 @@
-import { FriendService } from '@/apis/services/friend.service';
+import { useFriend } from '@/hooks/useFriendQuery';
 import { pathName } from '@/routes/path-name';
-import { StorageFunc } from '@/utilities/local-storage/storage-func';
-import { useQuery } from '@tanstack/react-query';
 import { Card, Image } from 'react-bootstrap';
 
 export const RightSidebar = () => {
@@ -10,15 +8,7 @@ export const RightSidebar = () => {
     document.body.classList.toggle('right-sidebar-close');
   };
 
-  const fetchAllFriendMyUser = async () => {
-    // const {user} = TokenService.getUser()
-    const idUser = StorageFunc.getUserId();
-    const { data } = await FriendService.showAllFriendMyUser(idUser);
-    return data;
-  };
-
-  const FriendsMyUserQueryKey = ['friendrightsidebar'];
-  const { data: friendsMyUser, isLoading } = useQuery(FriendsMyUserQueryKey, { queryFn: fetchAllFriendMyUser });
+  const { data: friendsMyUser, isLoading } = useFriend();
 
   return (
     <>
@@ -43,7 +33,11 @@ export const RightSidebar = () => {
                             rel="noopener noreferrer"
                           >
                             <div className="d-flex align-items-center mb-4">
-                              <div className="iq-profile-avatar status-online">
+                              <div
+                                className={`iq-profile-avatar ${
+                                  itemfriend?.friend?.activity_user === 'Online' ? 'status-online' : 'status-away'
+                                } `}
+                              >
                                 <Image
                                   className="rounded-circle avatar-50"
                                   src={itemfriend?.friend?.avatar}
@@ -53,7 +47,7 @@ export const RightSidebar = () => {
                               </div>
                               <div className="ms-3">
                                 <h6 className="mb-0">{itemfriend?.friend?.username}</h6>
-                                <p className="mb-0">Đang hoạt động</p>
+                                <p className="mb-0">{itemfriend?.friend?.activity_user}</p>
                               </div>
                             </div>
                           </a>
