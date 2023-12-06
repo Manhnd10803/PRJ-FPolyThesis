@@ -59,31 +59,25 @@
                 </li>
                 <li>
                     <i class="fa fa-heart bg-red"></i>
+
                     <div class="timeline-item">
+                        {{-- <span class="time"><i class="fa fa-clock-o"></i> 5 mins ago</span> --}}
+
                         <h3 class="timeline-header no-border" style="display: flex;justify-content: center;gap: 20px">
-                            <span>{{ $likeCounts['like'] }} <img src="{{ asset('dist/img/icon/01.png') }}"
-                                    alt=""></span>
-                            <span>{{ $likeCounts['love'] }} <img src="{{ asset('dist/img/icon/02.png') }}"
-                                    alt=""></span>
-                            <span>{{ $likeCounts['sad'] }} <img src="{{ asset('dist/img/icon/06.png') }}"
-                                    alt=""></span>
-                            <span>{{ $likeCounts['angry'] }} <img src="{{ asset('dist/img/icon/03.png') }}"
-                                    alt=""></span>
-                            <span>{{ $likeCounts['haha'] }} <img src="{{ asset('dist/img/icon/04.png') }}"
-                                    alt=""></span>
-                            <span>{{ $likeCounts['wow'] }} <img src="{{ asset('dist/img/icon/wow.png') }}" width="26"
-                                    alt=""></span>
+                            <span>{{ $qa->like_count }} <i class="fa fa-thumbs-o-up"></i></span>
+                            <span>{{ $qa->dislike_count }} <i class="fa fa-thumbs-o-down"></i></span>
+                            <span>{{ $qa->comment_count }} <i class="fa fa-commenting-o"></i></span>
                         </h3>
                     </div>
                 </li>
-                <li>
+                {{-- <li>
                     <i class="fa  fa-comments bg-yellow"></i>
                     <div class="timeline-item">
                         <h3 class="timeline-header no-border" style="display: flex;justify-content: center;gap: 10px">
                             {{ $commentCount }} comments
                         </h3>
                     </div>
-                </li>
+                </li> --}}
                 <li>
                     <i class="fa fa-eye bg-aqua"></i>
 

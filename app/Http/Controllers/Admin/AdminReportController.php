@@ -18,13 +18,15 @@ class AdminReportController extends Controller
             ->whereIn('report_status', [
                 config('default.report.status.resolved'),
                 config('default.report.status.dismissed')
-            ])->get();
+            ])->orderBy('created_at', 'desc')->get();
         return view('admin.report.index', compact('reports'));
     }
     public function pending()
     {
         $reports  = Report::with('reporter:id,first_name,last_name', 'reported:id,first_name,last_name')
-            ->where('report_status', config('default.report.status.pending'))->get();
+            ->where('report_status', config('default.report.status.pending'))
+            ->orderBy('created_at', 'desc')
+            ->get();
         return view('admin.report.index', compact('reports'));
     }
     public function show(Report $report)

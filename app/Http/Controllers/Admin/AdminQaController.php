@@ -19,20 +19,27 @@ class AdminQaController extends Controller
     }
     public function show(Qa $qa)
     {
-        $likes = $qa->likes;
-        $comments = $qa->comments;
+        // $likes = $qa->likes;
+        // $comments = $qa->comments;
 
-        $emotionCounts = [];
-        $validEmotions = ['dislike', 'like', 'love', 'haha', 'wow', 'sad', 'angry'];
-        // Đếm số lượng từng trạng thái lượt thích
-        foreach ($validEmotions as $emotion) {
-            $emotionCounts[$emotion] = $likes->where('emotion', $emotion)->count();
-        }
-        return view('admin.qa.show', [
-            'qa' => $qa,
-            'likeCounts' => $emotionCounts,
-            'commentCount' => $comments->count(),
-        ]);
+        // $emotionCounts = [];
+        // $validEmotions = ['dislike', 'like', 'love', 'haha', 'wow', 'sad', 'angry'];
+        // // Đếm số lượng từng trạng thái lượt thích
+        // foreach ($validEmotions as $emotion) {
+        //     $emotionCounts[$emotion] = $likes->where('emotion', $emotion)->count();
+        // }
+        // return view('admin.qa.show', [
+        //     'qa' => $qa,
+        //     'likeCounts' => $emotionCounts,
+        //     'commentCount' => $comments->count(),
+        // ]);
+        
+        $qa = Qa::with('user', 'likes', 'comments')->find($qa->id);
+        // Calculate like, dislike, and comment counts
+        $qa->like_count = $qa->likes->where('emotion', 'like')->count();
+        $qa->dislike_count = $qa->likes->where('emotion', 'dislike')->count();
+        $qa->comment_count = $qa->comments->count();
+        return view('admin.qa.show', compact('qa'));
     }
     public function destroy(Qa $qa)
     {
