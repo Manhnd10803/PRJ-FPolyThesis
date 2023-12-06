@@ -20,6 +20,11 @@ const saveAccessToken = (accessToken: string) => {
   save(storageKeys.ACCESS_TOKEN, accessToken);
 };
 
+const setActivityUser = (activityUser: string) => {
+  const oldData = load<IUser>(storageKeys.USER);
+  save(storageKeys.USER, { ...oldData, activity_user: activityUser });
+};
+
 const getUser = () => {
   return load<IUser>(storageKeys.USER);
 };
@@ -56,4 +61,5 @@ export const StorageFunc = {
   getAccessToken,
   saveUserDetailData,
   getFullName,
+  setActivityUser,
 };

@@ -190,7 +190,7 @@ class AuthController extends Controller
 
                 $friends = $user->friends;
                 foreach ($friends as $friend) {
-                    broadcast(new UpdateActivityUser($user, 'Online'))->toOthers();
+                    broadcast(new UpdateActivityUser($friend, 'Online', $user))->toOthers();
                 }
 
                 $request = Request::create('oauth/token', 'POST', [
@@ -255,7 +255,7 @@ class AuthController extends Controller
 
         $friends = $user->friends;
         foreach ($friends as $friend) {
-            broadcast(new UpdateActivityUser($friend, 'Offline'))->toOthers();
+            broadcast(new UpdateActivityUser($friend, 'Offline', $user))->toOthers();
         }
 
         DB::table('oauth_refresh_tokens')->where('access_token_id', $user->token()->id)->update(['revoked' => true]);
@@ -292,7 +292,7 @@ class AuthController extends Controller
             };
             $friends = $checkUser->friends;
             foreach ($friends as $friend) {
-                broadcast(new UpdateActivityUser($friend, 'Online'))->toOthers();
+                broadcast(new UpdateActivityUser($friend, 'Online', $checkUser))->toOthers();
             }
             $request = Request::create('oauth/token', 'POST', [
                 'grant_type' => 'socialite',
@@ -328,7 +328,7 @@ class AuthController extends Controller
 
                 $friends = $checkUser->friends;
                 foreach ($friends as $friend) {
-                    broadcast(new UpdateActivityUser($checkUser, 'Online'))->toOthers();
+                    broadcast(new UpdateActivityUser($friend, 'Online', $checkUser))->toOthers();
                 }
                 $request = Request::create('oauth/token', 'POST', [
                     'grant_type' => 'socialite',
@@ -592,7 +592,7 @@ class AuthController extends Controller
             $user->save;
             $friends = $user->friends;
             foreach ($friends as $friend) {
-                broadcast(new UpdateActivityUser($friend, $activity))->toOthers();
+                broadcast(new UpdateActivityUser($friend, $activity, $user))->toOthers();
             }
             DB::commit();
             $data = [

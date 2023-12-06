@@ -16,7 +16,6 @@ export const RealtimeActivityUser = () => {
 
       // Lắng nghe event
       const handleCheckStatusUser = (event: any) => {
-        console.log(event);
         manuallySetActivityFriend(event);
       };
 
