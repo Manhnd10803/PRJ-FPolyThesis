@@ -221,7 +221,7 @@ class AuthController extends Controller
             ]);
             $result = app()->handle($request);
             $response = json_decode($result->getContent(), true);
-            if(isset($response['error'])){
+            if (isset($response['error'])) {
                 return response()->json($response, 401);
             }
             return response()->json($response);
@@ -256,27 +256,14 @@ class AuthController extends Controller
      *     @OA\Response(response=200, description="URL đăng nhập Google")
      * )
      */
-    public function googleAuth()
-    {
-        $redirectUrl = Socialite::driver('google')->stateless()->redirect()->getTargetUrl();
-        return response()->json(['googleLoginUrl' => $redirectUrl]);
-    }
 
-    /**
-     * @OA\Get(
-     *     path="/api/auth/google-callback",
-     *     tags={"Authentication"},
-     *     summary="Xử lý đăng nhập bằng Google",
-     *     description="Xử lý việc đăng nhập bằng Google, lấy thông tin trả về từ Google thực hiện đăng ký hoặc đăng nhập.",
-     *     @OA\Response(response=200, description="Đăng nhập bằng Google thành công"),
-     *     @OA\Response(response=403, description="Tài khoản bị khóa hoặc lỗi trong quá trình xử lý"),
-     *     @OA\Response(response=400, description="Lỗi trong quá trình xử lý")
-     * )
-     */
-    public function googleCallback()
+    public function loginGoogle(Request $request)
     {
-        $user = Socialite::driver('google')->stateless()->user();
-        $checkUser = User::where('email', $user->email)->first();
+        $email = $request->email;
+        $first_name = $request->first_name;
+        $last_name = $request->last_name;
+        $avatar = $request->avatar;
+        $checkUser = User::where('email', $email)->first();
         if ($checkUser) {
             //đăng nhập 
             if ($checkUser->status == config('default.user.status.lock')) {
@@ -289,7 +276,7 @@ class AuthController extends Controller
                 'grant_type' => 'socialite',
                 'client_id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
                 'client_secret' => env('PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
-                'username' => $user->email,
+                'username' => $email,
                 'password' => $checkUser->password,
                 'scope' => '',
             ]);
@@ -300,25 +287,27 @@ class AuthController extends Controller
             //đăng ký
             DB::beginTransaction();
             try {
-                $username = explode('@', $user->email)[0] . 's';
+                $username = explode('@', $email)[0] . 's';
                 DB::table('users')->insert(
                     [
                         'username' => $username,
                         'password' => Hash::make(config('default.user.password')),
-                        'email' => $user->email,
-                        'first_name' => $user->user['family_name'],
-                        'last_name' => $user->user['given_name'],
+                        'email' => $email,
+                        'first_name' => $first_name,
+                        'last_name' => $last_name,
+                        'avatar' => $avatar,
+                        'major_id' => config('default.user.major.default'),
                         'group_id' => config('default.user.groupID.student'),
                         'status' => config('default.user.status.active'),
                     ]
                 );
                 DB::commit();
-                $checkUser = User::where('email', $user->email)->first();
+                $checkUser = User::where('email', $email)->first();
                 $request = Request::create('oauth/token', 'POST', [
                     'grant_type' => 'socialite',
                     'client_id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
                     'client_secret' => env('PASSPORT_PASSWORD_GRANT_CLIENT_SECRET'),
-                    'username' => $user->email,
+                    'username' => $email,
                     'password' => $checkUser->password,
                     'scope' => '',
                 ]);
@@ -331,7 +320,6 @@ class AuthController extends Controller
             }
         }
     }
-
 
     // Forgot password
 
@@ -551,19 +539,19 @@ class AuthController extends Controller
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
         }
-        
+
         $userData = $user->toArray();
 
         $user->load(['major' => function ($query) {
             $query->select('id', 'majors_name');
         }]);
 
-         // Thêm majors_name vào mảng dữ liệu của người dùng
+        // Thêm majors_name vào mảng dữ liệu của người dùng
         $userData['majors_name'] = $user->major->majors_name;
 
         return response()->json(['user' => $userData], 200);
     }
-    
+
 
     public function CheckActivityUser(Request $request)
     {

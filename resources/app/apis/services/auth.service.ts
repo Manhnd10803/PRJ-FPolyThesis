@@ -100,25 +100,30 @@ const ResetNewPassword = <T>(data: T) => {
   return httpRequest.post<ResetPasswordResponseType>(ApiConstants.RESET_NEW_PASSWORD, data);
 };
 
-const LoginWithGoogle = () => {
-  fetch('http://localhost:8000/api/auth/google-auth')
-    .then(response => {
-      if (response.ok) {
-        return response.json();
-      }
-      throw new Error('Something went wrong!');
-    })
-    .then(({ googleLoginUrl }) => (window.location.href = googleLoginUrl))
-    .then(response => {
-      console.log(response);
-      // save token to local storage
-      if (response.data.accessToken) {
-        StorageFunc.saveDataAfterLoginGoogle(response.data);
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
+const LoginWithGoogle = async <T>(dataLogin: T) => {
+  try {
+    const { data } = await httpRequest.post<LoginResponseType>(ApiConstants.LOGIN_GOOGLE, dataLogin);
+    toast.dismiss();
+    toast.success('Đăng nhập thành công');
+    //save data login to storage
+    StorageFunc.saveDataAfterLogin(data);
+
+    store.dispatch(authActions.setAccessToken(data.access_token));
+
+    const { data: userData } = await AuthService.GetUserDetail();
+
+    store.dispatch(authActions.setUserInfo(userData.user));
+
+    StorageFunc.saveUserDetailData(userData);
+    return data;
+  } catch (error: any) {
+    if (error.message) {
+      toast.error(error.message);
+    } else if (error) {
+      toast.error('Lỗi server');
+    }
+    return error;
+  }
 };
 
 export const AuthService = {
