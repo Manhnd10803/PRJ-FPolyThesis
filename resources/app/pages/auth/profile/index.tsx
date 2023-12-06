@@ -101,11 +101,10 @@ export const ProfilePage = () => {
                   <Tab.Pane eventKey="first">
                     <Timeline
                       about={detailUserProfile?.user}
-                      listPost={detailProfile?.listPost}
                       listImage={detailProfile?.detailTimeline?.images}
                       listFriend={detailProfile?.detailTimeline?.friend_details}
                       isLoading={isLoading}
-                      friend_id={id}
+                      isUser={isUser}
                     />
                   </Tab.Pane>
                   <Tab.Pane eventKey="second">
