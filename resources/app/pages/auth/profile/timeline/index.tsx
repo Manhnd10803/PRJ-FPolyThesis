@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Card, Col, Row } from 'react-bootstrap';
-import { CreatePost } from './components/create-post';
-import { ListPost } from './list-post';
 import { About } from './about';
 import MyPhoto from './my-photo';
 import { FriendList } from './friend-list';
 import './index.css';
+import { CreateNewPost } from '../../home/components/create-new-post';
+import { PostContainer } from '../../home/components/post';
 
-export const Timeline = ({ about, listPost, isLoading, friend_id, listImage, listFriend }) => {
+export const Timeline = ({ about, isLoading, isUser, listImage, listFriend }) => {
   const [isSticky, setSticky] = useState(false);
 
   useEffect(() => {
@@ -40,8 +40,8 @@ export const Timeline = ({ about, listPost, isLoading, friend_id, listImage, lis
           <FriendList listFriend={listFriend} />
         </Col>
         <Col lg={8}>
-          {!friend_id ? <CreatePost /> : ''}
-          <ListPost listPost={listPost} isLoading={isLoading} aboutUser={about} />
+          {isUser ? <CreateNewPost /> : ''}
+          <PostContainer />
         </Col>
       </Row>
     </Card.Body>
