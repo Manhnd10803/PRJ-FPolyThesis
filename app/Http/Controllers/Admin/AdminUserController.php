@@ -42,10 +42,6 @@ class AdminUserController extends Controller
             $query->where('email', 'like', '%' . $request->input('email') . '%');
         }
 
-        if ($request->filled('username')) {
-            $query->where('username', 'like', '%' . $request->input('username') . '%');
-        }
-
         if ($request->filled('major')) {
             $query->where('major_id', $request->input('major'));
         }
@@ -79,7 +75,6 @@ class AdminUserController extends Controller
     public function listUser()
     {
         $majors = Major::all();
-        // dd($majors);
         $users = User::whereIn('group_id', [config('default.user.groupID.student'), config('default.user.groupID.guest')])->orderByDesc('id')->get();
         return view('admin.users.index', compact('users', 'majors'));
     }

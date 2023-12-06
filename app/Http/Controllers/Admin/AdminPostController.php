@@ -13,6 +13,28 @@ class AdminPostController extends Controller
     {
         $this->middleware('authAdmin');
     }
+    public function searchPost(Request $request)
+    {
+        $request->flash();
+        $query = Post::query();
+        if ($request->has('creator')) {
+            $query->whereHas('user', function ($userQuery) use ($request) {
+                $userQuery->where('username', 'like', '%' . $request->input('creator') . '%');
+            });
+        }
+
+        if ($request->filled('created_from')) {
+            $query->whereDate('created_at', '>=', $request->input('created_from'));
+        }
+
+        if ($request->filled('created_to')) {
+            $query->whereDate('created_at', '<=', $request->input('created_to'));
+        }
+
+        $posts = $query->get();
+
+        return view('admin.posts.index', compact('posts'));
+    }
     // use FormatsCreatedAt;
     public function index()
     {

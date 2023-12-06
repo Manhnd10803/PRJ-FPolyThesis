@@ -35,6 +35,33 @@
         <div class="col-xs-12 mx-5">
             <div class="box">
                 <div class="box-header">
+                    <h3 class="box-title">Tìm kiếm</h3>
+                </div>
+                <div class="box-body">
+                    <form action="{{ route('admin.posts.search') }}" method="get">
+                        <div class="box-body">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <label for="creator">Người tạo</label>
+                                    <input type="text" class="form-control" name="creator" value="{{ old('creator', request('creator')) }}">
+                                </div>
+                                <div class="col-xs-3">
+                                    <label for="joined_from">Ngày tạo từ</label>
+                                    <input type="date" class="form-control" name="created_from" value="{{ old('created_from', request('created_from')) }}">
+                                </div>
+                                <div class="col-xs-3">
+                                    <label for="joined_to">Đến</label>
+                                    <input type="date" class="form-control" name="created_to" value="{{ old('created_to', request('created_to')) }}">
+                                </div>
+                            </div>
+                            <br>
+                            <button type="submit" class="btn btn-primary pull-right">Tìm kiếm</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="box">
+                <div class="box-header">
                     <h3 class="box-title">Danh sách bài post</h3>
                 </div>
                 <div class="box-body">
