@@ -44,7 +44,7 @@ class AdminReportController extends Controller
     {
         $report->update(['report_status' => config('default.report.status.dismissed')]);
         return redirect()->route('admin.report.show', ['report' => $report->id])
-            ->with('redirect', route('admin.report.index'));
+            ->with('redirect', route('admin.report.pending')); 
     }
     public function CountPendingReports()
     {
