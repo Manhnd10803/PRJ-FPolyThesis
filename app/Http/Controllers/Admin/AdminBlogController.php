@@ -129,6 +129,15 @@ class AdminBlogController extends Controller
         $blog->comment_count = $blog->comments->count();
         return view('admin.blogs.show', compact('blog'));
     }
+    public function showWithUser(Blog $blog)
+    {
+        $blog = Blog::with('user', 'likes', 'comments')->find($blog->id);
+        // Calculate like, dislike, and comment counts
+        $blog->like_count = $blog->likes->where('emotion', 'like')->count();
+        $blog->dislike_count = $blog->likes->where('emotion', 'dislike')->count();
+        $blog->comment_count = $blog->comments->count();
+        return view('admin.blogs.show-with-user', compact('blog'));
+    }
     public function destroy(Blog $blog)
     {
         // $score = config('default.user.score.reject_blog');

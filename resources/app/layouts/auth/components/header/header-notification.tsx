@@ -4,7 +4,6 @@ import useInfiniteNotifications, {
   useCountNotificationsNotSeen,
   useSeeAllNotification,
   useSeeNotification,
-  useSetAmountNotificationsNotSeen,
 } from '@/hooks/useNotificationQuery';
 import { INotification, NotificationStatus } from '@/models/notifications';
 import { pathName } from '@/routes/path-name';
@@ -44,7 +43,7 @@ const NotificationItem = ({ item }: NotificationItemProps) => {
         <div className="ms-3 w-100">
           <h6 className="mb-0 ">{item.content}</h6>
           <div className="d-flex justify-content-between align-items-center">
-            <small className="float-right font-size-12 text-primary mt-1">{momentVi(item.created_at).fromNow()}</small>
+            <small className="float-right font-size-12 text-primary mt-1">{momentVi(item.updated_at).fromNow()}</small>
           </div>
         </div>
       </div>

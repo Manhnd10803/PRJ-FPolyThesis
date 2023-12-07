@@ -1,15 +1,15 @@
 import { FriendService } from '@/apis/services/friend.service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, Row, Col, Container, Spinner } from 'react-bootstrap';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { formatFullName } from '@/utilities/functions';
 import { ModalRequest } from '../friend-request/components/modal';
 import { pathName } from '@/routes/path-name';
 export const FriendListPage = () => {
+  const [showDeleteFriendMap, setShowDeleteFriendMap] = useState({});
   const queryClient = useQueryClient();
-  const [showDeleteFriend, setShowDeleteFriend] = useState(false);
 
   const idUser = StorageFunc.getUserId();
 
@@ -32,7 +32,7 @@ export const FriendListPage = () => {
   const HandleUnFriend = async (id: any) => {
     try {
       const response = await unFriendMutation.mutateAsync(id);
-      setShowDeleteFriend(false);
+      setShowDeleteFriendMap(prevState => ({ ...prevState, [id]: false }));
       return response;
     } catch (error) {
       throw error;
@@ -90,15 +90,25 @@ export const FriendListPage = () => {
                                     <div className="d-flex flex-column gap-2 mt-2 mt-md-0">
                                       <Link
                                         to="#"
-                                        onClick={() => setShowDeleteFriend(true)}
+                                        onClick={() =>
+                                          setShowDeleteFriendMap(prevState => ({
+                                            ...prevState,
+                                            [itemFriend?.friend?.id]: true,
+                                          }))
+                                        }
                                         className="btn btn-primary rounded confirm-btn"
                                       >
                                         Hủy bạn bè
                                       </Link>
 
                                       <ModalRequest
-                                        show={showDeleteFriend}
-                                        onHide={() => setShowDeleteFriend(false)}
+                                        show={showDeleteFriendMap[itemFriend?.friend?.id]}
+                                        onHide={() =>
+                                          setShowDeleteFriendMap(prevState => ({
+                                            ...prevState,
+                                            [itemFriend?.friend?.id]: false,
+                                          }))
+                                        }
                                         onConfirm={() => HandleUnFriend(itemFriend?.friend?.id)}
                                         title={`Bạn có chắc chắn muốn hủy kết bạn với ${itemFriend?.friend?.username}?`}
                                       />
@@ -110,7 +120,7 @@ export const FriendListPage = () => {
                           })}
                         </>
                       ) : (
-                        <Card.Body>Không có yêu cầu mới</Card.Body>
+                        <Card.Body>Chưa có bạn bè</Card.Body>
                       )}
                     </Row>
                   )}

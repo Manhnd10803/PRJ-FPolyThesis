@@ -101,18 +101,19 @@ class AdminReportController extends Controller
             config('default.report.status.resolved'),
             config('default.report.status.dismissed')
         ])->get();
-
         return view('admin.report.index', compact('reports'));
     }
     public function pending()
     {
+
         $query = Report::with('reporter:id,first_name,last_name', 'reported:id,first_name,last_name')
         ->where('report_status', config('default.report.status.pending'));
     
         // Bổ sung điều kiện lọc chỉ lấy dữ liệu của pending.
         $this->applySearchFilters($query, request(), false); 
 
-        $reports = $query->get();
+        $reports = $query->orderBy('created_at', 'desc')->get();
+
         return view('admin.report.index', compact('reports'));
     }
     public function show(Report $report)
@@ -130,7 +131,7 @@ class AdminReportController extends Controller
     {
         $report->update(['report_status' => config('default.report.status.dismissed')]);
         return redirect()->route('admin.report.show', ['report' => $report->id])
-            ->with('redirect', route('admin.report.index'));
+            ->with('redirect', route('admin.report.pending')); 
     }
     public function CountPendingReports()
     {

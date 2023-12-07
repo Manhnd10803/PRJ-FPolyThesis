@@ -41,6 +41,7 @@ import { formatFullName } from '@/utilities/functions';
 export const DetailQandAPage = () => {
   const commentRef = useRef(null);
   const [show, setShow] = useState(false);
+  const [isLoadingReport, setIsLoadingReport] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { id } = useParams();
@@ -217,25 +218,20 @@ export const DetailQandAPage = () => {
   });
   const postReport = async (idfriend, title, idqa) => {
     try {
+      setIsLoadingReport(true);
       const idUser = StorageFunc.getUserId();
-
-      if (imagesRef.current.length && contentReport) {
-        const imageURL = await CloudiaryService.uploadImages(imagesRef.current, 'qa');
-        const formData = {
-          reporter_id: idUser,
-          reported_id: idfriend,
-          report_title: title,
-          report_content: contentReport,
-          report_type: 'qa',
-          report_type_id: idqa,
-          report_image: imageURL[0],
-        };
-        await createReportMutation.mutateAsync(formData);
-        handleClose();
-        toast.success('Bạn đã thực hiện báo cáo thành công');
-      } else {
-        toast.error('Bạn cần nhập đủ dữ liệu');
-      }
+      const imageURL = await CloudiaryService.uploadImages(imagesRef.current, 'qa');
+      const formData = {
+        reporter_id: idUser,
+        reported_id: idfriend,
+        report_title: title,
+        report_content: contentReport,
+        report_type: 'qa',
+        report_type_id: idqa,
+        report_image: imageURL[0] || '',
+      };
+      await createReportMutation.mutateAsync(formData);
+      handleClose();
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -362,19 +358,7 @@ export const DetailQandAPage = () => {
                           <h4 style={{ marginBottom: '15px' }}>
                             {qAndAData?.qa?.content && parse(String(JSON.parse(qAndAData?.qa?.content)))}
                           </h4>
-                          <Row className="mt-2">
-                            {/* IMAGE */}
-                            {/* <Col lg="4" md="6" className="mt-1">
-                              <img loading="lazy" src={imageUrl} className="img-fluid rounded" alt="Responsive img" />
-                            </Col>
-                            <Col lg="4" md="6" className="mt-1">
-                              <img loading="lazy" src={imageUrl} className="img-fluid rounded" alt="Responsive img" />
-                            </Col>
-                            <Col lg="4" md="6" className="mt-1">
-                              <img loading="lazy" src={imageUrl} className="img-fluid rounded" alt="Responsive img" />
-                            </Col> */}
-                          </Row>
-
+                          <Row className="mt-2"></Row>
                           {/* HashTag */}
                           <div>
                             {qAndAData?.qa?.hashtag.split(',').map((hashtag, index) => (
@@ -468,12 +452,9 @@ export const DetailQandAPage = () => {
                                   <CustomModal show={showModal} onHide={handleClose} title={modalTitle}>
                                     <div className="mb-3">
                                       <label htmlFor="fileInput" className="form-label">
-                                        Bạn hãy đính kèm hình ảnh
+                                        Bạn có thể đính kèm hình ảnh (tối đa 1 ảnh)
                                       </label>
-                                      {/* <input type="file" className="form-control" id="fileInput" onChange={handleFileChange} /> */}
-
                                       <DropZoneField
-                                        // onCloseAndRemoveAll={() => setIsHaveImage(false)}
                                         onChangeFiles={handleChangeFiles}
                                         maxFiles={1}
                                         accept={{ 'image/*': [] }}
@@ -498,8 +479,9 @@ export const DetailQandAPage = () => {
                                         onClick={() =>
                                           postReport(qAndAData?.qa?.user?.id, modalTitle, qAndAData?.qa?.id)
                                         }
+                                        disabled={isLoadingReport}
                                       >
-                                        Báo cáo
+                                        {isLoadingReport ? 'Đang báo cáo...' : 'Báo cáo'}
                                       </button>
                                     </Modal.Footer>
                                   </CustomModal>
