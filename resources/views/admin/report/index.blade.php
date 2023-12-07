@@ -132,6 +132,8 @@
                                         Câu hỏi
                                     @elseif ($report->report_type === "user")
                                         Người dùng
+                                    @elseif ($report->report_type === "comment")
+                                        Bình luận
                                     @endif
                                     {{-- {{$report->report_type}} --}}
                                 </td>
