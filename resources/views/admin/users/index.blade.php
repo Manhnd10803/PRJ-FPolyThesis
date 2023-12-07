@@ -72,14 +72,14 @@
                                 </select>
                             </div>
 
-                            <div class="col-xs-3">
+                            {{-- <div class="col-xs-3">
                                 <label for="gender">Giới tính</label>
                                 <select name="gender" class="form-control">
                                     <option value="">--Chọn giới tính--</option>
                                     <option value="Nam" {{ old('gender') == 'Nam' ? 'selected' : '' }}>Nam</option>
                                     <option value="Nữ" {{ old('gender') == 'Nữ' ? 'selected' : '' }}>Nữ</option>
                                 </select>
-                            </div>                            
+                            </div>                             --}}
 
                         </div>
                         <br>

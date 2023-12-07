@@ -43,6 +43,15 @@ class AdminPostController extends Controller
         $post->comment_count = $post->comments->count();
         return view('admin.posts.show', compact('post'));
     }
+    public function showWithUser(Post $post)
+    {
+        $post = Post::with('user', 'likes', 'comments')->find($post->id);
+        // Calculate like, dislike, and comment counts
+        $post->like_count = $post->likes->where('emotion', 'like')->count();
+        $post->dislike_count = $post->likes->where('emotion', 'dislike')->count();
+        $post->comment_count = $post->comments->count();
+        return view('admin.posts.show-with-user', compact('post'));
+    }
     public function edit(Post $post)
     {
         return view('admin.posts.edit', compact('post'));

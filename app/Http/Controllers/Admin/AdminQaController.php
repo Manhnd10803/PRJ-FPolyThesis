@@ -41,6 +41,15 @@ class AdminQaController extends Controller
         $qa->comment_count = $qa->comments->count();
         return view('admin.qa.show', compact('qa'));
     }
+    public function showWithUser(Qa $qa)
+    {
+        $qa = Qa::with('user', 'likes', 'comments')->find($qa->id);
+        // Calculate like, dislike, and comment counts
+        $qa->like_count = $qa->likes->where('emotion', 'like')->count();
+        $qa->dislike_count = $qa->likes->where('emotion', 'dislike')->count();
+        $qa->comment_count = $qa->comments->count();
+        return view('admin.qa.show-with-user', compact('qa'));
+    }
     public function destroy(Qa $qa)
     {
         $qa->delete();

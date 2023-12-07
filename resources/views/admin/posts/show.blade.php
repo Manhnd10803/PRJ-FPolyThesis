@@ -10,6 +10,7 @@
                     <span class="bg-red">
                         {{ $post->created_at->format('d M. Y') }}
                     </span>
+                    <span class="btn btn-aqua pull-right"><a href="{{ route('admin.posts.showWithUser', ['post' => $post->id]) }}">Xem tại phía người dùng</a></span>
                 </li>
                 <li>
                     <i class="fa fa-user bg-aqua"></i>

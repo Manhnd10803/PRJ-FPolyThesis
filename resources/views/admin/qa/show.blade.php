@@ -10,6 +10,8 @@
                     <span class="bg-red">
                         {{ $qa->created_at->format('d M. Y') }}
                     </span>
+                    <span class="btn btn-aqua pull-right"><a href="{{ route('admin.qa.showWithUser', ['qa' => $qa->id]) }}">Xem tại phía người dùng</a></span>
+
                 </li>
                 <li>
                     <i class="fa fa-user bg-aqua"></i>
