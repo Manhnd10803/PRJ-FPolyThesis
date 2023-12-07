@@ -74,6 +74,7 @@ Route::middleware('auth:api')->group(function () {
     //post
     Route::prefix('posts')->group(function () {
         Route::get('/newfeed/{quantity?}', [PostsController::class, 'ShowAllPosts'])->name('post.show');
+        Route::get('/detail/{post}', [PostsController::class, 'DetailPost']);
         Route::post('/', [PostsController::class, 'CreatePost'])->name('post.create');
         Route::put('/{post}', [PostsController::class, 'UpdatePost'])->name('post.update');
         Route::delete('/{post}', [PostsController::class, 'DeletePost'])->name('post.delete');

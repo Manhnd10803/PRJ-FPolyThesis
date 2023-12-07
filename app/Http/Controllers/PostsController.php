@@ -132,7 +132,37 @@ class PostsController extends Controller
      *     )
      * )
      */
-
+    public function DetailPost(Post $post)
+    {
+        $detailPost = Post::where('id', $post->id)->first();
+        $likeCountsByEmotion = [];
+        $likeCountsByEmotion['total_likes'] = $post->likes->count();
+        // Lấy danh sách người đã like bài viết và thông tin của họ
+        $likers = $post->likes->map(function ($like) {
+            return [
+                'user_id' => $like->user->id,
+                'user_username' => $like->user->username,
+                'user_first_name' => $like->user->first_name,
+                'user_last_name' => $like->user->last_name,
+                'emotion' => $like->emotion,
+            ];
+        });
+        // Tính số lượt thích cho mỗi giá trị biểu cảm (emotion)
+        $emotions = $likers->pluck('emotion')->unique();
+        foreach ($emotions as $emotion) {
+            $likeCountsByEmotion[$emotion] = $likers->where('emotion', $emotion)->count();
+        }
+        $totalComment = Comment::where('post_id', $post->id)->count();
+        $comment = Comment::where('post_id', $post->id)->get();
+        $postdata  = [
+            'detail_post' => $detailPost,
+            'like_counts_by_emotion' => $likeCountsByEmotion['total_likes'],
+            'likers' => $likers,
+            'total_comments' => $totalComment,
+            'comments' => $comment
+        ];
+        return response()->json($postdata, 200);
+    }
     public function ShowAllPosts($quantity = null)
     {
         DB::beginTransaction();
@@ -200,7 +230,7 @@ class PostsController extends Controller
             }
             DB::commit();
             if ($quantity) {
-                return response()->json(['data' => $result, 'last_page' => $last_page, 'current_page'=> $current_page], 200);
+                return response()->json(['data' => $result, 'last_page' => $last_page, 'current_page' => $current_page], 200);
             } else {
                 return response()->json($result, 200);
             }
