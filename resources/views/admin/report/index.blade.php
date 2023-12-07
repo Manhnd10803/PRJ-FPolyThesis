@@ -45,9 +45,9 @@
                             <th>Người tố cáo</th>
                             <th>Người bị tố cáo</th>
                             <th>Tiêu đề</th>
-                            <th>Nội dung</th>
+                            {{-- <th>Nội dung</th> --}}
                             <th>Loại tố cáo</th>
-                            <th>ID loại tố cao</th>
+                            <th>ID loại tố cáo</th>
                             <th>Trạng thái báo cáo</th>
                             <th>Ngày tạo</th>
                             <th>Thao tác</th>
@@ -62,11 +62,29 @@
                                 <td style="text-align: left; vertical-align: middle;">{{ $stt }}</td>
                                 <td style="text-align: left; vertical-align: middle;">{{$report->reporter->first_name}} {{$report->reporter->last_name}}</td>
                                 <td style="text-align: left; vertical-align: middle;">{{$report->reported->first_name}} {{$report->reported->last_name}}</td>
-                                <td style="text-align: left; vertical-align: middle;">{{$report->title}}</td>
+                                {{-- <td style="text-align: left; vertical-align: middle;">{{$report->title}}</td> --}}
                                 <td style="text-align: left; vertical-align: middle;">{{$report->content}}</td>
-                                <td style="text-align: left; vertical-align: middle;">{{$report->report_type}}</td>
+                                <td style="text-align: left; vertical-align: middle;">
+                                    @if ($report->report_type === "blog")
+                                        Bài viết
+                                    @elseif ($report->report_type === "qa")
+                                        Câu hỏi
+                                    @elseif ($report->report_type === "user")
+                                        Người dùng
+                                    @endif
+                                    {{-- {{$report->report_type}} --}}
+                                </td>
                                 <td style="text-align: left; vertical-align: middle;">{{$report->report_type_id}}</td>
-                                <td style="text-align: left; vertical-align: middle;">{{$report->report_status}}</td>
+                                <td style="text-align: left; vertical-align: middle;">
+                                    @if ($report->report_status === "pending")
+                                        Đang chờ duyệt
+                                    @elseif ($report->report_status === "resolved")
+                                        Đã duyệt
+                                    @elseif ($report->report_status === "dismissed")
+                                        Đã hủy
+                                    @endif
+                                    {{-- {{$report->report_status}} --}}
+                                </td>
                                 <td style="text-align: left; vertical-align: middle;">{{$report->created_at}}</td>
                                 <td >
                                     <a href="{{ route('admin.report.show', $report->id) }}" class="btn btn-info btn-sm"><i

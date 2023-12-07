@@ -22,7 +22,7 @@
                     <span class="bg-red">
                         {{ $blog->created_at->format('d M. Y') }}
                     </span>
-                    <span class="btn btn-aqua pull-right"><a href="/blog/{{ $blog->id }}">Xem tại phía người dùng</a></span>
+                    <span class="btn btn-aqua pull-right"><a href="{{ route('admin.blogs.showWithUser', ['blog' => $blog->id]) }}">Xem tại phía người dùng</a></span>
                 </li>
                 @if ($blog->status == config('default.blog.status.reject'))
                     <li>
@@ -46,8 +46,8 @@
                         </span>
                         <h3 class="timeline-header"><a href="#"> <img src="{{ $blog->user->avatar }}"
                                     class="img-circle" width="30" height="30" alt="User Image">
-                                @if ($blog->user && $blog->user->username)
-                                    {{ $blog->user->username }}
+                                @if ($blog->user && $blog->user->first_name)
+                                    {{ $blog->user->first_name }}  
                                 @else
                                     Không có người dùng
                                 @endif
