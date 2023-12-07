@@ -20,12 +20,12 @@ return [
         'avatar' => [
             'default' => 'http://res.cloudinary.com/dgl6vfxqw/image/upload/v1700270799/blog/wh2x5kgmo3zla8r7y5tr.jpg',
         ],
-        'score'=>[
-            'like'=>1,
-            'dislike'=>-1,
-            'create_blog'=>10,
-            'reject_blog'=>-10,
-            'create_qa'=>5,
+        'score' => [
+            'like' => 1,
+            'dislike' => -1,
+            'create_blog' => 10,
+            'reject_blog' => -10,
+            'create_qa' => 5,
         ],
         'major' => [
             'default' => '1',

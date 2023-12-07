@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\NotificationAdminEvent;
 use App\Models\Blog;
+use App\Models\Comment;
 use App\Models\Notification;
 use App\Models\Post;
 use App\Models\Qa;
@@ -44,6 +45,16 @@ class ReportController extends Controller
         case 'qa':
           $model = Qa::find($item);
           $notificationType = config('default.notification.notification_type.like_qa');
+          break;
+        case 'comment':
+          $model = Comment::find($item);
+          $fields = ['post_id', 'blog_id', 'qa_id'];
+          foreach ($fields as $field) {
+            if (!is_null($model->$field)) {
+              $notificationType = config("default.notification.notification_type.comment_" . str_replace('_id', '', $field));
+              break;
+            }
+          }
           break;
         default:
           break;
