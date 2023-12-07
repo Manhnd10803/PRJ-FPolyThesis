@@ -6,7 +6,7 @@ const getMajors = () => {
   return httpRequest.get<IMajors>(ApiConstants.MAJORS);
 };
 const getListMajorsRegister = () => {
-  return httpRequest.get<IMajors>(ApiConstants.LIST_MAJORS_REGISTER);
+  return httpRequest.get<Array<IMajors>>(ApiConstants.LIST_MAJORS_REGISTER);
 };
 
 export const MajorService = { getMajors, getListMajorsRegister };

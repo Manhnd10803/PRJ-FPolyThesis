@@ -15,6 +15,8 @@ export const SingleNavbarItem = ({ title, icon, pathname }: SingleNavbarItemProp
 
   const countNotificationsNotSeen = useCountNotificationsNotSeen();
   const checkAmountNoti = countNotificationsNotSeen && countNotificationsNotSeen > 0;
+
+  console.log({ checkAmountNoti, countNotificationsNotSeen });
   // return (
   //   <li className={`${location.pathname === pathname ? 'active' : ''} nav-item `}>
   //     <Link className={`${location.pathname === pathname ? 'active' : ''} nav-link `} aria-current="page" to={pathname}>
@@ -43,7 +45,7 @@ export const SingleNavbarItem = ({ title, icon, pathname }: SingleNavbarItemProp
                 : ''
             }`}
           >
-            {checkAmountNoti && countNotificationsNotSeen}
+            {checkAmountNoti ? countNotificationsNotSeen : ''}
           </span>
         )}
       </Link>

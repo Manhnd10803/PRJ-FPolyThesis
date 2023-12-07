@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Col, Form, Spinner } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
+import { GoogleLogin, GoogleOAuthProvider, CredentialResponse } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import toast from 'react-hot-toast';
 
@@ -50,7 +50,7 @@ export const LoginPage = () => {
     save(storageKeys.STAY_IN, !isStayIn);
   };
 
-  const handleGoogleLoginSuccess = async ({ credential }: { credential: string }) => {
+  const handleGoogleLoginSuccess = async ({ credential }: CredentialResponse) => {
     if (credential) {
       const dataLogin: DecodedToken = jwtDecode(credential);
       const dataForm: FormData = {
@@ -100,7 +100,7 @@ export const LoginPage = () => {
               {errors.password && <p className="text-danger">{`${errors.password.message}`}</p>}
             </Form.Group>
             <div className="d-inline-block w-100">
-              <Form.Check className="d-inline-block mt-2 pt-1">
+              <Form.Check className="d-inline-block mb-3">
                 <Form.Check.Input
                   type="checkbox"
                   className="me-2"
@@ -125,17 +125,18 @@ export const LoginPage = () => {
                 ) : (
                   ''
                 )}
-                Đăng nhập
+                Đăng nhập với email
               </Button>
             </div>
+            <hr />
             <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
               <GoogleLogin
                 onSuccess={handleGoogleLoginSuccess}
                 onError={() => {
-                  toast.error('Login Failed');
+                  toast.error('Đăng nhập thất bại');
                 }}
+                locale="vi_VN"
                 useOneTap
-                width={370}
               />
             </GoogleOAuthProvider>
             <div className="sign-info pt-1">

@@ -6,7 +6,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery } from '@tanstack/react-query';
 import { MajorService } from '@/apis/services/major.service';
-import { IMajors } from '@/models/major';
 import { pathName } from '@/routes/path-name';
 
 export const RegisterPage = () => {
@@ -47,12 +46,12 @@ export const RegisterPage = () => {
   return (
     <Col md="6" className="bg-white pt-5 pb-lg-0 pb-5">
       <div className="sign-in-from">
-        <h1 className="mb-0">Sign Up</h1>
+        <h1 className="mb-0">Đăng ký</h1>
         <Form onSubmit={handleSubmit(onSubmit)} className="mt-4">
           <Row>
             <Col md="6">
               <Form.Group className="form-group mb-0">
-                <Form.Label>First name</Form.Label>
+                <Form.Label>Tên</Form.Label>
                 <Form.Control
                   {...register('first_name')}
                   type="text"
@@ -68,7 +67,7 @@ export const RegisterPage = () => {
             </Col>
             <Col md="6">
               <Form.Group className="form-group mb-0">
-                <Form.Label>Last name</Form.Label>
+                <Form.Label>Họ (+ Tên đệm)</Form.Label>
                 <Form.Control
                   {...register('last_name')}
                   type="text"
@@ -105,7 +104,12 @@ export const RegisterPage = () => {
             </Form.Label>
             <Form.Select id="validationDefault041" {...register('major_id')} disabled={isSubmitting}>
               <option value="">Chọn chuyên ngành của bạn</option>
-              {majors?.map((item: IMajors) => <option value={item.id}>{item.majors_name}</option>)}
+              {majors &&
+                majors?.map(item => (
+                  <option key={item.id} value={item.id}>
+                    {item.majors_name}
+                  </option>
+                ))}
             </Form.Select>
             <div className="error-container" style={{ minHeight: '24px' }}>
               {errors.major_id && <p className="text-danger">{`${errors.major_id.message}`}</p>}
@@ -164,12 +168,12 @@ export const RegisterPage = () => {
               ) : (
                 ''
               )}
-              Sign up
+              Đăng ký
             </Button>
           </div>
           <div className="sign-info">
             <span className="dark-color d-inline-block line-height-2">
-              Already Have an Account? <Link to={pathName.LOGIN}>Log In</Link>
+              Bạn đã có tài khoản? <Link to={pathName.LOGIN}>Đăng nhập</Link>
             </span>
           </div>
         </Form>
