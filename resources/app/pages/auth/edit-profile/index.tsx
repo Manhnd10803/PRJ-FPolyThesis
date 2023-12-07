@@ -108,7 +108,7 @@ export const EditProfilePage = () => {
             height={250}
             border={30}
             color={[255, 255, 255, 0.6]} // RGBA
-            scale={1.2}
+            scale={1}
             rotate={0}
           />
         </Modal.Body>
