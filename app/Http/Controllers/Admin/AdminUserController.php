@@ -42,6 +42,10 @@ class AdminUserController extends Controller
             $query->where('email', 'like', '%' . $request->input('email') . '%');
         }
 
+        if ($request->filled('username')) {
+            $query->where('username', $request->input('username'));
+        }
+
         if ($request->filled('major')) {
             $query->where('major_id', $request->input('major'));
         }

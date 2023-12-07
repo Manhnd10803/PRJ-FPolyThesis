@@ -55,6 +55,10 @@
                                 <input type="text" class="form-control" name="full_name" value="{{ old('full_name', request('full_name')) }}">
                             </div>
                             <div class="col-xs-3">
+                                <label for="username">Username</label>
+                                <input type="text" class="form-control" name="username" value="{{ old('username', request('username')) }}">
+                            </div>
+                            <div class="col-xs-3">
                                 <label for="email">Email</label>
                                 <input type="text" class="form-control" name="email" value="{{ old('email', request('email')) }}">
                             </div>
@@ -67,16 +71,6 @@
                                     @endforeach
                                 </select>
                             </div>
-
-                            {{-- <div class="col-xs-3">
-                                <label for="gender">Giới tính</label>
-                                <select name="gender" class="form-control">
-                                    <option value="">--Chọn giới tính--</option>
-                                    <option value="Nam" {{ old('gender') == 'Nam' ? 'selected' : '' }}>Nam</option>
-                                    <option value="Nữ" {{ old('gender') == 'Nữ' ? 'selected' : '' }}>Nữ</option>
-                                </select>
-                            </div>                             --}}
-
                         </div>
                         <br>
                         <div class="row">
@@ -86,7 +80,15 @@
                             </div>
                             <div class="col-xs-3">
                                 <label for="joined_to">Đến</label>
-                                <input type="date" class="form-control" name="joined_to" value="{{ old('joined_to', request('joined_to')) }}" placeholder="">
+                                <<input type="date" class="form-control" name="joined_to" value="{{ old('joined_to', request('joined_to')) }}" placeholder="">
+                            </div>
+                            <div class="col-xs-2">
+                                <label for="gender">Giới tính</label>
+                                <select name="gender" class="form-control">
+                                    <option value="">--Chọn giới tính--</option>
+                                    <option value="{{ config('default.user.gender.male') }}" {{ old('gender') == config('default.user.gender.male') ? 'selected' : '' }}>Nam</option>
+                                    <option value="{{ config('default.user.gender.female') }}" {{ old('gender') == config('default.user.gender.female') ? 'selected' : '' }}>Nữ</option>
+                                </select>
                             </div>
                             <div class="col-xs-2">
                                 <label for="user_group">Nhóm người dùng</label>
@@ -107,7 +109,7 @@
                         <br>
                         <button type="submit" class="btn btn-primary pull-right">Tìm kiếm</button>
                     </div>
-                </form>
+                </form>                
             </div>
         </div>
         <div class="box">
@@ -142,9 +144,9 @@
                                 <td>{{ $user->first_name . ' '. $user->last_name }}</td>
                                 <td>{{ $user->username }}</td>
                                 <td>
-                                    @if ($user->gender == 'Nam')
+                                    @if ($user->gender == config('default.user.gender.male'))
                                         Nam
-                                    @elseif($user->gender == 'Nữ')
+                                    @elseif($user->gender == config('default.user.gender.female'))
                                         Nữ
                                     @endif
                                 </td>
