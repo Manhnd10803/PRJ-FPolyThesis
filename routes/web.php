@@ -51,7 +51,6 @@ Route::group(['prefix' => 'admin', 'middleware' => 'authAdmin'], function () {
 
     //Admin blog
     Route::get('blogs', [AdminBlogController::class, 'index'])->name('admin.blogs.index');
-    Route::get('blog/{blog}', [AdminBlogController::class, 'showWithUser'])->name('admin.blogs.showWithUser');
     Route::get('blogs/approve', [AdminBlogController::class, 'index'])->name('admin.blogs.approve');
     Route::put('blogs/approve/{blog}', [AdminBlogController::class, 'approveBlog'])->name('admin.blogs.statusApprove');
     Route::put('blogs/reject/{blog}', [AdminBlogController::class, 'rejectBlog'])->name('admin.blogs.statusReject');
@@ -79,7 +78,6 @@ Route::group(['prefix' => 'admin', 'middleware' => 'authAdmin'], function () {
         'show' => 'admin.posts.show',
         'destroy' => 'admin.posts.destroy',
     ]);
-    Route::get('post/{post}', [AdminPostController::class, 'showWithUser'])->name('admin.posts.showWithUser');
 
     //Admin qa
     Route::resource('qa', AdminQaController::class)->names([
@@ -87,7 +85,6 @@ Route::group(['prefix' => 'admin', 'middleware' => 'authAdmin'], function () {
         'show' => 'admin.qa.show',
         'destroy' => 'admin.qa.destroy',
     ]);
-    Route::get('qaa/{qa}', [AdminQaController::class, 'showWithUser'])->name('admin.qa.showWithUser');
 
     //Admin emotion
     Route::get('emotions', [AdminEmotionController::class, 'index'])->name('admin.emotions.index');

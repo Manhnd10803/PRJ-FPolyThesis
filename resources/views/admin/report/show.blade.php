@@ -22,6 +22,7 @@
                     <span class="bg-red">
                         {{ $report->created_at->format('d M. Y') }}
                     </span>
+                    <span class="btn btn-aqua pull-right"><a href="/profile/{{ $report->reported_id }}">Xem tại phía người dùng</a></span>
                 </li>
                 <li>
                   <i class=" fa fa-pencil"></i>
