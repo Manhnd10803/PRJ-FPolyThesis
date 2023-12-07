@@ -72,7 +72,7 @@ class LikeController extends Controller
         // Kiểm tra xem người dùng đã có cảm xúc cho mục này chưa
         $existingLike = Like::where('user_id', $user->id)->where($modelName . '_id', $item)->first();
 
-        $score = config('default.user.score.like');
+
 
         if ($existingLike) {
             // Nếu đã tồn tại và cảm xúc trùng khớp với cảm xúc hiện tại, xóa cảm xúc
@@ -89,6 +89,12 @@ class LikeController extends Controller
                     break;
             }
             if ($existingLike->emotion === $emotion) {
+                // $score = config('default.user.score.like');
+                if ($emotion == 'like') {
+                    $score = config('default.user.score.like');
+                } elseif ($emotion == 'dislike') {
+                    $score = config('default.user.score.dislike');
+                }
                 if (in_array($modelName, ['blog', 'qa'])) {
                     if ($modelClass !== null) {
                         $detailModel = $modelClass::find($item);
@@ -107,7 +113,7 @@ class LikeController extends Controller
                 if ($emotion == 'like') {
                     $score = config('default.user.score.like');
                 } elseif ($emotion == 'dislike') {
-                    $score = config('default.user.score.dislike');
+                    $score = config('default.user.score.dislike') + (-2);
                 }
                 // Nếu đã tồn tại, nhưng cảm xúc không trùng khớp, cập nhật lại cảm xúc
                 if (in_array($modelName, ['blog', 'qa'])) {
@@ -116,7 +122,7 @@ class LikeController extends Controller
                         if ($detailModel) {
                             $user = User::find($detailModel->user_id);
                             if ($user) {
-                                $user->score += $score;
+                                $user->score += (1+$score);
                                 $user->save();
                             }
                         }
