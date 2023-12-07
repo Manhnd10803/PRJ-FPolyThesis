@@ -1,13 +1,14 @@
+import notifyImageDefault from '@/assets/images/notification-default.png';
 import mp3NotificationCommon from '@/assets/mp3/noti-common.mp3';
+import { useAddNotification } from '@/hooks/useNotificationQuery';
 import { INotification } from '@/models/notifications';
 import { useAppSelector } from '@/redux/hook';
+import { pathName } from '@/routes/path-name';
 import { formatNotificationLink } from '@/utilities/functions';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
-import notiImageDefault from '@/assets/images/notification-default.png';
-import { useAddNotification, useSeeNotification } from '@/hooks/useNotificationQuery';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const audioReceiverNotification = () => {
   new Audio(mp3NotificationCommon).play();
@@ -33,7 +34,7 @@ const showNotification = ({
           <img
             className="rounded-circle avatar-50"
             style={{ objectFit: 'cover' }}
-            src={avatarSender || notiImageDefault}
+            src={avatarSender || notifyImageDefault}
             alt=""
           />
         </div>
@@ -70,6 +71,12 @@ const showNotification = ({
 export const RealtimeNotification = () => {
   const navigate = useNavigate();
 
+  const location = useLocation();
+
+  const isChatPage = useMemo(() => {
+    return location.pathname.split('/')[1] === pathName.CHAT.split('/')[1];
+  }, [location]);
+
   const { manuallyAddNotification } = useAddNotification();
 
   const { accessToken } = useAppSelector(state => state.auth);
@@ -82,28 +89,32 @@ export const RealtimeNotification = () => {
 
       // Lắng nghe notification
       const handleReceiveNotification = (event: any) => {
-        // play sound
-        audioReceiverNotification();
-
-        console.log('handleReceiveNotification', event);
+        console.log('🔔 Received notify', event);
 
         const { content } = event.notification;
         const { avatar_sender } = event;
 
-        showNotification({
-          content,
-          onClick: (id: string) => {
-            navigate(formatNotificationLink(event.notification));
-            toast.dismiss(id);
-          },
-          avatarSender: avatar_sender || notiImageDefault,
-        });
+        // Nếu đang ở trang chat thì không hiển thị notification
+        if (!isChatPage) {
+          // play sound
+          audioReceiverNotification();
+
+          showNotification({
+            content,
+            onClick: (id: string) => {
+              navigate(formatNotificationLink(event.notification));
+              toast.dismiss(id);
+            },
+            avatarSender: avatar_sender || notifyImageDefault,
+          });
+        }
 
         // Thêm vào danh sách notification
+
         const newNotification: INotification = {
           ...event.notification,
           user: {
-            avatar: avatar_sender || notiImageDefault,
+            avatar: avatar_sender || notifyImageDefault,
           },
         };
         manuallyAddNotification(newNotification);
@@ -121,7 +132,7 @@ export const RealtimeNotification = () => {
         );
       };
     }
-  }, [accessToken]);
+  }, [accessToken, isChatPage]);
 
   return null;
 };
