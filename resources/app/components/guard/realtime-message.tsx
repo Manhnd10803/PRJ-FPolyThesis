@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { chatActions } from '@/redux/slice';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const audioReceiveMessage = () => {
   new Audio(receiveMessage).play();
@@ -11,6 +12,10 @@ const audioReceiveMessage = () => {
 
 export const RealtimeMessage = () => {
   const dispatch = useAppDispatch();
+
+  const location = useLocation();
+
+  const chatId = location.pathname.split('/')[2];
 
   const { accessToken } = useAppSelector(state => state.auth);
 
@@ -22,13 +27,12 @@ export const RealtimeMessage = () => {
     try {
       const { sender_id, action = 'send' } = event.message;
 
-      console.log('🤪 event.message', event.message);
+      console.log('💬 Received message', event);
 
       if (action === 'delete') {
         return dispatch(chatActions.removeMessageFromConversation(event.message.id));
       }
 
-      console.log('listPrivateChannelRef', listPrivateChannel);
       // check xem có phải người mới gửi tin nhắn không
       const isNewSender = listPrivateChannel.findIndex((item: IUser) => +item.id === +sender_id) === -1;
 
@@ -41,7 +45,11 @@ export const RealtimeMessage = () => {
 
       audioReceiveMessage();
 
-      dispatch(chatActions.addMessageToConversation(event.message));
+      const isChatting = Number(chatId) === Number(sender_id);
+
+      if (isChatting) {
+        dispatch(chatActions.addMessageToConversation(event.message));
+      }
     } catch (error) {
       console.log('handlePrivateMessage', error);
     }
@@ -57,10 +65,7 @@ export const RealtimeMessage = () => {
     return () => {
       window.Echo.private(`user.${localUserId}`).stopListening('.PrivateMessageSent', handleStreamPrivateMessage);
     };
-  }, [accessToken]);
+  }, [accessToken, chatId, localUserId]);
 
-  useEffect(() => {
-    console.log({ listPrivateChannel });
-  }, [listPrivateChannel]);
   return <div>{listPrivateChannel ? null : ''}</div>;
 };
