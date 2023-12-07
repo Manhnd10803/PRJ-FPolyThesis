@@ -63,12 +63,15 @@ export const CreateBlogPage = () => {
       contentHtmlRef.current = $generateHtmlFromNodes(editorRef.current, null);
     });
 
+    if (!file) {
+      return toast.error('Thumbnail không được để trống');
+    }
+
     const contentEditor = JSON.stringify(contentHtmlRef.current);
     if (contentEditor == '"<p class=\\"PlaygroundEditorTheme__paragraph\\"><br></p>"' || contentEditor == '""') {
       return toast.error('Nội dung không được để trống');
     }
-    const fileType = [file];
-    const imageURL = await CloudiaryService.uploadImages(fileType, 'blog');
+    const imageURL = await CloudiaryService.uploadImages(file, 'blog');
     const newData = {
       ...data,
       content: contentEditor,
@@ -151,11 +154,11 @@ export const CreateBlogPage = () => {
           <AvatarEditor
             ref={imageCoverRef}
             image={imageCoverPhoto}
-            width={250}
-            height={250}
+            width={413}
+            height={232.31}
             border={30}
             color={[255, 255, 255, 0.6]} // RGBA
-            scale={1.2}
+            scale={1}
             rotate={0}
           />
         </Modal.Body>
@@ -191,7 +194,6 @@ export const CreateBlogPage = () => {
     const file = dataURLtoFile(imageBase64, 'my_cover_photo.jpg');
     const fileList = [file];
     const selectedImage = file; // Chọn File cụ thể từ fileList
-    console.log(selectedImage);
 
     const imageUrl = selectedImage ? URL.createObjectURL(selectedImage) : noImage;
     setImage(imageUrl);
@@ -253,8 +255,6 @@ export const CreateBlogPage = () => {
                       >
                         Tải ảnh lên
                       </MuiButton>
-
-                      <p className="text-danger">{errors?.thumbnail?.message}</p>
                     </div>
                   </Form.Group>
                   <Form.Group className="form-group">
