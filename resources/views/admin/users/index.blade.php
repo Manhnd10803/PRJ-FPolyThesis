@@ -55,10 +55,6 @@
                                 <input type="text" class="form-control" name="full_name" value="{{ old('full_name', request('full_name')) }}">
                             </div>
                             <div class="col-xs-3">
-                                <label for="username">Username</label>
-                                <input type="text" class="form-control" name="username" placeholder="">
-                            </div>
-                            <div class="col-xs-3">
                                 <label for="email">Email</label>
                                 <input type="text" class="form-control" name="email" value="{{ old('email', request('email')) }}">
                             </div>
@@ -91,14 +87,6 @@
                             <div class="col-xs-3">
                                 <label for="joined_to">Đến</label>
                                 <input type="date" class="form-control" name="joined_to" value="{{ old('joined_to', request('joined_to')) }}" placeholder="">
-                            </div>
-                            <div class="col-xs-2">
-                                <label for="gender">Giới tính</label>
-                                <select name="gender" class="form-control">
-                                    <option value="">--Chọn giới tính--</option>
-                                    <option value="{{ config('default.user.gender.male') }}">Nam</option>
-                                    <option value="{{ config('default.user.gender.female') }}">Nữ</option>
-                                </select>
                             </div>
                             <div class="col-xs-2">
                                 <label for="user_group">Nhóm người dùng</label>

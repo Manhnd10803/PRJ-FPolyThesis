@@ -79,12 +79,17 @@ Route::group(['prefix' => 'admin', 'middleware' => 'authAdmin'], function () {
         'destroy' => 'admin.posts.destroy',
     ]);
 
+    Route::get('post/search', [AdminPostController::class, 'searchPost'])->name('admin.posts.search');
+
     //Admin qa
     Route::resource('qa', AdminQaController::class)->names([
         'index' => 'admin.qa.index',
         'show' => 'admin.qa.show',
         'destroy' => 'admin.qa.destroy',
     ]);
+
+    Route::get('qas/search', [AdminQaController::class, 'searchQa'])->name('admin.qa.search');
+    // Route::get('/admin/qa/search', 'AdminQaController@searchQa')->name('admin.qa.search');
 
     //Admin emotion
     Route::get('emotions', [AdminEmotionController::class, 'index'])->name('admin.emotions.index');
@@ -107,6 +112,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'authAdmin'], function () {
         Route::put('/resolved/{report}', [AdminReportController::class, 'ResolvedReport'])->name('admin.report.statusResolved');
         Route::put('/dismissed/{report}', [AdminReportController::class, 'DismissedReport'])->name('admin.report.statusDismissed');
         Route::delete('/delete/{report}', [AdminReportController::class, 'DeleteReport'])->name('admin.report.delete');
+
+        Route::get('/admin/reports/search', [AdminReportController::class, 'search'])->name('admin.reports.search');
     });
 });
 

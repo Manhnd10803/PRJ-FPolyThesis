@@ -45,6 +45,43 @@
         <div class="col-xs-12 mx-5">
             <div class="box">
                 <div class="box-header">
+                    <h3 class="box-title">Tìm kiếm</h3>
+                </div>
+                <div class="box-body">
+                    <form action="{{ route('admin.qa.search') }}" method="get">
+                        <div class="box-body">
+                            <div class="row">
+                                <div class="col-xs-3">
+                                    <label for="full_name">Tiêu đề</label>
+                                    <input type="text" class="form-control" name="title" value="{{ old('title', request('title')) }}">
+                                </div>
+                                <div class="col-xs-3">
+                                    <label for="email">Người tạo</label>
+                                    <input type="text" class="form-control" name="creator" value="{{ old('creator', request('creator')) }}">
+                                </div>
+                                <div class="col-xs-3">
+                                    <label for="major">Chuyên ngành</label>
+                                    <select name="major" class="form-control">
+                                        <option value="">--Chọn chuyên ngành--</option>
+                                        @foreach($majors as $major)
+                                            <option value="{{ $major->id }}" {{ old('major') == $major->id ? 'selected' : '' }}>{{ $major->majors_code }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+    
+                                <div class="col-xs-3">
+                                    <label for="gender">Hashtag</label>
+                                    <input type="text" class="form-control" name="hashtag" value="{{ old('hashtag', request('hashtag')) }}">
+                                </div>                            
+                            </div>
+                            <br>
+                            <button type="submit" class="btn btn-primary pull-right">Tìm kiếm</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="box">
+                <div class="box-header">
                     <h3 class="box-title">Danh sách câu hỏi</h3>
                 </div>
                 <div class="box-body">
