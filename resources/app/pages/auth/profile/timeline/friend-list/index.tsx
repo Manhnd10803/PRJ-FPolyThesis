@@ -22,7 +22,7 @@ export const FriendList = ({ listFriend, idUser }) => {
           <ul className="profile-img-gallary p-0 m-0 list-unstyled">
             {listFriend &&
               listFriend.map((item: IUser, index: number) => (
-                <li key={index}>
+                <li key={index} className={`${listFriend?.length === 1 ? 'col-4' : ''}`}>
                   <Link to={`/profile/${item.id}`}>
                     <img loading="lazy" src={item.avatar} alt="gallary" className="img-fluid" />
                   </Link>

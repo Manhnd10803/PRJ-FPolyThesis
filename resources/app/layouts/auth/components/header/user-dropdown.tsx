@@ -68,7 +68,7 @@ export const UserDropdown = () => {
       },
       {
         icon: 'circle',
-        title: 'Bận',
+        title: 'Đang bận',
         classColor: 'text-warning',
       },
       {

@@ -12,6 +12,7 @@ export interface IUser {
   address: null;
   biography: null;
   gender: null;
+  activity_user: string;
   status: number;
   major_id: null;
   majors_name?: string;

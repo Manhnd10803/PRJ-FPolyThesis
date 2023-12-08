@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Events\UpdateActivityUser;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -22,6 +23,6 @@ class UserLoggedIn
     public function handle(Login $event)
     {
         $user = $event->user;
-        $user->update(['activity_user' => 'Online']);
+        $user->update(['activity_user' => 'Đang hoạt động']);
     }
 }

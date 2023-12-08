@@ -187,6 +187,19 @@ class AuthController extends Controller
                 if ($user->status == config('default.user.status.suspend')) {
                     return response()->json(['message' => 'Tài khoản đã bị khóa'], 403);
                 }
+
+                $user->update([
+                    'activity_user' => 'Đang hoạt động'
+                ]);
+
+                $user->save;
+
+                $friends = $user->friends;
+                foreach ($friends as $friend) {
+                    broadcast(new UpdateActivityUser($friend, 'Đang hoạt động', $user))->toOthers();
+                }
+
+
                 $request = Request::create('oauth/token', 'POST', [
                     'grant_type' => 'password',
                     'client_id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
@@ -240,6 +253,18 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $user = Auth::user();
+
+        $user->update([
+            'activity_user' => 'Ngoại tuyến'
+        ]);
+
+        $user->save;
+
+        $friends = $user->friends;
+        foreach ($friends as $friend) {
+            broadcast(new UpdateActivityUser($friend, 'Ngoại tuyến', $user))->toOthers();
+        }
+
         DB::table('oauth_refresh_tokens')->where('access_token_id', $user->token()->id)->update(['revoked' => true]);
         $user->tokens->each(function ($token) {
             $token->delete();
@@ -272,6 +297,18 @@ class AuthController extends Controller
             if ($checkUser->status == config('default.user.status.suspend')) {
                 return response()->json(['message' => 'Tài khoản đã bị khóa'], 403);
             };
+            $checkUser->update([
+                'activity_user' => 'Đang hoạt động'
+            ]);
+
+            $checkUser->save;
+
+            $friends = $checkUser->friends;
+            foreach ($friends as $friend) {
+                broadcast(new UpdateActivityUser($friend, 'Đang hoạt động', $checkUser))->toOthers();
+            }
+
+
             $request = Request::create('oauth/token', 'POST', [
                 'grant_type' => 'socialite',
                 'client_id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
@@ -303,6 +340,19 @@ class AuthController extends Controller
                 );
                 DB::commit();
                 $checkUser = User::where('email', $email)->first();
+
+                $checkUser->update([
+                    'activity_user' => 'Đang hoạt động'
+                ]);
+
+                $checkUser->save;
+
+                $friends = $checkUser->friends;
+                foreach ($friends as $friend) {
+                    broadcast(new UpdateActivityUser($friend, 'Đang hoạt động', $checkUser))->toOthers();
+                }
+
+
                 $request = Request::create('oauth/token', 'POST', [
                     'grant_type' => 'socialite',
                     'client_id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
@@ -558,17 +608,23 @@ class AuthController extends Controller
         DB::beginTransaction();
         try {
             $user = Auth::user();
-            $activity  = $request->activity;
+            $activity  = $request->activity_user;
+
             $user->update([
                 'activity_user' => $activity,
             ]);
             $user->save;
+
             $friends = $user->friends;
             foreach ($friends as $friend) {
-                broadcast(new UpdateActivityUser($friend, $activity))->toOthers();
+                broadcast(new UpdateActivityUser($friend, $activity, $user))->toOthers();
             }
             DB::commit();
-            return response()->json(['message' => 'trạng thái đang là ' . $activity], 200);
+            $data = [
+                'user_id' => $user->id,
+                'activity_user' => $activity,
+            ];
+            return response()->json(['data' => $data], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 400);

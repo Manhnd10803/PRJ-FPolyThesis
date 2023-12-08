@@ -332,17 +332,19 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
                     ) : (
                       <img loading="lazy" src={backgroundImage} alt="profile-bg" className="rounded img-fluid" />
                     )}
-                    <ul className="header-nav list-inline d-flex flex-wrap justify-end p-0 m-0">
-                      <li>
-                        <Link
-                          to="#"
-                          className="material-symbols-outlined cursor-pointer"
-                          onClick={() => setModalShowUplodaImage(true)}
-                        >
-                          photo_camera
-                        </Link>
-                      </li>
-                    </ul>
+                    {isUser && (
+                      <ul className="header-nav list-inline d-flex flex-wrap justify-end p-0 m-0">
+                        <li>
+                          <Link
+                            to="#"
+                            className="material-symbols-outlined cursor-pointer"
+                            onClick={() => setModalShowUplodaImage(true)}
+                          >
+                            photo_camera
+                          </Link>
+                        </li>
+                      </ul>
+                    )}
                   </div>
                   <div className="user-detail text-center mb-3">
                     <div className="profile-img">

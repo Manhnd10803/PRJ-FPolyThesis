@@ -444,6 +444,13 @@ ul.request-list {
 		background-color: $success;
 	}
 }
+
+.iq-profile-avatar.status-offline {
+	&:before {
+		background-color: $danger;
+	}
+}
+
 .iq-profile-avatar.status-away {
 	&:before {
 		background-color: $warning;
