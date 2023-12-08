@@ -43,10 +43,10 @@ export const AuthGuard: FC<AuthGuardProps> = ({ children }) => {
           () => {
             setStatus('Đang bận');
           },
-          1000 * 60 * 2,
+          1000 * 60 * 5,
         );
       } else {
-        if (elapsedTime > 1000 * 60 * 2) {
+        if (elapsedTime > 1000 * 60 * 5) {
           setStatus('Đang hoạt động');
         }
         clearTimeout(timeoutId);
