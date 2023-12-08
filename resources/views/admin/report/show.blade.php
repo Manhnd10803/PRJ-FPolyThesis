@@ -22,7 +22,17 @@
                     <span class="bg-red">
                         {{ $report->created_at->format('d M. Y') }}
                     </span>
-                    <span class="btn btn-aqua pull-right"><a href="/profile/{{ $report->reported_id }}">Xem tại phía người dùng</a></span>
+                    @if ($report->report_type === "blog")
+                        <span class="btn btn-aqua pull-right"><a href="/blog/{{ $report->report_type_id }}">Xem tại phía người dùng</a></span>
+                    @elseif ($report->report_type === "qa")
+                        <span class="btn btn-aqua pull-right"><a href="/quests/{{ $report->report_type_id }}">Xem tại phía người dùng</a></span>
+                    @elseif ($report->report_type === "user")
+                        <span class="btn btn-aqua pull-right"><a href="/profile/{{ $report->report_type_id }}">Xem tại phía người dùng</a></span>
+                    @elseif ($report->report_type === "comment")
+                        <span class="btn btn-aqua pull-right"><a href="/comment/{{ $report->report_type_id }}">Xem tại phía người dùng</a></span>
+                    @elseif ($report->report_type === "post")
+                        <span class="btn btn-aqua pull-right"><a href="/post/{{ $report->report_type_id }}">Xem tại phía người dùng</a></span>
+                    @endif
                 </li>
                 <li>
                   <i class=" fa fa-pencil"></i>
