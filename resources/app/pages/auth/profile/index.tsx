@@ -59,6 +59,7 @@ export const ProfilePage = () => {
   const { id } = useParams();
   const localUserId = StorageFunc.getUserId();
   const isUser = id == undefined || id == localUserId ? true : false;
+  const idUser = id == undefined || id == localUserId ? localUserId : id;
 
   const getDetailProfile = async () => {
     const user_id = id || localUserId;
@@ -105,6 +106,7 @@ export const ProfilePage = () => {
                       listFriend={detailProfile?.detailTimeline?.friend_details}
                       isLoading={isLoading}
                       isUser={isUser}
+                      idUser={idUser}
                     />
                   </Tab.Pane>
                   <Tab.Pane eventKey="second">
