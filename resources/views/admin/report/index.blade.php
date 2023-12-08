@@ -134,6 +134,8 @@
                                         Người dùng
                                     @elseif ($report->report_type === "comment")
                                         Bình luận
+                                    @elseif ($report->report_type === "post")
+                                        Bài đăng bản tin
                                     @endif
                                     {{-- {{$report->report_type}} --}}
                                 </td>

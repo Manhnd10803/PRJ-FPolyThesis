@@ -324,6 +324,7 @@ export const EditProfilePage = () => {
                                   <Form.Check.Label> Nữ</Form.Check.Label>
                                 </Form.Check>
                               </Form.Check>
+                              <div className="error-message text-danger">{errors.gender?.message}</div>
                             </Form.Group>
 
                             <Form.Group className="form-group">
@@ -334,6 +335,7 @@ export const EditProfilePage = () => {
                                 defaultValue={DataUser?.birthday || ''}
                                 {...update('birthday')}
                               />
+                              <div className="error-message text-danger">{errors.birthday?.message}</div>
                             </Form.Group>
 
                             <Form.Group className="form-group">
@@ -344,6 +346,7 @@ export const EditProfilePage = () => {
                                 defaultValue={DataUser?.biography || ''}
                                 {...update('biography')}
                               />
+                              <div className="error-message text-danger">{errors.biography?.message}</div>
                             </Form.Group>
                             <Form.Group className="col-md-12 form-group mb-3 ">
                               <Form.Label>Địa chỉ: *</Form.Label>
@@ -355,6 +358,7 @@ export const EditProfilePage = () => {
                                 defaultValue={DataUser?.address || ''}
                                 {...update('address')}
                               ></Form.Control>
+                              <div className="error-message text-danger">{errors.address?.message}</div>
                             </Form.Group>
                             <Button name="next" className="float-right" type="submit" disabled={isLoading}>
                               {isLoading ? 'Đang cập nhật...' : 'Cập nhật'}

@@ -6,8 +6,9 @@ import { FriendList } from './friend-list';
 import './index.css';
 import { CreateNewPost } from '../../home/components/create-new-post';
 import { PostContainer } from '../../home/components/post';
+import { useParams } from 'react-router-dom';
 
-export const Timeline = ({ about, isLoading, isUser, listImage, listFriend }) => {
+export const Timeline = ({ about, isLoading, isUser, listImage, listFriend, idUser }) => {
   const [isSticky, setSticky] = useState(false);
 
   useEffect(() => {
@@ -37,7 +38,7 @@ export const Timeline = ({ about, isLoading, isUser, listImage, listFriend }) =>
         <Col lg={4}>
           <About aboutUser={about} isLoading={isLoading} />
           <MyPhoto listPhoto={listImage} />
-          <FriendList listFriend={listFriend} />
+          <FriendList listFriend={listFriend} idUser={idUser} />
         </Col>
         <Col lg={8}>
           {isUser ? <CreateNewPost /> : ''}

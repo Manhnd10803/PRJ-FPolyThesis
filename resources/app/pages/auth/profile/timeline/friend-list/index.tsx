@@ -4,7 +4,7 @@ import { formatFullName } from '@/utilities/functions';
 import { Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-export const FriendList = ({ listFriend }) => {
+export const FriendList = ({ listFriend, idUser }) => {
   return (
     <>
       <Card>
@@ -14,7 +14,7 @@ export const FriendList = ({ listFriend }) => {
           </div>
           <div className="card-header-toolbar d-flex align-items-center">
             <p className="m-0">
-              <Link to={pathName.PROFILE_FRIEND_LIST}>Xem thêm</Link>
+              <Link to={`${pathName.PROFILE}/${idUser}#pills-friends-tab`}>Xem thêm</Link>
             </p>
           </div>
         </div>

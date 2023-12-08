@@ -78,7 +78,7 @@ export const ContentBlogDetail = ({ data, commentRef, createLike, BlogsQueryKey 
     },
   });
   const idUser = StorageFunc.getUserId();
-  const postReport = async (idfriend, title, idblog) => {
+  const postReport = async (idfriend: any, title: any, idblog: any) => {
     try {
       setIsLoadingReport(true);
       const imageURL = await CloudiaryService.uploadImages(imagesRef.current, 'blog');

@@ -119,7 +119,7 @@ export const Editor = React.forwardRef((props: any, ref: any): JSX.Element => {
     <>
       <ToolbarPlugin setIsLinkEditMode={setIsLinkEditMode} />
       <div className={`editor-container plain-text}`}>
-        <MaxLengthPlugin maxLength={5000} />
+        <MaxLengthPlugin maxLength={15000} />
         <DragDropPaste />
         <AutoFocusPlugin />
         <ClearEditorPlugin />
