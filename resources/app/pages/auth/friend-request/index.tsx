@@ -6,11 +6,15 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { formatFullName } from '@/utilities/functions';
 import { pathName } from '@/routes/path-name';
+import { useSetListFriend } from '@/hooks/useFriendQuery';
 interface FriendStates {
   [key: string]: string;
 }
 export const FriendRequestPage = () => {
   const queryClient = useQueryClient();
+
+  const { manuallySetListFriend } = useSetListFriend();
+
   const [addFriendStates, setAddFriendStates] = useState<FriendStates>({});
 
   const fetchAllFriendRequest = async () => {
@@ -30,9 +34,10 @@ export const FriendRequestPage = () => {
   });
   const HandleConfirmFriendRequest = async (id: any) => {
     try {
-      const response = await confirmFriendRequestMutation.mutateAsync(id);
+      const { data } = await confirmFriendRequestMutation.mutateAsync(id);
+      manuallySetListFriend('add', data);
       toast.success('Xác nhận thành công');
-      return response;
+      return data;
     } catch (error) {
       throw error;
     }
