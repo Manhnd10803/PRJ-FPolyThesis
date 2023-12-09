@@ -30,7 +30,7 @@ class AdminReportController extends Controller
                 $q->where(function ($query) use ($nameParts) {
                     foreach ($nameParts as $part) {
                         $query->where('first_name', 'LIKE', "%$part%")
-                              ->orWhere('last_name', 'LIKE', "%$part%");
+                            ->orWhere('last_name', 'LIKE', "%$part%");
                     }
                 });
             });
@@ -42,7 +42,7 @@ class AdminReportController extends Controller
                 $q->where(function ($query) use ($nameParts) {
                     foreach ($nameParts as $part) {
                         $query->where('first_name', 'LIKE', "%$part%")
-                              ->orWhere('last_name', 'LIKE', "%$part%");
+                            ->orWhere('last_name', 'LIKE', "%$part%");
                     }
                 });
             });
@@ -107,10 +107,10 @@ class AdminReportController extends Controller
     {
 
         $query = Report::with('reporter:id,first_name,last_name', 'reported:id,first_name,last_name')
-        ->where('report_status', config('default.report.status.pending'));
-    
+            ->where('report_status', config('default.report.status.pending'));
+
         // Bổ sung điều kiện lọc chỉ lấy dữ liệu của pending.
-        $this->applySearchFilters($query, request(), false); 
+        $this->applySearchFilters($query, request(), false);
 
         $reports = $query->orderBy('created_at', 'desc')->get();
 
@@ -125,13 +125,13 @@ class AdminReportController extends Controller
     {
         $report->update(['report_status' => config('default.report.status.resolved')]);
         return redirect()->route('admin.report.show', ['report' => $report->id])
-            ->with('redirect', route('admin.report.index'));
+            ->with('redirect', route('admin.report.pending'));
     }
     public function DismissedReport(Report $report)
     {
         $report->update(['report_status' => config('default.report.status.dismissed')]);
         return redirect()->route('admin.report.show', ['report' => $report->id])
-            ->with('redirect', route('admin.report.pending')); 
+            ->with('redirect', route('admin.report.pending'));
     }
     public function CountPendingReports()
     {
