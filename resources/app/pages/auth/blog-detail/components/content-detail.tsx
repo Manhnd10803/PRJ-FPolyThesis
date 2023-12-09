@@ -25,19 +25,15 @@ import { CustomListItem } from '../../../../utilities/funcReport/listItem';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ReportService } from '@/apis/services/report.service';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
-import { CloudiaryService } from '@/apis/services/cloudinary.service';
 import toast from 'react-hot-toast';
-import { DropZoneField } from '@/components/custom/drop-zone-field';
 import StarsIcon from '@mui/icons-material/Stars';
 import { momentVi } from '@/utilities/functions/moment-locale';
 import { BlogService } from '@/apis/services/blog.service';
 
 export const ContentBlogDetail = ({ data, commentRef, createLike, BlogsQueryKey }: any) => {
   const [likeStatus, setLikeStatus] = useState(data?.user_like?.emotion || null);
-  const [isLoadingReport, setIsLoadingReport] = useState(false);
   const queryClient = useQueryClient();
   const [contentReport, setContentReport] = useState('');
-  const imagesRef = useRef<File[]>([]);
   const { id } = useParams();
   const navigate = useNavigate();
   const [showModalReport, setShowModalReport] = useState(false);
@@ -61,12 +57,10 @@ export const ContentBlogDetail = ({ data, commentRef, createLike, BlogsQueryKey 
     { title: 'Spam', onClick: () => handleShow('Spam') },
     { title: 'Vi phạm điều khoản', onClick: () => handleShow('Vi phạm điều khoản') },
     { title: 'Quấy rối', onClick: () => handleShow('Quấy rối') },
-    { title: 'Bản dịch kém chất lượng', onClick: () => handleShow('Bản dịch kém chất lượng') },
     { title: 'Vi phạm bản quyền', onClick: () => handleShow('Vi phạm bản quyền') },
+    { title: 'Bản dịch kém chất lượng', onClick: () => handleShow('Bản dịch kém chất lượng') },
   ];
-  const handleChangeFiles = (files: File[]) => {
-    imagesRef.current = files;
-  };
+
   const handleContentChange = (event: any) => {
     const content = event.target.value;
     setContentReport(content);
@@ -80,8 +74,7 @@ export const ContentBlogDetail = ({ data, commentRef, createLike, BlogsQueryKey 
   const idUser = StorageFunc.getUserId();
   const postReport = async (idfriend: any, title: any, idblog: any) => {
     try {
-      setIsLoadingReport(true);
-      const imageURL = await CloudiaryService.uploadImages(imagesRef.current, 'blog');
+      handleClose();
       const formData = {
         reporter_id: idUser,
         reported_id: idfriend,
@@ -89,10 +82,10 @@ export const ContentBlogDetail = ({ data, commentRef, createLike, BlogsQueryKey 
         report_content: contentReport,
         report_type: 'blog',
         report_type_id: idblog,
-        report_image: imageURL[0] || '',
+        report_image: '',
       };
       await createReportMutation.mutateAsync(formData);
-      handleClose();
+      toast.success('! Nội dung bình luận được báo cáo thành công');
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -150,7 +143,7 @@ export const ContentBlogDetail = ({ data, commentRef, createLike, BlogsQueryKey 
               <div className="d-flex align-items-center justify-content-between">
                 <div className="d-flex align-items-center">
                   <div className="user-image mb-3">
-                    <Image className="avatar-80 rounded" src={data?.blog?.user.avatar} alt="Ảnh đại diện" />
+                    <Image className="avatar-50 rounded-circle" src={data?.blog?.user.avatar} alt="Ảnh đại diện" />
                   </div>
                   <div className="ms-3">
                     <Link to={`${pathName.PROFILE}/${data?.blog?.user.id}`}>
@@ -235,7 +228,7 @@ export const ContentBlogDetail = ({ data, commentRef, createLike, BlogsQueryKey 
                     {/* Modal  */}
                     <Modal centered show={showModalReport} onHide={handleCloseModalReport}>
                       <Modal.Header closeButton>
-                        <Modal.Title>Báo cáo</Modal.Title>
+                        <Modal.Title>Nội dung báo cáo</Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
                         <p className="py-2">
@@ -255,12 +248,6 @@ export const ContentBlogDetail = ({ data, commentRef, createLike, BlogsQueryKey 
                     {/* Modal item  */}
                     <CustomModal show={showModal} onHide={handleClose} title={modalTitle}>
                       <div className="mb-3">
-                        <label htmlFor="fileInput" className="form-label">
-                          Bạn có thể đính kèm hình ảnh (tối đa 1 ảnh)
-                        </label>
-                        <DropZoneField onChangeFiles={handleChangeFiles} maxFiles={1} accept={{ 'image/*': [] }} />
-                      </div>
-                      <div className="mb-3">
                         <label htmlFor="commentTextarea" className="form-label">
                           Nhận xét (tối đa 225 kí tự)
                         </label>
@@ -273,13 +260,15 @@ export const ContentBlogDetail = ({ data, commentRef, createLike, BlogsQueryKey 
                           rows="3"
                         ></textarea>
                       </div>
-                      <Modal.Footer>
+                      <Modal.Footer className="d-flex justify-content-between">
+                        <label htmlFor="fileInput" className="form-label">
+                          Điều khoản dịch vụ của FpolyZone
+                        </label>
                         <button
                           className="btn btn-info"
                           onClick={() => postReport(data?.blog?.user?.id, modalTitle, data?.blog?.id)}
-                          disabled={isLoadingReport}
                         >
-                          {isLoadingReport ? 'Đang báo cáo...' : 'Báo cáo'}
+                          Báo cáo
                         </button>
                       </Modal.Footer>
                     </CustomModal>

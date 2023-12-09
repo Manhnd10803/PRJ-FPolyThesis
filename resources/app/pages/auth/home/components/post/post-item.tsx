@@ -78,7 +78,7 @@ const Header = () => {
               <span className="mb-0 ps-1 d-inline-block">{actionType}</span>
               <p className="mb-0 text-primary">{momentVi(post?.updated_at).fromNow()}</p>
             </div>
-            <MoreActionDropdown friendId={post?.user?.id} postId={post?.id} />
+            <MoreActionDropdown friendId={post?.user?.id} postId={post?.id} username={post?.user?.username} />
           </div>
         </div>
       </div>

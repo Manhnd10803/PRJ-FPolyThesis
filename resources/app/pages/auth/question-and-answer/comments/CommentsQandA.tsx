@@ -111,7 +111,7 @@ export const CommentsQandA = ({ qAndAData, postComment, deleteComment, putCommen
                           <div className="d-flex justify-content-between">
                             <div className="d-flex align-items-center">
                               <div className="user-image mb-3">
-                                <Image className="avatar-80 rounded" src={comment?.user?.avatar} alt="#" />
+                                <Image className="avatar-50 rounded-circle" src={comment?.user?.avatar} alt="#" />
                               </div>
                               <div className="ms-3">
                                 <h5>{comment?.user ? formatFullName(comment?.user) : 'Chưa cập nhật'}</h5>
@@ -256,7 +256,7 @@ export const CommentsQandA = ({ qAndAData, postComment, deleteComment, putCommen
                                 <div className="d-flex justify-content-between">
                                   <div className="d-flex align-items-center">
                                     <div className="user-image mb-3">
-                                      <Image className="avatar-80 rounded" src={reply?.user?.avatar} alt="#" />
+                                      <Image className="avatar-50 rounded-circle" src={reply?.user?.avatar} alt="#" />
                                     </div>
                                     <div className="ms-3">
                                       <h5>{reply?.user ? formatFullName(reply?.user) : 'Chưa cập nhật'}</h5>
@@ -346,7 +346,10 @@ export const CommentsQandA = ({ qAndAData, postComment, deleteComment, putCommen
                                 ) : (
                                   <div className="blog-description">
                                     <p>
-                                      <span className="text-primary">@{reply?.reply_to}</span> {reply?.content}
+                                      <span className="text-primary">
+                                        {reply?.user?.username != reply?.reply_to ? `@${reply?.reply_to}` : ''}
+                                      </span>{' '}
+                                      {reply?.content}
                                     </p>
                                     <div className="d-flex align-items-center justify-content-between mb-2 position-right-side">
                                       <div className="d-flex align-items-center gap-3">

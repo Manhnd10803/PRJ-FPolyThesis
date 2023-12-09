@@ -273,7 +273,7 @@ export const DetailQandAPage = () => {
                             loading="lazy"
                             src={qAndAData?.qa?.user?.avatar}
                             alt="userimg"
-                            className="avatar-40 rounded-circle"
+                            className="avatar-50 rounded-circle"
                           />
                         </div>
 
@@ -298,28 +298,7 @@ export const DetailQandAPage = () => {
                             </div>
 
                             <div className="ms-auto d-flex align-items-center">
-                              <div className="ms-auto d-flex align-items-center">
-                                {/* { qAndAData.like_counts_by_emotion.total_likes > 0 ? (
-                                <>
-                                  <i className="material-symbols-outlined md-16"> thumb_up </i>
-                                  <span className="mx-1">
-                                    <small>{qAndAData.like_counts_by_emotion.total_likes}</small>
-                                  </span>
-                                </>
-                              ) : (
-                                <>
-                                  <i className="material-symbols-outlined md-16"> thumb_up </i>
-                                  <span className="mx-1">
-                                    <small>0</small>
-                                  </span>
-                                </>
-                              ) } */}
-
-                                {/* <i className="material-symbols-outlined md-16"> thumb_up </i>
-                              <span className="mx-1">
-                                <small>0</small>
-                              </span> */}
-                              </div>
+                              <div className="ms-auto d-flex align-items-center"></div>
 
                               <div className="ms-auto d-flex align-items-center">
                                 <i className="material-symbols-outlined md-16"> chat_bubble_outline </i>
