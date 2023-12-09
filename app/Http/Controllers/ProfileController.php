@@ -34,6 +34,8 @@ class ProfileController extends Controller
                     'avatar' => $user->avatar,
                     'major' => $major->majors_name,
                     'cover_photo' => $user->cover_photo,
+                    'birthday' => $user->birthday,
+                    'bio' => $user->biography
                 ],
                 'total_post' => $countposts,
                 'total_blog' => $countblogs,

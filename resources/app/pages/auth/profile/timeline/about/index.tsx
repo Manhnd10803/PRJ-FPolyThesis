@@ -1,7 +1,7 @@
 import { Card } from 'react-bootstrap';
 
 export const About = ({ aboutUser, isLoading }) => {
-  const { major } = aboutUser || '';
+  const { major, bio, birthday } = aboutUser || '';
   return (
     <>
       <Card>
@@ -11,18 +11,25 @@ export const About = ({ aboutUser, isLoading }) => {
           </div>
         </div>
         <Card.Body>
-          <ul className="list-inline p-0 m-0">
-            <li className="mb-2 d-flex align-items-center">
-              <span className="material-symbols-outlined md-18">person</span>
-              {isLoading ? (
-                <>...</>
-              ) : (
-                <>
-                  <p className="mb-0 ms-2">{major}</p>
-                </>
-              )}
-            </li>
-          </ul>
+          {isLoading ? (
+            <>...</>
+          ) : (
+            <ul className="list-inline p-0 m-0">
+              <>
+                {bio && <li className="mb-2 d-flex align-items-center justify-content-center fw-bold">{bio}</li>}
+                <li className="mb-2 d-flex align-items-center">
+                  <span className="material-symbols-outlined md-18">person</span>
+                  <span className="mb-0 d-flex align-items-center ms-2">{major}</span>
+                </li>
+                {birthday && (
+                  <li className="mb-2 d-flex align-items-center">
+                    <span className="material-symbols-outlined md-18">cake</span>
+                    <p className="mb-0 ms-2">{birthday}</p>
+                  </li>
+                )}
+              </>
+            </ul>
+          )}
         </Card.Body>
       </Card>
     </>

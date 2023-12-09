@@ -20,6 +20,10 @@ Broadcast::channel('user.{sender_id}', function ($user, $sender_id) {
     return true;
 });
 
+Broadcast::channel('activity.{user_id}', function () {
+    return true;
+});
+
 Broadcast::channel('receive-notification-{recipient}', function ($user, $recipient) {
     return true;
 });

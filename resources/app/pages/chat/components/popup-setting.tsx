@@ -52,7 +52,7 @@ export const PopUpSetting = ({ show, setShow }: PopUpSettingProps) => {
           <ul className="user-status p-0">
             <li className="mb-1">
               <i className="ri-checkbox-blank-circle-fill text-success pe-1"></i>
-              <span>Online</span>
+              <span>Đang hoạt động</span>
             </li>
             <li className="mb-1">
               <i className="ri-checkbox-blank-circle-fill text-warning pe-1"></i>
@@ -64,7 +64,7 @@ export const PopUpSetting = ({ show, setShow }: PopUpSettingProps) => {
             </li>
             <li className="mb-1">
               <i className="ri-checkbox-blank-circle-fill text-light pe-1"></i>
-              <span>Offline</span>
+              <span>Ngoại tuyến</span>
             </li>
           </ul>
         </div>

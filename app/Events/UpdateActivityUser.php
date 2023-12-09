@@ -15,21 +15,23 @@ class UpdateActivityUser implements ShouldBroadcast
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $user;
     public $activity;
+    public $loginUser;
 
-    public function __construct($user, $activity)
+    public function __construct($user, $activity, $loginUser)
     {
         $this->user = $user;
         $this->activity = $activity;
+        $this->loginUser = $loginUser;
     }
     public function broadcastOn()
     {
-        return new PrivateChannel('user.' . $this->user->id);
+        return new PrivateChannel('activity.' . $this->user->id);
     }
     public function broadcastWith()
     {
         return [
-            'user_id' => $this->user->id,
-            'activity' => $this->activity,
+            'user_id' => $this->loginUser->id,
+            'activity_user' => $this->activity,
         ];
     }
     public function broadcastAs()
