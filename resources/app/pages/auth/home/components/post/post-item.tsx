@@ -12,6 +12,7 @@ import { PostItemContextProvider, usePostContext, usePostItemContext } from '../
 import { ChosePostEmotion, EmotionType } from '@/components/shared/choose-emotion';
 import { momentVi } from '@/utilities/functions/moment-locale';
 import { formatImagesToRender, getClassImages } from '../../constants';
+import { formatFullName } from '@/utilities/functions';
 
 type PostItemProps = {
   item: GetNewPostResponseType;
@@ -74,7 +75,7 @@ const Header = () => {
         <div className="w-100">
           <div className="d-flex justify-content-between">
             <div>
-              <h5 className="mb-0 d-inline-block">{post?.user?.username}</h5>
+              <h5 className="mb-0 d-inline-block">{formatFullName(post?.user)}</h5>
               <span className="mb-0 ps-1 d-inline-block">{actionType}</span>
               <p className="mb-0 text-primary">{momentVi(post?.updated_at).fromNow()}</p>
             </div>

@@ -1,6 +1,7 @@
 import { momentVi } from '@/utilities/functions/moment-locale';
 import { usePostDetailContext } from '../../contexts';
 import { MoreActionDropdown } from '../more-action-dropdown';
+import { formatFullName } from '@/utilities/functions';
 
 export const Header = () => {
   const { post } = usePostDetailContext();
@@ -16,7 +17,7 @@ export const Header = () => {
         <div className="w-100">
           <div className="d-flex justify-content-between">
             <div>
-              <h5 className="mb-0 d-inline-block">{post?.user?.username}</h5>
+              <h5 className="mb-0 d-inline-block">{formatFullName(post?.user)}</h5>
               <span className="mb-0 ps-1 d-inline-block">{actionType}</span>
               <p className="mb-0 text-primary">{momentVi(post?.updated_at).fromNow()}</p>
             </div>

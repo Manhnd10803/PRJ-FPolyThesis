@@ -1,6 +1,7 @@
 import { MajorService } from '@/apis/services/major.service';
 import { QandAService } from '@/apis/services/qanda.service';
 import { formatDateFromCreatedAt } from '@/pages/auth/blog/components/format-date';
+import { formatFullName } from '@/utilities/functions';
 import { momentVi } from '@/utilities/functions/moment-locale';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
@@ -172,13 +173,18 @@ export const ListMyQAndAs = () => {
             <h4>Tất cả câu hỏi của bạn</h4>
             {filteredData &&
               filteredData.map((qandA, index) => (
-                <div key={qandA.qa.id} className="borderbox1 mt-3 rounded d-flex rounded">
+                <div key={qandA.qa.id} className="borderbox1 mt-3 rounded d-flex">
                   <div className="user-img me-2">
-                    <img loading="lazy" src={imageUrl} alt="userimg" className="avatar-40 rounded-circle" />
+                    <img
+                      loading="lazy"
+                      src={qandA?.qa?.user?.avatar}
+                      alt="userimg"
+                      className="avatar-40 rounded-circle"
+                    />
                   </div>
                   <div className="borderbox border rounded p-2">
                     <div className="d-flex align-items-center flex-wrap mb-2">
-                      <h5>{qandA?.qa?.user?.username}</h5>
+                      <h5>{formatFullName(qandA?.qa?.user)}</h5>
 
                       <span className="text-primary ms-1 d-flex align-items-center">
                         <i className="material-symbols-outlined me-2 text-primary md-16">check_circle</i>
