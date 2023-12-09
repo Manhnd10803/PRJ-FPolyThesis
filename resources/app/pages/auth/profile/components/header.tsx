@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import AvatarEditor from 'react-avatar-editor';
 import React, { useEffect, useRef, useState } from 'react';
 import { FriendService } from '@/apis/services/friend.service';
 import { Button, Card, Col, Dropdown, ListGroup, Modal } from 'react-bootstrap';
@@ -9,15 +8,13 @@ import { ProfileService } from '@/apis/services/profile.service';
 import toast from 'react-hot-toast';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { IProfileUser } from '@/models/user';
-import MuiButton from '@mui/material/Button';
-import { styled } from '@mui/material/styles';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { formatFullName } from '@/utilities/functions';
 import { DropZoneField } from '@/components/custom/drop-zone-field';
 import { CustomListItem } from '@/utilities/funcReport/listItem';
 import { CustomModal } from '@/utilities/funcReport/modalReport';
 import { ReportService } from '@/apis/services/report.service';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
+import { ResizeImage, UploadImage } from './component';
 const imageUrl = 'https://picsum.photos/20';
 
 type Props = {
@@ -28,21 +25,11 @@ type Props = {
   queryKey: Array<string>;
 };
 
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  whiteSpace: 'nowrap',
-  width: 1,
-});
-
 export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Props) => {
-  const [modalShowUploadImage, setModalShowUplodaImage] = React.useState(false);
-  const [modalShowResizeImage, setModalShowResizeImage] = React.useState(false);
+  const [modalShowUploadArticlePhoto, setModalShowUploadArticlePhoto] = React.useState(false);
+  const [modalShowResizeArticlePhoto, setModalShowResizeArticlePhoto] = React.useState(false);
+  const [modalShowUploadAvatar, setModalShowUploadAvatar] = React.useState(false);
+  const [modalShowResizeAvatar, setModalShowResizeAvatar] = React.useState(false);
   const [modalShowNoti, setModalShowNoti] = React.useState(false);
   const { total_blog, total_post, total_friend, user } = detailUser || {};
   const [imageCoverPhoto, setImageCoverPhoto] = useState('');
@@ -52,21 +39,19 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
   const [contentReport, setContentReport] = useState('');
   const imagesRef = useRef<File[]>([]);
   const [isLoadingReport, setIsLoadingReport] = useState(false);
-  const [showModalReport, setShowModalReport] = useState(false);
-  const handleCloseModalReport = () => setShowModalReport(false);
-  const handleShowModalReport = () => setShowModalReport(true);
+  const [showModalOptionReport, setShowModalOptionReport] = useState(false);
 
-  const [showModal, setShowModal] = useState(false);
+  const [showModalFormReport, setShowModalFormReport] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
 
   const handleClose = () => {
-    setShowModal(false);
+    setShowModalFormReport(false);
   };
 
   const handleShow = (title: any) => {
     setModalTitle(title);
-    setShowModal(true);
-    handleCloseModalReport();
+    setShowModalFormReport(true);
+    setShowModalOptionReport(false);
   };
   const listItems = [
     { title: 'Giả mạo người khác', onClick: () => handleShow('Giả mạo người khác') },
@@ -132,83 +117,6 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
     );
   };
 
-  const UploadImage = (props: any) => {
-    const handleImageUpload = (e: any) => {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = event => {
-          const image = new Image();
-          image.onload = () => {
-            if (image.width < 1300) {
-              setModalShowNoti(true);
-            } else {
-              const base64String: string | null = event.target?.result as string;
-              if (base64String) {
-                setImageCoverPhoto(base64String);
-                setModalShowUplodaImage(false);
-                setModalShowResizeImage(true);
-              }
-            }
-          };
-          image.src = event.target?.result as string;
-        };
-        reader.readAsDataURL(file);
-      }
-    };
-
-    return (
-      <Modal {...props} size="md" aria-labelledby="contained-modal-title-vcenter" centered animation={false}>
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">Cập nhật ảnh bìa</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <MuiButton className="w-100" component="label" variant="contained" startIcon={<CloudUploadIcon />}>
-            Tải ảnh lên
-            <VisuallyHiddenInput
-              type="file"
-              name="avatar"
-              onChange={handleImageUpload}
-              accept="image/png, image/jpg, image/jpeg"
-            />
-          </MuiButton>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={props.onHide}>Close</Button>
-        </Modal.Footer>
-      </Modal>
-    );
-  };
-
-  const ResizeImage = (props: any) => {
-    return (
-      <Modal {...props} size="lg" aria-labelledby="contained-modal-title-vcenter" centered animation={false}>
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">Chỉnh sửa ảnh bìa</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <AvatarEditor
-            ref={imageCoverRef}
-            image={imageCoverPhoto}
-            width={650}
-            height={162.5}
-            border={50}
-            color={[255, 255, 255, 0.6]}
-            scale={1}
-            rotate={0}
-            style={{ width: '100%' }}
-          />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button className="bg-secondary" onClick={props.onHide}>
-            Close
-          </Button>
-          <Button onClick={handleSaveImage}>Lưu</Button>
-        </Modal.Footer>
-      </Modal>
-    );
-  };
-
   const imageCoverRef = useRef(null);
 
   const dataURLtoFile = (dataurl: any, filename: string) => {
@@ -223,9 +131,10 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
     return new File([u8arr], filename, { type: mime });
   };
 
-  const updateCoverPhotoMutation = useMutation(ProfileService.updateCoverPhoto);
-  const handleSaveImage = async () => {
-    setModalShowResizeImage(false);
+  const updateCoverArticleMutation = useMutation(ProfileService.updateCoverPhoto);
+  const updateCoverAvatarMutation = useMutation(ProfileService.updateCoverAvatar);
+  const handleSaveArticle = async () => {
+    setModalShowResizeArticlePhoto(false);
     const canvas = imageCoverRef?.current?.getImage();
     const imageBase64 = canvas.toDataURL('image/jpeg'); // Chuyển canvas thành base64
 
@@ -238,12 +147,35 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
       cover_photo: data[0],
     };
     try {
-      await updateCoverPhotoMutation.mutateAsync(dataForm);
+      await updateCoverArticleMutation.mutateAsync(dataForm);
       toast.success('Cập nhật ảnh bìa thành công');
       queryClient.invalidateQueries(queryKey);
       return;
     } catch (error) {
       toast.error('Cập nhật ảnh bìa thất bại');
+      return;
+    }
+  };
+  const handleSaveAvatar = async () => {
+    setModalShowResizeAvatar(false);
+    const canvas = imageCoverRef?.current?.getImage();
+    const imageBase64 = canvas.toDataURL('image/jpeg'); // Chuyển canvas thành base64
+
+    // Chuyển đổi base64 thành File
+    const file = dataURLtoFile(imageBase64, 'my_cover_photo.jpg');
+
+    const fileList = [file];
+    const data = await CloudiaryService.uploadImages(fileList, 'cover');
+    const dataForm = {
+      avatar: data[0],
+    };
+    try {
+      await updateCoverAvatarMutation.mutateAsync(dataForm);
+      toast.success('Cập nhật ảnh đại diện thành công');
+      queryClient.invalidateQueries(queryKey);
+      return;
+    } catch (error) {
+      toast.error('Cập nhật ảnh đại diện thất bại');
       return;
     }
   };
@@ -296,8 +228,48 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
 
   return (
     <>
-      <UploadImage show={modalShowUploadImage} onHide={() => setModalShowUplodaImage(false)} />
-      <ResizeImage show={modalShowResizeImage} onHide={() => setModalShowResizeImage(false)} />
+      <UploadImage
+        title={'Cập nhật ảnh bìa'}
+        show={modalShowUploadArticlePhoto}
+        onHide={() => setModalShowUploadArticlePhoto(false)}
+        setModalShowNoti={() => setModalShowNoti(true)}
+        setImageCoverPhoto={(value: any) => setImageCoverPhoto(value)}
+        setModalShowUploadImage={() => setModalShowUploadArticlePhoto(false)}
+        setModalShowResizeImage={() => setModalShowResizeArticlePhoto(true)}
+      />
+      <ResizeImage
+        title={'Chỉnh sửa ảnh bìa'}
+        show={modalShowResizeArticlePhoto}
+        onHide={() => setModalShowResizeArticlePhoto(false)}
+        imageCoverRef={imageCoverRef}
+        imageCoverPhoto={imageCoverPhoto}
+        handleSaveImage={handleSaveArticle}
+        width={650}
+        height={162.5}
+        styleInfo={{ width: '100%' }}
+        size={'lg'}
+      />
+      <UploadImage
+        title={'Cập nhật ảnh đại diện'}
+        show={modalShowUploadAvatar}
+        onHide={() => setModalShowUploadAvatar(false)}
+        setModalShowNoti={() => setModalShowNoti(true)}
+        setImageCoverPhoto={(value: any) => setImageCoverPhoto(value)}
+        setModalShowUploadImage={() => setModalShowUploadAvatar(false)}
+        setModalShowResizeImage={() => setModalShowResizeAvatar(true)}
+      />
+      <ResizeImage
+        title={'Chỉnh sửa ảnh đại diện'}
+        show={modalShowResizeAvatar}
+        onHide={() => setModalShowResizeAvatar(false)}
+        imageCoverRef={imageCoverRef}
+        imageCoverPhoto={imageCoverPhoto}
+        handleSaveImage={handleSaveAvatar}
+        width={250}
+        height={250}
+        size={'md'}
+      />
+
       <NotiModal show={modalShowNoti} onHide={() => setModalShowNoti(false)} />
       <Col sm={12}>
         <Card>
@@ -347,8 +319,27 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
                     )}
                   </div>
                   <div className="user-detail text-center mb-3">
-                    <div className="profile-img">
+                    <div className="profile-img" style={{ position: 'relative' }}>
                       <img loading="lazy" src={user?.avatar} alt="profile-img1" className="avatar-130 img-fluid" />
+                      {isUser && (
+                        <Link
+                          to="#"
+                          style={{
+                            position: 'absolute',
+                            top: '86%',
+                            left: '55%',
+                            transform: 'translate(-50%, -50%)',
+                            background: '#F7B787',
+                            borderRadius: '50rem',
+                            padding: '0.3rem',
+                            color: '#fff',
+                          }}
+                          className="material-symbols-outlined cursor-pointer"
+                          onClick={() => setModalShowUploadAvatar(true)}
+                        >
+                          photo_camera
+                        </Link>
+                      )}
                     </div>
                     <div className="profile-detail">
                       <h3>{formatFullName(user)}</h3>
@@ -445,14 +436,14 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
                             <Dropdown.Item
                               eventKey="five"
                               className="d-flex align-items-center"
-                              onClick={handleShowModalReport}
+                              onClick={() => setShowModalOptionReport(true)}
                             >
                               <span className="material-symbols-outlined">report</span>Tìm hỗ trợ hoặc báo cáo
                             </Dropdown.Item>
                           </Dropdown.Menu>
                         </Dropdown>
                         {/* Modal  */}
-                        <Modal centered show={showModalReport} onHide={handleCloseModalReport}>
+                        <Modal centered show={showModalOptionReport} onHide={() => setShowModalOptionReport(false)}>
                           <Modal.Header closeButton>
                             <Modal.Title>Báo cáo</Modal.Title>
                           </Modal.Header>
@@ -461,7 +452,6 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
                               Nếu bạn nhận thấy ai đó đang gặp nguy hiểm, đừng chần chừ mà hãy tìm ngay sự giúp đỡ trước
                               khi báo cáo.
                             </p>
-
                             <ListGroup>
                               {listItems.map((item, index) => (
                                 <CustomListItem key={index} title={item.title} onClick={item.onClick} />
@@ -472,7 +462,7 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
                         </Modal>
 
                         {/* Modal item  */}
-                        <CustomModal show={showModal} onHide={handleClose} title={modalTitle}>
+                        <CustomModal show={showModalFormReport} onHide={handleClose} title={modalTitle}>
                           <div className="mb-3">
                             <label htmlFor="fileInput" className="form-label">
                               Bạn có thể đính kèm hình ảnh (tối đa 1 ảnh)

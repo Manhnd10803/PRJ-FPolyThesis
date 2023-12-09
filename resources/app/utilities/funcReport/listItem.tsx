@@ -1,6 +1,6 @@
-import { ListGroup, Modal } from 'react-bootstrap';
+import { ListGroup } from 'react-bootstrap';
 
-export const CustomListItem = ({ title, onClick }) => {
+export const CustomListItem = ({ title, onClick }: any) => {
   return (
     <ListGroup.Item action variant="primary" className="d-flex justify-content-between" onClick={() => onClick(title)}>
       {title}
