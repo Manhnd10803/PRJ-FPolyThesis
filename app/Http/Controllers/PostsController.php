@@ -176,20 +176,6 @@ class PostsController extends Controller
                 $posts = Post::whereIn('user_id', $friendIds)->latest()->paginate($quantity);
                 $last_page = $posts->lastPage();
                 $current_page = $posts->currentPage();
-
-                // $pagination = [
-                //     'first_page_url' => $posts->url(1),
-                //     'from' => $posts->firstItem(),
-                //     'last_page' => $posts->lastPage(),
-                //     'last_page_url' => $posts->url($posts->lastPage()),
-                //     'links' =>  $posts->toArray()['links'],
-                //     'next_page_url' => $posts->nextPageUrl(),
-                //     'path' => $posts->path(),
-                //     'per_page' => $posts->perPage(),
-                //     'prev_page_url' => $posts->previousPageUrl(),
-                //     'to' => $posts->lastItem(),
-                //     'total' => 
-                // ];
             } else {
                 $posts = Post::whereIn('user_id', $friendIds)->latest()->get();
             }
@@ -239,8 +225,6 @@ class PostsController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
-
-
     /**
      * @OA\Post(
      *     path="/api/posts",

@@ -203,7 +203,6 @@ class FriendController extends Controller
                 $query->where('user_id_1', $sender->id)
                     ->where('user_id_2', $user2);
             })->first();
-
             if ($friendship) {
                 $friendship->delete(); // Xóa lời mời kết bạn
                 DB::commit();
@@ -262,16 +261,15 @@ class FriendController extends Controller
      *     security={{ "bearerAuth": {} }}
      * )
      */
-    public function FetchAllFriend(User $user, $quantity = null) 
+    public function FetchAllFriend(User $user, $quantity = null)
     {
         $idLoginUser = Auth::id();
         $status = config('default.friend.status.accepted');
-        if($idLoginUser == $user->id){
-            
+        if ($idLoginUser == $user->id) {
             $friends = Friend::where('user_id_1', $idLoginUser)->where('status', $status)->with('friend')->get();
+        } else {
+            $friends = Friend::where('user_id_1', $user->id)->where('status', $status)->with('friend')->get();
         }
-      
-        $friends = Friend::where('user_id_1', $user->id)->where('status', $status)->with('friend')->get();
         if ($quantity != null) {
             $currentPage = LengthAwarePaginator::resolveCurrentPage();
             $perPage = $quantity;
@@ -391,7 +389,7 @@ class FriendController extends Controller
             if ($self == $friend) {
                 throw new \Exception('Bạn không thể tự unfriend chính mình.');
             }
-            $friendship = Friend::where(function ($query) use ($self, $friend) {
+            $friendships = Friend::where(function ($query) use ($self, $friend) {
                 $query->where('user_id_1', $self)
                     ->where('user_id_2', $friend)
                     ->where('status', 1);
@@ -400,12 +398,12 @@ class FriendController extends Controller
                     ->where('user_id_2', $self)
                     ->where('status', 1);
             })->get();
-            $friendId1 = $friendship->pluck('user_id_1')->toArray();
-            $friendId2 = $friendship->pluck('user_id_2')->toArray();
-            if ($friendship) {
-                Friend::whereIn('user_id_1', $friendId1)->whereIn('user_id_2', $friendId2)->delete();
+            if ($friendships->count() > 0) {
+                foreach ($friendships as $friendship) {
+                    $friendship->delete();
+                }
                 DB::commit();
-                return response()->json(['message' => 'Đã hủy bạn bè'], 200);
+                return response()->json(['message' => 'Đã hủy bạn bè', 'user_1' => $self, 'user_2' => $friend], 200);
             } else {
                 DB::rollBack();
                 return response()->json(['message' => 'Không thành công'], 400);
