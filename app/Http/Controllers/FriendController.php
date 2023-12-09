@@ -155,8 +155,9 @@ class FriendController extends Controller
             ]);
             $avatar_sender = Auth::user()->avatar;
             broadcast(new ReceiveNotification($notification, $avatar_sender))->toOthers();
+            $detailfriend = User::where('id', $sender->id)->select('id', 'first_name', 'last_name', 'avatar', 'activity_user')->first();
             DB::commit();
-            return response()->json(['message' => 'Đã chấp nhận'], 200);
+            return response()->json(['friend' => $detailfriend], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 400);
@@ -266,10 +267,13 @@ class FriendController extends Controller
         $idLoginUser = Auth::id();
         $status = config('default.friend.status.accepted');
         if ($idLoginUser == $user->id) {
+
             $friends = Friend::where('user_id_1', $idLoginUser)->where('status', $status)->with('friend')->get();
         } else {
             $friends = Friend::where('user_id_1', $user->id)->where('status', $status)->with('friend')->get();
         }
+
+        $friends = Friend::where('user_id_1', $user->id)->where('status', $status)->with('friend')->get();
         if ($quantity != null) {
             $currentPage = LengthAwarePaginator::resolveCurrentPage();
             $perPage = $quantity;
@@ -398,12 +402,14 @@ class FriendController extends Controller
                     ->where('user_id_2', $self)
                     ->where('status', 1);
             })->get();
+            $detailfriend = User::where('id', $friend)->select('id', 'first_name', 'last_name', 'avatar', 'activity_user')->first();
             if ($friendships->count() > 0) {
                 foreach ($friendships as $friendship) {
                     $friendship->delete();
                 }
                 DB::commit();
-                return response()->json(['message' => 'Đã hủy bạn bè', 'user_1' => $self, 'user_2' => $friend], 200);
+
+                return response()->json(['friend' => $detailfriend], 200);
             } else {
                 DB::rollBack();
                 return response()->json(['message' => 'Không thành công'], 400);
@@ -413,6 +419,7 @@ class FriendController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
+
     // Trạng thái bạn bè 
     public function getFriendshipStatus($user_id2)
     {

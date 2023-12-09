@@ -35,12 +35,10 @@ export const useSetListFriend = () => {
       if (!oldData) return oldData;
 
       if (action === 'add') {
-        console.log(data.id);
         return [...oldData, data];
       }
       if (action === 'delete') {
-        console.log(data.id);
-        const updatedData = oldData.filter((item: any) => item.id !== data.id);
+        const updatedData = oldData.filter((item: any) => item.friend.id !== data.friend.id);
         return updatedData;
       }
       return oldData;

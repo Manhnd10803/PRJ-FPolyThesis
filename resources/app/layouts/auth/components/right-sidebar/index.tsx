@@ -1,5 +1,6 @@
 import { useFriend } from '@/hooks/useFriendQuery';
 import { pathName } from '@/routes/path-name';
+import { formatFullName } from '@/utilities/functions';
 import { Card, Image } from 'react-bootstrap';
 
 export const RightSidebar = () => {
@@ -50,7 +51,7 @@ export const RightSidebar = () => {
                                 />
                               </div>
                               <div className="ms-3">
-                                <h6 className="mb-0">{itemfriend?.friend?.username}</h6>
+                                <h6 className="mb-0">{formatFullName(qandA?.qa?.user)}</h6>
                                 <p className="mb-0">{itemfriend?.friend?.activity_user}</p>
                               </div>
                             </div>
