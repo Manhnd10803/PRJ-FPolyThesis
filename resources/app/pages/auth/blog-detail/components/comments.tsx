@@ -1,14 +1,19 @@
 import { Card } from '@/components/custom';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { useState } from 'react';
-import { Button, Col, Dropdown, Form, Image, Modal, Row } from 'react-bootstrap';
+import { Button, Col, Dropdown, Form, Image, ListGroup, Modal, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { compileFunction } from 'vm';
 import { formatFullName } from '@/utilities/functions';
 import { pathName } from '@/routes/path-name';
 import { momentVi } from '@/utilities/functions/moment-locale';
+import { ReportService } from '@/apis/services/report.service';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
+
+import { CustomModalReport } from './custom-modal';
 
 export const Comments = ({ data, postComment, deleteComment, putComment }: any) => {
+  const queryClient = useQueryClient();
   const [replyFormsVisible, setReplyFormsVisible] = useState({});
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [content, setContent] = useState('');
@@ -17,7 +22,6 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
   const [editedContent, setEditedContent] = useState('');
   // User ID
   const userId = StorageFunc.getUserId();
-  // Name :
 
   const toggleReplyForm = (commentId: any) => {
     const currentVisibility = replyFormsVisible[commentId];
@@ -48,6 +52,7 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
   // Delete Comment
   const handleSubmitDeleteComment = async (commentId: any) => {
     try {
+      setShow(false);
       await deleteComment(commentId);
     } catch (error) {
       throw error;
@@ -88,17 +93,71 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
     setEditCommentId(null);
   };
 
+  const [contentReport, setContentReport] = useState('');
+  const [showModalReport, setShowModalReport] = useState(false);
+  const [currentPostId, setCurrentPostId] = useState(null);
+  const handleShowModalReport = (postId: any) => {
+    setCurrentPostId(postId);
+    setShowModalReport(true);
+    setShowCustomModal(false);
+  };
+  const listItems = [
+    { title: 'Spam', onClick: () => handleShowTitle('Spam') },
+    { title: 'Vi phạm điều khoản', onClick: () => handleShowTitle('Vi phạm điều khoản') },
+    { title: 'Thông tin sai sự thật', onClick: () => handleShowTitle('Thông tin sai sự thật') },
+    { title: 'Quấy rối', onClick: () => handleShowTitle('Quấy rối') },
+    { title: 'Bản dịch kém chất lượng', onClick: () => handleShowTitle('Bản dịch kém chất lượng') },
+  ];
+  const handleCloseModalReport = () => setShowModalReport(false);
+  const [showCustomModal, setShowCustomModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+
+  const handleShowTitle = (title: any) => {
+    setModalTitle(title);
+    setShowCustomModal(true);
+    handleCloseModalReport();
+  };
+
+  const handleContentChange = (event: any) => {
+    const content = event.target.value;
+    setContentReport(content);
+  };
+  const QueryKey = ['reportPost'];
+  const createReportMutation = useMutation(ReportService.postReport, {
+    onSettled: () => {
+      queryClient.invalidateQueries(QueryKey); // Chỉnh sửa tên query nếu cần
+    },
+  });
+  const idUser = StorageFunc.getUserId();
+  const commentReport = async (idfriend: any, title: any, idComment: any) => {
+    try {
+      setShowCustomModal(false);
+      const formData = {
+        reporter_id: idUser,
+        reported_id: idfriend,
+        report_title: title,
+        report_content: contentReport,
+        report_type: 'comment',
+        report_type_id: idComment,
+        report_image: '',
+      };
+      await createReportMutation.mutateAsync(formData);
+      toast.success('! Nội dung bình luận được báo cáo thành công');
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
   return (
     <>
       <Col lg="12">
         <Card className="card-block card-stretch card-height blog user-comment">
           <Card.Header className="d-flex justify-content-between">
             <div className="header-title">
-              <h4 className="card-title">User Comment</h4>
+              <h4 className="card-title">Bình luận người dùng</h4>
             </div>
           </Card.Header>
           <Card.Body>
-            {data &&
+            {data && data.length > 0 ? (
               data.map((comment: any, index: any) => {
                 return (
                   <Row key={index}>
@@ -108,14 +167,14 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
                           <div className="d-flex justify-content-between">
                             <div className="d-flex align-items-center">
                               <div className="user-image mb-3">
-                                <Image className="avatar-80 rounded" src={comment?.user?.avatar} alt="#" />
+                                <Image className="avatar-50 rounded-circle" src={comment?.user?.avatar} alt="#" />
                               </div>
                               <Link to={`${pathName.PROFILE}/${comment?.user?.id}`} className="ms-3">
                                 <h5>{formatFullName(comment?.user)}</h5>
                                 <p>@{comment?.user?.username}</p>
                               </Link>
                             </div>
-                            <div className="card-header-toolbar d-flex">
+                            <div className="card-header-toolbar d-flex justify-content-center">
                               <Dropdown>
                                 <Link to="#">
                                   <Dropdown.Toggle as="span" className="material-symbols-outlined">
@@ -157,9 +216,27 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
                                       </Dropdown.Item>
                                     </>
                                   ) : (
-                                    <Dropdown.Item>
-                                      <i className="ri-pencil-fill me-2"></i>Báo cáo
-                                    </Dropdown.Item>
+                                    <>
+                                      <Dropdown.Item
+                                        onClick={() => handleShowModalReport(comment?.id)}
+                                        className="d-flex align-items-center gap-2"
+                                      >
+                                        <span className="material-symbols-outlined">error</span> Báo cáo
+                                      </Dropdown.Item>
+                                      <CustomModalReport
+                                        showModalReport={showModalReport}
+                                        currentPostId={currentPostId}
+                                        postId={comment?.id}
+                                        handleCloseModalReport={handleCloseModalReport}
+                                        listItems={listItems}
+                                        showCustomModal={showCustomModal}
+                                        setShowCustomModal={setShowCustomModal}
+                                        modalTitle={modalTitle}
+                                        handleContentChange={handleContentChange}
+                                        postComment={commentReport}
+                                        friendId={comment?.user?.id}
+                                      />
+                                    </>
                                   )}
                                 </Dropdown.Menu>
                               </Dropdown>
@@ -253,7 +330,7 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
                                 <div className="d-flex justify-content-between">
                                   <div className="d-flex align-items-center">
                                     <div className="user-image mb-3">
-                                      <Image className="avatar-80 rounded" src={reply?.user?.avatar} alt="#" />
+                                      <Image className="avatar-50 rounded-circle" src={reply?.user?.avatar} alt="#" />
                                     </div>
                                     <Link to={`${pathName.PROFILE}/${comment?.user?.id}`} className="ms-3">
                                       <h5>{formatFullName(reply?.user)}</h5>
@@ -302,9 +379,23 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
                                             </Dropdown.Item>
                                           </>
                                         ) : (
-                                          <Dropdown.Item>
-                                            <i className="ri-pencil-fill me-2"></i>Báo cáo
-                                          </Dropdown.Item>
+                                          <>
+                                            <Dropdown.Item onClick={() => handleShowModalReport(reply?.id)}>
+                                              <i className="ri-user-unfollow-line h4"></i> Báo cáo
+                                            </Dropdown.Item>
+                                            <CustomModalReport
+                                              showModalReport={showModalReport}
+                                              currentPostId={currentPostId}
+                                              postId={reply?.id}
+                                              handleCloseModalReport={handleCloseModalReport}
+                                              listItems={listItems}
+                                              showCustomModal={showCustomModal}
+                                              setShowCustomModal={setShowCustomModal}
+                                              modalTitle={modalTitle}
+                                              postComment={commentReport}
+                                              friendId={reply?.user?.id}
+                                            />
+                                          </>
                                         )}
                                       </Dropdown.Menu>
                                     </Dropdown>
@@ -343,7 +434,11 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
                                 ) : (
                                   <div className="blog-description">
                                     <p>
-                                      <span className="text-primary">@{reply?.reply_to}</span> {reply?.content}
+                                      {/* userId === comment?.user?.id */}
+                                      <span className="text-primary">
+                                        {reply?.user?.username != reply?.reply_to ? `@${reply?.reply_to}` : ''}
+                                      </span>{' '}
+                                      {reply?.content}
                                     </p>
                                     <div className="d-flex align-items-center justify-content-between mb-2 position-right-side">
                                       <div className="d-flex align-items-center gap-3">
@@ -388,7 +483,10 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
                     )}
                   </Row>
                 );
-              })}
+              })
+            ) : (
+              <div className="text-center">Chưa có bình luận nào</div>
+            )}
           </Card.Body>
         </Card>
       </Col>
