@@ -9,17 +9,17 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class VerifyAccount extends Mailable
+class UnLockAccount extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public $codeVerify;
-    public function __construct($codeVerify)
+    public $fullname;
+    public function __construct($fullname)
     {
-        $this->codeVerify = $codeVerify;
+        $this->fullname = $fullname;
     }
 
     /**
@@ -28,7 +28,7 @@ class VerifyAccount extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Xác thực tài khoản của bạn - ' . env('APP_NAME'),
+            subject: 'Thông báo mở khóa tài khoản - ' . env('APP_NAME'),
         );
     }
 
@@ -38,7 +38,7 @@ class VerifyAccount extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'email.verifyAccount',
+            view: 'email.unlockAccount',
         );
     }
 
