@@ -130,7 +130,7 @@ export const DropZoneField = ({
           <i className="icon material-symbols-outlined">cancel</i>
         </div>
         <input {...getInputProps()} />
-        {files.length ? <p>Kéo thả hoặc chọn ảnh vào đây ...</p> : <p>Kéo thả hoặc vào đây, hoặc click để chọn ảnh</p>}
+        {files.length ? <p>Kéo thả hoặc chọn ảnh vào đây ...</p> : <p>Kéo thả, hoặc click để chọn ảnh</p>}
 
         {/*============= preview =============*/}
         {files.length ? (

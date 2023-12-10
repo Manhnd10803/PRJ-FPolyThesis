@@ -1,12 +1,10 @@
+import { IComment } from '@/models/comment';
 import httpRequest from '../axios-instance';
 import { ApiConstants } from '../endpoints';
 
 type CommentResponseType = {
-  parent_id: number;
-  reply_to: string;
-  content: string;
-  blog_id: any;
-  qa_id: any;
+  message: string;
+  comment: IComment;
 };
 
 const createComment = <T>(data: T) => {
@@ -17,8 +15,8 @@ const createCommentQA = <T>(data: T) => {
   return httpRequest.post<CommentResponseType>(`${ApiConstants.COMMENT}/qa/${data.qa_id}`, data);
 };
 
-const createCommentPost = <T>(data: T) => {
-  return httpRequest.post<CommentResponseType>(`${ApiConstants.COMMENT}/post/${data.post_id}`, data);
+const createCommentPost = <T>(data: T, postId: number) => {
+  return httpRequest.post<CommentResponseType>(`${ApiConstants.COMMENT}/post/${postId}`, data);
 };
 
 const deleteComment = <T>(id: T) => {

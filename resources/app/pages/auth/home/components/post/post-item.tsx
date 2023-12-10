@@ -6,12 +6,13 @@ import { Link } from 'react-router-dom';
 import { CommentList } from '../comment/comment-list';
 import { CreateComment } from '../comment/create-comment';
 import { MoreActionDropdown } from '../more-action-dropdown';
-import { TotalCommentPost } from './post-total-comment';
-import { TotalLikePost } from './post-total-like';
+import { TotalComment } from '../total-comment';
+import { TotalLike } from '../total-like';
 import { PostItemContextProvider, usePostContext, usePostItemContext } from '../../contexts';
 import { ChosePostEmotion, EmotionType } from '@/components/shared/choose-emotion';
 import { momentVi } from '@/utilities/functions/moment-locale';
 import { formatImagesToRender, getClassImages } from '../../constants';
+import { IUser } from '@/models/user';
 import { formatFullName } from '@/utilities/functions';
 
 type PostItemProps = {
@@ -19,6 +20,7 @@ type PostItemProps = {
 };
 export const PostItem = ({ item }: PostItemProps) => {
   // state
+  const { like_counts_by_emotion, like, total_comments, comments, post } = item;
 
   const handleChangeEmotion = (emotion: EmotionType) => {
     console.log('emotion', emotion);
@@ -30,13 +32,16 @@ export const PostItem = ({ item }: PostItemProps) => {
         item: item,
         post: item.post,
         like_counts_by_emotion: item.like_counts_by_emotion,
+        total_comments: item.total_comments,
         comments: item.comments,
+        like: item.like,
       }}
     >
       <Col sm={12}>
         <Card className=" card-block card-stretch card-height">
           <Card.Body>
             <Header />
+
             <Content />
 
             <div className="comment-area mt-3">
@@ -45,15 +50,21 @@ export const PostItem = ({ item }: PostItemProps) => {
                   <div className="d-flex align-items-center">
                     <ChosePostEmotion onChange={handleChangeEmotion} />
 
-                    <TotalLikePost />
+                    <TotalLike
+                      totalLike={(like_counts_by_emotion && like_counts_by_emotion?.total_likes) || 0}
+                      listUserLike={like as IUser[]}
+                    />
                   </div>
-                  <TotalCommentPost />
+
+                  <TotalComment totalComments={total_comments} comments={comments} />
                 </div>
                 <ShareOffCanvas />
               </div>
               <hr />
-              <CommentList />
-              <CreateComment />
+
+              <CommentList comments={comments} />
+
+              <CreateComment postId={post.id} />
             </div>
           </Card.Body>
         </Card>
@@ -70,7 +81,7 @@ const Header = () => {
     <div className="user-post-data">
       <div className="d-flex justify-content-between">
         <div className="me-3">
-          <img className="avatar-50 rounded-circle" src={post?.user?.avatar} alt="avatar" />
+          <img className="avatar-50 rounded-circle" src={post?.user?.avatar} alt="avatar" loading="lazy" />
         </div>
         <div className="w-100">
           <div className="d-flex justify-content-between">
@@ -88,7 +99,7 @@ const Header = () => {
 };
 
 const ContentImages = () => {
-  const { post: post, item } = usePostItemContext();
+  const { post, item } = usePostItemContext();
 
   const { handleShowDetail } = usePostContext();
 
@@ -113,6 +124,7 @@ const ContentImages = () => {
                   src={imageUrl}
                   alt={`post${index}`}
                   className="img-fluid rounded w-100"
+                  loading="lazy"
                 />
                 {/* last image */}
                 {originalImages.length > 4 && index === 3 && (
@@ -132,7 +144,7 @@ const ContentImages = () => {
         ) : (
           <div className="user-post text-center">
             <Link to="#">
-              <img src={newImages[0]} alt="post1" className="img-fluid rounded w-100 mt-3" />
+              <img src={newImages[0]} alt="post1" className="img-fluid rounded w-100 mt-3" loading="lazy" />
             </Link>
           </div>
         )}
