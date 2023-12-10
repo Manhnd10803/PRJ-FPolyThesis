@@ -11,7 +11,7 @@ import { IProfileUser } from '@/models/user';
 import { formatFullName } from '@/utilities/functions';
 import { DropZoneField } from '@/components/custom/drop-zone-field';
 import { CustomListItem } from '@/utilities/funcReport/listItem';
-import { CustomModal } from '@/utilities/funcReport/modalReport';
+import { CustomModal } from '@/utilities/funcReport/modalCustomReport';
 import { ReportService } from '@/apis/services/report.service';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { ResizeImage, UploadImage } from './component';
@@ -38,7 +38,6 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
   const queryClient = useQueryClient();
   const [contentReport, setContentReport] = useState('');
   const imagesRef = useRef<File[]>([]);
-  const [isLoadingReport, setIsLoadingReport] = useState(false);
   const [showModalOptionReport, setShowModalOptionReport] = useState(false);
 
   const [showModalFormReport, setShowModalFormReport] = useState(false);
@@ -75,10 +74,10 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
     },
   });
   const idUserStorage = StorageFunc.getUserId();
-  const postReport = async (idfriend, title, idUserReport) => {
+  const postReport = async (idfriend: any, title: any, idUserReport: any) => {
     try {
-      setIsLoadingReport(true);
-      const imageURL = await CloudiaryService.uploadImages(imagesRef.current, 'blog');
+      handleClose();
+      const imageURL = await CloudiaryService.uploadImages(imagesRef.current, 'default');
       const formData = {
         reporter_id: idUserStorage,
         reported_id: idfriend,
@@ -86,10 +85,10 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
         report_content: contentReport,
         report_type: 'user',
         report_type_id: idUserReport,
-        report_image: imageURL[0],
+        report_image: imageURL[0] || '',
       };
       await createReportMutation.mutateAsync(formData);
-      handleClose();
+      toast.success('Nội dung được báo cáo thành công');
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -484,12 +483,8 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
                             ></textarea>
                           </div>
                           <Modal.Footer>
-                            <button
-                              className="btn btn-info"
-                              onClick={() => postReport(idUser, modalTitle, idUser)}
-                              disabled={isLoadingReport}
-                            >
-                              {isLoadingReport ? 'Đang báo cáo...' : 'Báo cáo'}
+                            <button className="btn btn-info" onClick={() => postReport(idUser, modalTitle, idUser)}>
+                              Báo cáo
                             </button>
                           </Modal.Footer>
                         </CustomModal>

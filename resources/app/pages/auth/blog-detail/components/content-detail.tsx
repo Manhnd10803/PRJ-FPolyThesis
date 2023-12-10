@@ -20,7 +20,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { formatFullName } from '@/utilities/functions';
 import { pathName } from '@/routes/path-name';
 import parse from 'html-react-parser';
-import { CustomModal } from '../../../../utilities/funcReport/modalReport';
+import { CustomModal } from '../../../../utilities/funcReport/modalCustomReport';
 import { CustomListItem } from '../../../../utilities/funcReport/listItem';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ReportService } from '@/apis/services/report.service';
@@ -85,7 +85,7 @@ export const ContentBlogDetail = ({ data, commentRef, createLike, BlogsQueryKey 
         report_image: '',
       };
       await createReportMutation.mutateAsync(formData);
-      toast.success('! Nội dung bình luận được báo cáo thành công');
+      toast.success('Nội dung được báo cáo thành công');
     } catch (error: any) {
       toast.error(error.message);
     }

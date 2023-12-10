@@ -6,10 +6,15 @@ import { formatDateFromCreatedAt } from '../components/format-date';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { formatFullName } from '@/utilities/functions';
 import { momentVi } from '@/utilities/functions/moment-locale';
+import { CustomModalReport } from '@/utilities/funcReport/modalReportComment';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { ReportService } from '@/apis/services/report.service';
+import toast from 'react-hot-toast';
 
 const imageUrl = 'https://picsum.photos/20';
 
 export const CommentsQandA = ({ qAndAData, postComment, deleteComment, putComment }: any) => {
+  const queryClient = useQueryClient();
   const [replyFormsVisible, setReplyFormsVisible] = useState({});
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [content, setContent] = useState('');
@@ -90,6 +95,61 @@ export const CommentsQandA = ({ qAndAData, postComment, deleteComment, putCommen
     setEditCommentId(null);
   };
 
+  const [contentReport, setContentReport] = useState('');
+  const [showModalReport, setShowModalReport] = useState(false);
+  const [currentPostId, setCurrentPostId] = useState(null);
+  const handleShowModalReport = (postId: any) => {
+    setCurrentPostId(postId);
+    setShowModalReport(true);
+    setShowCustomModal(false);
+  };
+  const listItems = [
+    { title: 'Spam', onClick: () => handleShowTitle('Spam') },
+    { title: 'Vi phạm điều khoản', onClick: () => handleShowTitle('Vi phạm điều khoản') },
+    { title: 'Thông tin sai sự thật', onClick: () => handleShowTitle('Thông tin sai sự thật') },
+    { title: 'Quấy rối', onClick: () => handleShowTitle('Quấy rối') },
+    { title: 'Bản dịch kém chất lượng', onClick: () => handleShowTitle('Bản dịch kém chất lượng') },
+  ];
+  const handleCloseModalReport = () => setShowModalReport(false);
+  const [showCustomModal, setShowCustomModal] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+
+  const handleShowTitle = (title: any) => {
+    setModalTitle(title);
+    setShowCustomModal(true);
+    handleCloseModalReport();
+  };
+
+  const handleContentChange = (event: any) => {
+    const content = event.target.value;
+    setContentReport(content);
+  };
+  const QueryKey = ['reportPost'];
+  const createReportMutation = useMutation(ReportService.postReport, {
+    onSettled: () => {
+      queryClient.invalidateQueries(QueryKey); // Chỉnh sửa tên query nếu cần
+    },
+  });
+  const idUser = StorageFunc.getUserId();
+  const commentReport = async (idfriend: any, title: any, idComment: any) => {
+    try {
+      setShowCustomModal(false);
+      const formData = {
+        reporter_id: idUser,
+        reported_id: idfriend,
+        report_title: title,
+        report_content: contentReport,
+        report_type: 'comment',
+        report_type_id: idComment,
+        report_image: '',
+      };
+      await createReportMutation.mutateAsync(formData);
+      toast.success('Nội dung được báo cáo thành công');
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <>
       <Col lg="12">
@@ -160,9 +220,27 @@ export const CommentsQandA = ({ qAndAData, postComment, deleteComment, putCommen
                                       </Dropdown.Item>
                                     </>
                                   ) : (
-                                    <Dropdown.Item>
-                                      <i className="ri-pencil-fill me-2"></i>Báo cáo
-                                    </Dropdown.Item>
+                                    <>
+                                      <Dropdown.Item
+                                        onClick={() => handleShowModalReport(comment?.id)}
+                                        className="d-flex align-items-center gap-2"
+                                      >
+                                        <span className="material-symbols-outlined">error</span> Báo cáo
+                                      </Dropdown.Item>
+                                      <CustomModalReport
+                                        showModalReport={showModalReport}
+                                        currentPostId={currentPostId}
+                                        postId={comment?.id}
+                                        handleCloseModalReport={handleCloseModalReport}
+                                        listItems={listItems}
+                                        showCustomModal={showCustomModal}
+                                        setShowCustomModal={setShowCustomModal}
+                                        modalTitle={modalTitle}
+                                        handleContentChange={handleContentChange}
+                                        postComment={commentReport}
+                                        friendId={comment?.user?.id}
+                                      />
+                                    </>
                                   )}
                                 </Dropdown.Menu>
                               </Dropdown>
@@ -305,9 +383,23 @@ export const CommentsQandA = ({ qAndAData, postComment, deleteComment, putCommen
                                             </Dropdown.Item>
                                           </>
                                         ) : (
-                                          <Dropdown.Item>
-                                            <i className="ri-pencil-fill me-2"></i>Báo cáo
-                                          </Dropdown.Item>
+                                          <>
+                                            <Dropdown.Item onClick={() => handleShowModalReport(reply?.id)}>
+                                              <i className="ri-user-unfollow-line h4"></i> Báo cáo
+                                            </Dropdown.Item>
+                                            <CustomModalReport
+                                              showModalReport={showModalReport}
+                                              currentPostId={currentPostId}
+                                              postId={reply?.id}
+                                              handleCloseModalReport={handleCloseModalReport}
+                                              listItems={listItems}
+                                              showCustomModal={showCustomModal}
+                                              setShowCustomModal={setShowCustomModal}
+                                              modalTitle={modalTitle}
+                                              postComment={commentReport}
+                                              friendId={reply?.user?.id}
+                                            />
+                                          </>
                                         )}
                                       </Dropdown.Menu>
                                     </Dropdown>
