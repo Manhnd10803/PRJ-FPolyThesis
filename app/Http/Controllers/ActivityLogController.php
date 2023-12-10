@@ -60,4 +60,18 @@ class ActivityLogController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
+    public function DeleteOneLogActivity(Activity $activity)
+    {
+        DB::beginTransaction();
+        try {
+            $userId = Auth::id();
+            $query = Activity::where('causer_id', $userId)->where('id', $activity);
+            $query->delete();
+            DB::commit();
+            return response()->json(['message' => 'Delete success'], 200);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
 }

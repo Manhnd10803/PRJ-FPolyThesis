@@ -162,7 +162,10 @@ Route::middleware('auth:api')->group(function () {
     Route::post('/report/{user}/{model}/{item}', [ReportController::class, 'CreateReport']);
     Route::put('/changestatus/{user}', [PrivateMessagesController::class, 'changestatus']);
     //Activity Log
-    Route::post('/activity/log/{logname}', [ActivityLogController::class, 'GetLogActivity']);
-    Route::get('/activity/logname', [ActivityLogController::class, 'GetLogName']);
-    Route::delete('/activity/log/{logname}', [ActivityLogController::class, 'DeleteLogActivity']);
+    Route::prefix('activity')->group(function () {
+        Route::post('/log/{logname}', [ActivityLogController::class, 'GetLogActivity']);
+        Route::get('/logname', [ActivityLogController::class, 'GetLogName']);
+        Route::delete('/log/{logname}', [ActivityLogController::class, 'DeleteLogActivity']);
+        Route::delete('/log/{activity}', [ActivityLogController::class, 'DeleteOneLogActivity']);
+    });
 });
