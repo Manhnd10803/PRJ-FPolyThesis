@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\LockAccount;
+use App\Mail\UnLockAccount;
 use App\Models\Role;
 use App\Models\RolePermission;
 use App\Models\User;
@@ -14,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Mail;
 
 class AdminUserController extends Controller
 {
@@ -85,11 +88,15 @@ class AdminUserController extends Controller
     public function lockUser(User $user)
     {
         $user->update(['status' => config('default.user.status.suspend')]);
+        $fullname = $user->last_name . ' ' . $user->first_name;
+        Mail::to($user->email)->send(new LockAccount($fullname));
         return redirect()->back()->with('success', 'Khóa người dùng thành công');
     }
     public function unlockUser(User $user)
     {
         $user->update(['status' => config('default.user.status.active')]);
+        $fullname = $user->last_name . ' ' . $user->first_name;
+        Mail::to($user->email)->send(new UnLockAccount($fullname));
         return redirect()->back()->with('success', 'Mở khóa người dùng thành công');
     }
     //Group Member
