@@ -1,3 +1,4 @@
+import { IComment } from './comment';
 import { IUser } from './user';
 
 export interface GetNewPostResponseType {
@@ -5,7 +6,7 @@ export interface GetNewPostResponseType {
   like_counts_by_emotion?: LikeCountsByEmotion;
   like?: any[];
   total_comments?: number;
-  comments?: any[];
+  comments?: Array<IComment>;
 }
 
 export interface LikeCountsByEmotion {

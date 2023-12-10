@@ -286,7 +286,8 @@ class CommentController extends Controller
                 }
             }
             DB::commit();
-            return response()->json(['message' => 'Comment added successfully'], 200);
+            $commentWithUser = Comment::where('id', $comment->id)->with('user')->first();
+            return response()->json(['message' => 'Comment added successfully', "comment" => $commentWithUser], 200);
         } else {
             DB::rollBack();
             return response()->json(['error' => 'You must be logged in to comment'], 401);

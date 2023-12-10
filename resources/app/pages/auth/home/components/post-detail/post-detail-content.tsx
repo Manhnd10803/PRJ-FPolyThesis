@@ -3,17 +3,21 @@ import { ChosePostEmotion, EmotionType } from '@/components/shared/choose-emotio
 import { Card } from 'react-bootstrap';
 import { CommentList } from '../comment/comment-list';
 import { CreateComment } from '../comment/create-comment';
-import { TotalCommentPost } from '../post/post-total-comment';
-import { TotalLikePost } from '../post/post-total-like';
+import { TotalComment } from '../total-comment';
+import { TotalLike } from '../total-like';
 import { Content } from './content';
 import { Header } from './header';
+import { usePostDetailContext } from '../../contexts';
+import { IUser } from '@/models/user';
 
 export const PostDetailContent = () => {
   // state
-
+  const { like_counts_by_emotion, like, total_comments, comments, post } = usePostDetailContext();
   // func
   const handleChangeEmotion = (emotion: EmotionType) => {
     console.log('emotion', emotion);
+    // nếu đã like rồi thì bỏ like
+    // nếu chưa like thì like
   };
 
   // render
@@ -29,15 +33,17 @@ export const PostDetailContent = () => {
               <div className="d-flex align-items-center">
                 <ChosePostEmotion onChange={handleChangeEmotion} />
 
-                <TotalLikePost />
+                <TotalLike totalLike={like_counts_by_emotion?.total_likes as number} listUserLike={like as IUser[]} />
               </div>
-              <TotalCommentPost />
+
+              <TotalComment totalComments={total_comments} comments={comments} />
             </div>
+
             <ShareOffCanvas />
           </div>
           <hr />
-          <CommentList />
-          <CreateComment />
+          <CommentList comments={comments} />
+          <CreateComment postId={post.id} />
         </div>
       </Card.Body>
     </Card>

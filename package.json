@@ -49,6 +49,7 @@
     "@emoji-mart/react": "^1.1.1",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@hookform/error-message": "^2.0.1",
     "@hookform/resolvers": "^3.3.2",
     "@lexical/clipboard": "0.12.2",
     "@lexical/code": "0.12.2",

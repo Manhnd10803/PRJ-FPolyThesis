@@ -35,7 +35,9 @@ export const PostDetailModal = ({ onClose, show, data }: PostDetailProps) => {
         data: data,
         post: data.post,
         like_counts_by_emotion: data.like_counts_by_emotion,
+        total_comments: data.total_comments,
         comments: data.comments,
+        like: data.like,
       }}
     >
       <Modal centered fullscreen className="fade" animation id="post-modal" onHide={onClose} show={show}>

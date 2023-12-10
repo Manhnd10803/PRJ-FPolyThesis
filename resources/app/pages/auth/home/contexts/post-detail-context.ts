@@ -5,6 +5,8 @@ type PostDetailContextType = {
   data: GetNewPostResponseType;
   post: GetNewPostResponseType['post'];
   like_counts_by_emotion: GetNewPostResponseType['like_counts_by_emotion'];
+  like: GetNewPostResponseType['like'];
+  total_comments: GetNewPostResponseType['total_comments'];
   comments: GetNewPostResponseType['comments'];
 };
 
