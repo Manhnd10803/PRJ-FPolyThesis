@@ -1,12 +1,11 @@
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
+import { ErrorBoundary } from 'react-error-boundary';
 import { RouteObject, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import App from './App';
-import { RootAuthRouter, RootUnAuthRouter, RootChatRouter, OthersRouter } from './routes';
 import { AppProvider } from './AppProvider';
-import { Toaster } from 'react-hot-toast';
-import { ErrorBoundary } from 'react-error-boundary';
 import { Fallback } from './Fallback';
+import { OthersRouter, RootAuthRouter, RootChatRouter, RootUnAuthRouter } from './routes';
 
 //Define all routes here
 const routes: RouteObject[] = [...RootAuthRouter, ...RootUnAuthRouter, ...RootChatRouter, ...OthersRouter];
@@ -27,7 +26,6 @@ ReactDOM.createRoot(document.getElementById('app') as HTMLElement).render(
       >
         <App>
           <RouterProvider router={router} />
-          <Toaster />
         </App>
       </ErrorBoundary>
     </AppProvider>

@@ -1,8 +1,7 @@
-import { Row, Col, Container, Image } from 'react-bootstrap';
-import { Link, Outlet } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
+import { Col, Container, Image, Row } from 'react-bootstrap';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 
-import { Navigation, Autoplay } from 'swiper/modules';
+import { Autoplay, Navigation } from 'swiper/modules';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -10,14 +9,31 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
 
-import logo from '@/assets/images/logo-bee-full.png';
 import login1 from '@/assets/images/login/1.png';
 import login2 from '@/assets/images/login/2.png';
 import login3 from '@/assets/images/login/3.png';
+import logo from '@/assets/images/logo-bee-full.png';
+import { pathName } from '@/routes/path-name';
+import { StorageFunc } from '@/utilities/local-storage/storage-func';
+import { useEffect } from 'react';
 
 // install Swiper modules
 
 export const UnAuthLayout = () => {
+  const navigate = useNavigate();
+  const token = StorageFunc.getAccessToken();
+
+  useEffect(() => {
+    // Nếu là trang login mà đã đăng nhập rồi thì cho về trang trước
+    if (window.location.pathname === pathName.LOGIN && token) {
+      navigate(-1);
+    }
+  }, [token, navigate]);
+
+  // Nếu là trang login mà đã đăng nhập rồi thì hiển thị null
+  if (window.location.pathname === pathName.LOGIN && token) {
+    return null;
+  }
   return (
     <>
       <section className="sign-in-page">
@@ -61,7 +77,6 @@ export const UnAuthLayout = () => {
               </div>
             </Col>
             <Outlet />
-            <Toaster />
           </Row>
         </Container>
       </section>

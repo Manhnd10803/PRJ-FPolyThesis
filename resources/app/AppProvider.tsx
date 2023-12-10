@@ -4,6 +4,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Provider as ReduxProvider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistor, store } from './redux/store/store';
+import { Toaster } from 'react-hot-toast';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,6 +26,7 @@ export const AppProvider = ({ children }: AppProviderProps) => {
         <PersistGate loading={null} persistor={persistor}>
           <ReactQueryDevtools position="bottom-right" />
           {children}
+          <Toaster />
         </PersistGate>
       </ReduxProvider>
     </QueryClientProvider>

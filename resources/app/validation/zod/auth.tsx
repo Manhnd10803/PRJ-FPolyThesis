@@ -7,8 +7,8 @@ const noSpaces = (value: any) => {
   return !/\s{2,}/.test(value); // Check if the string contains only non-whitespace characters
 };
 export const signInSchema = z.object({
-  email: z.string().min(1, 'Email is required').email(),
-  password: z.string().min(1, 'Password is required').min(8, 'Password must be at least 8 characters'),
+  email: z.string().min(1, 'Hãy nhập email').email(),
+  password: z.string().min(1, 'Hãy nhập mật khẩu').min(8, 'Mật khẩu phải có ít nhất 8 ký tự'),
 });
 
 export const signUpSchema = z
