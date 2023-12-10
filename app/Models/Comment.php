@@ -4,10 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class Comment extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
+    protected static $recordEvents = ['created', 'updated', 'deleted'];
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly(['*'])
+            ->useLogName('comments');
+    }
+    public function getDescriptionForEvent(string $eventName): string
+    {
+        return "User has been {$eventName}";
+    }
     protected $fillable = [
         'user_id', 'content', 'post_id', 'parent_id', 'blog_id', 'qa_id', 'reply_to'
 

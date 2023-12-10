@@ -187,19 +187,14 @@ class AuthController extends Controller
                 if ($user->status == config('default.user.status.suspend')) {
                     return response()->json(['message' => 'Tài khoản đã bị khóa'], 403);
                 }
-
                 $user->update([
                     'activity_user' => 'Đang hoạt động'
                 ]);
-
                 $user->save;
-
                 $friends = $user->friends;
                 foreach ($friends as $friend) {
                     broadcast(new UpdateActivityUser($friend, 'Đang hoạt động', $user))->toOthers();
                 }
-
-
                 $request = Request::create('oauth/token', 'POST', [
                     'grant_type' => 'password',
                     'client_id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
@@ -210,6 +205,14 @@ class AuthController extends Controller
                 ]);
                 $result = app()->handle($request);
                 $response = json_decode($result->getContent(), true);
+                //lấy địa chỉ ip và trình duyệt đang sử dụng để check đăng nhập lạ
+                $data  = [
+                    'user_id' => auth()->id(),
+                    'username' => auth()->user()->username,
+                    'ip_address' => isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null,
+                    'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null,
+                ];
+                activity('login')->log(json_encode($data));
                 return response()->json($response, 200);
             } else {
                 $checkAccount = User::where('email', $request->email)->first();
@@ -307,8 +310,14 @@ class AuthController extends Controller
             foreach ($friends as $friend) {
                 broadcast(new UpdateActivityUser($friend, 'Đang hoạt động', $checkUser))->toOthers();
             }
-
-
+            //lấy địa chỉ ip và trình duyệt đang sử dụng để check đăng nhập lạ
+            $data  = [
+                'user_id' => auth()->id(),
+                'username' => auth()->user()->username,
+                'ip_address' => isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null,
+                'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null,
+            ];
+            activity('users')->log(json_encode($data));
             $request = Request::create('oauth/token', 'POST', [
                 'grant_type' => 'socialite',
                 'client_id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID'),
@@ -571,8 +580,15 @@ class AuthController extends Controller
         if (!$checkVerify) {
             return response()->json(['message' => 'Mã xác nhận không chính xác'], 403);
         } else {
-            // $checkUser->update(['password' => Hash::make($request->password)]);
             DB::table('users')->where('verification_code', $request->verification_code)->update(['password' => Hash::make($request->password)]);
+            //lấy địa chỉ ip và trình duyệt đang sử dụng để check đăng nhập lạ
+            $data  = [
+                'user_id' => auth()->id(),
+                'username' => auth()->user()->username,
+                'ip_address' => isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null,
+                'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null,
+            ];
+            activity('users')->log(json_encode($data));
             Mail::to($checkVerify->email)->send(new ForgotPassword($request->password, $checkVerify->username));
             DB::commit();
             return response()->json(['message' => 'Mật khẩu đã được đặt lại thành công'], 200);

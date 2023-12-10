@@ -310,7 +310,7 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
                           <Link
                             to="#"
                             className="material-symbols-outlined cursor-pointer"
-                            onClick={() => setModalShowUplodaImage(true)}
+                            onClick={() => setModalShowUploadArticlePhoto(true)}
                           >
                             photo_camera
                           </Link>
@@ -325,6 +325,7 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
                         <Link
                           to="#"
                           style={{
+                            zIndex: 100,
                             position: 'absolute',
                             top: '86%',
                             left: '55%',

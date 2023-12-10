@@ -175,6 +175,7 @@ return [
         App\Providers\SocialAuthServiceProvider::class,
         App\Providers\EmotionsServiceProvider::class,
         App\Providers\ReadMenuAdminProvider::class,
+        Spatie\Activitylog\ActivitylogServiceProvider::class,
     ])->toArray(),
     /*
     |--------------------------------------------------------------------------

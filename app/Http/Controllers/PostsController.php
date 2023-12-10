@@ -284,7 +284,6 @@ class PostsController extends Controller
                 'image' => json_encode($imagePaths),
                 'hashtag' => $hashtagString,
             ]);
-            // dd($post);
             $post->save();
             DB::commit();
             return response()->json($post, 200);
