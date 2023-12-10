@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use PhpParser\Node\Expr\FuncCall;
 use PhpParser\Node\Stmt\Break_;
+use Spatie\Activitylog\Models\Activity;
 
 class ProfileController extends Controller
 {
@@ -48,8 +49,6 @@ class ProfileController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
-
-
     public function Profile(User $user, $type, $status = null)
     {
         DB::beginTransaction();
@@ -270,6 +269,20 @@ class ProfileController extends Controller
             'image' => json_encode($avatar),
         ]);
         $post->save();
+        activity('users')
+            ->tap(function (Activity $activity) use ($avatar) {
+                $activity->subject_type = class_basename(User::class); // Lấy tên lớp của đối tượng $user
+                $activity->subject_id = Auth::id();
+                $activity->properties = $avatar;
+                $activity->event = 'updated';
+            })
+            ->log('User has been updated');
+        activity('posts')
+            ->tap(function (Activity $activity) use ($post) {
+                $activity->properties = $post;
+                $activity->event = 'created';
+            })
+            ->log('User has been created');
         return response()->json(['data' => [$user, $post], 'message' => 'Thêm ảnh đại diện thành công'], 200);
     }
     public function UpdateCoverPhotoForUser(Request $request)
@@ -284,6 +297,18 @@ class ProfileController extends Controller
             'image' => json_encode($cover_photo),
         ]);
         $post->save();
+        activity('users')
+            ->tap(function (Activity $activity) use ($cover_photo) {
+                $activity->properties = $cover_photo;
+                $activity->event = 'updated';
+            })
+            ->log('User has been updated');
+        activity('posts')
+            ->tap(function (Activity $activity) use ($post) {
+                $activity->properties = $post;
+                $activity->event = 'created';
+            })
+            ->log('User has been created');
         return response()->json(['message' => 'Cập nhật ảnh bìa thành công'], 200);
     }
     public function updateProfile(Request $request)
@@ -291,19 +316,19 @@ class ProfileController extends Controller
         DB::beginTransaction();
         try {
             $user = Auth::user();
-
-            // Retrieve input data
             $inputData = $request->except('password');
-
             if ($request->input('avatar')) {
-
                 $inputData['avatar'] = $request->input('avatar');
             } else {
-                // Nếu không có tệp tin avatar mới, giữ nguyên giá trị avatar hiện có
                 $inputData['avatar'] = $user->avatar;
             }
-
             $user->update($inputData);
+            activity('users')
+                ->tap(function (Activity $activity) use ($user) {
+                    $activity->properties = $user;
+                    $activity->event = 'updated';
+                })
+                ->log('User has been updated');
             DB::commit();
             return response()->json($user, 200);
         } catch (\Exception $e) {
