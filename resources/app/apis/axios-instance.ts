@@ -7,7 +7,7 @@ import { store } from '@/redux/store/store';
 import { authActions } from '@/redux/slice';
 import { RefreshTokenResponseType } from '@/models/auth';
 import { clear } from '@/utilities/local-storage';
-import { pathName } from '@/routes/path-name';
+// import { pathName } from '@/routes/path-name';
 
 // Create an Axios instance
 const requestConfig: AxiosRequestConfig = {
@@ -74,7 +74,6 @@ httpRequest.interceptors.response.use(
             });
 
             refreshTokenPromise = null;
-
             return httpRequest(originalRequest);
           })
           .catch(error => {
@@ -85,6 +84,9 @@ httpRequest.interceptors.response.use(
     }
 
     switch (error.response?.status) {
+      case 400: {
+        return Promise.reject(error.response.data);
+      }
       case 401: {
         if (ApiConstants.REFRESH_TOKEN === originalRequest.url) {
           toast.error('Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại!', {
@@ -97,8 +99,9 @@ httpRequest.interceptors.response.use(
         return;
       }
       case 500: {
-        Promise.reject(error.response.data);
-        return window.location.replace(pathName.ERROR_500);
+        toast.error('Có lỗi server!');
+        return Promise.reject(error.response.data);
+        // return window.location.replace(pathName.ERROR_500);
       }
       default: {
         toast.error('Có lỗi xảy ra, vui lòng thử lại sau!');

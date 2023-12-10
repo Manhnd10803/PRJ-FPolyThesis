@@ -55,17 +55,7 @@ const RefreshToken = async () => {
 };
 
 const Logout = async () => {
-  try {
-    const response = await httpRequest.post<any>(ApiConstants.LOGOUT);
-
-    store.dispatch(authActions.clear());
-    clear();
-
-    return response;
-  } catch (error) {
-    toast.error('Đăng xuất thất bại');
-    throw error;
-  }
+  return httpRequest.post<any>(ApiConstants.LOGOUT);
 };
 
 const GetUserDetail = () => {
