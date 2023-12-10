@@ -3,7 +3,7 @@ import { Container, Col, Form } from 'react-bootstrap';
 import { ListCard } from './components/list-card';
 import { Link } from 'react-router-dom';
 import { BlogService } from '@/apis/services/blog.service';
-import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { pathName } from '@/routes/path-name';
 import { Loading } from '@/components/shared/loading';
 import { MajorService } from '@/apis/services/major.service';
@@ -12,7 +12,6 @@ import { IMajors } from '@/models/major';
 export const BlogPage = () => {
   const [totalPage, setTotalPage] = useState(0);
   const [selectedMajor, setSelectedMajor] = useState('');
-  const queryClient = useQueryClient();
 
   const fetchBlogs = async ({ pageParam = 1 }) => {
     try {
@@ -74,8 +73,6 @@ export const BlogPage = () => {
                     onChange={e => {
                       const newMajor = e.target.value;
                       handleMajorChange(newMajor);
-                      // Manually refetch the data with the updated major
-                      queryClient.refetchQueries(queryKey, { active: true, exact: true });
                     }}
                   >
                     <option value="">Tất cả chuyên ngành</option>
