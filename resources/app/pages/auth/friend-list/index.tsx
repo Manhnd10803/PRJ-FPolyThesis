@@ -7,9 +7,11 @@ import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { formatFullName } from '@/utilities/functions';
 import { ModalRequest } from '../friend-request/components/modal';
 import { pathName } from '@/routes/path-name';
+import { useSetListFriend } from '@/hooks/useFriendQuery';
 export const FriendListPage = () => {
   const [showDeleteFriendMap, setShowDeleteFriendMap] = useState({});
   const queryClient = useQueryClient();
+  const { manuallySetListFriend } = useSetListFriend();
 
   const idUser = StorageFunc.getUserId();
 
@@ -32,6 +34,7 @@ export const FriendListPage = () => {
   const HandleUnFriend = async (id: any) => {
     try {
       const response = await unFriendMutation.mutateAsync(id);
+      manuallySetListFriend('delete', response.data);
       setShowDeleteFriendMap(prevState => ({ ...prevState, [id]: false }));
       return response;
     } catch (error) {

@@ -1,6 +1,7 @@
 import { AuthService } from '@/apis/services/auth.service';
 import { CustomToggle } from '@/components/custom';
 import { pathName } from '@/routes/path-name';
+import { formatFullName } from '@/utilities/functions';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { useMemo, useState } from 'react';
 import { Card, Dropdown, Image } from 'react-bootstrap';
@@ -94,14 +95,14 @@ export const UserDropdown = () => {
       <Dropdown.Toggle href="#" as={CustomToggle} variant="d-flex align-items-center">
         <Image src={userInfo?.avatar} className="img-fluid rounded-circle me-3" alt="user" loading="lazy" />
         <div className="caption d-none d-lg-block">
-          <h6 className="mb-0 line-height">{userInfo?.username}</h6>
+          <h6 className="mb-0 line-height">{formatFullName(userInfo)}</h6>
         </div>
       </Dropdown.Toggle>
       <Dropdown.Menu className="sub-drop caption-menu">
         <Card className="shadow-none m-0">
           <Card.Header>
             <div className="header-title">
-              <h5 className="mb-0 ">Chào 👋 - {userInfo?.username}</h5>
+              <h5 className="mb-0 ">Chào 👋 - {formatFullName(userInfo)}</h5>
             </div>
           </Card.Header>
 

@@ -27,6 +27,28 @@ export const useFriend = () => {
   };
 };
 
+export const useSetListFriend = () => {
+  const queryClient = useQueryClient();
+
+  const manuallySetListFriend = (action: string, data: any) => {
+    queryClient.setQueryData(queryKeyFriends, (oldData: any) => {
+      if (!oldData) return oldData;
+
+      if (action === 'add') {
+        return [...oldData, data];
+      }
+      if (action === 'delete') {
+        const updatedData = oldData.filter((item: any) => item.friend.id !== data.friend.id);
+        return updatedData;
+      }
+      return oldData;
+    });
+  };
+  return {
+    manuallySetListFriend,
+  };
+};
+
 export const useSetActivityFriend = () => {
   const queryClient = useQueryClient();
 

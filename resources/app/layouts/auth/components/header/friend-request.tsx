@@ -1,5 +1,6 @@
 import { FriendService } from '@/apis/services/friend.service';
 import { CustomToggle } from '@/components/custom';
+import { useSetListFriend } from '@/hooks/useFriendQuery';
 import { pathName } from '@/routes/path-name';
 import { formatFullName } from '@/utilities/functions';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -10,6 +11,9 @@ import { Link } from 'react-router-dom';
 
 export const FriendRequest = () => {
   const queryClient = useQueryClient();
+
+  const { manuallySetListFriend } = useSetListFriend();
+
   const fetchAllFriendRequest = async () => {
     const { data } = await FriendService.showAllFriendRequest(5);
     const FriendRequestData = data;
@@ -40,9 +44,10 @@ export const FriendRequest = () => {
   };
   const HandleConfirmFriendRequest = async (id: any) => {
     try {
-      const response = await confirmFriendRequestMutation.mutateAsync(id);
+      const { data } = await confirmFriendRequestMutation.mutateAsync(id);
+      manuallySetListFriend('add', data);
       toast.success('Xác nhận thành công');
-      return response;
+      return data;
     } catch (error) {
       throw error;
     }
