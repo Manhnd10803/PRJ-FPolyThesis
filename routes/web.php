@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\AdminQaController;
 use App\Http\Controllers\Admin\AdminEmotionController;
 use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\AdminReportController;
+use App\Http\Controllers\AdminLogController;
 use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 
@@ -114,6 +115,11 @@ Route::group(['prefix' => 'admin', 'middleware' => 'authAdmin'], function () {
         Route::delete('/delete/{report}', [AdminReportController::class, 'DeleteReport'])->name('admin.report.delete');
 
         Route::get('/admin/reports/search', [AdminReportController::class, 'search'])->name('admin.reports.search');
+    });
+    //Admin log
+    Route::prefix('log')->group(function () {
+        Route::get('/', [AdminLogController::class, 'index'])->name('admin.log.index');
+        Route::delete('/{activity}', [AdminLogController::class, 'destroy'])->name('admin.log.destroy');
     });
 });
 

@@ -220,4 +220,24 @@ return [
       ],
     ],
   ],
+  'activity_logs' => [
+    'order' => 9,
+    'text'  => 'Quản lý Actiivity Log',
+    'permission' => 'admin.log',
+    'icon' => 'fa fa-fw fa-history',
+    'sub' => [
+      'list_activity_log' => [
+        'order' => 1,
+        'route' => 'admin.log.index',
+        'permission' => 'admin.log.index',
+        'sub_permission' => [
+          [
+            'name' => 'Xóa',
+            'permission' => 'admin.log.destroy'
+          ],
+        ],
+        'text' => 'Hoạt động đăng nhập',
+      ],
+    ],
+  ],
 ];
