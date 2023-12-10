@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\Admin\AdminBlogController;
@@ -160,4 +161,6 @@ Route::middleware('auth:api')->group(function () {
     //Report
     Route::post('/report/{user}/{model}/{item}', [ReportController::class, 'CreateReport']);
     Route::put('/changestatus/{user}', [PrivateMessagesController::class, 'changestatus']);
+    //Activity Log
+    Route::post('/activity/log', [ActivityLogController::class, 'GetLogActivity']);
 });
