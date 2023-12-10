@@ -15,7 +15,7 @@ class Qa extends Model
     {
         return LogOptions::defaults()
             ->logOnly(['*'])
-            ->useLogName('Qa');
+            ->useLogName('qas');
     }
     public function getDescriptionForEvent(string $eventName): string
     {

@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Socialite\Facades\Socialite;
+use Spatie\Activitylog\Models\Activity;
 
 class AuthController extends Controller
 {
@@ -212,7 +213,12 @@ class AuthController extends Controller
                     'ip_address' => isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null,
                     'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null,
                 ];
-                activity('login')->log(json_encode($data));
+                activity('auths')
+                    ->tap(function (Activity $activity) use ($data) {
+                        $activity->properties = $data;
+                        $activity->event = 'login';
+                    })
+                    ->log('User has been login');
                 return response()->json($response, 200);
             } else {
                 $checkAccount = User::where('email', $request->email)->first();
@@ -317,7 +323,12 @@ class AuthController extends Controller
                 'ip_address' => isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null,
                 'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null,
             ];
-            activity('users')->log(json_encode($data));
+            activity('auths')
+                ->tap(function (Activity $activity) use ($data) {
+                    $activity->properties = $data;
+                    $activity->event = 'login';
+                })
+                ->log('User has been login');
             $request = Request::create('oauth/token', 'POST', [
                 'grant_type' => 'socialite',
                 'client_id' => env('PASSPORT_PASSWORD_GRANT_CLIENT_ID'),

@@ -19,7 +19,7 @@ class Blog extends Model
     {
         return LogOptions::defaults()
             ->logOnly(['*'])
-            ->useLogName('comments');
+            ->useLogName('blogs');
     }
     public function getDescriptionForEvent(string $eventName): string
     {
