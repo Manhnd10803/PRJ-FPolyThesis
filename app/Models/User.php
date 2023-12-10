@@ -22,8 +22,7 @@ class User extends Authenticatable
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly(['*'])
-            ->useLogName('users');
+            ->logOnly(['*']);
     }
     public function getDescriptionForEvent(string $eventName): string
     {
