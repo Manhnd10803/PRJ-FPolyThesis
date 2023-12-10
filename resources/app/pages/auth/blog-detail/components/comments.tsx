@@ -10,7 +10,7 @@ import { ReportService } from '@/apis/services/report.service';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 
-import { CustomModalReport } from './custom-modal';
+import { CustomModalReport } from '../../../../utilities/funcReport/modalReportComment';
 
 export const Comments = ({ data, postComment, deleteComment, putComment }: any) => {
   const queryClient = useQueryClient();
@@ -142,7 +142,7 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
         report_image: '',
       };
       await createReportMutation.mutateAsync(formData);
-      toast.success('! Nội dung bình luận được báo cáo thành công');
+      toast.success('Nội dung được báo cáo thành công');
     } catch (error: any) {
       toast.error(error.message);
     }

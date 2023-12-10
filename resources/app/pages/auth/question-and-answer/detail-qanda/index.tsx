@@ -30,9 +30,7 @@ import { LikeService } from '@/apis/services/like.service';
 import parse from 'html-react-parser';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { CustomListItem } from '@/utilities/funcReport/listItem';
-import { CustomModal } from '@/utilities/funcReport/modalReport';
-import { DropZoneField } from '@/components/custom/drop-zone-field';
-import { CloudiaryService } from '@/apis/services/cloudinary.service';
+import { CustomModal } from '@/utilities/funcReport/modalCustomReport';
 import { ReportService } from '@/apis/services/report.service';
 import { momentVi } from '@/utilities/functions/moment-locale';
 import StarsIcon from '@mui/icons-material/Stars';
@@ -41,7 +39,6 @@ import { formatFullName } from '@/utilities/functions';
 export const DetailQandAPage = () => {
   const commentRef = useRef(null);
   const [show, setShow] = useState(false);
-  const [isLoadingReport, setIsLoadingReport] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { id } = useParams();
@@ -177,7 +174,6 @@ export const DetailQandAPage = () => {
   };
 
   const [contentReport, setContentReport] = useState('');
-  const imagesRef = useRef<File[]>([]);
 
   const [showModalReport, setShowModalReport] = useState(false);
   const handleCloseModalReport = () => setShowModalReport(false);
@@ -200,12 +196,10 @@ export const DetailQandAPage = () => {
     { title: 'Spam', onClick: () => handleShow('Spam') },
     { title: 'Vi phạm điều khoản', onClick: () => handleShow('Vi phạm điều khoản') },
     { title: 'Quấy rối', onClick: () => handleShow('Quấy rối') },
-    { title: 'Bản dịch kém chất lượng', onClick: () => handleShow('Bản dịch kém chất lượng') },
     { title: 'Vi phạm bản quyền', onClick: () => handleShow('Vi phạm bản quyền') },
+    { title: 'Bản dịch kém chất lượng', onClick: () => handleShow('Bản dịch kém chất lượng') },
   ];
-  const handleChangeFiles = (files: File[]) => {
-    imagesRef.current = files;
-  };
+
   const handleContentChange = (event: any) => {
     const content = event.target.value;
     setContentReport(content);
@@ -218,9 +212,8 @@ export const DetailQandAPage = () => {
   });
   const postReport = async (idfriend, title, idqa) => {
     try {
-      setIsLoadingReport(true);
+      handleClose();
       const idUser = StorageFunc.getUserId();
-      const imageURL = await CloudiaryService.uploadImages(imagesRef.current, 'qa');
       const formData = {
         reporter_id: idUser,
         reported_id: idfriend,
@@ -228,10 +221,10 @@ export const DetailQandAPage = () => {
         report_content: contentReport,
         report_type: 'qa',
         report_type_id: idqa,
-        report_image: imageURL[0] || '',
+        report_image: '',
       };
       await createReportMutation.mutateAsync(formData);
-      handleClose();
+      toast.success('Nội dung được báo cáo thành công');
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -429,16 +422,7 @@ export const DetailQandAPage = () => {
 
                                   {/* Modal item  */}
                                   <CustomModal show={showModal} onHide={handleClose} title={modalTitle}>
-                                    <div className="mb-3">
-                                      <label htmlFor="fileInput" className="form-label">
-                                        Bạn có thể đính kèm hình ảnh (tối đa 1 ảnh)
-                                      </label>
-                                      <DropZoneField
-                                        onChangeFiles={handleChangeFiles}
-                                        maxFiles={1}
-                                        accept={{ 'image/*': [] }}
-                                      />
-                                    </div>
+                                    <div className="mb-3"></div>
                                     <div className="mb-3">
                                       <label htmlFor="commentTextarea" className="form-label">
                                         Nhận xét (tối đa 225 kí tự)
@@ -452,15 +436,17 @@ export const DetailQandAPage = () => {
                                         rows="3"
                                       ></textarea>
                                     </div>
-                                    <Modal.Footer>
+                                    <Modal.Footer className="d-flex justify-content-between">
+                                      <label htmlFor="fileInput" className="form-label">
+                                        Điều khoản dịch vụ của FpolyZone
+                                      </label>
                                       <button
                                         className="btn btn-info"
                                         onClick={() =>
                                           postReport(qAndAData?.qa?.user?.id, modalTitle, qAndAData?.qa?.id)
                                         }
-                                        disabled={isLoadingReport}
                                       >
-                                        {isLoadingReport ? 'Đang báo cáo...' : 'Báo cáo'}
+                                        Báo cáo
                                       </button>
                                     </Modal.Footer>
                                   </CustomModal>

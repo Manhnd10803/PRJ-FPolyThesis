@@ -1,6 +1,6 @@
 import { Modal, ListGroup } from 'react-bootstrap';
 import { CustomListItem } from '@/utilities/funcReport/listItem';
-import { CustomModal } from '@/utilities/funcReport/modalReport';
+import { CustomModal } from '@/utilities/funcReport/modalCustomReport';
 export const CustomModalReport = ({
   showModalReport,
   currentPostId,

@@ -2,7 +2,7 @@ import { CloudiaryService } from '@/apis/services/cloudinary.service';
 import { ReportService } from '@/apis/services/report.service';
 import { DropZoneField } from '@/components/custom/drop-zone-field';
 import { CustomListItem } from '@/utilities/funcReport/listItem';
-import { CustomModal } from '@/utilities/funcReport/modalReport';
+import { CustomModal } from '@/utilities/funcReport/modalCustomReport';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
@@ -67,6 +67,7 @@ export const MoreActionDropdown = ({ friendId, postId, username }: any) => {
         report_image: imageURL[0] || '',
       };
       await createReportMutation.mutateAsync(formData);
+      toast.success('Nội dung được báo cáo thành công');
     } catch (error: any) {
       toast.error(error.message);
     }
