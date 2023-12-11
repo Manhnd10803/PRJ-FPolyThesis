@@ -13,7 +13,7 @@ use App\Http\Controllers\Admin\AdminQaController;
 use App\Http\Controllers\Admin\AdminEmotionController;
 use App\Http\Controllers\Admin\AdminNotificationController;
 use App\Http\Controllers\Admin\AdminReportController;
-use App\Http\Controllers\AdminLogController;
+use App\Http\Controllers\Admin\AdminLogController;
 use App\Models\Notification;
 use Illuminate\Support\Facades\Auth;
 

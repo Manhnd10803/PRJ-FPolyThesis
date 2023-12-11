@@ -33,6 +33,7 @@ export const pathName = {
   UPLOAD: '/upload',
   ACCOUNT_SETTING: '/account-setting',
   PRIVACY_SECURITY: '/privacy-security',
+  ACCOUNT_HISTORY: '/account-history',
 
   //======== Chat path ========//
   CHAT: '/chat',
