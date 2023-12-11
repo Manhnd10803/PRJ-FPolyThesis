@@ -22,7 +22,7 @@ class ProfileController extends Controller
     {
         DB::beginTransaction();
         try {
-            // $user = Auth::user();
+            $user = Auth::user();
             $countposts = $user->posts->count();
             $countblogs  = $user->blogs->count();
             $countfriends = $user->friends->count();
@@ -75,8 +75,22 @@ class ProfileController extends Controller
                     }
                     // Lấy danh sách bài viết của người dùng
                     $postsQuery = Post::where('user_id', $user->id)->orderBy('created_at', 'DESC');
+                    //lấy bạn bè của người dùng
+                    $loginfriends = $loggedInUser->friends;
+                    $friendIds = $loginfriends->pluck('id')->toArray();
+                    //nếu không phải người đăng nhập
                     if ($user->id != $loggedInUser->id) {
-                        $postsQuery->where('status', 0);
+                        //nhưng là bạn bè
+                        if (in_array($user->id, $friendIds)) {
+                            // Nếu là bạn bè, lấy các bài viết có status là 0 và 1
+                            $postsQuery->whereIn('status', [0, 1]);
+                            //không phải bạn bè
+                        } else {
+                            // Nếu không phải là bạn bè, lấy các bài viết có status là 0
+                            $postsQuery->where('status', 0);
+                        }
+                    } elseif ($user->id == $loggedInUser->id) {
+                        $postsQuery->whereIn('status', [0, 1, 2]);
                     }
                     $images = [];
                     $postList = $postsQuery->get();

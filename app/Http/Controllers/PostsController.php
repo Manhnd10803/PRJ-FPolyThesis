@@ -6,6 +6,7 @@ use App\Http\Requests\PostRequest;
 use App\Models\Comment;
 use App\Models\Like;
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -46,10 +47,17 @@ class PostsController extends Controller
     {
         DB::beginTransaction();
         try {
-            $posts = Post::where('user_id', Auth::id())
-                ->orWhere(function ($query) {
-                    $query->where('status', '<>', 1);
-                })->orderBy('created_at', 'DESC')->get();
+            //Nếu User_id = Auth::id() thì lấy tất cả bài viết của user đó ngược lại láy tất cả bài viết có trạng thái khác 2
+            $posts = Post::where(function ($query) {
+                $query->where('user_id', Auth::id())
+                    ->orWhere(function ($subquery) {
+                        $subquery->where('status', 0);
+                    });
+            })
+                ->orderBy('created_at', 'DESC')
+                ->get();
+
+
             $result = [];
             foreach ($posts as $post) {
                 // Tính toán số lượt like cho bài viết
@@ -167,17 +175,22 @@ class PostsController extends Controller
     {
         DB::beginTransaction();
         try {
-            // Lấy thông tin người đăng bài và thông tin bài viết (lọc theo bạn bè)
+            // Lấy thông tin người đăng bài và thông tin bài viết nếu là bạn bè thì lấy status là 0 và 1.nếu không phải bạn bè lấy bài viết status =0
             $user = Auth::user();
             $friends = $user->friends()->where('friends.status', config('default.friend.status.accepted'))->get();
             $friendIds = $friends->pluck('id')->toArray();
-            $friendIds[] = $user->id;
+            $friendIds1 = $friends->pluck('id')->toArray();
+            $friendIds1[] = $user->id;
+            $memberIds = User::whereNotIn('id', $friendIds1)->pluck('id')->toArray();
+            $postWithUser = Post::where('user_id', $user->id)->whereIn('status', [0, 1, 2]);
+            $postWithFriend = Post::whereIn('user_id', $friendIds)->whereIn('status', [0, 1]);
+            $postWithNotFriend = Post::whereIn('user_id', $memberIds)->where('status', 0);
             if ($quantity) {
-                $posts = Post::whereIn('user_id', $friendIds)->latest()->paginate($quantity);
+                $posts = $postWithFriend->union($postWithNotFriend)->union($postWithUser)->distinct()->latest()->paginate($quantity);
                 $last_page = $posts->lastPage();
                 $current_page = $posts->currentPage();
             } else {
-                $posts = Post::whereIn('user_id', $friendIds)->latest()->get();
+                $posts = $postWithFriend->union($postWithNotFriend)->union($postWithUser)->distinct()->latest()->get();
             }
             $result = [];
             foreach ($posts as $post) {
@@ -252,6 +265,7 @@ class PostsController extends Controller
         try {
             $content = $request->input('content');
             $feeling = $request->input('feeling');
+            $status = $request->input('status') ?? 0;
             $hashtagString = ''; // Mặc định hashtag là chuỗi trống
             $imagePaths = $request->input('image', []);
             if (isset($content) && !empty($content)) {
@@ -267,6 +281,7 @@ class PostsController extends Controller
                 'feeling' => $feeling,
                 'image' => json_encode($imagePaths),
                 'hashtag' => $hashtagString,
+                'status' => $status,
             ]);
             $post->save();
             DB::commit();
@@ -283,7 +298,7 @@ class PostsController extends Controller
      *     path="/api/posts/{post}",
      *     tags={"Posts"},
      *     summary="Cập nhật bài viết",
-     *     description="Cập nhật một bài viết với nội dung, cảm xúc, hashtag và hình ảnh tải lên (tối đa 5 hình ảnh).",
+     *     description="Cập nhật trạng thái một bài viết ",
      *     @OA\Parameter(
      *         name="post",
      *         in="path",
@@ -295,11 +310,7 @@ class PostsController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             required={"content"},
-     *             @OA\Property(property="content", type="string", description="Nội dung của bài viết", maxLength=255),
-     *             @OA\Property(property="feeling", type="string", description="Cảm xúc của bài viết", nullable=true),
-     *             @OA\Property(property="hashtag", type="string", description="Hashtag của bài viết", maxLength=255, nullable=true),
-     *             @OA\Property(property="images", type="array", @OA\Items(type="string", format="binary", description="Hình ảnh đính kèm (JPEG, JPG hoặc PNG)"), maxItems=5, nullable=true),
-     *             @OA\Property(property="status", type="integer", description="Trạng thái của bài viết", enum={0, 1}),
+     *             @OA\Property(property="status", type="integer", description="Trạng thái của bài viết"),
      *         )
      *     ),
      *     @OA\Response(response=200, description="Bài viết đã được cập nhật thành công"),
@@ -311,23 +322,11 @@ class PostsController extends Controller
     {
         DB::beginTransaction();
         try {
-            $content = $request->input('content', $post->content);
-            $feeling = $request->input('feeling', $post->feeling);
-            $hashtagString = '';
-            $imagePaths = $request->input('image', $post->image);
-            if (isset($content) && !empty($content)) {
-                // Tách chuỗi thành mảng các từ (dùng khoảng trắng để tách)
-                $hashtags = [];
-                preg_match_all("/(?<!\w)(#\w+)/", $content, $matches);
-                $hashtags = $matches[1];
-                $hashtagString = implode(' ', $hashtags);
-            }
+            // cập nhật trạng thái bài viết
+            $status = $request->input('status');
             // Cập nhật thông tin bài đăng
             $post->update([
-                'content' => $content,
-                'feeling' => $feeling,
-                'image' => json_encode($imagePaths),
-                'hashtag' => $hashtagString,
+                'status' => $status,
             ]);
             DB::commit();
             return response()->json($post, 200);
@@ -336,7 +335,6 @@ class PostsController extends Controller
             return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
-
     /**
      * @OA\Delete(
      *     path="/api/posts/{post}",
@@ -377,47 +375,5 @@ class PostsController extends Controller
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()], 400);
         }
-    }
-    //Admin Posts
-
-    /**
-     * @OA\Get(
-     *     path="/api/list-posts",
-     *     tags={"Admin Posts"},
-     *     summary="Lấy danh sách bài viết",
-     *     description="Trả về danh sách các bài viết.",
-     *     @OA\Response(response=200, description="Danh sách các bài viết")
-     * )
-     */
-    public function index()
-    {
-        $posts = Post::all();
-        return response()->json(['posts' => $posts], 200);
-    }
-
-    /**
-     * @OA\Get(
-     *     path="/api/posts/{post}",
-     *     tags={"Admin Posts"},
-     *     summary="Lấy thông tin của một bài viết",
-     *     description="Trả về thông tin của một bài viết dựa trên đối tượng Post.",
-     *     @OA\Parameter(
-     *         name="post",
-     *         in="path",
-     *         required=true,
-     *         description="Đối tượng Post",
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(response=200, description="Thông tin của bài viết"),
-     *     @OA\Response(response=404, description="Bài viết không tồn tại"),
-     * )
-     */
-    public function show(Post $post)
-    {
-        if (!$post) {
-            return response()->json(['error' => 'Bài viết không tồn tại'], 404);
-        }
-
-        return response()->json(['post' => $post], 200);
     }
 }
