@@ -20,6 +20,7 @@ import { ListQAndAsByMajorId } from '@/pages/auth/question-and-answer/list-qanda
 import { UpdateQandA } from '@/pages/auth/question-and-answer/update-qanda/update-form';
 import { pathName } from './path-name';
 import { SearchPage } from '@/pages/auth/search';
+import { AccountHistoryPage } from '@/pages/auth/account-history';
 
 export const AuthRouter = [
   {
@@ -110,5 +111,9 @@ export const AuthRouter = [
   {
     path: pathName.SEARCH,
     element: <SearchPage />,
+  },
+  {
+    path: pathName.ACCOUNT_HISTORY,
+    element: <AccountHistoryPage />,
   },
 ];

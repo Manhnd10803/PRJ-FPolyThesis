@@ -57,6 +57,11 @@ export const UserDropdown = () => {
         link: pathName.ACCOUNT_SETTING,
       },
       {
+        icon: 'history',
+        title: 'Lịch sử hoạt động',
+        link: pathName.ACCOUNT_HISTORY,
+      },
+      {
         icon: 'lock',
         title: 'Điều khoản và bảo mật',
         link: pathName.PRIVACY_SECURITY,

@@ -30,19 +30,24 @@ class ActivityLogController extends Controller
         DB::beginTransaction();
         try {
             $userId = Auth::id();
-            $startTime = $request->input('start_time');
-            $endTime = $request->input('end_time');
-            $query = Activity::where('causer_id', $userId)
-                ->whereBetween('created_at', [$startTime, $endTime])
-                ->orderBy('created_at', 'desc');
-            if ($logname) {
-                $query->where('log_name', $logname);
+            $startTime = $request->startDate;
+            $endTime = $request->endDate;
+
+            $query = Activity::where('log_name', $logname)->where('causer_id', $userId);
+
+            if ($startTime && $endTime) {
+
+                $query->whereBetween('created_at', [$startTime, $endTime]);
             }
-            $Activities = $query->get();
+
+            $activities = $query->orderBy('created_at', 'desc')->get();
+
             DB::commit();
-            return response()->json(['Activities' => $Activities], 200);
+
+            return response()->json($activities, 200);
         } catch (\Exception $e) {
             DB::rollback();
+
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
@@ -65,7 +70,7 @@ class ActivityLogController extends Controller
         DB::beginTransaction();
         try {
             $userId = Auth::id();
-            $query = Activity::where('causer_id', $userId)->where('id', $activity);
+            $query = Activity::where('causer_id', $userId)->where('id', $activity->id);
             $query->delete();
             DB::commit();
             return response()->json(['message' => 'Delete success'], 200);

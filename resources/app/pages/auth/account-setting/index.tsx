@@ -35,12 +35,6 @@ export const AccountSettingPage = () => {
                       CÀI ĐẶT QUYỀN RIÊNG TƯ
                     </h3>
                   </div>
-
-                  {/* <Link to="" style={{ fontWeight: '600', }}
-                    className="bg-white px-3 py-2 d-flex align-items-center rounded-2 d-block"
-                  >
-                    Privacy Setting
-                  </Link> */}
                 </div>
               </Card>
             </Col>
@@ -52,22 +46,10 @@ export const AccountSettingPage = () => {
                   <Card.Body>
                     <Nav variant="pills" className=" basic-info-items list-inline d-block p-0 m-0">
                       <Nav.Item>
-                        <Nav.Link href="#blog" eventKey="about1" className="d-flex align-items-center gap-3">
+                        <Nav.Link href="#" eventKey="about1" className="d-flex align-items-center gap-3">
                           <i className="material-symbols-outlined">create</i> Bảo mật tài khoản
                         </Nav.Link>
                       </Nav.Item>
-
-                      {/* <Nav.Item>
-                        <Nav.Link href="#blog-pending" eventKey="about2" className="d-flex align-items-center gap-3">
-                          <i className="material-symbols-outlined">forum</i> Chờ duyệt
-                        </Nav.Link>
-                      </Nav.Item> */}
-
-                      {/* <Nav.Item>
-                        <Nav.Link href="#blog-reject" eventKey="about3" className="d-flex align-items-center gap-3">
-                          <i className="material-symbols-outlined">delete</i> Vi phạm
-                        </Nav.Link>
-                      </Nav.Item> */}
                     </Nav>
                   </Card.Body>
                 </Card>
@@ -78,7 +60,6 @@ export const AccountSettingPage = () => {
                     <Tab.Content>
                       <Tab.Pane eventKey="about1">
                         {isResetForm ? <ResetForm /> : <ConfirmForm onContinue={handleContinue} />}
-                        {/* <ConfirmForm/> */}
                       </Tab.Pane>
                     </Tab.Content>
                   </Card.Body>

@@ -97,6 +97,7 @@ class CommentController extends Controller
                 'reply_to' => $reply_to
             ]);
             $comment->save();
+            $newComment = $comment;
             //thông báo
             //2TH
             //TH1 - thông báo là bình luận trực tiếp
@@ -286,7 +287,7 @@ class CommentController extends Controller
                 }
             }
             DB::commit();
-            $commentWithUser = Comment::where('id', $comment->id)->with('user')->first();
+            $commentWithUser = Comment::where('id', $newComment->id)->with('user')->latest()->get();
             return response()->json(['message' => 'Comment added successfully', "comment" => $commentWithUser], 200);
         } else {
             DB::rollBack();

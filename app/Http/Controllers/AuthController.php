@@ -222,7 +222,7 @@ class AuthController extends Controller
                 //lấy địa chỉ ip và trình duyệt đang sử dụng để check đăng nhập lạ
                 $data  = [
                     'user_id' => auth()->id(),
-                    'username' => auth()->user()->username,
+                    'username' => auth()->user()->first_name . ' ' . auth()->user()->last_name,
                     'ip_address' => isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null,
                     'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null,
                 ];
@@ -286,18 +286,7 @@ class AuthController extends Controller
         foreach ($friends as $friend) {
             broadcast(new UpdateActivityUser($friend, 'Ngoại tuyến', $user))->toOthers();
         }
-        $data  = [
-            'user_id' => $user->id,
-            'username' => $user->username,
-            'ip_address' => isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null,
-            'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null,
-        ];
-        activity('auths')
-            ->tap(function (Activity $activity) use ($data) {
-                $activity->properties = $data;
-                $activity->event = 'logout';
-            })
-            ->log('User has been logout');
+
         DB::table('oauth_refresh_tokens')->where('access_token_id', $user->token()->id)->update(['revoked' => true]);
         $user->tokens->each(function ($token) {
             $token->delete();
@@ -351,13 +340,14 @@ class AuthController extends Controller
             $response = json_decode($result->getContent(), true);
             $data  = [
                 'user_id' => $checkUser->id,
-                'username' => $checkUser->username,
+                'username' => $checkUser->first_name . ' ' . $checkUser->last_name,
                 'ip_address' => isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null,
                 'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null,
             ];
             activity('auths')
                 ->tap(function (Activity $activity) use ($data) {
                     $activity->properties = $data;
+                    $activity->causer_id= $data['user_id'];
                     $activity->event = 'login';
                 })
                 ->log('User has been login');
@@ -407,7 +397,7 @@ class AuthController extends Controller
                 $response = json_decode($result->getContent(), true);
                 $data  = [
                     'user_id' => $checkUser->id,
-                    'username' => $checkUser->username,
+                    'username' => $checkUser->first_name . ' ' . $checkUser->last_name,
                     'ip_address' => isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null,
                     'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null,
                 ];
@@ -505,6 +495,7 @@ class AuthController extends Controller
                         'status' => 1
                     ]
                 );
+               
                 Mail::to($request->email)->send(new VerifyAccount($verificationCode));
                 DB::commit();
                 return response()->json(['message' => 'Mã xác nhận đã được gửi đến mail của bạn. Kiểm tra ngay nhé!'], 200);
@@ -626,19 +617,7 @@ class AuthController extends Controller
             return response()->json(['message' => 'Mã xác nhận không chính xác'], 403);
         } else {
             DB::table('users')->where('verification_code', $request->verification_code)->update(['password' => Hash::make($request->password)]);
-            //lấy địa chỉ ip và trình duyệt đang sử dụng để check đăng nhập lạ
-            $data  = [
-                'user_id' => $checkVerify->id,
-                'username' => $checkVerify->username,
-                'ip_address' => isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : null,
-                'user_agent' => isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : null,
-            ];
-            activity('auths')
-                ->tap(function (Activity $activity) use ($data) {
-                    $activity->properties = $data;
-                    $activity->event = 'updated';
-                })
-                ->log('User has been updated');
+
             Mail::to($checkVerify->email)->send(new ForgotPassword($request->password, $checkVerify->username));
             DB::commit();
             return response()->json(['message' => 'Mật khẩu đã được đặt lại thành công'], 200);
