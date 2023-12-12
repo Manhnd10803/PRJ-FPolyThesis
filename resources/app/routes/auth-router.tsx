@@ -13,11 +13,6 @@ import { ProfilePage } from '@/pages/auth/profile';
 import { QuestionAndAnswerPage } from '@/pages/auth/question-and-answer';
 import { CreateQandA } from '@/pages/auth/question-and-answer/create-qanda';
 import { DetailQandAPage } from '@/pages/auth/question-and-answer/detail-qanda';
-import { ListMostsCmtQAndAs } from '@/pages/auth/question-and-answer/list-qanda/components/list-best-cmt-qanda';
-import { ListMyQAndAs } from '@/pages/auth/question-and-answer/list-qanda/components/list-my-qanda';
-import { ListNoAnswerQAndAs } from '@/pages/auth/question-and-answer/list-qanda/components/list-no-answer-qanda';
-import { ListQAndAsByMajorId } from '@/pages/auth/question-and-answer/list-qanda/components/list-qanda-major';
-import { UpdateQandA } from '@/pages/auth/question-and-answer/update-qanda/update-form';
 import { pathName } from './path-name';
 import { SearchPage } from '@/pages/auth/search';
 import { AccountHistoryPage } from '@/pages/auth/account-history';
@@ -36,27 +31,7 @@ export const AuthRouter = [
     element: <CreateQandA />,
   },
   {
-    path: pathName.LIST_QUESTS_MOST_CMT,
-    element: <ListMostsCmtQAndAs />,
-  },
-  {
-    path: pathName.LIST_QUESTS_NO_ANSWER,
-    element: <ListNoAnswerQAndAs />,
-  },
-  {
-    path: pathName.LIST_QUESTS_MY_QANDA,
-    element: <ListMyQAndAs />,
-  },
-  {
-    path: pathName.LIST_QUESTS_BY_MAJOR,
-    element: <ListQAndAsByMajorId />,
-  },
-  {
-    path: pathName.QUESTS_UPDATE,
-    element: <UpdateQandA />,
-  },
-  {
-    path: pathName.QUESTS_DETAIL,
+    path: pathName.QUEST_DETAIL_ROUTE,
     element: <DetailQandAPage />,
   },
   {

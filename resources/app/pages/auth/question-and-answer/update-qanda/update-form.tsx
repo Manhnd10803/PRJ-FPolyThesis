@@ -1,6 +1,7 @@
 import { MajorService } from '@/apis/services/major.service';
 import { QandAService } from '@/apis/services/qanda.service';
 import { IMajors } from '@/models/major';
+import { pathName } from '@/routes/path-name';
 import { QandACreateSchema, TQandACreateSchema } from '@/validation/zod/qanda';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery } from '@tanstack/react-query';
@@ -65,7 +66,7 @@ export const UpdateQandA = () => {
           },
           onSuccess: () => {
             toast.success('Câu hỏi đã được cập nhật thành công');
-            navigate(`/quests/${id}`);
+            navigate(`/${pathName.QUESTS}/${id}`);
           },
         },
       );

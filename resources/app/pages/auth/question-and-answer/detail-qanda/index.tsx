@@ -1,16 +1,14 @@
 import { QandAService } from '@/apis/services/qanda.service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   Container,
-  Col,
   Button,
   ButtonGroup,
   Row,
   Card,
   Badge,
   Modal,
-  Form,
   Dropdown,
   Spinner,
   ListGroup,
@@ -35,6 +33,7 @@ import { ReportService } from '@/apis/services/report.service';
 import { momentVi } from '@/utilities/functions/moment-locale';
 import StarsIcon from '@mui/icons-material/Stars';
 import { formatFullName } from '@/utilities/functions';
+import { pathName } from '@/routes/path-name';
 
 export const DetailQandAPage = () => {
   const commentRef = useRef(null);
@@ -167,7 +166,7 @@ export const DetailQandAPage = () => {
     try {
       await QandAService.deleteQandA(id);
       toast.success('Xóa câu hỏi thành công');
-      navigate('/quests');
+      navigate(pathName.QUESTS);
     } catch (error) {
       console.error('Lỗi khi xóa câu hỏi:', error);
     }

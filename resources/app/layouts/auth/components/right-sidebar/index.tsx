@@ -1,6 +1,7 @@
 import { useFriend } from '@/hooks/useFriendQuery';
 import { pathName } from '@/routes/path-name';
 import { formatFullName } from '@/utilities/functions';
+import { Skeleton } from '@mui/material';
 import { Card, Image } from 'react-bootstrap';
 
 export const RightSidebar = () => {
@@ -20,7 +21,28 @@ export const RightSidebar = () => {
               <div className="media-height p-3" data-scrollbar="init">
                 {isLoading ? (
                   <>
-                    <div>...Loading</div>
+                    <Card>
+                      <Card.Body>
+                        <div className="d-flex gap-2 align-items-center">
+                          <Skeleton variant="circular" height={50} width={50} />
+                          <div>
+                            <Skeleton height={15} width={100} style={{ marginBottom: '5px' }} />
+                            <Skeleton height={10} width={100} />
+                          </div>
+                        </div>
+                      </Card.Body>
+                    </Card>
+                    <Card>
+                      <Card.Body>
+                        <div className="d-flex gap-2 align-items-center">
+                          <Skeleton variant="circular" height={50} width={50} />
+                          <div>
+                            <Skeleton height={15} width={100} style={{ marginBottom: '5px' }} />
+                            <Skeleton height={10} width={100} />
+                          </div>
+                        </div>
+                      </Card.Body>
+                    </Card>
                   </>
                 ) : (
                   <>

@@ -25,7 +25,7 @@ export const HistoryOtherItem = ({ item, onDelete, param }: History) => {
       case 'comment':
         return '';
       default:
-        return pathName.QUESTS;
+        return pathName.QUESTS_DETAIL;
     }
   };
 
@@ -63,7 +63,7 @@ export const HistoryOtherItem = ({ item, onDelete, param }: History) => {
       case 'qas':
         data = {
           title: `câu hỏi <strong>${action.title}</strong>`,
-          path: pathName.QUESTS,
+          path: pathName.QUESTS_DETAIL,
         };
         break;
       case 'searches':
@@ -73,7 +73,8 @@ export const HistoryOtherItem = ({ item, onDelete, param }: History) => {
         };
         break;
       case 'likes':
-        const pathTypeLike = action.post_id !== null ? pathName.POST : action.blog_id ? pathName.BLOG : pathName.QUESTS;
+        const pathTypeLike =
+          action.post_id !== null ? pathName.POST : action.blog_id ? pathName.BLOG : pathName.QUESTS_DETAIL;
         const type = action.post_id !== null ? 'bài viết' : action.blog_id ? 'blog' : 'câu hỏi';
         data = {
           title: `<strong>${type}</strong>`,

@@ -6,7 +6,6 @@ import { FriendList } from './friend-list';
 import './index.css';
 import { CreateNewPost } from '../../home/components/create-new-post';
 import { PostContainer } from '../../home/components/post';
-import { useParams } from 'react-router-dom';
 
 export const Timeline = ({ about, isLoading, isUser, listImage, listFriend, idUser }) => {
   const [isSticky, setSticky] = useState(false);
@@ -14,7 +13,7 @@ export const Timeline = ({ about, isLoading, isUser, listImage, listFriend, idUs
   useEffect(() => {
     const handleScroll = () => {
       const offset = window.scrollY;
-      const topThreshold = 50;
+      const topThreshold = 400;
 
       if (offset >= topThreshold) {
         setSticky(true);
@@ -40,7 +39,7 @@ export const Timeline = ({ about, isLoading, isUser, listImage, listFriend, idUs
           <MyPhoto listPhoto={listImage} />
           <FriendList listFriend={listFriend} idUser={idUser} />
         </Col>
-        <Col lg={8}>
+        <Col lg={8} className={`${isSticky ? 'scroller-profile' : ''}`}>
           {isUser ? <CreateNewPost /> : ''}
           <PostContainer />
         </Col>

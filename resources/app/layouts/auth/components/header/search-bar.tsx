@@ -1,5 +1,6 @@
 import { SearchService } from '@/apis/services/search.service';
 import { useDebounce } from '@/hooks';
+import { pathName } from '@/routes/path-name';
 import { formatFullName } from '@/utilities/functions';
 import { momentVi } from '@/utilities/functions/moment-locale';
 import parse from 'html-react-parser';
@@ -177,7 +178,12 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
                   <div className="mt-2">
                     <h4 className="px-3 py-2 bg-primary text-white">Câu hỏi</h4>
                     {data?.qa.map((item, index) => (
-                      <Link to={`quests/${item.id}`} onClick={handleLinkClick} key={index} className="text-black">
+                      <Link
+                        to={`${pathName.QUESTS_DETAIL}/${item.id}`}
+                        onClick={handleLinkClick}
+                        key={index}
+                        className="text-black"
+                      >
                         <div className="suggestion-card px-3 d-flex search-hover border-bottom" key={index}>
                           <div>
                             <h4>{item.title}</h4>

@@ -7,6 +7,7 @@ import { store } from '@/redux/store/store';
 import { authActions } from '@/redux/slice';
 import { RefreshTokenResponseType } from '@/models/auth';
 import { clear } from '@/utilities/local-storage';
+import { useNavigate } from 'react-router-dom';
 // import { pathName } from '@/routes/path-name';
 
 // Create an Axios instance
@@ -82,7 +83,7 @@ httpRequest.interceptors.response.use(
           });
       }
     }
-
+    const navigate = useNavigate();
     switch (error.response?.status) {
       case 400: {
         return Promise.reject(error.response.data);
@@ -98,10 +99,10 @@ httpRequest.interceptors.response.use(
         }
         return;
       }
-      // case 404: {
-      //   window.location.replace('/404');
-      //   return Promise.reject(error.response.data);
-      // }
+      case 404: {
+        navigate('/error-404');
+        return Promise.reject(error.response.data);
+      }
       case 500: {
         toast.error('Có lỗi server!');
         return Promise.reject(error.response.data);

@@ -56,7 +56,7 @@ export const MyListQa = ({ listQa, isLoading }) => {
                       <Link
                         className="text-dark font-bold"
                         style={{ fontSize: '20px' }}
-                        to={`${pathName.QUESTS}/${item.id}`}
+                        to={`${pathName.QUESTS_DETAIL}/${item.id}`}
                       >
                         {item.title}
                       </Link>

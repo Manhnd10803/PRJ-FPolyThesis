@@ -5,13 +5,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import toast from 'react-hot-toast';
 import { QandACreateSchema, TQandACreateSchema } from '@/validation/zod/qanda';
 import { IMajors } from '@/models/major';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { MajorService } from '@/apis/services/major.service';
 import { QandAService } from '@/apis/services/qanda.service';
 import { useRef, useState } from 'react';
 import { SupperEditor } from '@/components/shared/editor';
 
 import { $generateHtmlFromNodes } from '@lexical/html';
+import { pathName } from '@/routes/path-name';
 
 export const CreateQandA = () => {
   const navigate = useNavigate();
@@ -19,6 +20,8 @@ export const CreateQandA = () => {
   const editorRef: any = useRef();
 
   const contentHtmlRef = useRef<string>();
+
+  const queryClient = useQueryClient();
 
   const { data } = useQuery({
     queryKey: ['majors'],
@@ -45,14 +48,12 @@ export const CreateQandA = () => {
   const onSubmit = (data: TQandACreateSchema) => {
     editorRef.current.getEditorState().read(() => {
       contentHtmlRef.current = $generateHtmlFromNodes(editorRef.current, null);
-
-      console.log('htmlString', contentHtmlRef.current);
     });
 
     data.content = JSON.stringify(contentHtmlRef.current);
-
-    console.log(data);
-
+    if (data.content == '"<p class=\\"PlaygroundEditorTheme__paragraph\\"><br></p>"' || data.content == '""') {
+      return toast.error('Nội dung không được để trống');
+    }
     if (!isLoading) {
       mutate(data, {
         onError: error => {
@@ -60,7 +61,8 @@ export const CreateQandA = () => {
         },
         onSuccess: () => {
           toast.success('Câu hỏi đã được tạo thành công');
-          navigate('/quests');
+          queryClient.invalidateQueries(['qa']);
+          navigate(pathName.QUESTS);
         },
       });
     }
@@ -105,14 +107,6 @@ export const CreateQandA = () => {
                     </Form.Group>
                     <Form.Group className="form-group">
                       <Form.Label>Nội dung</Form.Label>
-                      {/* <Form.Control
-                        as="textarea"
-                        className="textarea"
-                        id="content"
-                        {...createAsk('content')}
-                        rows={5}
-                        placeholder="Nhập chi tiết thông tin câu hỏi của bạn ..."
-                      /> */}
 
                       <SupperEditor ref={editorRef} />
 

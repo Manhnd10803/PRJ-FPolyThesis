@@ -19,13 +19,7 @@ export const ApiConstants = {
 
   // question and answer
   QANDA: '/quests',
-  ALL_QANDA: '/quests/all',
-  // LIST_QANDA: '/quests/lista',
-  LIST_QANDA_BY_MAJOR: '/quests/major',
-  LIST_MY_QANDA: '/quests/my-quests',
-  LIST_MOST_CMT_QANDA: '/quests/most-commented',
-  LIST_UNANSWER_QANDA: '/quests/unanswer',
-  DETAIL_QANDA: '/quests/detail',
+  DETAIL_QANDA: '/quest/detail',
 
   // post
   POSTS: '/posts',
