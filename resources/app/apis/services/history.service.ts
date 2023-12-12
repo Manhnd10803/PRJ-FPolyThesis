@@ -1,8 +1,8 @@
 import httpRequest from '../axios-instance';
 import { ApiConstants } from '../endpoints';
 
-const getHistories = async (params: string, data: TimeRanges) => {
-  return httpRequest.post<any>(`${ApiConstants.HISTORY}/${params}`, data);
+const getHistories = async (params: string, data: TimeRanges, pageParam: number) => {
+  return httpRequest.post<any>(`${ApiConstants.HISTORY}/${params}?page=${pageParam}`, data);
 };
 
 const deleteHistory = async (id: number) => {

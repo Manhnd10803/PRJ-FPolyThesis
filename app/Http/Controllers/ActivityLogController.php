@@ -53,7 +53,7 @@ class ActivityLogController extends Controller
                 $query->whereBetween('created_at', [$newStartTime, $newEndTime]);
             }
 
-            $activities = $query->orderBy('created_at', 'desc')->get();
+            $activities = $query->orderBy('created_at', 'desc')->paginate(9);
 
             DB::commit();
 

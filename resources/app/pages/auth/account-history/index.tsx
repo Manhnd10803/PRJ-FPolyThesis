@@ -1,5 +1,5 @@
 import { HistoryService } from '@/apis/services/history.service';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Card, Col, Container, Modal, Nav, Row, Tab } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import { HistoryLoggedInItem } from './components/history-logged-in-item';
@@ -10,11 +10,15 @@ import { useEffect, useRef, useState } from 'react';
 import { DateRange, RangeKeyDict } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // calender style file
 import 'react-date-range/dist/theme/default.css'; // calender theme css file
-import { vi } from 'date-fns/locale';
+import { is, vi } from 'date-fns/locale';
 import { Loading } from '@/components/shared/loading';
 import { pathName } from '@/routes/path-name';
 import { menuHistory } from './components/history-menu';
 import { DeleteHistoryModal, DeleteHistoryByLogNameModal } from './components/modal-custom';
+import { useInView } from 'react-intersection-observer';
+import { set } from 'lodash';
+
+const imageUrlLoading = 'https://i.gifer.com/ZKZg.gif';
 
 export const AccountHistoryPage = () => {
   const queryClient = useQueryClient();
@@ -22,9 +26,11 @@ export const AccountHistoryPage = () => {
   const [showModalDeleteByLogName, setShowModalDeleteByLogName] = useState(false);
   const [deleteCondition, setDeleteCondition] = useState<number | null>(null);
   const [deleteAllCondition, setDeleteAllCondition] = useState<string>('');
-  const [rangeTime, setRangeTime] = useState<any>({ startDate: new Date(), endDate: '' });
+  const [rangeTime, setRangeTime] = useState<any>({ startDate: '', endDate: new Date() });
   const [showFilter, setShowFilter] = useState(false);
   const [showBtnFilter, setShowBtnFilter] = useState(true);
+
+  const { ref: endRef, inView: endInView } = useInView();
 
   let { hash } = useLocation();
   let params = hash.split('#')[1];
@@ -91,21 +97,27 @@ export const AccountHistoryPage = () => {
       break;
   }
 
-  const getHistories = async () => {
+  const getHistories = async ({ pageParam = 1 }) => {
     try {
-      const { data } = await HistoryService.getHistories(params, rangeTime);
+      const { data } = await HistoryService.getHistories(params, rangeTime, pageParam);
       return data;
     } catch (error) {
       throw new Error('Failed to fetch histories');
     }
   };
 
-  const queryKey = ['history', params, rangeTime];
-  const { data: listHistory, isLoading } = useQuery(queryKey, getHistories, {
-    onSuccess: () => {
-      queryClient.invalidateQueries([queryKey]);
+  const queryKeyHistory = ['history', params, rangeTime];
+  const { data, fetchNextPage, hasNextPage, isLoading, isFetching } = useInfiniteQuery({
+    queryKey: queryKeyHistory,
+    queryFn: getHistories,
+    getNextPageParam: (lastPage, _) => {
+      if (lastPage.current_page === lastPage.last_page) {
+        return undefined;
+      }
+      return lastPage.current_page + 1;
     },
   });
+  const listHistory = data?.pages.flatMap(page => page.data);
 
   const handleDeleteHistory = async (id: number) => {
     try {
@@ -162,6 +174,13 @@ export const AccountHistoryPage = () => {
     setShowBtnFilter(!showBtnFilter);
     setShowFilter(!showFilter);
   };
+
+  useEffect(() => {
+    if (endInView && hasNextPage && !isFetching) {
+      fetchNextPage();
+    }
+  }, [endInView, isFetching, hasNextPage, fetchNextPage]);
+
   return (
     <>
       <DeleteHistoryModal show={showModal} onHide={() => setShowModal(false)} onDelete={onDeleteConfirmed} />
@@ -170,7 +189,7 @@ export const AccountHistoryPage = () => {
         onHide={() => setShowModalDeleteByLogName(false)}
         onDelete={onDeleteByLogNameConfirmed}
       />
-      <div id="content-page" className="content-page">
+      <div id="content-page" className="content-page history-page">
         <Container>
           <Row>
             <Col sm="12">
@@ -229,7 +248,7 @@ export const AccountHistoryPage = () => {
                                 </Button>
                                 <Button
                                   variant="primary"
-                                  onClick={() => setRangeTime({ startDate: '', endDate: '' })}
+                                  onClick={() => setRangeTime({ startDate: '', endDate: new Date() })}
                                   className="me-3"
                                 >
                                   Xem tất cả
@@ -246,7 +265,7 @@ export const AccountHistoryPage = () => {
                             {showFilter && (
                               <div
                                 ref={dateRangeRef}
-                                style={{ position: 'absolute', zIndex: '1000', top: 5, right: 5 }}
+                                style={{ position: 'absolute', zIndex: '1000', top: 14, right: 5 }}
                               >
                                 <DateRange
                                   ranges={[
@@ -268,7 +287,7 @@ export const AccountHistoryPage = () => {
                           </div>
                         </div>
                         <hr />
-                        <>
+                        <div className="scroller-history">
                           {isLoading ? (
                             <Loading size={100} textStyle={{ fontSize: '30px' }} textLoading="Đang tải..." />
                           ) : (
@@ -290,9 +309,20 @@ export const AccountHistoryPage = () => {
                                     )}
                                   </>
                                 ))}
+                              {isFetching && (
+                                <div className="col-sm-12 text-center">
+                                  <img src={imageUrlLoading} alt="loader" style={{ height: '50px' }} />
+                                </div>
+                              )}
+                              {!isFetching && !hasNextPage && listHistory && listHistory.length > 0 && (
+                                <div className="text-center">
+                                  <h5>Không còn dữ liệu cũ hơn !</h5>
+                                </div>
+                              )}
+                              <div ref={endRef}></div>
                             </>
                           )}
-                        </>
+                        </div>
                       </Tab.Pane>
                     </Tab.Content>
                   </Card.Body>
