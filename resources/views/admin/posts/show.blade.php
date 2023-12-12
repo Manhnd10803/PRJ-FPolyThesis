@@ -42,7 +42,7 @@
                             Nội dung
                         </h3>
                         <div class="timeline-body ">
-                            {{ $post->content }}
+                            {!! str_replace(['\\', '&quot;', '"', "'"], '', $post->content) !!}
                         </div>
                     </div>
                 </li>

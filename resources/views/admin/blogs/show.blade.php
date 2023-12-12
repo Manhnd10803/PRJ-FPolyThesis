@@ -70,9 +70,9 @@
                         <h3 class="timeline-header">
                             Nội dung
                         </h3>
-                        <div class="timeline-body ">
+                        <div class="timeline-body">
                             <h2>{{ $blog->title }}</h2>
-                            {!! str_replace(['"', "'"], '', $blog->content) !!}
+                            {!! str_replace(['\\', '&quot;', '"', "'"], '', $blog->content) !!}
                         </div>
                         <div class="timeline-footer">
 
