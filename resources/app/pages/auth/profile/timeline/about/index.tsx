@@ -1,3 +1,4 @@
+import { Skeleton } from '@mui/material';
 import { Card } from 'react-bootstrap';
 
 export const About = ({ aboutUser, isLoading }) => {
@@ -12,7 +13,14 @@ export const About = ({ aboutUser, isLoading }) => {
         </div>
         <Card.Body>
           {isLoading ? (
-            <>...</>
+            <>
+              <ul className="list-inline p-0 m-0">
+                <>
+                  <Skeleton height={20} width="100%" />
+                  <Skeleton height={20} width="100%" />
+                </>
+              </ul>
+            </>
           ) : (
             <ul className="list-inline p-0 m-0">
               <>

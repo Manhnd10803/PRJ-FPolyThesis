@@ -105,14 +105,6 @@ export const CreateQandA = () => {
                     </Form.Group>
                     <Form.Group className="form-group">
                       <Form.Label>Nội dung</Form.Label>
-                      {/* <Form.Control
-                        as="textarea"
-                        className="textarea"
-                        id="content"
-                        {...createAsk('content')}
-                        rows={5}
-                        placeholder="Nhập chi tiết thông tin câu hỏi của bạn ..."
-                      /> */}
 
                       <SupperEditor ref={editorRef} />
 

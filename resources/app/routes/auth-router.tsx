@@ -36,26 +36,6 @@ export const AuthRouter = [
     element: <CreateQandA />,
   },
   {
-    path: pathName.LIST_QUESTS_MOST_CMT,
-    element: <ListMostsCmtQAndAs />,
-  },
-  {
-    path: pathName.LIST_QUESTS_NO_ANSWER,
-    element: <ListNoAnswerQAndAs />,
-  },
-  {
-    path: pathName.LIST_QUESTS_MY_QANDA,
-    element: <ListMyQAndAs />,
-  },
-  {
-    path: pathName.LIST_QUESTS_BY_MAJOR,
-    element: <ListQAndAsByMajorId />,
-  },
-  {
-    path: pathName.QUESTS_UPDATE,
-    element: <UpdateQandA />,
-  },
-  {
     path: pathName.QUESTS_DETAIL,
     element: <DetailQandAPage />,
   },

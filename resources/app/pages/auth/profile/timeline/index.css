@@ -17,9 +17,14 @@
   overflow-y: auto; 
 } */
 
-
 .scroller-history {
   /* Thiết lập chiều cao cố định và cho phép cuộn */
   max-height: calc(100vh - 320px); /* Chiều cao cố định với 80px trừ đi từ chiều cao cửa sổ */
   overflow-y: auto; /* Cho phép cuộn khi nội dung vượt quá kích thước */
 }
+
+/* .scroller-profile {
+  max-height: calc(100vh - 140px); 
+  overflow-y: auto; 
+  transition: transform 3s ease-in-out;
+} */

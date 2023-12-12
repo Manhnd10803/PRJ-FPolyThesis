@@ -1,16 +1,14 @@
 import { QandAService } from '@/apis/services/qanda.service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import {
   Container,
-  Col,
   Button,
   ButtonGroup,
   Row,
   Card,
   Badge,
   Modal,
-  Form,
   Dropdown,
   Spinner,
   ListGroup,

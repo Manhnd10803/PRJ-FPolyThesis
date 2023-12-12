@@ -1,6 +1,6 @@
 import { HistoryService } from '@/apis/services/history.service';
-import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Button, Card, Col, Container, Modal, Nav, Row, Tab } from 'react-bootstrap';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { Button, Card, Col, Container, Nav, Row, Tab } from 'react-bootstrap';
 import { Link, useLocation } from 'react-router-dom';
 import { HistoryLoggedInItem } from './components/history-logged-in-item';
 import { HistoryOtherItem } from './components/history-other-item';
@@ -10,13 +10,12 @@ import { useEffect, useRef, useState } from 'react';
 import { DateRange, RangeKeyDict } from 'react-date-range';
 import 'react-date-range/dist/styles.css'; // calender style file
 import 'react-date-range/dist/theme/default.css'; // calender theme css file
-import { is, vi } from 'date-fns/locale';
+import { vi } from 'date-fns/locale';
 import { Loading } from '@/components/shared/loading';
 import { pathName } from '@/routes/path-name';
 import { menuHistory } from './components/history-menu';
 import { DeleteHistoryModal, DeleteHistoryByLogNameModal } from './components/modal-custom';
 import { useInView } from 'react-intersection-observer';
-import { set } from 'lodash';
 
 const imageUrlLoading = 'https://i.gifer.com/ZKZg.gif';
 
@@ -181,6 +180,27 @@ export const AccountHistoryPage = () => {
     }
   }, [endInView, isFetching, hasNextPage, fetchNextPage]);
 
+  const [isSticky, setSticky] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const offset = window.scrollY;
+      const topThreshold = 50;
+
+      if (offset >= topThreshold) {
+        setSticky(true);
+      } else {
+        setSticky(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   return (
     <>
       <DeleteHistoryModal show={showModal} onHide={() => setShowModal(false)} onDelete={onDeleteConfirmed} />
@@ -287,7 +307,7 @@ export const AccountHistoryPage = () => {
                           </div>
                         </div>
                         <hr />
-                        <div className="scroller-history">
+                        <div className={`${isSticky ? 'scroller-history' : ''}`}>
                           {isLoading ? (
                             <Loading size={100} textStyle={{ fontSize: '30px' }} textLoading="Đang tải..." />
                           ) : (

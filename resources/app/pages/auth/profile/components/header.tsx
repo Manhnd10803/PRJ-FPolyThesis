@@ -15,6 +15,7 @@ import { CustomModal } from '@/utilities/funcReport/modalCustomReport';
 import { ReportService } from '@/apis/services/report.service';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { ResizeImage, UploadImage } from './component';
+import { Skeleton } from '@mui/material';
 const imageUrl = 'https://picsum.photos/20';
 
 type Props = {
@@ -278,20 +279,15 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
                 <>
                   <div className="position-relative">
                     <img loading="lazy" src={backgroundImage} alt="profile-bg" className="rounded img-fluid" />
-                    <ul className="header-nav list-inline d-flex flex-wrap justify-end p-0 m-0">
-                      <li>
-                        <Link to="#" className="material-symbols-outlined cursor-pointer">
-                          photo_camera
-                        </Link>
-                      </li>
-                    </ul>
                   </div>
                   <div className="user-detail text-center mb-3">
                     <div className="profile-img">
                       <img loading="lazy" src={imageUrl} alt="profile-img1" className="avatar-130 img-fluid" />
                     </div>
                     <div className="profile-detail">
-                      <h3>.....</h3>
+                      <h3 className="d-flex justify-content-center">
+                        <Skeleton height={30} width={200} />
+                      </h3>
                     </div>
                   </div>
                 </>
