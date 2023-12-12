@@ -1,11 +1,13 @@
+import { PostService } from '@/apis/services/post.service';
+import logo from '@/assets/images/logo.png';
 import { GetNewPostResponseType } from '@/models/post';
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
 import { Col, Image, Modal, Row } from 'react-bootstrap';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { PostDetailContextProvider } from './contexts';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ListImage } from './components/list-image';
 import { PostDetailContent } from './components/post-detail-content';
-import logo from '@/assets/images/logo.png';
+import { PostDetailContextProvider } from './contexts';
 
 type StateType = {
   data: GetNewPostResponseType;
@@ -16,19 +18,40 @@ export const PostDetail = () => {
 
   const location = useLocation();
 
-  const { data } = (location.state as StateType) ?? {};
+  const { id } = useParams();
 
+  const { data: dataModal } = (location.state as StateType) ?? {};
+
+  const isShowModal = useMemo(() => {
+    return !!dataModal;
+  }, [dataModal]);
+
+  // Nếu không có data thì sẽ gọi api để lấy data dựa vào điều kiện isShowModal
+  const {
+    data: dataDetail,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['post', id],
+    queryFn: async () => {
+      const { data } = await PostService.getPostDetail(Number(id));
+      return data;
+    },
+    enabled: !isShowModal,
+    // staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+
+  // Nếu có data thì sẽ lấy data từ location.state
+  const data = dataModal ? dataModal : dataDetail;
+
+  console.log(data);
   const handleClose = () => {
     navigate(-1);
   };
 
-  const isShow = useMemo(() => {
-    return !!data;
-  }, [data]);
-
   // effect
   useEffect(() => {
-    if (isShow) {
+    if (isShowModal) {
       const headerElement = document.getElementById('header-navbar');
 
       headerElement?.style.setProperty('display', 'none');
@@ -41,6 +64,11 @@ export const PostDetail = () => {
     };
   }, []);
 
+  // if (isLoading) return <div>Loading...</div>;
+
+  if (isError) return <div>Error...</div>;
+
+  if (!data) return null;
   // render
   return (
     <PostDetailContextProvider
@@ -53,14 +81,38 @@ export const PostDetail = () => {
         like: data.like,
       }}
     >
-      <Modal centered fullscreen className="fade" animation id="post-modal" onHide={handleClose} show={isShow}>
-        <Modal.Body className="relative overflow-hidden p-0">
+      {isShowModal ? (
+        <Modal centered fullscreen className="fade" animation id="post-modal" onHide={handleClose} show={isShowModal}>
+          <Modal.Body className="relative overflow-hidden p-0">
+            <div style={{ display: 'flex', gap: 10, position: 'absolute', zIndex: 10, left: 10, top: 10 }}>
+              <Link to="#" className="lh-1" onClick={handleClose}>
+                <span style={{ fontSize: 50 }} className="material-symbols-outlined">
+                  close
+                </span>
+              </Link>
+              <Link
+                to="/"
+                style={{ width: 50, height: 50, boxShadow: '0px 0px 8px #000' }}
+                className="bg-white rounded-circle"
+              >
+                <Image src={logo} width={50} className="p-1" />
+              </Link>
+            </div>
+            <Row>
+              {/* ==== render left content ==== */}
+              <Col lg={8}>
+                <ListImage />
+              </Col>
+              {/* ==== render right content ==== */}
+              <Col lg={4}>
+                <PostDetailContent />
+              </Col>
+            </Row>
+          </Modal.Body>
+        </Modal>
+      ) : (
+        <div className="relative overflow-hidden p-0">
           <div style={{ display: 'flex', gap: 10, position: 'absolute', zIndex: 10, left: 10, top: 10 }}>
-            <Link to="#" className="lh-1" onClick={handleClose}>
-              <span style={{ fontSize: 50 }} className="material-symbols-outlined">
-                close
-              </span>
-            </Link>
             <Link
               to="/"
               style={{ width: 50, height: 50, boxShadow: '0px 0px 8px #000' }}
@@ -79,8 +131,8 @@ export const PostDetail = () => {
               <PostDetailContent />
             </Col>
           </Row>
-        </Modal.Body>
-      </Modal>
+        </div>
+      )}
     </PostDetailContextProvider>
   );
 };

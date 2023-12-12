@@ -20,8 +20,8 @@ export const TotalComment = ({ totalComments = 0, comments = [] }: TotalCommentP
         </Dropdown.Toggle>
         <Dropdown.Menu>
           {uniqueUser.map(comment => (
-            <Dropdown.Item href="#" key={comment.user.id}>
-              {formatFullName(comment.user)}
+            <Dropdown.Item href="#" key={comment?.user?.id}>
+              {formatFullName(comment?.user)}
             </Dropdown.Item>
           ))}
         </Dropdown.Menu>

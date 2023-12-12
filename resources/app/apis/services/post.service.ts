@@ -9,10 +9,15 @@ const getPostsNewFeed = (quantity: number, page: number) => {
   );
 };
 
+const getPostDetail = (id: number) => {
+  return httpRequest.get<GetNewPostResponseType>(`${ApiConstants.POSTS_DETAIL}/${id}`);
+};
+
 const createNewPost = <T>(data: T) => {
   return httpRequest.post<IPost>(ApiConstants.POSTS, data);
 };
 export const PostService = {
   getPostsNewFeed,
   createNewPost,
+  getPostDetail,
 };

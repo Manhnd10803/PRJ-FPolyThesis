@@ -1,7 +1,7 @@
 import { PostService } from '@/apis/services/post.service';
 import { Paginate } from '@/models/pagination';
 import { GetNewPostResponseType, IPost } from '@/models/post';
-import { InfiniteData, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { InfiniteData, useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const queryKeyPosts = ['posts'];
 
