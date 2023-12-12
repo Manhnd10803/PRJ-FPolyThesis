@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use DateTime;
+use DateTimeZone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Spatie\Activitylog\Models\Activity;
 
@@ -25,6 +29,14 @@ class ActivityLogController extends Controller
             return response()->json(['error' => $e->getMessage()], 400);
         }
     }
+
+    function convertTimezoneAndFormat($time)
+    {
+        $time = new DateTime($time);
+        $time->setTimezone(new DateTimeZone('Asia/Ho_Chi_Minh'));
+        return $time->format('Y-m-d H:i:s');
+    }
+
     public function GetLogActivity(Request $request, $logname)
     {
         DB::beginTransaction();
@@ -36,8 +48,9 @@ class ActivityLogController extends Controller
             $query = Activity::where('log_name', $logname)->where('causer_id', $userId);
 
             if ($startTime && $endTime) {
-
-                $query->whereBetween('created_at', [$startTime, $endTime]);
+                $newStartTime = $this->convertTimezoneAndFormat($startTime);
+                $newEndTime = $this->convertTimezoneAndFormat($endTime);
+                $query->whereBetween('created_at', [$newStartTime, $newEndTime]);
             }
 
             $activities = $query->orderBy('created_at', 'desc')->get();

@@ -1,68 +1,28 @@
 import { HistoryService } from '@/apis/services/history.service';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button, Card, Col, Container, Modal, Nav, Row, Tab } from 'react-bootstrap';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { HistoryLoggedInItem } from './components/history-logged-in-item';
 import { HistoryOtherItem } from './components/history-other-item';
 import { HistoryCommentItem } from './components/history-comment-item';
 import toast from 'react-hot-toast';
 import { useEffect, useRef, useState } from 'react';
 import { DateRange, RangeKeyDict } from 'react-date-range';
-import 'react-date-range/dist/styles.css'; // main style file
-import 'react-date-range/dist/theme/default.css'; // theme css file
+import 'react-date-range/dist/styles.css'; // calender style file
+import 'react-date-range/dist/theme/default.css'; // calender theme css file
 import { vi } from 'date-fns/locale';
 import { Loading } from '@/components/shared/loading';
-
-const menuHistory = [
-  {
-    id: 1,
-    name: 'Lịch sử đăng nhập',
-    icon: 'passkey',
-    param: 'auths',
-  },
-  {
-    id: 2,
-    name: 'Blog',
-    icon: 'article',
-    param: 'blogs',
-  },
-  {
-    id: 3,
-    name: 'Bài viết',
-    icon: 'newspaper',
-    param: 'posts',
-  },
-  {
-    id: 4,
-    name: 'Câu hỏi',
-    icon: 'quiz',
-    param: 'qas',
-  },
-  {
-    id: 5,
-    name: 'Bình luận',
-    icon: 'comment',
-    param: 'comments',
-  },
-  {
-    id: 6,
-    name: 'Lịch sử tìm kiếm',
-    icon: 'search',
-    param: 'searches',
-  },
-  {
-    id: 7,
-    name: 'Bạn bè',
-    icon: 'group',
-    param: 'friends',
-  },
-];
+import { pathName } from '@/routes/path-name';
+import { menuHistory } from './components/history-menu';
+import { DeleteHistoryModal, DeleteHistoryByLogNameModal } from './components/modal-custom';
 
 export const AccountHistoryPage = () => {
   const queryClient = useQueryClient();
   const [showModal, setShowModal] = useState(false);
-  const [deleteId, setDeleteId] = useState<number | null>(null);
-  const [rangeTime, setRangeTime] = useState<any>({ startDate: new Date(), endDate: new Date() });
+  const [showModalDeleteByLogName, setShowModalDeleteByLogName] = useState(false);
+  const [deleteCondition, setDeleteCondition] = useState<number | null>(null);
+  const [deleteAllCondition, setDeleteAllCondition] = useState<string>('');
+  const [rangeTime, setRangeTime] = useState<any>({ startDate: new Date(), endDate: '' });
   const [showFilter, setShowFilter] = useState(false);
   const [showBtnFilter, setShowBtnFilter] = useState(true);
 
@@ -114,10 +74,15 @@ export const AccountHistoryPage = () => {
       params = 'searches';
       activeKey = 'about6';
       break;
-    case 'friends':
-      title = 'Bạn bè';
-      params = 'friends';
+    case 'likes':
+      title = 'Lượt thích và cảm xúc';
+      params = 'likes';
       activeKey = 'about7';
+      break;
+    case 'reports':
+      title = 'Lịch sử báo cáo';
+      params = 'reports';
+      activeKey = 'about8';
       break;
     default:
       title = 'Lịch sử đăng nhập';
@@ -142,28 +107,9 @@ export const AccountHistoryPage = () => {
     },
   });
 
-  const DeleteHistoryModal = (props: any) => {
-    return (
-      <Modal {...props} size="md" aria-labelledby="contained-modal-title-vcenter" centered>
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">Xác nhận xoá</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>Bạn muốn xoá lịch sử hoạt động này?</p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={props.onHide}>
-            Huỷ
-          </Button>
-          <Button onClick={props.onDelete}>Xác nhận</Button>
-        </Modal.Footer>
-      </Modal>
-    );
-  };
-
   const handleDeleteHistory = async (id: number) => {
     try {
-      setDeleteId(id);
+      setDeleteCondition(id);
       setShowModal(true);
     } catch (error) {
       throw new Error('Xoá thất bại');
@@ -171,12 +117,34 @@ export const AccountHistoryPage = () => {
   };
 
   const onDeleteConfirmed = async () => {
-    if (deleteId !== null) {
+    if (deleteCondition !== null) {
       try {
-        await HistoryService.deleteHistory(deleteId);
+        await HistoryService.deleteHistory(deleteCondition);
         queryClient.invalidateQueries(['history']);
         toast.success('Xoá lịch sử hoạt động thành công');
         setShowModal(false);
+      } catch (error) {
+        toast.error('Xoá thất bại');
+      }
+    }
+  };
+
+  const handleDeleteHistoryByLogName = async (logName: string) => {
+    try {
+      setDeleteAllCondition(logName);
+      setShowModalDeleteByLogName(true);
+    } catch (error) {
+      throw new Error('Xoá thất bại');
+    }
+  };
+
+  const onDeleteByLogNameConfirmed = async () => {
+    if (deleteAllCondition !== '') {
+      try {
+        await HistoryService.deleteAllHistoryByLogName(deleteAllCondition);
+        queryClient.invalidateQueries(['history']);
+        toast.success('Xoá toàn bộ lịch sử của hoạt động thành công');
+        setShowModalDeleteByLogName(false);
       } catch (error) {
         toast.error('Xoá thất bại');
       }
@@ -197,6 +165,11 @@ export const AccountHistoryPage = () => {
   return (
     <>
       <DeleteHistoryModal show={showModal} onHide={() => setShowModal(false)} onDelete={onDeleteConfirmed} />
+      <DeleteHistoryByLogNameModal
+        show={showModalDeleteByLogName}
+        onHide={() => setShowModalDeleteByLogName(false)}
+        onDelete={onDeleteByLogNameConfirmed}
+      />
       <div id="content-page" className="content-page">
         <Container>
           <Row>
@@ -262,11 +235,11 @@ export const AccountHistoryPage = () => {
                                   Xem tất cả
                                 </Button>
                                 <Link
-                                  to="#"
+                                  to={`${pathName.ACCOUNT_HISTORY}#${params}`}
                                   className="material-symbols-outlined text-dark"
-                                  onClick={() => handleDeleteHistory(0)}
+                                  onClick={() => handleDeleteHistoryByLogName(params)}
                                 >
-                                  more_vert
+                                  delete
                                 </Link>
                               </div>
                             )}
@@ -300,6 +273,11 @@ export const AccountHistoryPage = () => {
                             <Loading size={100} textStyle={{ fontSize: '30px' }} textLoading="Đang tải..." />
                           ) : (
                             <>
+                              {listHistory && listHistory.length === 0 && (
+                                <div className="text-center">
+                                  <h4>Không có dữ liệu</h4>
+                                </div>
+                              )}
                               {listHistory &&
                                 listHistory.map((item: any) => (
                                   <>
@@ -308,7 +286,7 @@ export const AccountHistoryPage = () => {
                                     ) : params === 'comments' ? (
                                       <HistoryCommentItem item={item} onDelete={handleDeleteHistory} />
                                     ) : (
-                                      <HistoryOtherItem item={item} onDelete={handleDeleteHistory} />
+                                      <HistoryOtherItem item={item} onDelete={handleDeleteHistory} param={params} />
                                     )}
                                   </>
                                 ))}

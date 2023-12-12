@@ -86,5 +86,5 @@ export const ApiConstants = {
   //history
   HISTORY: '/history/log',
   DELETE_HISTORY: '/history/log/delete',
-  DELETE_ALL_HISTORY: '/history/log/delete-all',
+  DELETE_HISTORY_BY_LOG_NAME: '/history/log/delete-all',
 } as const;
