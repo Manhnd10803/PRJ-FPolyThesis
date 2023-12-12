@@ -12,7 +12,8 @@
     "format": "prettier --check \"resources/**/*.{js,jsx,ts,tsx}\"",
     "format:fix": "prettier --write \"resources/**/*.{js,jsx,ts,tsx}\"",
     "server": "laravel-echo-server start",
-    "listen": "php artisan queue:work"
+    "listen": "php artisan queue:work",
+    "type:check": "yarn tsc --noEmit --skipLibCheck"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^4.36.1",
