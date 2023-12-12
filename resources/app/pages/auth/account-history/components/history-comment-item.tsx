@@ -27,7 +27,7 @@ export const HistoryCommentItem = ({ item, onDelete }: History) => {
         data = {
           id: newItem.qa_id,
           type: 'câu hỏi',
-          path: pathName.QUESTS,
+          path: pathName.QUESTS_DETAIL,
         };
         return data;
       case newItem.post_id !== null:

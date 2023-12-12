@@ -1,4 +1,5 @@
 import { Card } from '@/components/custom';
+import { pathName } from '@/routes/path-name';
 import { CommentTextSchema } from '@/validation';
 import { useState } from 'react';
 
@@ -25,7 +26,7 @@ export const FormComment = ({ postComment }: any) => {
         await postComment(content);
         setContent('');
         setIsButtonDisabled(true);
-        navigate(`/quests/${id}`);
+        navigate(`${pathName.QUESTS_DETAIL}/${id}`);
       } else {
         console.error('Lỗi: commentText không được xác định.');
       }

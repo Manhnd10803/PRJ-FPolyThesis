@@ -19,7 +19,7 @@ export const ApiConstants = {
 
   // question and answer
   QANDA: '/quests',
-  DETAIL_QANDA: '/quests/detail',
+  DETAIL_QANDA: '/quest/detail',
 
   // post
   POSTS: '/posts',

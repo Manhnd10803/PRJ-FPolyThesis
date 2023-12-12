@@ -6,7 +6,7 @@ import { Container, Nav } from 'react-bootstrap';
 import { FriendRequest } from './friend-request';
 import { HomeItem } from './home-item';
 import { LogoAndMenu } from './logo-and-menu';
-import { HeaderMessage } from './header-message';
+// import { HeaderMessage } from './header-message';
 import { HeaderNotification } from './header-notification';
 import { SearchBar } from './search-bar';
 import { SearchBarMobile } from './search-bar-mobile';
@@ -31,7 +31,7 @@ export const Header = () => {
               {/* <SearchBarMobile show={show} handleClose={handleClose} handleShow={handleShow} /> */}
               <FriendRequest />
               <HeaderNotification />
-              <HeaderMessage />
+              {/* <HeaderMessage /> */}
               <UserDropdown />
             </ul>
           </Container>

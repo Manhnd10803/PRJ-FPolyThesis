@@ -33,6 +33,7 @@ import { ReportService } from '@/apis/services/report.service';
 import { momentVi } from '@/utilities/functions/moment-locale';
 import StarsIcon from '@mui/icons-material/Stars';
 import { formatFullName } from '@/utilities/functions';
+import { pathName } from '@/routes/path-name';
 
 export const DetailQandAPage = () => {
   const commentRef = useRef(null);
@@ -165,7 +166,7 @@ export const DetailQandAPage = () => {
     try {
       await QandAService.deleteQandA(id);
       toast.success('Xóa câu hỏi thành công');
-      navigate('/quests');
+      navigate(pathName.QUESTS);
     } catch (error) {
       console.error('Lỗi khi xóa câu hỏi:', error);
     }

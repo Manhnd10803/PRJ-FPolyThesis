@@ -9,7 +9,7 @@ export const Navbar = () => {
             <div className="d-flex flex-wrap align-items-center justify-content-between">
               <Nav variant="pills" className="d-flex align-items-center text-center profile-forum-items p-0 m-0 w-100">
                 <Col sm={3} className=" p-0">
-                  <Nav.Link href="#all-answer" eventKey="all-answer" role="button" className=" text-center p-3">
+                  <Nav.Link href="#all-question" eventKey="all-question" role="button" className=" text-center p-3">
                     Tất cả
                   </Nav.Link>
                 </Col>
@@ -23,23 +23,10 @@ export const Navbar = () => {
                     Chưa trả lời
                   </Nav.Link>
                 </Col>
-                <Col sm={3} className="p-0">
-                  <button className=" btn">
-                    <div className="card-header-toolbar d-flex align-items-center">
-                      <Dropdown>
-                        <Dropdown.Toggle as="div" className="lh-1">
-                          <Nav.Link role="button" className=" text-center p-3">
-                            Chuyên ngành
-                          </Nav.Link>
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu>
-                          <Dropdown.Item href="#major" eventKey="major" role="button" className=" text-center p-3">
-                            Web
-                          </Dropdown.Item>
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    </div>
-                  </button>
+                <Col sm={3} className=" p-0">
+                  <Nav.Link href="#majors" eventKey="majors" role="button" className=" text-center p-3">
+                    Chuyên ngành
+                  </Nav.Link>
                 </Col>
               </Nav>
             </div>

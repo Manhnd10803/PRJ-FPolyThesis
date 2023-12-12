@@ -79,7 +79,11 @@ class QaController extends Controller
                     $query->where('user_id', Auth::id())->latest();
                     break;
                 case 'majors':
-                    $query->where('majors_id', $majorsId)->latest();
+                    if ($majorsId) {
+                        $query->where('majors_id', $majorsId)->latest();
+                    } else {
+                        $query->latest();
+                    }
                     break;
                 default:
                     return response()->json(['error' => 'Không tìm thấy trang'], 404);
@@ -89,7 +93,7 @@ class QaController extends Controller
 
             foreach ($qas as $qa) {
                 //load thông tin user đăng bài và major(ngành) của bài đăng
-                $qa->load(['user:id,username,first_name,last_name,avatar,major_id', 'major:id,majors_name']);
+                $qa->load(['user:id,username,first_name,last_name,avatar,major_id,score', 'major:id,majors_name']);
                 $likeCountsByEmotion = [
                     'like' => $qa->likes()->where('emotion', 'like')->count(),
                     'dislike' => $qa->likes()->where('emotion', 'dislike')->count(),
@@ -103,8 +107,13 @@ class QaController extends Controller
                 ];
                 array_push($result, $qaData);
             }
+            $data = [
+                'qas' => $result,
+                'current_page' => $qas->currentPage(),
+                'last_page' => $qas->lastPage(),
+            ];
             DB::commit();
-            return response()->json($result, 200);
+            return response()->json($data, 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()], 400);
@@ -266,26 +275,41 @@ class QaController extends Controller
 
     public function detailQandA(Qa $qa)
     {
-        $qa->load(['user:id,username,first_name,last_name,avatar,major_id', 'major:id,majors_name']);
-        $likeCountsByEmotion = [
-            'like' => $qa->likes()->where('emotion', 'like')->count(),
-            'dislike' => $qa->likes()->where('emotion', 'dislike')->count(),
-        ];
+        $qa->major;
+        $qaLikes = $qa->likes;
+        $user = Auth::user(); // Lấy thông tin người dùng đăng nhập
+        $userLike = $qaLikes->where('user_id', $user->id)->first();
+        if ($qaLikes->isEmpty()) {
+            $emotions = [];
+        } else {
+            $emotions = $qaLikes->pluck('emotion')->unique();
+        }
+        $countsByEmotion = [];
+        foreach ($emotions as $emotion) {
+            $countsByEmotion[$emotion] = $qaLikes->where('emotion', $emotion)->count();
+        }
+        $qa->user;
+        // $emotions = $likers->pluck('emotion')->unique();
         $comments = Comment::where('qa_id', $qa->id)->where('parent_id', null)->get();
-
+        $totalComments = 0;
         foreach ($comments as $comment) {
-            $comment->load('user:id,username,first_name,last_name,avatar');
+            $comment->user;
+            $comment->replies;
+
+            $totalComments++; // Tính bình luận gốc
+            $totalComments += count($comment->replies); // Tính số lượng câu trả lời
+
             foreach ($comment->replies as $reply) {
-                $reply->load('user:id,username,first_name,last_name,avatar');
+                $reply->user;
             }
         }
-        $totalComment = Comment::where('qa_id', $qa->id)->count();
         return response()->json(
             [
                 'qa' => $qa,
-                'like_counts_by_emotion' => $likeCountsByEmotion,
+                'emotion' => $countsByEmotion,
                 'comments' => $comments,
-                'total_comments' => $totalComment,
+                'total_comments' => $totalComments,
+                'user_like' => $userLike
             ]
         );
     }

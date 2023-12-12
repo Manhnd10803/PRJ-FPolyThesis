@@ -85,8 +85,8 @@ export const NotificationLink = {
   [NotificationType['like_blog']]: pathName.BLOG,
   [NotificationType['comment_blog']]: pathName.BLOG,
   [NotificationType['reply_blog']]: pathName.BLOG,
-  [NotificationType['like_qa']]: pathName.QUESTS,
-  [NotificationType['comment_qa']]: pathName.QUESTS,
-  [NotificationType['reply_qa']]: pathName.QUESTS,
+  [NotificationType['like_qa']]: pathName.QUESTS_DETAIL,
+  [NotificationType['comment_qa']]: pathName.QUESTS_DETAIL,
+  [NotificationType['reply_qa']]: pathName.QUESTS_DETAIL,
   [NotificationType['message']]: pathName.CHAT,
 } as const;
