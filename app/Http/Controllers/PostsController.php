@@ -142,7 +142,7 @@ class PostsController extends Controller
      */
     public function DetailPost(Post $post)
     {
-        $detailPost = Post::where('id', $post->id)->first();
+        $detailPost = Post::with(['user', 'likes'])->where('id', $post->id)->first();
         $likeCountsByEmotion = [];
         $likeCountsByEmotion['total_likes'] = $post->likes->count();
         // Lấy danh sách người đã like bài viết và thông tin của họ
@@ -161,9 +161,10 @@ class PostsController extends Controller
             $likeCountsByEmotion[$emotion] = $likers->where('emotion', $emotion)->count();
         }
         $totalComment = Comment::where('post_id', $post->id)->count();
-        $comment = Comment::where('post_id', $post->id)->get();
+        // $comment = Comment::where('post_id', $post->id)->get();
+        $comment = Comment::with('user:id,username,first_name,last_name,avatar')->where('post_id', $post->id)->get();
         $postdata  = [
-            'detail_post' => $detailPost,
+            'post' => $detailPost,
             'like_counts_by_emotion' => $likeCountsByEmotion['total_likes'],
             'likers' => $likers,
             'total_comments' => $totalComment,
