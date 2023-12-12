@@ -33,928 +33,82 @@ class QaController extends Controller
      *                     @OA\Property(property="views", type="integer", description="Số lượt xem câu hỏi"),
      *                     @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
      *                     @OA\Property(property="updated_at", type="string", format="date-time", nullable=true),
-     *                     @OA\Property(property="likes", type="array",
-     *                         @OA\Items(
-     *                             @OA\Property(property="id", type="integer"),
-     *                             @OA\Property(property="user_id", type="integer"),
-     *                             @OA\Property(property="emotion", type="string"),
-     *                             @OA\Property(property="post_id", type="integer"),
-     *                             @OA\Property(property="blog_id", type="integer"),
-     *                             @OA\Property(property="qa_id", type="integer"),
-     *                             @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
-     *                             @OA\Property(property="updated_at", type="string", format="date-time", nullable=true),
-     *                             @OA\Property(property="user", type="object",
-     *                                 @OA\Property(property="id", type="integer"),
-     *                                 @OA\Property(property="username", type="string"),
-     *                                 @OA\Property(property="first_name", type="string", nullable=true),
-     *                                 @OA\Property(property="last_name", type="string", nullable=true),
-     *                             ),
-     *                         ),
-     *                     ),
+     *                    
      *                         @OA\Property(property="major", type="object",
      *                         @OA\Property(property="id", type="integer"),
      *                         @OA\Property(property="majors_name", type="string"),
-     *                         @OA\Property(property="majors_code", type="string"),
-     *                         @OA\Property(property="description", type="string"),
-     *                         @OA\Property(property="created_at", type="string", format="date-time"),
-     *                         @OA\Property(property="updated_at", type="string", format="date-time")
      *                     ),
      *                     @OA\Property(property="user", type="object",
      *                     @OA\Property(property="id", type="integer"),
      *                     @OA\Property(property="username", type="string"),
      *                     @OA\Property(property="first_name", type="string"),
      *                     @OA\Property(property="last_name", type="string"),
-     *                     @OA\Property(property="group_id", type="integer"),
-     *                     @OA\Property(property="email", type="string"),
-     *                     @OA\Property(property="birthday", type="string"),
-     *                     @OA\Property(property="avatar", type="string"),
-     *                     @OA\Property(property="phone", type="string"),
-     *                     @OA\Property(property="address", type="string"),
-     *                     @OA\Property(property="biography", type="string"),
-     *                     @OA\Property(property="gender", type="string"),
-     *                     @OA\Property(property="status", type="integer"),
      *                     @OA\Property(property="major_id", type="integer"),
-     *                     @OA\Property(property="permissions", type="string"),
-     *                     @OA\Property(property="verification_code", type="string"),
-     *                     @OA\Property(property="created_at", type="string", format="date-time"),
-     *                     @OA\Property(property="updated_at", type="string", format="date-time")
+     *                   
      *                 )
      *                 ),
      *                 @OA\Property(property="like_counts_by_emotion", type="object",
-     *                     @OA\Property(property="total_likes", type="integer", description="Tổng số lượt thích"),
-     *                     @OA\Property(property="emotion1", type="integer", description="Số lượt thích với emotion1"),
-     *                     @OA\Property(property="emotion2", type="integer", description="Số lượt thích với emotion2"),
+     *                     @OA\Property(property="like", type="integer", description="Tổng Số lượt thích "),
+     *                     @OA\Property(property="dislike", type="integer", description="Tổng lượt dislike"),
      *                 ),
      *                 @OA\Property(property="total_comments", type="integer", description="Tổng số bình luận"),
-     *                 @OA\Property(property="comments", type="array",
-     *                     @OA\Items(
-     *                         @OA\Property(property="id", type="integer"),
-     *                         @OA\Property(property="user_id", type="integer"),
-     *                         @OA\Property(property="content", type="string", description="Nội dung bình luận"),
-     *                         @OA\Property(property="parent_id", type="integer"),
-     *                         @OA\Property(property="post_id", type="integer"),
-     *                         @OA\Property(property="blog_id", type="integer"),
-     *                         @OA\Property(property="qa_id", type="integer"),
-     *                         @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
-     *                         @OA\Property(property="updated_at", type="string", format="date-time", nullable=true),
-     *                         @OA\Property(property="reply", type="integer", description="Số lượng reply"),
-     *                         @OA\Property(property="user", type="object",
-     *                             @OA\Property(property="id", type="integer"),
-     *                             @OA\Property(property="username", type="string"),
-     *                             @OA\Property(property="first_name", type="string", nullable=true),
-     *                             @OA\Property(property="last_name", type="string", nullable=true),
-     *                         ),
-     *                     ),
-     *                 ),
      *             ),
      *         ),
      *     ),
      * )
      */
-    public function ShowAllQa(Request $request, $quantity = null)
+    public function ShowAllQa($soft, $majorsId = null)
     {
-
         DB::beginTransaction();
         try {
-            $majorsId = $request->input('majors_id');
-            $hashtag = $request->input('hashtag');
             $query = Qa::query();
-
-            if ($majorsId) {
-                $query->where('majors_id', $majorsId);
+            switch ($soft) {
+                case 'all-question':
+                    $query->latest();
+                    break;
+                case 'most-liked':
+                    $query->withCount('likes')->orderBy('likes_count', 'desc')->latest();
+                    break;
+                case 'un-answered':
+                    $query->whereDoesntHave('comments', function ($subquery) {
+                        // lấy ra các bài viết user chưa comment
+                        $subquery->where('user_id', Auth::id());
+                    })->latest();
+                    break;
+                case 'my-quests':
+                    $query->where('user_id', Auth::id())->latest();
+                    break;
+                case 'majors':
+                    $query->where('majors_id', $majorsId)->latest();
+                    break;
+                default:
+                    return response()->json(['error' => 'Không tìm thấy trang'], 404);
             }
-
-            if ($hashtag) {
-                $query->where('content', 'LIKE', '%' . $hashtag . '%');
-            }
-
-            if ($quantity) {
-                $qas = $query->latest()->paginate($quantity);
-            } else {
-                $qas = $query->latest()->get();
-            }
-
+            $qas = $query->paginate(5);
             $result = [];
 
             foreach ($qas as $qa) {
-                $likeCountsByEmotion = [];
-                $likeCountsByEmotion['total_likes'] = $qa->likes->count();
-
-                $likers = $qa->likes->map(function ($like) {
-                    return [
-                        'user' => $like->user,
-                        'emotion' => $like->emotion,
-                    ];
-                });
-
-                $qa->user;
-                $qa->major;
-                $emotions = $likers->pluck('emotion')->unique();
-
-                foreach ($emotions as $emotion) {
-                    $likeCountsByEmotion[$emotion] = $likers->where('emotion', $emotion)->count();
-                }
-                // Tổng số bình luận + 3 bình luận demo
+                //load thông tin user đăng bài và major(ngành) của bài đăng
+                $qa->load(['user:id,username,first_name,last_name,avatar,major_id', 'major:id,majors_name']);
+                $likeCountsByEmotion = [
+                    'like' => $qa->likes()->where('emotion', 'like')->count(),
+                    'dislike' => $qa->likes()->where('emotion', 'dislike')->count(),
+                ];
                 $totalComment = Comment::where('qa_id', $qa->id)->count();
-                $commentDemos = Comment::where('qa_id', $qa->id)->where('parent_id', null)->limit(3)->get();
-                foreach ($commentDemos as $commentDemo) {
-                    $commentDemo->user;
-                    //số lượng reply
-                    $commentDemo->reply = Comment::where('qa_id', $qa->id)->where('parent_id', $commentDemo->id)->count();
-                }
+
                 $qaData = [
                     'qa' => $qa,
                     'like_counts_by_emotion' => $likeCountsByEmotion,
                     'total_comments' => $totalComment,
-                    'comments' => $commentDemos,
                 ];
                 array_push($result, $qaData);
             }
-
             DB::commit();
             return response()->json($result, 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()], 400);
         }
-    }
-
-    /**
-     * @OA\Get(
-     *     path="/api/quests/most-commented",
-     *     tags={"Q&A"},
-     *     summary="Danh sách các câu hỏi Hay nhất (nhiều bình luận nhất)",
-     *     @OA\Parameter(
-     *         name="majors_id",
-     *         in="query",
-     *         description="ID của Major",
-     *         required=false,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Parameter(
-     *         name="hashtag",
-     *         in="query",
-     *         description="Từ khóa để tìm kiếm câu hỏi",
-     *         required=false,
-     *         @OA\Schema(type="string")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Danh sách câu hỏi có nhiều bình luận nhất",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 @OA\Property(property="qa", type="object",
-     *                     @OA\Property(property="id", type="integer"),
-     *                     @OA\Property(property="title", type="string"),
-     *                     @OA\Property(property="content", type="string"),
-     *                     @OA\Property(property="majors_id", type="integer"),
-     *                     @OA\Property(property="user_id", type="integer"),
-     *                     @OA\Property(property="hashtag", type="string"),
-     *                     @OA\Property(property="views", type="integer"),
-     *                     @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
-     *                     @OA\Property(property="updated_at", type="string", format="date-time", nullable=true),
-     *                     @OA\Property(property="likes", type="array",
-     *                         @OA\Items(
-     *                             @OA\Property(property="id", type="integer"),
-     *                             @OA\Property(property="user_id", type="integer"),
-     *                             @OA\Property(property="emotion", type="string"),
-     *                             @OA\Property(property="post_id", type="integer"),
-     *                             @OA\Property(property="blog_id", type="integer"),
-     *                             @OA\Property(property="qa_id", type="integer"),
-     *                             @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
-     *                             @OA\Property(property="updated_at", type="string", format="date-time", nullable=true),
-     *                             @OA\Property(property="user", type="object",
-     *                                 @OA\Property(property="id", type="integer"),
-     *                                 @OA\Property(property="username", type="string"),
-     *                                 @OA\Property(property="first_name", type="string", nullable=true),
-     *                                 @OA\Property(property="last_name", type="string", nullable=true),
-     *                             ),
-     *                         ),
-     *                     ),
-     *                     @OA\Property(property="major", type="object",
-     *                         @OA\Property(property="id", type="integer"),
-     *                         @OA\Property(property="majors_name", type="string"),
-     *                         @OA\Property(property="majors_code", type="string"),
-     *                         @OA\Property(property="description", type="string"),
-     *                         @OA\Property(property="created_at", type="string", format="date-time"),
-     *                         @OA\Property(property="updated_at", type="string", format="date-time")
-     *                     ),
-     *                     @OA\Property(property="user", type="object",
-     *                         @OA\Property(property="id", type="integer"),
-     *                         @OA\Property(property="username", type="string"),
-     *                         @OA\Property(property="first_name", type="string"),
-     *                         @OA\Property(property="last_name", type="string"),
-     *                         @OA\Property(property="group_id", type="integer"),
-     *                         @OA\Property(property="email", type="string"),
-     *                         @OA\Property(property="birthday", type="string"),
-     *                         @OA\Property(property="avatar", type="string"),
-     *                         @OA\Property(property="phone", type="string"),
-     *                         @OA\Property(property="address", type="string"),
-     *                         @OA\Property(property="biography", type="string"),
-     *                         @OA\Property(property="gender", type="string"),
-     *                         @OA\Property(property="status", type="integer"),
-     *                         @OA\Property(property="major_id", type="integer"),
-     *                         @OA\Property(property="permissions", type="string"),
-     *                         @OA\Property(property="verification_code", type="string"),
-     *                         @OA\Property(property="created_at", type="string", format="date-time"),
-     *                         @OA\Property(property="updated_at", type="string", format="date-time")
-     *                     )
-     *                 ),
-     *                 @OA\Property(property="like_counts_by_emotion", type="object",
-     *                     @OA\Property(property="total_likes", type="integer", description="Tổng số lượt thích"),
-     *                     @OA\Property(property="emotion1", type="integer", description="Số lượt thích với emotion1"),
-     *                     @OA\Property(property="emotion2", type="integer", description="Số lượt thích với emotion2"),
-     *                 ),
-     *                 @OA\Property(property="total_comments", type="integer", description="Tổng số bình luận"),
-     *                 @OA\Property(property="comments", type="array",
-     *                     @OA\Items(
-     *                         @OA\Property(property="id", type="integer"),
-     *                         @OA\Property(property="user_id", type="integer"),
-     *                         @OA\Property(property="content", type="string"),
-     *                         @OA\Property(property="parent_id", type="integer"),
-     *                         @OA\Property(property="post_id", type="integer"),
-     *                         @OA\Property(property="blog_id", type="integer"),
-     *                         @OA\Property(property="qa_id", type="integer"),
-     *                         @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
-     *                         @OA\Property(property="updated_at", type="string", format="date-time", nullable=true),
-     *                         @OA\Property(property="reply", type="integer", description="Số lượng reply"),
-     *                         @OA\Property(property="user", type="object",
-     *                             @OA\Property(property="id", type="integer"),
-     *                             @OA\Property(property="username", type="string"),
-     *                             @OA\Property(property="first_name", type="string", nullable=true),
-     *                             @OA\Property(property="last_name", type="string", nullable=true),
-     *                         ),
-     *                     ),
-     *                 ),
-     *             ),
-     *         ),
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Lỗi",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="errors", type="string", description="Thông báo lỗi")
-     *         )
-     *     )
-     * )
-     */
-
-
-    public function showMostCommentedQa(Request $request, $quantity = null)
-    {
-        DB::beginTransaction();
-
-        try {
-
-            $majorsId = $request->input('majors_id');
-            $hashtag = $request->input('hashtag');
-
-            $query = Qa::query();
-
-            if ($majorsId) {
-                $query->where('majors_id', $majorsId);
-            }
-
-            if ($hashtag) {
-                $query->where('content', 'LIKE', '%' . $hashtag . '%');
-            }
-
-            // Sắp xếp theo số lượng bình luận giảm dần
-            // $query->withCount('comments')->orderBy('comments_count', 'desc');
-            $query->withCount('comments')->having('comments_count', '>', 0)->orderBy('comments_count', 'desc');
-
-            if ($quantity) {
-                $qas = $query->latest()->paginate($quantity);
-            } else {
-                $qas = $query->latest()->get();
-            }
-
-            $result = [];
-
-            foreach ($qas as $qa) {
-                $likeCountsByEmotion = [];
-                $likeCountsByEmotion['total_likes'] = $qa->likes->count();
-
-                $likers = $qa->likes->map(function ($like) {
-                    return [
-                        'user' => $like->user,
-                        'emotion' => $like->emotion,
-                    ];
-                });
-
-                $qa->user;
-                $qa->major;
-                $emotions = $likers->pluck('emotion')->unique();
-
-                foreach ($emotions as $emotion) {
-                    $likeCountsByEmotion[$emotion] = $likers->where('emotion', $emotion)->count();
-                }
-
-                $totalComment = Comment::where('qa_id', $qa->id)->count();
-                $commentDemos = Comment::where('qa_id', $qa->id)->where('parent_id', null)->limit(3)->get();
-
-                foreach ($commentDemos as $commentDemo) {
-                    $commentDemo->user;
-                    $commentDemo->reply = Comment::where('qa_id', $qa->id)->where('parent_id', $commentDemo->id)->count();
-                }
-
-                $qaData = [
-                    'qa' => $qa,
-                    'like_counts_by_emotion' => $likeCountsByEmotion,
-                    'total_comments' => $totalComment,
-                    'comments' => $commentDemos,
-                ];
-
-                array_push($result, $qaData);
-            }
-
-            DB::commit();
-
-            return response()->json($result, 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['errors' => $e->getMessage()], 400);
-        }
-    }
-
-    /**
-     * @OA\Get(
-     *     path="/api/quests/un-answer",
-     *     tags={"Q&A"},
-     *     summary="Danh sách các câu hỏi chưa được trả lời",
-     *     @OA\Parameter(
-     *         name="majors_id",
-     *         in="query",
-     *         description="ID của Major",
-     *         required=false,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Parameter(
-     *         name="hashtag",
-     *         in="query",
-     *         description="Từ khóa để tìm kiếm câu hỏi",
-     *         required=false,
-     *         @OA\Schema(type="string")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Danh sách câu hỏi chưa được trả lời",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 @OA\Property(property="qa", type="object",
-     *                     @OA\Property(property="id", type="integer"),
-     *                     @OA\Property(property="title", type="string"),
-     *                     @OA\Property(property="content", type="string"),
-     *                     @OA\Property(property="majors_id", type="integer"),
-     *                     @OA\Property(property="user_id", type="integer"),
-     *                     @OA\Property(property="hashtag", type="string"),
-     *                     @OA\Property(property="views", type="integer"),
-     *                     @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
-     *                     @OA\Property(property="updated_at", type="string", format="date-time", nullable=true),
-     *                     @OA\Property(property="likes", type="array",
-     *                         @OA\Items(
-     *                             @OA\Property(property="id", type="integer"),
-     *                             @OA\Property(property="user_id", type="integer"),
-     *                             @OA\Property(property="emotion", type="string"),
-     *                             @OA\Property(property="post_id", type="integer"),
-     *                             @OA\Property(property="blog_id", type="integer"),
-     *                             @OA\Property(property="qa_id", type="integer"),
-     *                             @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
-     *                             @OA\Property(property="updated_at", type="string", format="date-time", nullable=true),
-     *                             @OA\Property(property="user", type="object",
-     *                                 @OA\Property(property="id", type="integer"),
-     *                                 @OA\Property(property="username", type="string"),
-     *                                 @OA\Property(property="first_name", type="string", nullable=true),
-     *                                 @OA\Property(property="last_name", type="string", nullable=true),
-     *                             ),
-     *                         ),
-     *                     ),
-     *                     @OA\Property(property="major", type="object",
-     *                         @OA\Property(property="id", type="integer"),
-     *                         @OA\Property(property="majors_name", type="string"),
-     *                         @OA\Property(property="majors_code", type="string"),
-     *                         @OA\Property(property="description", type="string"),
-     *                         @OA\Property(property="created_at", type="string", format="date-time"),
-     *                         @OA\Property(property="updated_at", type="string", format="date-time")
-     *                     ),
-     *                     @OA\Property(property="user", type="object",
-     *                         @OA\Property(property="id", type="integer"),
-     *                         @OA\Property(property="username", type="string"),
-     *                         @OA\Property(property="first_name", type="string"),
-     *                         @OA\Property(property="last_name", type="string"),
-     *                         @OA\Property(property="group_id", type="integer"),
-     *                         @OA\Property(property="email", type="string"),
-     *                         @OA\Property(property="birthday", type="string"),
-     *                         @OA\Property(property="avatar", type="string"),
-     *                         @OA\Property(property="phone", type="string"),
-     *                         @OA\Property(property="address", type="string"),
-     *                         @OA\Property(property="biography", type="string"),
-     *                         @OA\Property(property="gender", type="string"),
-     *                         @OA\Property(property="status", type="integer"),
-     *                         @OA\Property(property="major_id", type="integer"),
-     *                         @OA\Property(property="permissions", type="string"),
-     *                         @OA\Property(property="verification_code", type="string"),
-     *                         @OA\Property(property="created_at", type="string", format="date-time"),
-     *                         @OA\Property(property="updated_at", type="string", format="date-time")
-     *                     )
-     *                 ),
-     *                 @OA\Property(property="like_counts_by_emotion", type="object",
-     *                     @OA\Property(property="total_likes", type="integer", description="Tổng số lượt thích"),
-     *                     @OA\Property(property="emotion1", type="integer", description="Số lượt thích với emotion1"),
-     *                     @OA\Property(property="emotion2", type="integer", description="Số lượt thích với emotion2"),
-     *                 ),
-     *                 @OA\Property(property="total_comments", type="integer", description="Tổng số bình luận"),
-     *                 @OA\Property(property="comments", type="array",
-     *                     @OA\Items(
-     *                         @OA\Property(property="id", type="integer"),
-     *                         @OA\Property(property="user_id", type="integer"),
-     *                         @OA\Property(property="content", type="string"),
-     *                         @OA\Property(property="parent_id", type="integer"),
-     *                         @OA\Property(property="post_id", type="integer"),
-     *                         @OA\Property(property="blog_id", type="integer"),
-     *                         @OA\Property(property="qa_id", type="integer"),
-     *                         @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
-     *                         @OA\Property(property="updated_at", type="string", format="date-time", nullable=true),
-     *                         @OA\Property(property="reply", type="integer", description="Số lượng reply"),
-     *                         @OA\Property(property="user", type="object",
-     *                             @OA\Property(property="id", type="integer"),
-     *                             @OA\Property(property="username", type="string"),
-     *                             @OA\Property(property="first_name", type="string", nullable=true),
-     *                             @OA\Property(property="last_name", type="string", nullable=true),
-     *                         ),
-     *                     ),
-     *                 ),
-     *             ),
-     *         ),
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Lỗi",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="errors", type="string", description="Thông báo lỗi")
-     *         )
-     *     )
-     * )
-     */
-
-    public function showUnAnswerdQa(Request $request, $quantity = null)
-    {
-        DB::beginTransaction();
-
-        try {
-
-            $majorsId = $request->input('majors_id');
-            $hashtag = $request->input('hashtag');
-
-            $query = Qa::query();
-
-            if ($majorsId) {
-                $query->where('majors_id', $majorsId);
-            }
-
-            if ($hashtag) {
-                $query->where('content', 'LIKE', '%' . $hashtag . '%');
-            }
-
-            // Sắp xếp theo số lượng bình luận giảm dần
-            // $query->withCount('comments')->orderBy('comments_count', 'desc');
-            $query->withCount('comments')->having('comments_count', '=', 0)->orderBy('comments_count', 'desc');
-
-            if ($quantity) {
-                $qas = $query->latest()->paginate($quantity);
-            } else {
-                $qas = $query->latest()->get();
-            }
-
-            $result = [];
-
-            foreach ($qas as $qa) {
-                $likeCountsByEmotion = [];
-                $likeCountsByEmotion['total_likes'] = $qa->likes->count();
-
-                $likers = $qa->likes->map(function ($like) {
-                    return [
-                        'user' => $like->user,
-                        'emotion' => $like->emotion,
-                    ];
-                });
-
-                $qa->user;
-                $qa->major;
-                $emotions = $likers->pluck('emotion')->unique();
-
-                foreach ($emotions as $emotion) {
-                    $likeCountsByEmotion[$emotion] = $likers->where('emotion', $emotion)->count();
-                }
-
-                $totalComment = Comment::where('qa_id', $qa->id)->count();
-                $commentDemos = Comment::where('qa_id', $qa->id)->where('parent_id', null)->limit(3)->get();
-
-                foreach ($commentDemos as $commentDemo) {
-                    $commentDemo->user;
-                    $commentDemo->reply = Comment::where('qa_id', $qa->id)->where('parent_id', $commentDemo->id)->count();
-                }
-
-                $qaData = [
-                    'qa' => $qa,
-                    'like_counts_by_emotion' => $likeCountsByEmotion,
-                    'total_comments' => $totalComment,
-                    'comments' => $commentDemos,
-                ];
-
-                array_push($result, $qaData);
-            }
-
-            DB::commit();
-
-            return response()->json($result, 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['errors' => $e->getMessage()], 400);
-        }
-    }
-
-    /**
-     * @OA\Get(
-     *     path="/api/quests/my-quests",
-     *     tags={"Q&A"},
-     *     summary="Danh sách tất cả câu hỏi của người dùng hiện tại",
-     *     @OA\Response(
-     *         response=200,
-     *         description="Danh sách câu hỏi của người dùng",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 @OA\Property(property="qa", type="object",
-     *                     @OA\Property(property="id", type="integer"),
-     *                     @OA\Property(property="title", type="string", description="Tiêu đề câu hỏi"),
-     *                     @OA\Property(property="content", type="string", description="Nội dung câu hỏi"),
-     *                     @OA\Property(property="majors_id", type="integer", description="ID của chuyên ngành liên quan đến câu hỏi"),
-     *                     @OA\Property(property="user_id", type="integer", description="ID của người đặt câu hỏi"),
-     *                     @OA\Property(property="hashtag", type="string", description="HashTag liên quan đến câu hỏi"),
-     *                     @OA\Property(property="views", type="integer", description="Số lượt xem câu hỏi"),
-     *                     @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
-     *                     @OA\Property(property="updated_at", type="string", format="date-time", nullable=true),
-     *                     @OA\Property(property="likes", type="array",
-     *                         @OA\Items(
-     *                             @OA\Property(property="id", type="integer"),
-     *                             @OA\Property(property="user_id", type="integer"),
-     *                             @OA\Property(property="emotion", type="string"),
-     *                             @OA\Property(property="post_id", type="integer"),
-     *                             @OA\Property(property="blog_id", type="integer"),
-     *                             @OA\Property(property="qa_id", type="integer"),
-     *                             @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
-     *                             @OA\Property(property="updated_at", type="string", format="date-time", nullable=true),
-     *                             @OA\Property(property="user", type="object",
-     *                                 @OA\Property(property="id", type="integer"),
-     *                                 @OA\Property(property="username", type="string"),
-     *                                 @OA\Property(property="first_name", type="string", nullable=true),
-     *                                 @OA\Property(property="last_name", type="string", nullable=true),
-     *                             ),
-     *                         ),
-     *                     ),
-     *                     @OA\Property(property="major", type="object",
-     *                         @OA\Property(property="id", type="integer"),
-     *                         @OA\Property(property="majors_name", type="string"),
-     *                         @OA\Property(property="majors_code", type="string"),
-     *                         @OA\Property(property="description", type="string"),
-     *                         @OA\Property(property="created_at", type="string", format="date-time"),
-     *                         @OA\Property(property="updated_at", type="string", format="date-time")
-     *                     ),
-     *                     @OA\Property(property="user", type="object",
-     *                         @OA\Property(property="id", type="integer"),
-     *                         @OA\Property(property="username", type="string"),
-     *                         @OA\Property(property="first_name", type="string"),
-     *                         @OA\Property(property="last_name", type="string"),
-     *                         @OA\Property(property="group_id", type="integer"),
-     *                         @OA\Property(property="email", type="string"),
-     *                         @OA\Property(property="birthday", type="string"),
-     *                         @OA\Property(property="avatar", type="string"),
-     *                         @OA\Property(property="phone", type="string"),
-     *                         @OA\Property(property="address", type="string"),
-     *                         @OA\Property(property="biography", type="string"),
-     *                         @OA\Property(property="gender", type="string"),
-     *                         @OA\Property(property="status", type="integer"),
-     *                         @OA\Property(property="major_id", type="integer"),
-     *                         @OA\Property(property="permissions", type="string"),
-     *                         @OA\Property(property="verification_code", type="string"),
-     *                         @OA\Property(property="created_at", type="string", format="date-time"),
-     *                         @OA\Property(property="updated_at", type="string", format="date-time")
-     *                     )
-     *                 ),
-     *                 @OA\Property(property="like_counts_by_emotion", type="object",
-     *                     @OA\Property(property="total_likes", type="integer", description="Tổng số lượt thích"),
-     *                     @OA\Property(property="emotion1", type="integer", description="Số lượt thích với emotion1"),
-     *                     @OA\Property(property="emotion2", type="integer", description="Số lượt thích với emotion2"),
-     *                 ),
-     *                 @OA\Property(property="total_comments", type="integer", description="Tổng số bình luận"),
-     *                 @OA\Property(property="comments", type="array",
-     *                     @OA\Items(
-     *                         @OA\Property(property="id", type="integer"),
-     *                         @OA\Property(property="user_id", type="integer"),
-     *                         @OA\Property(property="content", type="string", description="Nội dung bình luận"),
-     *                         @OA\Property(property="parent_id", type="integer"),
-     *                         @OA\Property(property="post_id", type="integer"),
-     *                         @OA\Property(property="blog_id", type="integer"),
-     *                         @OA\Property(property="qa_id", type="integer"),
-     *                         @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
-     *                         @OA\Property(property="updated_at", type="string", format="date-time", nullable=true),
-     *                         @OA\Property(property="reply", type="integer", description="Số lượng reply"),
-     *                         @OA\Property(property="user", type="object",
-     *                             @OA\Property(property="id", type="integer"),
-     *                             @OA\Property(property="username", type="string"),
-     *                             @OA\Property(property="first_name", type="string", nullable=true),
-     *                             @OA\Property(property="last_name", type="string", nullable=true),
-     *                         ),
-     *                     ),
-     *                 ),
-     *             ),
-     *         ),
-     *     ),
-     * )
-     */
-
-
-    public function showMyQa(Request $request, $quantity = null)
-    {
-        // Lấy thông tin người dùng đang đăng nhập
-        $user = $request->user();
-
-        if (!$user) {
-            return response()->json(['error' => 'Bạn chưa đăng nhập.'], 401);
-        }
-
-        DB::beginTransaction();
-
-        try {
-            // Lấy tất cả các câu hỏi của người dùng hiện tại
-            if ($quantity) {
-                $qas = Qa::where('user_id', $user->id)->latest()->paginate($quantity);
-            } else {
-                $qas = Qa::where('user_id', $user->id)->latest()->get();
-            }
-
-            $result = [];
-
-            foreach ($qas as $qa) {
-                $likeCountsByEmotion = [];
-                $likeCountsByEmotion['total_likes'] = $qa->likes->count();
-
-                $likers = $qa->likes->map(function ($like) {
-                    return [
-                        'user' => $like->user,
-                        'emotion' => $like->emotion,
-                    ];
-                });
-
-                $qa->user;
-                $qa->major;
-                $emotions = $likers->pluck('emotion')->unique();
-
-                foreach ($emotions as $emotion) {
-                    $likeCountsByEmotion[$emotion] = $likers->where('emotion', $emotion)->count();
-                }
-
-                $totalComment = Comment::where('qa_id', $qa->id)->count();
-                $commentDemos = Comment::where('qa_id', $qa->id)->where('parent_id', null)->limit(3)->get();
-
-                foreach ($commentDemos as $commentDemo) {
-                    $commentDemo->user;
-                    $commentDemo->reply = Comment::where('qa_id', $qa->id)->where('parent_id', $commentDemo->id)->count();
-                }
-
-                $qaData = [
-                    'qa' => $qa,
-                    'like_counts_by_emotion' => $likeCountsByEmotion,
-                    'total_comments' => $totalComment,
-                    'comments' => $commentDemos,
-                ];
-
-                array_push($result, $qaData);
-            }
-
-            DB::commit();
-
-            return response()->json($result, 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['errors' => $e->getMessage()], 400);
-        }
-    }
-
-
-    /**
-     * @OA\Get(
-     *     path="/api/quests/major/{major_id}",
-     *     tags={"Q&A"},
-     *     summary="Danh sách câu hỏi theo Major ID",
-     *     @OA\Parameter(
-     *         name="major_id",
-     *         in="path",
-     *         description="ID của Major",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Parameter(
-     *         name="hashtag",
-     *         in="query",
-     *         description="Từ khóa để tìm kiếm câu hỏi",
-     *         required=false,
-     *         @OA\Schema(type="string")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Danh sách câu hỏi",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 @OA\Property(property="qa", type="object",
-     *                     @OA\Property(property="id", type="integer"),
-     *                     @OA\Property(property="title", type="string"),
-     *                     @OA\Property(property="content", type="string"),
-     *                     @OA\Property(property="majors_id", type="integer"),
-     *                     @OA\Property(property="user_id", type="integer"),
-     *                     @OA\Property(property="hashtag", type="string"),
-     *                     @OA\Property(property="views", type="integer"),
-     *                     @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
-     *                     @OA\Property(property="updated_at", type="string", format="date-time", nullable=true),
-     *                     @OA\Property(property="likes", type="array",
-     *                         @OA\Items(
-     *                             @OA\Property(property="id", type="integer"),
-     *                             @OA\Property(property="user_id", type="integer"),
-     *                             @OA\Property(property="emotion", type="string"),
-     *                             @OA\Property(property="post_id", type="integer"),
-     *                             @OA\Property(property="blog_id", type="integer"),
-     *                             @OA\Property(property="qa_id", type="integer"),
-     *                             @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
-     *                             @OA\Property(property="updated_at", type="string", format="date-time", nullable=true),
-     *                             @OA\Property(property="user", type="object",
-     *                                 @OA\Property(property="id", type="integer"),
-     *                                 @OA\Property(property="username", type="string"),
-     *                                 @OA\Property(property="first_name", type="string", nullable=true),
-     *                                 @OA\Property(property="last_name", type="string", nullable=true),
-     *                             ),
-     *                         ),
-     *                     ),
-     *                     @OA\Property(property="major", type="object",
-     *                         @OA\Property(property="id", type="integer"),
-     *                         @OA\Property(property="majors_name", type="string"),
-     *                         @OA\Property(property="majors_code", type="string"),
-     *                         @OA\Property(property="description", type="string"),
-     *                         @OA\Property(property="created_at", type="string", format="date-time"),
-     *                         @OA\Property(property="updated_at", type="string", format="date-time")
-     *                     ),
-     *                     @OA\Property(property="user", type="object",
-     *                         @OA\Property(property="id", type="integer"),
-     *                         @OA\Property(property="username", type="string"),
-     *                         @OA\Property(property="first_name", type="string"),
-     *                         @OA\Property(property="last_name", type="string"),
-     *                         @OA\Property(property="group_id", type="integer"),
-     *                         @OA\Property(property="email", type="string"),
-     *                         @OA\Property(property="birthday", type="string"),
-     *                         @OA\Property(property="avatar", type="string"),
-     *                         @OA\Property(property="phone", type="string"),
-     *                         @OA\Property(property="address", type="string"),
-     *                         @OA\Property(property="biography", type="string"),
-     *                         @OA\Property(property="gender", type="string"),
-     *                         @OA\Property(property="status", type="integer"),
-     *                         @OA\Property(property="major_id", type="integer"),
-     *                         @OA\Property(property="permissions", type="string"),
-     *                         @OA\Property(property="verification_code", type="string"),
-     *                         @OA\Property(property="created_at", type="string", format="date-time"),
-     *                         @OA\Property(property="updated_at", type="string", format="date-time")
-     *                     )
-     *                 ),
-     *                 @OA\Property(property="like_counts_by_emotion", type="object",
-     *                     @OA\Property(property="total_likes", type="integer"),
-     *                     @OA\Property(property="emotion1", type="integer"),
-     *                     @OA\Property(property="emotion2", type="integer"),
-     *                 ),
-     *                 @OA\Property(property="total_comments", type="integer"),
-     *                 @OA\Property(property="comments", type="array",
-     *                     @OA\Items(
-     *                         @OA\Property(property="id", type="integer"),
-     *                         @OA\Property(property="user_id", type="integer"),
-     *                         @OA\Property(property="content", type="string"),
-     *                         @OA\Property(property="parent_id", type="integer"),
-     *                         @OA\Property(property="post_id", type="integer"),
-     *                         @OA\Property(property="blog_id", type="integer"),
-     *                         @OA\Property(property="qa_id", type="integer"),
-     *                         @OA\Property(property="created_at", type="string", format="date-time", nullable=true),
-     *                         @OA\Property(property="updated_at", type="string", format="date-time", nullable=true),
-     *                         @OA\Property(property="reply", type="integer"),
-     *                         @OA\Property(property="user", type="object",
-     *                             @OA\Property(property="id", type="integer"),
-     *                             @OA\Property(property="username", type="string"),
-     *                             @OA\Property(property="first_name", type="string", nullable=true),
-     *                             @OA\Property(property="last_name", type="string", nullable=true),
-     *                         ),
-     *                     ),
-     *                 ),
-     *             ),
-     *         ),
-     *     ),
-     * )
-     */
-
-    public function ShowQaByMajor(Request $request, $major_id, $quantity = null)
-    {
-        DB::beginTransaction();
-        try {
-            $hashtag = $request->input('hashtag');
-            $query = Qa::query();
-
-            if ($hashtag) {
-                $query->where('content', 'LIKE', '%' . $hashtag . '%');
-            }
-
-            // Lọc theo Major_id
-            $query->where('majors_id', $major_id);
-
-            if ($quantity) {
-                $qas = $query->latest()->paginate($quantity);
-            } else {
-                $qas = $query->latest()->get();
-            }
-
-            $result = [];
-
-            foreach ($qas as $qa) {
-                $likeCountsByEmotion = [];
-                $likeCountsByEmotion['total_likes'] = $qa->likes->count();
-
-                $likers = $qa->likes->map(function ($like) {
-                    return [
-                        'user' => $like->user,
-                        'emotion' => $like->emotion,
-                    ];
-                });
-
-                $qa->user;
-                $qa->major;
-                $emotions = $likers->pluck('emotion')->unique();
-
-                foreach ($emotions as $emotion) {
-                    $likeCountsByEmotion[$emotion] = $likers->where('emotion', $emotion)->count();
-                }
-                // Tổng số bình luận + 3 bình luận demo
-                $totalComment = Comment::where('qa_id', $qa->id)->count();
-                $commentDemos = Comment::where('qa_id', $qa->id)->where('parent_id', null)->limit(3)->get();
-                foreach ($commentDemos as $commentDemo) {
-                    $commentDemo->user;
-                    //số lượng reply
-                    $commentDemo->reply = Comment::where('qa_id', $qa->id)->where('parent_id', $commentDemo->id)->count();
-                }
-                $qaData = [
-                    'qa' => $qa,
-                    'like_counts_by_emotion' => $likeCountsByEmotion,
-                    'total_comments' => $totalComment,
-                    'comments' => $commentDemos,
-                ];
-                array_push($result, $qaData);
-            }
-
-            DB::commit();
-            return response()->json($result, 200);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['errors' => $e->getMessage()], 400);
-        }
-    }
-
-
-    /**
-     * @OA\Get(
-     *     path="/api/quests/lista",
-     *     tags={"Q&A"},
-     *     summary="Danh sách tất cả câu hỏi",
-     *     @OA\Response(
-     *         response=200,
-     *         description="Danh sách câu hỏi",
-     *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 @OA\Property(property="user_id", type="integer"),
-     *                 @OA\Property(property="title", type="string", description="Tiêu đề câu hỏi"),
-     *                 @OA\Property(property="content", type="string", description="Nội dung câu hỏi"),
-     *                 @OA\Property(property="majors_id", type="integer", description="ID của chuyên ngành liên quan đến câu hỏi"),
-     *                 @OA\Property(property="hashtag", type="string", description="HashTag liên quan đến câu hỏi câu hỏi"),
-     *                 @OA\Property(property="views", type="integer", description="Số lượng lượt xem câu hỏi"),
-     *             ),
-     *         ),
-     *     ),
-     * )
-     */
-
-
-    public function listA()
-    {
-        $qa = Qa::all();
-        return response()->json($qa);
     }
 
     /**
@@ -1112,58 +266,28 @@ class QaController extends Controller
 
     public function detailQandA(Qa $qa)
     {
-        $qa->major;
-        $qaLikes = $qa->likes;
-        $user = Auth::user(); // Lấy thông tin người dùng đăng nhập
-        $userLike = $qaLikes->where('user_id', $user->id)->first();
-        if ($qaLikes->isEmpty()) {
-            $emotions = [];
-        } else {
-            $emotions = $qaLikes->pluck('emotion')->unique();
-        }
-        $countsByEmotion = [];
-        foreach ($emotions as $emotion) {
-            $countsByEmotion[$emotion] = $qaLikes->where('emotion', $emotion)->count();
-        }
-        $qa->user;
-        // $emotions = $likers->pluck('emotion')->unique();
+        $qa->load(['user:id,username,first_name,last_name,avatar,major_id', 'major:id,majors_name']);
+        $likeCountsByEmotion = [
+            'like' => $qa->likes()->where('emotion', 'like')->count(),
+            'dislike' => $qa->likes()->where('emotion', 'dislike')->count(),
+        ];
         $comments = Comment::where('qa_id', $qa->id)->where('parent_id', null)->get();
-        $totalComments = 0;
+
         foreach ($comments as $comment) {
-            $comment->user;
-            $comment->replies;
-
-            $totalComments++; // Tính bình luận gốc
-            $totalComments += count($comment->replies); // Tính số lượng câu trả lời
-
+            $comment->load('user:id,username,first_name,last_name,avatar');
             foreach ($comment->replies as $reply) {
-                $reply->user;
+                $reply->load('user:id,username,first_name,last_name,avatar');
             }
         }
+        $totalComment = Comment::where('qa_id', $qa->id)->count();
         return response()->json(
             [
                 'qa' => $qa,
-                'emotion' => $countsByEmotion,
+                'like_counts_by_emotion' => $likeCountsByEmotion,
                 'comments' => $comments,
-                'total_comments' => $totalComments,
-                'user_like' => $userLike
+                'total_comments' => $totalComment,
             ]
         );
-    }
-
-    public function ListQa(Request $request)
-    {
-        $hashtag = $request->input('hashtag');
-        $majorsId = $request->input('majors_id');
-        $query = Qa::orderBy("created_at", "desc");
-        if ($hashtag) {
-            $query->where('hashtag', 'LIKE', '%' . $hashtag . '%');
-        }
-        if ($majorsId) {
-            $query->where('majors_id', $majorsId);
-        }
-        $qa = $query->paginate(10);
-        return response()->json($qa, 200);
     }
 
     /**

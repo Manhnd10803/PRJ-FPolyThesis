@@ -114,17 +114,12 @@ Route::middleware('auth:api')->group(function () {
     });
     //qa
     Route::prefix('quests')->group(function () {
-        Route::get('all/{quantity?}', [QaController::class, 'ShowAllQa'])->name('qa.showAll');
-        Route::get('/major/{major_id}/{quantity?}', [QaController::class, 'ShowQaByMajor'])->name('qa.showAllByMajor');
-        Route::get('/my-quests/{quantity?}', [QaController::class, 'showMyQa'])->name('qa.showMyQa');
-        Route::get('/most-commented/{quantity?}', [QaController::class, 'showMostCommentedQa'])->name('qa.showMostCommentedQa');
-        Route::get('/unanswer/{quantity?}', [QaController::class, 'showUnAnswerdQa'])->name('qa.showUnAnswerdQa');
+        Route::get('/{soft}/{majorsId?}', [QaController::class, 'ShowAllQa'])->name('qa.showAll');
         Route::post('/', [QaController::class, 'CreateQa'])->name('qa.create');
-        Route::get('/detail/{qa}', [QaController::class, 'detailQandA'])->name('qa.detail');
         Route::put('/{qa}', [QaController::class, 'UpdateQa'])->name('qa.update');
         Route::delete('/{qa}', [QaController::class, 'DeleteQa'])->name('qa.delete');
-        //Route::get('/list', [QaController::class, 'ListQa'])->name('qa.list');
     });
+    Route::get('quest/detail/{qa}', [QaController::class, 'detailQandA'])->name('qa.detail');
     //friend --relationship
     Route::post('/send-request/{recipient}', [FriendController::class, 'SendFriendRequest'])->name('friend.send');
     Route::post('/confirm-request/{sender}', [FriendController::class, 'ConfirmFriendRequest'])->name('friend.confirm');
