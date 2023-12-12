@@ -1,3 +1,4 @@
+import { AccountHistoryPage } from '@/pages/auth/account-history';
 import { AccountSettingPage } from '@/pages/auth/account-setting';
 import { BlogPage } from '@/pages/auth/blog';
 import { CreateBlogPage } from '@/pages/auth/blog-create';
@@ -8,16 +9,17 @@ import { FriendRequestPage } from '@/pages/auth/friend-request';
 import { GroupPage } from '@/pages/auth/group';
 import { HomePage } from '@/pages/auth/home';
 import { NotificationPage } from '@/pages/auth/notification';
+import { PostDetail } from '@/pages/auth/post-detail';
 import { PrivacySecurityPage } from '@/pages/auth/privacy-security';
 import { ProfilePage } from '@/pages/auth/profile';
 import { QuestionAndAnswerPage } from '@/pages/auth/question-and-answer';
 import { CreateQandA } from '@/pages/auth/question-and-answer/create-qanda';
 import { DetailQandAPage } from '@/pages/auth/question-and-answer/detail-qanda';
-import { pathName } from './path-name';
 import { SearchPage } from '@/pages/auth/search';
-import { AccountHistoryPage } from '@/pages/auth/account-history';
+import { pathName } from './path-name';
+import { AuthRouteType } from '@/models/routes';
 
-export const AuthRouter = [
+export const AuthRouter: Array<AuthRouteType> = [
   {
     path: pathName.HOME,
     element: <HomePage />,
@@ -29,6 +31,7 @@ export const AuthRouter = [
   {
     path: pathName.QUESTS_CREATE,
     element: <CreateQandA />,
+    noRightSidebar: true,
   },
   {
     path: pathName.QUEST_DETAIL_ROUTE,
@@ -90,5 +93,10 @@ export const AuthRouter = [
   {
     path: pathName.ACCOUNT_HISTORY,
     element: <AccountHistoryPage />,
+  },
+  {
+    path: pathName.POST_DETAIL,
+    element: <PostDetail />,
+    noLayout: true,
   },
 ];

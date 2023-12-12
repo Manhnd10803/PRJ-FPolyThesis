@@ -1,7 +1,7 @@
-import { usePostItemContext } from '../../contexts';
+import { usePostDetailContext } from '../contexts';
 
 export const Content = () => {
-  const { post: post } = usePostItemContext();
+  const { post: post } = usePostDetailContext();
   // render
   return (
     <>

@@ -1,7 +1,7 @@
 import { momentVi } from '@/utilities/functions/moment-locale';
-import { usePostDetailContext } from '../../contexts';
-import { MoreActionDropdown } from '../more-action-dropdown';
 import { formatFullName } from '@/utilities/functions';
+import { MoreActionDropdown } from '@/components/post/more-action';
+import { usePostDetailContext } from '../contexts';
 
 export const Header = () => {
   const { post } = usePostDetailContext();

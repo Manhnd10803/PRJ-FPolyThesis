@@ -2,7 +2,7 @@ import { CustomToggle } from '@/components/custom';
 import { IComment } from '@/models/comment';
 import { formatFullName } from '@/utilities/functions';
 import { Dropdown } from 'react-bootstrap';
-import { tryConvertUniqueUser } from '../constants';
+import { tryConvertUniqueUser } from '../../../pages/auth/home/constants';
 
 type TotalCommentProps = {
   totalComments?: number;

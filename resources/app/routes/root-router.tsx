@@ -1,19 +1,20 @@
 import { AuthGuard } from '@/components/guard';
 import { AuthLayout, ChatLayout, UnAuthLayout } from '@/layouts/';
-import { AuthRouteType } from '@/models/routes';
-import { ChatRouter } from './chat-route';
-import { AuthRouter as AuthRouterConfig } from './auth-router';
-import { UnAuthRouter } from './un-auth-router';
 import Error404 from '@/layouts/others/error-404';
 import Error500 from '@/layouts/others/error-500';
+import { Outlet } from 'react-router-dom';
+import { AuthRouter as AuthRouterConfig } from './auth-router';
+import { ChatRouter } from './chat-route';
 import { pathName } from './path-name';
+import { UnAuthRouter } from './un-auth-router';
 
 //Can add more auth router here
 export const RootAuthRouter = (() => {
-  const noRightSidebar = (route: AuthRouteType) => route.noRightSidebar;
+  const AuthRouter = AuthRouterConfig.filter(route => !(route.noRightSidebar || route.noLayout));
 
-  const AuthRouter = AuthRouterConfig.filter(route => !noRightSidebar(route));
-  const AuthRouterNoSidebar = AuthRouterConfig.filter(noRightSidebar);
+  const AuthRouterNoSidebar = AuthRouterConfig.filter(route => route.noRightSidebar && !route.noLayout);
+
+  const AuthRouterNoLayout = AuthRouterConfig.filter(route => route.noLayout && !route.noRightSidebar);
 
   return [
     {
@@ -33,6 +34,15 @@ export const RootAuthRouter = (() => {
         </AuthGuard>
       ),
       children: [...AuthRouterNoSidebar],
+    },
+    {
+      path: '/',
+      element: (
+        <AuthGuard>
+          <Outlet />
+        </AuthGuard>
+      ),
+      children: [...AuthRouterNoLayout],
     },
   ];
 })();

@@ -10,8 +10,8 @@ import './list-image.scss';
 
 // import required modules
 import { Navigation, Keyboard, EffectFade } from 'swiper/modules';
-import { usePostContext, usePostDetailContext } from '../../contexts';
-import { formatImagesToRender } from '../../constants';
+import { formatImagesToRender } from '../constants';
+import { usePostDetailContext } from '../contexts';
 
 export const ListImage = () => {
   const { post } = usePostDetailContext();

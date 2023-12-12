@@ -1,29 +1,23 @@
 import useInfinitePosts from '@/hooks/usePostQuery';
-import { useEffect, useRef, useState } from 'react';
-import { useInView } from 'react-intersection-observer';
-import { PostContextProvider } from '../../contexts';
 import { GetNewPostResponseType } from '@/models/post';
-import { PostDetailModal } from '../post-detail';
+import { pathName } from '@/routes/path-name';
+import { useEffect } from 'react';
+import { useInView } from 'react-intersection-observer';
+import { useNavigate } from 'react-router-dom';
+import { PostContextProvider } from '../../contexts';
 import { PostItem } from './post-item';
 
 const imageUrlLoading = 'https://i.gifer.com/ZKZg.gif';
 
 export const PostContainer = () => {
+  const navigate = useNavigate();
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isError, isLoading } = useInfinitePosts();
-
-  const [showDetail, setShowDetail] = useState(false);
 
   const { ref: endRef, inView: endInView } = useInView();
 
-  const dataDetailRef = useRef<GetNewPostResponseType | null>(null);
-
   // func
-  const handleClose = () => setShowDetail(false);
-
-  const handleShowDetail = (post: GetNewPostResponseType) => {
-    dataDetailRef.current = post;
-
-    setShowDetail(true);
+  const handleShowDetail = (postItem: GetNewPostResponseType) => {
+    navigate(`${pathName.POST}/${postItem.post.id}`, { state: { data: postItem } });
   };
 
   // effect
@@ -33,6 +27,7 @@ export const PostContainer = () => {
     }
   }, [endInView, isFetchingNextPage, hasNextPage, fetchNextPage]);
 
+  // render
   if (isError) {
     return <span>Error...</span>;
   }
@@ -71,9 +66,6 @@ export const PostContainer = () => {
           </div>
         )}
         <div ref={endRef}></div>
-
-        {/* //=========  modal detail post=========// */}
-        <PostDetailModal show={showDetail} onClose={handleClose} data={dataDetailRef.current} />
       </PostContextProvider>
     </>
   );

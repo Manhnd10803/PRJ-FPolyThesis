@@ -1,14 +1,14 @@
 import { ShareOffCanvas } from '@/components/custom';
-import { ChosePostEmotion, EmotionType } from '@/components/shared/choose-emotion';
+import { ChosePostEmotion, EmotionType } from '@/components/post/choose-emotion';
+import { TotalComment } from '@/components/post/total-comment';
+import { TotalLike } from '@/components/post/total-like';
+import { IUser } from '@/models/user';
 import { Card } from 'react-bootstrap';
-import { CommentList } from '../comment/comment-list';
-import { CreateComment } from '../comment/create-comment';
-import { TotalComment } from '../total-comment';
-import { TotalLike } from '../total-like';
+import { usePostDetailContext } from '../contexts';
 import { Content } from './content';
 import { Header } from './header';
-import { usePostDetailContext } from '../../contexts';
-import { IUser } from '@/models/user';
+import { CommentList } from '@/components/post/comment-list';
+import { CreateComment } from '@/components/post/create-comment';
 
 export const PostDetailContent = () => {
   // state
