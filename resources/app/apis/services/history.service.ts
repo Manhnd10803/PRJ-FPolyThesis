@@ -9,7 +9,12 @@ const deleteHistory = async (id: number) => {
   return httpRequest.delete<any>(`${ApiConstants.DELETE_HISTORY}/${id}`);
 };
 
+const deleteAllHistoryByLogName = async (logName: string) => {
+  return httpRequest.delete<any>(`${ApiConstants.DELETE_HISTORY_BY_LOG_NAME}/${logName}`);
+};
+
 export const HistoryService = {
   getHistories,
   deleteHistory,
+  deleteAllHistoryByLogName,
 };

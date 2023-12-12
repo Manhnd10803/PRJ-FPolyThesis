@@ -98,10 +98,10 @@ httpRequest.interceptors.response.use(
         }
         return;
       }
-      case 404: {
-        window.location.replace('/404');
-        return Promise.reject(error.response.data);
-      }
+      // case 404: {
+      //   window.location.replace('/404');
+      //   return Promise.reject(error.response.data);
+      // }
       case 500: {
         toast.error('Có lỗi server!');
         return Promise.reject(error.response.data);

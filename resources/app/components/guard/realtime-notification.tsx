@@ -6,6 +6,7 @@ import { useAppSelector } from '@/redux/hook';
 import { pathName } from '@/routes/path-name';
 import { formatNotificationLink } from '@/utilities/functions';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -83,15 +84,21 @@ export const RealtimeNotification = () => {
 
   const localUserId = StorageFunc.getUserId();
 
+  const queryClient = useQueryClient();
+
   useEffect(() => {
     if (accessToken) {
       window.Echo.connector.options.auth.headers['Authorization'] = `Bearer ${accessToken}`;
 
       // Lắng nghe notification
       const handleReceiveNotification = (event: any) => {
-        console.log('🔔 Received notify', event);
-
+        // console.log('🔔 Received notify', event);
         const { content } = event.notification;
+        const { notification_type } = event.notification;
+        if (notification_type === 'friend') {
+          queryClient.invalidateQueries(['friends']);
+          queryClient.invalidateQueries(['friend']);
+        }
         const { avatar_sender } = event;
 
         // Nếu đang ở trang chat thì không hiển thị notification

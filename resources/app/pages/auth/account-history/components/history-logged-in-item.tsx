@@ -21,8 +21,9 @@ export const HistoryLoggedInItem = ({ item, onDelete }: History) => {
       const spaceIndex = userAgent.indexOf(' ', start);
 
       if (spaceIndex !== -1) {
-        const result = userAgent.substring(start, spaceIndex);
-        return result.trim();
+        const result = userAgent.substring(start, spaceIndex).trim().split(';')[0];
+
+        return result;
       }
     }
   };

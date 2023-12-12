@@ -8,85 +8,150 @@ import { useAppSelector } from '@/redux/hook';
 export type History = {
   item: any;
   onDelete: (id: number) => void;
+  param: string;
 };
 
-export const HistoryOtherItem = ({ item, onDelete }: History) => {
+export const HistoryOtherItem = ({ item, onDelete, param }: History) => {
   const { userInfo } = useAppSelector(state => state.auth);
+
+  const getPathTypeReport = (reportType: string) => {
+    switch (reportType) {
+      case 'post':
+        return pathName.POST;
+      case 'blog':
+        return pathName.BLOG;
+      case 'user':
+        return pathName.PROFILE;
+      case 'comment':
+        return '';
+      default:
+        return pathName.QUESTS;
+    }
+  };
+
+  const getTypeObject = (reportType: string) => {
+    switch (reportType) {
+      case 'post':
+        return 'bài viết';
+      case 'blog':
+        return 'blog';
+      case 'user':
+        return 'người dùng';
+      case 'comment':
+        return 'bình luận';
+      default:
+        return 'câu hỏi';
+    }
+  };
+
   const getLogName = (item: any) => {
     let data = null;
     let action = item.event === 'created' ? item.properties.attributes : item.properties.old;
-    if (item.log_name === 'blogs') {
-      data = {
-        title: `blog <strong>${action.title}</strong>`,
-        path: pathName.BLOG,
-      };
-      return data;
-    } else if (item.log_name === 'posts') {
-      data = {
-        title: 'bài viết',
-        path: pathName.POST,
-      };
-      return data;
-    } else if (item.log_name === 'qas') {
-      data = {
-        title: `câu hỏi <strong>${action.title}</strong>`,
-        path: pathName.QUESTS,
-      };
-      return data;
-    } else if (item.log_name === 'searches') {
-      data = {
-        title: `<strong>${action.query}</strong>`,
-        path: '',
-      };
-      return data;
-    } else if (item.log_name === 'friends') {
-      data = {
-        title: `<strong>${action.query}</strong>`,
-        path: '',
-      };
-      return data;
+    switch (item.log_name) {
+      case 'blogs':
+        data = {
+          title: `blog <strong>${action.title}</strong>`,
+          path: pathName.BLOG,
+        };
+        break;
+      case 'posts':
+        data = {
+          title: 'bài viết',
+          path: pathName.POST,
+        };
+        break;
+      case 'qas':
+        data = {
+          title: `câu hỏi <strong>${action.title}</strong>`,
+          path: pathName.QUESTS,
+        };
+        break;
+      case 'searches':
+        data = {
+          title: `<strong>${action.query}</strong>`,
+          path: '',
+        };
+        break;
+      case 'likes':
+        const pathTypeLike = action.post_id !== null ? pathName.POST : action.blog_id ? pathName.BLOG : pathName.QUESTS;
+        const type = action.post_id !== null ? 'bài viết' : action.blog_id ? 'blog' : 'câu hỏi';
+        data = {
+          title: `<strong>${type}</strong>`,
+          path: pathTypeLike,
+        };
+        break;
+      case 'reports':
+        const pathTypeReport = getPathTypeReport(action.report_type);
+        const typeObject = getTypeObject(action.report_type);
+        data = {
+          title: `<strong>${typeObject}</strong>`,
+          path: pathTypeReport,
+        };
+        break;
+      default:
+        break;
     }
+
+    return data;
   };
+
   const getAction = (item: any) => {
     let data = null;
     const logName = getLogName(item)?.title;
+    let action = item.event === 'created' ? item.properties.attributes : item.properties.old;
     switch (item.event) {
       case 'created':
-        if (item.log_name === 'searches') {
-          data = {
-            title: `đã tìm kiếm ${logName}`,
-            id: item.properties.attributes.id,
-          };
-          return data;
-        } else if (item.log_name === 'friends') {
-          data = {
-            title: `đã kết bạn với ${logName}`,
-            id: item.properties.attributes.id,
-          };
-          return data;
-        } else {
-          data = {
-            title: `đã tạo một ${logName}`,
-            id: item.properties.attributes.id,
-          };
-          return data;
+        switch (item.log_name) {
+          case 'searches':
+            data = {
+              title: `đã tìm kiếm ${logName}`,
+              id: action.id,
+            };
+            break;
+          case 'likes':
+            const emotion = action.emotion === 'like' ? 'thích' : 'bày tỏ cảm xúc về';
+            const newId =
+              action.post_id !== null ? action.post_id : action.blog_id !== null ? action.blog_id : action.qa_id;
+            data = {
+              title: `đã ${emotion} một ${logName}`,
+              id: newId,
+            };
+            break;
+          case 'reports':
+            data = {
+              title: `đã báo cáo một ${logName}`,
+              id: action.report_type_id,
+            };
+            break;
+          default:
+            data = {
+              title: `đã tạo một ${logName}`,
+              id: item.properties.attributes.id,
+            };
+            break;
         }
-
+        break;
       default:
-        if (item.log_name === 'friends') {
-          data = {
-            title: `đã huỷ kết bạn với ${logName}`,
-            id: item.properties.old.id,
-          };
-          return data;
-        } else {
-          data = {
-            title: `đã xoá một ${logName}`,
-            id: item.properties.old.id,
-          };
-          return data;
+        switch (item.log_name) {
+          case 'likes':
+            const newId =
+              action.post_id !== null ? action.post_id : action.blog_id !== null ? action.blog_id : action.qa_id;
+            data = {
+              title: `đã bỏ thích một ${logName}`,
+              id: newId,
+            };
+            break;
+          default:
+            data = {
+              title: `đã xoá một ${logName}`,
+              id: action.id,
+            };
+            break;
         }
+        break;
     }
+
+    return data;
   };
 
   const Content = () => (
@@ -107,7 +172,11 @@ export const HistoryOtherItem = ({ item, onDelete }: History) => {
                 </h6>
               </div>
               <div className="d-flex align-items-center">
-                <Link to="#blogs" onClick={() => onDelete(item.id)} className="me-3 iq-notify">
+                <Link
+                  to={`${pathName.ACCOUNT_HISTORY}#${param}`}
+                  onClick={() => onDelete(item.id)}
+                  className="me-3 iq-notify"
+                >
                   <i style={{ fontSize: 26 }} className={`material-symbols-outlined md-18 filled`}>
                     delete
                   </i>
