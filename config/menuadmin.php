@@ -222,7 +222,7 @@ return [
   ],
   'activity_logs' => [
     'order' => 9,
-    'text'  => 'Quản lý Actiivity Log',
+    'text'  => 'Quản lý hoạt động',
     'permission' => 'admin.log',
     'icon' => 'fa fa-fw fa-history',
     'sub' => [
