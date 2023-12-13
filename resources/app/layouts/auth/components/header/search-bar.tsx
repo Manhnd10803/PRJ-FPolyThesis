@@ -114,7 +114,7 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
           <Form.Control
             type="text"
             className="text search-input form-control bg-soft-primary d-none d-lg-block"
-            placeholder="Search here..."
+            placeholder="Tìm kiếm trên FpolyZone"
             value={searchValue}
             disabled={isDropdownOpen}
           />
@@ -141,7 +141,7 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
                 ref={inputRef}
                 type="text"
                 className="text search-input form-control bg-soft-primary d-lg-block"
-                placeholder="Search here..."
+                placeholder="Tìm kiếm trên FpolyZone"
                 value={searchValue}
                 onChange={e => setSearchValue(e.target.value)}
               />

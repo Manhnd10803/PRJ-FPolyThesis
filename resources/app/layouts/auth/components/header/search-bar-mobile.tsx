@@ -27,7 +27,7 @@ export const SearchBarMobile = ({ show, handleShow, handleClose }: SearchBarMobi
           <Form.Control
             type="text"
             className="text search-input form-control bg-soft-primary  d-none d-lg-block"
-            placeholder="Search here..."
+            placeholder="Tìm kiếm trên FpolyZone"
           />
           <Link
             className="d-lg-none d-flex"
@@ -58,7 +58,7 @@ export const SearchBarMobile = ({ show, handleShow, handleClose }: SearchBarMobi
                   <Form.Control
                     type="text"
                     className="text search-input bg-soft-primary"
-                    placeholder="Search here..."
+                    placeholder="Tìm kiếm trên FpolyZone"
                   />
                 </form>
 
