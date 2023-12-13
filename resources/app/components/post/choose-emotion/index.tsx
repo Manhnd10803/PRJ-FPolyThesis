@@ -1,81 +1,69 @@
 import { CustomToggle } from '@/components/custom';
 import { useState } from 'react';
-import { Dropdown, OverlayTrigger, Tooltip } from 'react-bootstrap';
-
-//image
-import emotion1 from '@/assets/images/emotion/01.png';
-import emotion2 from '@/assets/images/emotion/02.png';
-import emotion3 from '@/assets/images/emotion/03.png';
-import emotion4 from '@/assets/images/emotion/04.png';
-import emotion5 from '@/assets/images/emotion/05.png';
-import emotion6 from '@/assets/images/emotion/06.png';
-import emotion7 from '@/assets/images/emotion/07.png';
+import { Dropdown, Image, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-const emotionData = [
-  {
-    id: 1,
-    emotion: emotion1,
-    name: 'Thích',
-  },
-  {
-    id: 2,
-    emotion: emotion2,
-    name: 'Yêu thích',
-  },
-  {
-    id: 3,
-    emotion: emotion3,
-    name: 'Hihi',
-  },
-  {
-    id: 4,
-    emotion: emotion4,
-    name: 'HaHa',
-  },
-  {
-    id: 5,
-    emotion: emotion5,
-    name: 'Wow',
-  },
-  {
-    id: 6,
-    emotion: emotion6,
-    name: 'Buồn',
-  },
-  {
-    id: 7,
-    emotion: emotion7,
-    name: 'Thương thương',
-  },
-];
+//image
+import haha from '@/assets/images/emotion/haha.png';
+import like from '@/assets/images/emotion/like.png';
+import love from '@/assets/images/emotion/love.png';
+import wow from '@/assets/images/emotion/wow.png';
+import sad from '@/assets/images/emotion/sad.png';
+import angry from '@/assets/images/emotion/angry.png';
 
-export type EmotionType = (typeof emotionData)[0];
+import { EmotionUnionType, emotionData, emotionSource } from '@/models/like';
 
 type ChosePostEmotionProps = {
-  onChange: (e: (typeof emotionData)[0]) => void;
+  defaultValue?: EmotionUnionType;
+  top3Emotion?: EmotionUnionType[];
+  onChange: (emotion: EmotionUnionType) => void;
 };
 
-export const ChosePostEmotion = ({ onChange }: ChosePostEmotionProps) => {
-  const [emotionSelected, setEmotionSelected] = useState(emotionData[0]);
+export const ChosePostEmotion = ({ defaultValue, top3Emotion, onChange }: ChosePostEmotionProps) => {
+  const [emotionSelected, setEmotionSelected] = useState<EmotionUnionType | undefined>(defaultValue);
 
-  const handleChangeEmotion = (e: EmotionType) => {
-    setEmotionSelected(e);
-    onChange && onChange(e);
+  const handleChangeEmotion = (emotion: EmotionUnionType) => {
+    setEmotionSelected(emotion);
+    onChange && onChange(emotion);
   };
+
   return (
-    <div className="like-data">
+    <div className="like-data me-4">
       <Dropdown>
         <Dropdown.Toggle as={CustomToggle}>
-          <img src={emotionSelected.emotion} className="img-fluid" alt="" />
+          <div className="iq-media-group">
+            {top3Emotion && top3Emotion.length > 0 ? (
+              top3Emotion.map(emotion => {
+                return (
+                  <span className="iq-media" key={emotion}>
+                    <Image className="img-fluid rounded-circle avatar-30" src={emotionSource[emotion]} alt="" />
+                  </span>
+                );
+              })
+            ) : (
+              <span className="iq-media">
+                <Image className="img-fluid rounded-circle avatar-30" src={like} alt="" />
+              </span>
+            )}
+            {emotionSelected && (
+              <span className="iq-media">
+                <Image
+                  style={{ transform: 'scale(1.6) translateX(10px)' }}
+                  className="img-fluid rounded-circle avatar-30"
+                  src={emotionSource[emotionSelected]}
+                  alt=""
+                />
+              </span>
+            )}
+          </div>
         </Dropdown.Toggle>
-        <Dropdown.Menu className=" py-2">
+        <Dropdown.Menu className="py-2">
           {emotionData.map(e => {
             return (
               <OverlayTrigger key={e.id} placement="top" overlay={<Tooltip>{e.name}</Tooltip>}>
-                <Link to="#" onClick={() => handleChangeEmotion(e)}>
-                  <img src={e.emotion} className="img-fluid me-2" alt="" />
-                </Link>
+                <span onClick={() => handleChangeEmotion(e.id)}>
+                  <Image className="img-fluid rounded-circle avatar-30 me-2" src={e.emotion} alt="" />
+                </span>
               </OverlayTrigger>
             );
           })}

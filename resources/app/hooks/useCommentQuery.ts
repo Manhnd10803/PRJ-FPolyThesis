@@ -9,7 +9,7 @@ import { IComment } from '@/models/comment';
 
 type TCreateComment = { bodyData: TCommentSchema; id: number };
 
-export const useCreateComment = () => {
+export const useCreateCommentPost = () => {
   const { mutate, ...rest } = useMutation({
     mutationFn: async ({ bodyData, id }: TCreateComment) => {
       return await CommentService.createCommentPost<TCommentSchema>(bodyData, id);

@@ -1,12 +1,16 @@
 import { CustomToggle } from '@/components/custom';
+import { ILiker } from '@/models/like';
+import { tryConvertUniqueLiker } from '@/pages/auth/home/constants';
+import { formatFullName } from '@/utilities/functions';
 import { Dropdown } from 'react-bootstrap';
-import { IUser } from '@/models/user';
 
 type TotalLikeProps = {
   totalLike: number;
-  listUserLike: IUser[];
+  likers: ILiker[];
 };
-export const TotalLike = ({ totalLike = 0, listUserLike = [] }: TotalLikeProps) => {
+export const TotalLike = ({ totalLike = 0, likers = [] }: TotalLikeProps) => {
+  const uniqueUser = tryConvertUniqueLiker(likers);
+
   return (
     <div className="total-like-block ms-2 me-3">
       <Dropdown>
@@ -14,9 +18,9 @@ export const TotalLike = ({ totalLike = 0, listUserLike = [] }: TotalLikeProps) 
           {totalLike} Thích
         </Dropdown.Toggle>
         <Dropdown.Menu>
-          {listUserLike?.map(user => (
-            <Dropdown.Item href="#" key={user.username}>
-              {user?.username}
+          {uniqueUser?.map(liker => (
+            <Dropdown.Item href="#" key={liker.user?.id}>
+              {formatFullName(liker.user)}
             </Dropdown.Item>
           ))}
         </Dropdown.Menu>

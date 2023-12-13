@@ -1,4 +1,4 @@
-import { useAddCommentPost, useCreateComment } from '@/hooks/useCommentQuery';
+import { useAddCommentPost, useCreateCommentPost } from '@/hooks/useCommentQuery';
 import { TCommentSchema, createCommentSchema } from '@/validation/zod/comment';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -13,7 +13,7 @@ export const CreateComment = ({ postId }: CreateCommentProps) => {
     resolver: zodResolver(createCommentSchema),
   });
 
-  const { createComment, isLoading } = useCreateComment();
+  const { createComment, isLoading } = useCreateCommentPost();
 
   const { manuallyAddCommentPostItem } = useAddCommentPost();
 

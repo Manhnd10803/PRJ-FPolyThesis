@@ -78,7 +78,7 @@ export const PostDetail = () => {
         like_counts_by_emotion: data.like_counts_by_emotion,
         total_comments: data.total_comments,
         comments: data.comments,
-        like: data.like,
+        likers: data.likers,
       }}
     >
       {isShowModal ? (
