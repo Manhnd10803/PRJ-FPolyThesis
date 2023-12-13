@@ -78,7 +78,7 @@ export const SearchPage = () => {
                     <form className="iq-comingsoon-form w-100 my-4" onSubmit={handleFormSubmit}>
                       <div className="">
                         <input
-                          placeholder="Search Fpoly"
+                          placeholder="Tìm kiếm trên FpolyZone"
                           type="text"
                           className="comming mb-0 form-control"
                           value={searchValue}
