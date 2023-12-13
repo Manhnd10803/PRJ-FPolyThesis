@@ -48,7 +48,7 @@ export const DetailQandAPage = () => {
   // Create CMT
   const createCommentMutation = useMutation(CommentService.createCommentQA, {
     onSettled: () => {
-      queryClient.invalidateQueries(queryKeyQa);
+      queryClient.invalidateQueries(queryKeyDetailQa);
     },
   });
 
@@ -70,7 +70,7 @@ export const DetailQandAPage = () => {
   // Delete Comment
   const deleteCommentMutation = useMutation(CommentService.deleteComment, {
     onSettled: () => {
-      queryClient.invalidateQueries(queryKeyQa);
+      queryClient.invalidateQueries(queryKeyDetailQa);
     },
   });
 
@@ -85,7 +85,7 @@ export const DetailQandAPage = () => {
   // Edit Comment
   const editCommentMutation = useMutation(CommentService.editComment, {
     onSettled: () => {
-      queryClient.invalidateQueries(queryKeyQa);
+      queryClient.invalidateQueries(queryKeyDetailQa);
     },
   });
   const putComment = async (content: string, commentId: any) => {
@@ -105,7 +105,7 @@ export const DetailQandAPage = () => {
   // Create Like
   const LikeQandAMutation = useMutation(LikeService.postLikeQA, {
     onSettled: () => {
-      queryClient.invalidateQueries(queryKeyQa);
+      queryClient.invalidateQueries(queryKeyDetailQa);
     },
   });
   const createLike = async (emotion: string) => {
@@ -154,8 +154,8 @@ export const DetailQandAPage = () => {
     return data;
   };
 
-  const queryKeyQa = ['qanda'];
-  const { isLoading: isQaLoading } = useQuery(queryKeyQa, getDetailQandA, {
+  const queryKeyDetailQa = ['qanda'];
+  const { isLoading: isQaLoading } = useQuery(queryKeyDetailQa, getDetailQandA, {
     onSuccess: data => {
       setQandAData(data);
     },
@@ -164,6 +164,7 @@ export const DetailQandAPage = () => {
   const handleDelete = async () => {
     try {
       await QandAService.deleteQandA(id);
+      queryClient.invalidateQueries(['qa']);
       toast.success('Xóa câu hỏi thành công');
       navigate(pathName.QUESTS);
     } catch (error) {
