@@ -149,9 +149,7 @@ class PostsController extends Controller
         $likers = $post->likes->map(function ($like) {
             return [
                 'user_id' => $like->user->id,
-                'user_username' => $like->user->username,
-                'user_first_name' => $like->user->first_name,
-                'user_last_name' => $like->user->last_name,
+                'user' => $like->user,
                 'emotion' => $like->emotion,
             ];
         });
@@ -202,6 +200,7 @@ class PostsController extends Controller
                 $likers = $post->likes->map(function ($like) {
                     return [
                         'user' => $like->user,
+                        'user_id' => $like->user->id,
                         'emotion' => $like->emotion,
                     ];
                 });

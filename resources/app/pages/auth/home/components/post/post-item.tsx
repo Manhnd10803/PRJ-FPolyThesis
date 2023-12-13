@@ -1,30 +1,57 @@
 import { ShareOffCanvas } from '@/components/custom';
 import { GetNewPostResponseType } from '@/models/post';
 
+import { ChosePostEmotion } from '@/components/post/choose-emotion';
+import { MoreActionDropdown } from '@/components/post/more-action';
+import { TotalComment } from '@/components/post/total-comment';
+import { TotalLike } from '@/components/post/total-like';
+import { useChooseEmotionPost, useIncreaseTotalLikePost } from '@/hooks/useLikeQuery';
+import { EmotionUnionType, ILiker } from '@/models/like';
+import { IUser } from '@/models/user';
+import { formatFullName } from '@/utilities/functions';
+import { momentVi } from '@/utilities/functions/moment-locale';
 import { Card, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { CommentList } from '../../../../../components/post/comment-list';
 import { CreateComment } from '../../../../../components/post/create-comment';
-import { MoreActionDropdown } from '@/components/post/more-action';
-import { TotalComment } from '@/components/post/total-comment';
-import { TotalLike } from '@/components/post/total-like';
-import { PostItemContextProvider, usePostContext, usePostItemContext } from '../../contexts';
-import { ChosePostEmotion, EmotionType } from '@/components/post/choose-emotion';
-import { momentVi } from '@/utilities/functions/moment-locale';
 import { formatImagesToRender, getClassImages } from '../../constants';
-import { IUser } from '@/models/user';
-import { formatFullName } from '@/utilities/functions';
+import { PostItemContextProvider, usePostContext, usePostItemContext } from '../../contexts';
+import { StorageFunc } from '@/utilities/local-storage/storage-func';
+import { useRef } from 'react';
+import { checkIfReacted, getTopEmotions } from '@/utilities/functions/post';
 
 type PostItemProps = {
   item: GetNewPostResponseType;
 };
 export const PostItem = ({ item }: PostItemProps) => {
   // state
-  const { like_counts_by_emotion, like, total_comments, comments, post } = item;
+  const userInfo = StorageFunc.getUser();
 
-  const handleChangeEmotion = (emotion: EmotionType) => {
-    console.log('emotion', emotion);
+  const { mutate } = useChooseEmotionPost();
+  const { manuallyIncreaseTotalLikePost } = useIncreaseTotalLikePost();
+
+  const { like_counts_by_emotion, likers, total_comments, comments, post } = item;
+
+  // kiểm tra xem đã like chưa, nếu đã like thì trả về emotion, chưa like thì trả về null
+  const emotionSelected = checkIfReacted(likers as ILiker[], userInfo as IUser);
+
+  const isIncrease = useRef(Boolean(emotionSelected));
+
+  // lấy ra 3 loại emotion được like nhiều nhất dựa vào like_counts_by_emotion, sắp xếp theo thứ tự giảm dần
+  const top3Emotion = getTopEmotions(like_counts_by_emotion);
+
+  const handleChangeEmotion = (emotion: EmotionUnionType) => {
+    // Kiểm tra xem đã like chưa, nếu đã like rồi thì bỏ like, chưa like thì like
+    if (!emotionSelected && !isIncrease.current) {
+      isIncrease.current = true;
+      manuallyIncreaseTotalLikePost(post.id);
+    }
+    mutate({
+      emotion: emotion,
+      postId: post.id,
+    });
   };
+
   //render
   return (
     <PostItemContextProvider
@@ -34,7 +61,7 @@ export const PostItem = ({ item }: PostItemProps) => {
         like_counts_by_emotion: item.like_counts_by_emotion,
         total_comments: item.total_comments,
         comments: item.comments,
-        like: item.like,
+        likers: item.likers,
       }}
     >
       <Col sm={12}>
@@ -48,11 +75,15 @@ export const PostItem = ({ item }: PostItemProps) => {
               <div className="d-flex justify-content-between align-items-center flex-wrap">
                 <div className="like-block position-relative d-flex align-items-center">
                   <div className="d-flex align-items-center">
-                    <ChosePostEmotion onChange={handleChangeEmotion} />
+                    <ChosePostEmotion
+                      onChange={handleChangeEmotion}
+                      defaultValue={emotionSelected}
+                      top3Emotion={top3Emotion}
+                    />
 
                     <TotalLike
                       totalLike={(like_counts_by_emotion && like_counts_by_emotion?.total_likes) || 0}
-                      listUserLike={like as IUser[]}
+                      likers={likers as ILiker[]}
                     />
                   </div>
 
