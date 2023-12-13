@@ -73,8 +73,7 @@ class QaController extends Controller
                     break;
                 case 'most-liked':
                     $query->withCount('likes')
-                        ->orderByDesc('likes_count')
-                        ->get();;
+                        ->orderByDesc('likes_count');
                     break;
                 case 'un-answered':
                     $query->whereDoesntHave('comments', function ($subquery) {
@@ -94,7 +93,7 @@ class QaController extends Controller
                 default:
                     return response()->json(['error' => 'Không tìm thấy trang'], 404);
             }
-            $qas = $query->paginate(4);
+            $qas = $query->paginate(6);
             $result = [];
 
             foreach ($qas as $qa) {
@@ -276,34 +275,32 @@ class QaController extends Controller
 
     public function detailQandA(Qa $qa)
     {
-        $qa->major;
+        $qa->load(['major', 'likes', 'user']);
+
         $qaLikes = $qa->likes;
-        $user = Auth::user(); // Lấy thông tin người dùng đăng nhập
-        $userLike = $qaLikes->where('user_id', $user->id)->first();
+        $user = Auth::user(); // Get logged in user information
+        $userLike = $qaLikes->firstWhere('user_id', $user->id);
+
         if ($qaLikes->isEmpty()) {
             $emotions = [];
         } else {
             $emotions = $qaLikes->pluck('emotion')->unique();
         }
+
         $countsByEmotion = [];
         foreach ($emotions as $emotion) {
             $countsByEmotion[$emotion] = $qaLikes->where('emotion', $emotion)->count();
         }
-        $qa->user;
-        // $emotions = $likers->pluck('emotion')->unique();
-        $comments = Comment::where('qa_id', $qa->id)->where('parent_id', null)->get();
-        $totalComments = 0;
-        foreach ($comments as $comment) {
-            $comment->user;
-            $comment->replies;
 
-            $totalComments++; // Tính bình luận gốc
-            $totalComments += count($comment->replies); // Tính số lượng câu trả lời
+        $comments = Comment::with(['user', 'replies.user'])
+            ->where('qa_id', $qa->id)
+            ->where('parent_id', null)
+            ->get();
 
-            foreach ($comment->replies as $reply) {
-                $reply->user;
-            }
-        }
+        $totalComments = $comments->count() + $comments->sum(function ($comment) {
+            return $comment->replies->count();
+        });
+
         return response()->json(
             [
                 'qa' => $qa,

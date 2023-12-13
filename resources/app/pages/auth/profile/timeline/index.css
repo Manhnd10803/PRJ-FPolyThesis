@@ -24,6 +24,13 @@
   overflow-y: auto; /* Cho phép cuộn khi nội dung vượt quá kích thước */
 }
 
+.scroller-my-blog {
+  transition: all 0.5s ease-in-out;
+  /* Thiết lập chiều cao cố định và cho phép cuộn */
+  max-height: calc(100vh - 330px); /* Chiều cao cố định với 80px trừ đi từ chiều cao cửa sổ */
+  overflow-y: auto; /* Cho phép cuộn khi nội dung vượt quá kích thước */
+  overflow-x: hidden;
+}
 /* .scroller-profile {
   max-height: calc(100vh - 140px); 
   overflow-y: auto; 

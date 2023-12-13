@@ -184,11 +184,11 @@ class ProfileController extends Controller
                         // Xử lý logic cho trường hợp 'blog' dựa trên trạng thái (pending , approved , reject)
                         $statusValue = $statuses[$status];
                         $query = Blog::where('user_id', $loggedInUser->id)->where('status', $statusValue)->orderBy('created_at', 'DESC');
-                        $blogs = $query->paginate(10);
-                        if ($blogs->isEmpty()) {
+                        if (!$query->exists()) {
                             $message = "Không có blog với trạng thái $status";
                             return response()->json(['data' => [], 'message' => $message], 200);
                         }
+                        $blogs = $query->get();
                         $blogData = [
                             'blog' => $blogs,
                         ];
@@ -197,9 +197,8 @@ class ProfileController extends Controller
                         return response()->json(['error' => 'Trạng thái không hợp lệ'], 400);
                     }
                     break;
-                    // Load qa
                 case 'qa':
-                    $qas = Qa::where('user_id', $loggedInUser->id)->orderBy('created_at', 'DESC')->paginate(10);
+                    $qas = Qa::where('user_id', $loggedInUser->id)->orderBy('created_at', 'DESC')->get();
                     if ($qas->isEmpty()) {
                         return response()->json(['data' => [], 'message' => 'Không có bài viết'], 200);
                     }

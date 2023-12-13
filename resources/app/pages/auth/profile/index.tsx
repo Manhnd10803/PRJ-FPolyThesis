@@ -110,7 +110,7 @@ export const ProfilePage = () => {
                     />
                   </Tab.Pane>
                   <Tab.Pane eventKey="second">
-                    {type === 'blog' && <MyBlog listBlog={detailProfile?.data[0]?.blog?.data} isLoading={isLoading} />}
+                    {type === 'blog' && <MyBlog listBlog={detailProfile?.data[0]?.blog} isLoading={isLoading} />}
                   </Tab.Pane>
                   <Tab.Pane eventKey="third">
                     <FriendsMyUserPage isUser={isUser} typeURL={type} />
@@ -118,7 +118,7 @@ export const ProfilePage = () => {
                   <Tab.Pane eventKey="forth">
                     {(type === 'qa' || type === 'commentedQuestions') && (
                       <MyListQa
-                        listQa={type === 'qa' ? detailProfile?.data[0]?.qa?.data : detailProfile?.data[0]?.qa?.data}
+                        listQa={type === 'qa' ? detailProfile?.data[0]?.qa : detailProfile?.data[0]?.qa?.data}
                         isLoading={isLoading}
                       />
                     )}
