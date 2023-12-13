@@ -83,7 +83,7 @@ httpRequest.interceptors.response.use(
           });
       }
     }
-    const navigate = useNavigate();
+
     switch (error.response?.status) {
       case 400: {
         return Promise.reject(error.response.data);
@@ -100,7 +100,7 @@ httpRequest.interceptors.response.use(
         return;
       }
       case 404: {
-        navigate('/error-404');
+        window.location.replace('/404');
         return Promise.reject(error.response.data);
       }
       case 500: {

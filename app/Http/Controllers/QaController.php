@@ -61,17 +61,23 @@ class QaController extends Controller
     {
         DB::beginTransaction();
         try {
-            $query = Qa::query();
+            $query = Qa::with(['user:id,username,first_name,last_name,avatar,major_id,score', 'major:id,majors_name', 'likes' => function ($query) {
+                $query->selectRaw('count(*) as total, emotion')
+                    ->groupBy('emotion');
+            }, 'comments'])
+                ->withCount('comments');
+
             switch ($soft) {
                 case 'all-question':
                     $query->latest();
                     break;
                 case 'most-liked':
-                    $query->withCount('likes')->orderBy('likes_count', 'desc')->latest();
+                    $query->withCount('likes')
+                        ->orderByDesc('likes_count')
+                        ->get();;
                     break;
                 case 'un-answered':
                     $query->whereDoesntHave('comments', function ($subquery) {
-                        // lấy ra các bài viết user chưa comment
                         $subquery->where('user_id', Auth::id());
                     })->latest();
                     break;
@@ -88,17 +94,12 @@ class QaController extends Controller
                 default:
                     return response()->json(['error' => 'Không tìm thấy trang'], 404);
             }
-            $qas = $query->paginate(5);
+            $qas = $query->paginate(4);
             $result = [];
 
             foreach ($qas as $qa) {
-                //load thông tin user đăng bài và major(ngành) của bài đăng
-                $qa->load(['user:id,username,first_name,last_name,avatar,major_id,score', 'major:id,majors_name']);
-                $likeCountsByEmotion = [
-                    'like' => $qa->likes()->where('emotion', 'like')->count(),
-                    'dislike' => $qa->likes()->where('emotion', 'dislike')->count(),
-                ];
-                $totalComment = Comment::where('qa_id', $qa->id)->count();
+                $likeCountsByEmotion = $qa->likes->groupBy('emotion')->map->count();
+                $totalComment = $qa->comments_count;
 
                 $qaData = [
                     'qa' => $qa,

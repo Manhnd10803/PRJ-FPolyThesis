@@ -35,7 +35,7 @@ export const QandAItem = ({ item, key }: QandAItemProps) => {
                 <div className="ms-auto d-flex align-items-center">
                   <i className="material-symbols-outlined md-16"> thumb_up </i>
                   <span className="mx-1">
-                    <small>{item?.like_counts_by_emotion.like}</small>
+                    <small>{item?.like_counts_by_emotion.like || item?.qa?.likes_count}</small>
                   </span>
                 </div>
                 <div className="ms-auto d-flex align-items-center">
