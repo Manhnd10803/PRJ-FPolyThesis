@@ -13,8 +13,9 @@ class AdminReportController extends Controller
         $this->middleware('authAdmin');
     }
 
-    protected function applySearchFilters($query, Request $request, $includeStatusFilter = true)
+    public function search(Request $request)
     {
+        $request->flash();
         $reporterName = $request->input('reporter_name');
         $reportedName = $request->input('reported_name');
         $title = $request->input('title');
@@ -24,13 +25,15 @@ class AdminReportController extends Controller
         $reportType = $request->input('report_type');
         $status = $request->input('status');
 
+        $query = Report::with('reporter:id,first_name,last_name', 'reported:id,first_name,last_name');
+
         if ($reporterName) {
             $nameParts = explode(' ', $reporterName);
             $query->whereHas('reporter', function ($q) use ($nameParts) {
                 $q->where(function ($query) use ($nameParts) {
                     foreach ($nameParts as $part) {
                         $query->where('first_name', 'LIKE', "%$part%")
-                            ->orWhere('last_name', 'LIKE', "%$part%");
+                              ->orWhere('last_name', 'LIKE', "%$part%");
                     }
                 });
             });
@@ -42,7 +45,7 @@ class AdminReportController extends Controller
                 $q->where(function ($query) use ($nameParts) {
                     foreach ($nameParts as $part) {
                         $query->where('first_name', 'LIKE', "%$part%")
-                            ->orWhere('last_name', 'LIKE', "%$part%");
+                              ->orWhere('last_name', 'LIKE', "%$part%");
                     }
                 });
             });
@@ -68,52 +71,31 @@ class AdminReportController extends Controller
             $query->where('report_type', $reportType);
         }
 
-        if ($includeStatusFilter && $status !== null) {
-            if ($status !== config('default.report.status.pending')) {
-                $query->where('report_status', $status);
-            }
-        } elseif ($includeStatusFilter) {
-            $query->whereIn('report_status', [
-                config('default.report.status.resolved'),
-                config('default.report.status.dismissed')
-            ]);
+        if ($status) {
+            $query->where('report_status', $status);
         }
-    }
-    public function search(Request $request)
-    {
-        $request->flash();
-
-        $query = Report::query();
-        $this->applySearchFilters($query, $request);
 
         $reports = $query->get();
-
         return view('admin.report.index', compact('reports'));
     }
 
     public function index()
     {
         $query = Report::with('reporter:id,first_name,last_name', 'reported:id,first_name,last_name');
-        $this->applySearchFilters($query, request());
 
-        // Bổ sung điều kiện lọc chỉ lấy dữ liệu của index (loại bỏ trạng thái pending).
         $reports = $query->whereIn('report_status', [
             config('default.report.status.resolved'),
             config('default.report.status.dismissed')
         ])->get();
+
         return view('admin.report.index', compact('reports'));
     }
     public function pending()
     {
-
         $query = Report::with('reporter:id,first_name,last_name', 'reported:id,first_name,last_name')
-            ->where('report_status', config('default.report.status.pending'));
+        ->where('report_status', config('default.report.status.pending'));
 
-        // Bổ sung điều kiện lọc chỉ lấy dữ liệu của pending.
-        $this->applySearchFilters($query, request(), false);
-
-        $reports = $query->orderBy('created_at', 'desc')->get();
-
+        $reports = $query->get();
         return view('admin.report.index', compact('reports'));
     }
     public function show(Report $report)
@@ -125,13 +107,13 @@ class AdminReportController extends Controller
     {
         $report->update(['report_status' => config('default.report.status.resolved')]);
         return redirect()->route('admin.report.show', ['report' => $report->id])
-            ->with('redirect', route('admin.report.pending'));
+            ->with('redirect', route('admin.report.index'));
     }
     public function DismissedReport(Report $report)
     {
         $report->update(['report_status' => config('default.report.status.dismissed')]);
         return redirect()->route('admin.report.show', ['report' => $report->id])
-            ->with('redirect', route('admin.report.pending'));
+            ->with('redirect', route('admin.report.index'));
     }
     public function CountPendingReports()
     {

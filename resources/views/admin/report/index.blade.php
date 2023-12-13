@@ -70,18 +70,20 @@
                                 <label for="report_type">Loại tố cáo</label>
                                 <select name="report_type" class="form-control">
                                     <option value="">Tất cả</option>
-                                    <option value="blog" {{ old('report_type') == 'blog' ? 'selected' : '' }}>Blog</option>
-                                    <option value="post" {{ old('report_type') == 'post' ? 'selected' : '' }}>Post</option>
-                                    <option value="user" {{ old('report_type') == 'user' ? 'selected' : '' }}>User</option>
-                                    <option value="qa" {{ old('report_type') == 'qa' ? 'selected' : '' }}>QA</option>
+                                    <option value="blog" {{ old('report_type') == 'blog' ? 'selected' : '' }}>Bài viết</option>
+                                    <option value="post" {{ old('report_type') == 'qa' ? 'selected' : '' }}>Câu hỏi</option>
+                                    <option value="user" {{ old('report_type') == 'user' ? 'selected' : '' }}>Người dùng</option>
+                                    <option value="qa" {{ old('report_type') == 'comment' ? 'selected' : '' }}>Bình luận</option>
+                                    <option value="qa" {{ old('report_type') == 'post' ? 'selected' : '' }}>Bài đăng bản tin</option>
                                 </select>
                             </div>
                             <div class="col-xs-2">
                                 <label for="status">Trạng thái</label>
                                 <select name="status" class="form-control">
                                     <option value="">Tất cả</option>
-                                    <option value="{{ config('default.report.status.resolved') }}" {{ old('status') == config('default.report.status.resolved') ? 'selected' : '' }}>Resolved</option>
-                                    <option value="{{ config('default.report.status.dismissed') }}" {{ old('status') == config('default.report.status.dismissed') ? 'selected' : '' }}>Dismissed</option>
+                                    <option value="{{ config('default.report.status.resolved') }}" {{ old('status') == config('default.report.status.resolved') ? 'selected' : '' }}>Đã duyệt</option>
+                                    <option value="{{ config('default.report.status.dismissed') }}" {{ old('status') == config('default.report.status.dismissed') ? 'selected' : '' }}>Đã hủy</option>
+                                    <option value="{{ config('default.report.status.pending') }}" {{ old('status') == config('default.report.status.pending') ? 'selected' : '' }}>Đang chờ duyệt</option>
                                 </select>
                             </div>                            
                         </div>
