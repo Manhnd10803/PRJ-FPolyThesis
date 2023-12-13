@@ -44,8 +44,7 @@ export const DetailQandAPage = () => {
   const user_id = StorageFunc.getUserId();
   const [qAndAData, setQandAData] = useState(null);
 
-  const [likeStatus, setLikeStatus] = useState(qAndAData?.user_like?.emotion || null);
-
+  const [likeStatus, setLikeStatus] = useState(null);
   // Create CMT
   const createCommentMutation = useMutation(CommentService.createCommentQA, {
     onSettled: () => {
@@ -351,6 +350,7 @@ export const DetailQandAPage = () => {
                             <ButtonGroup aria-label="Basic example">
                               <Button
                                 className="d-flex align-items-center gap-2 "
+                                style={{ backgroundColor: qAndAData?.user_like?.emotion === 'like' ? '#b2b5b8' : '' }}
                                 variant="light"
                                 onClick={handleLikeClick}
                               >

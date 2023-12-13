@@ -62,7 +62,9 @@ export const RightSidebar = () => {
                                     ? 'status-online'
                                     : itemfriend?.friend?.activity_user === 'Đang bận'
                                       ? 'status-away'
-                                      : 'status-offline'
+                                      : itemfriend?.friend?.activity_user === 'Ẩn'
+                                        ? 'status-invisible'
+                                        : 'status-offline'
                                 } `}
                               >
                                 <Image

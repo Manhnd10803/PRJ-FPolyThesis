@@ -24,7 +24,7 @@ export const About = ({ aboutUser, isLoading }) => {
           ) : (
             <ul className="list-inline p-0 m-0">
               <>
-                {bio && <li className="mb-2 d-flex align-items-center justify-content-center fw-bold">{bio}</li>}
+                {bio && <li className="mb-2 fw-bold">{bio}</li>}
                 <li className="mb-2 d-flex align-items-center">
                   <span className="material-symbols-outlined md-18">person</span>
                   <span className="mb-0 d-flex align-items-center ms-2">{major}</span>

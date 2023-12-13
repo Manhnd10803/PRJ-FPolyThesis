@@ -22,10 +22,11 @@ class ProfileController extends Controller
     {
         DB::beginTransaction();
         try {
-            $user = Auth::user();
-            $countposts = $user->posts->count();
-            $countblogs  = $user->blogs->count();
-            $countfriends = $user->friends->count();
+            $user = User::withCount(['posts', 'blogs', 'friends'])->find($user->id);
+
+            $countposts = $user->posts_count;
+            $countblogs = $user->blogs_count;
+            $countfriends = $user->friends_count;
             $major = $user->major;
             $profileData = [
                 'user' => [
@@ -36,7 +37,8 @@ class ProfileController extends Controller
                     'major' => $major->majors_name,
                     'cover_photo' => $user->cover_photo,
                     'birthday' => $user->birthday,
-                    'bio' => $user->biography
+                    'bio' => $user->biography,
+                    'score' => $user->score,
                 ],
                 'total_post' => $countposts,
                 'total_blog' => $countblogs,

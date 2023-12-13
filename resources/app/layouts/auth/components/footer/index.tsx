@@ -1,3 +1,4 @@
+import { pathName } from '@/routes/path-name';
 import { Col, Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
@@ -26,10 +27,10 @@ export const Footer = () => {
             <Col lg="6">
               <ul className="list-inline mb-0">
                 <li className="list-inline-item">
-                  <Link to="/dashboard/extrapages/privacy-policy">Chính sách bảo mật</Link>
+                  <Link to={pathName.PRIVACY_SECURITY}>Chính sách bảo mật</Link>
                 </li>{' '}
                 <li className="list-inline-item">
-                  <Link to="/dashboard/extrapages/terms-of-service">Điều khoản sử dụng</Link>
+                  <Link to={pathName.PRIVACY_SECURITY}>Điều khoản sử dụng</Link>
                 </li>
               </ul>
             </Col>

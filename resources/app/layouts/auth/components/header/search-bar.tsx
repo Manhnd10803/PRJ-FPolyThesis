@@ -240,7 +240,7 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
 
               {debouncedValue.trim() && !loading && !(data?.blog?.length || data?.qa?.length || data?.user?.length) && (
                 <div className="mt-2">
-                  <p className="text-center">No results found for any category.</p>
+                  <p className="text-center">Không tìm thấy dữ liệu.</p>
                 </div>
               )}
             </Modal.Body>

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import React, { useEffect, useRef, useState } from 'react';
 import { FriendService } from '@/apis/services/friend.service';
-import { Button, Card, Col, Dropdown, ListGroup, Modal } from 'react-bootstrap';
+import { Button, Card, Col, Dropdown, ListGroup, Modal, OverlayTrigger } from 'react-bootstrap';
 import backgroundImage from '../../../../assets/images/profile-bg1.jpg';
 import { CloudiaryService } from '@/apis/services/cloudinary.service';
 import { ProfileService } from '@/apis/services/profile.service';
@@ -15,8 +15,8 @@ import { CustomModal } from '@/utilities/funcReport/modalCustomReport';
 import { ReportService } from '@/apis/services/report.service';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { ResizeImage, UploadImage } from './component';
-import { Skeleton } from '@mui/material';
-const imageUrl = 'https://picsum.photos/20';
+import { Skeleton, Tooltip } from '@mui/material';
+import imageUrl from '../../../../assets/images/profile-default.jpg';
 
 type Props = {
   detailUser: IProfileUser;
@@ -376,6 +376,19 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
                         <li className="text-center ps-3">
                           <h6>Friends</h6>
                           <p className="mb-0">{total_friend}</p>
+                        </li>
+                        <li className="text-center ps-3 pt-1">
+                          <div>
+                            <OverlayTrigger placement="right" overlay={<Tooltip>Uy tín: {user?.score}</Tooltip>}>
+                              <div className="d-flex gap-1 align-items-center">
+                                <div>
+                                  <span style={{ fontSize: '45px' }} className="material-symbols-outlined text-primary">
+                                    rewarded_ads
+                                  </span>
+                                </div>
+                              </div>
+                            </OverlayTrigger>
+                          </div>
                         </li>
                       </ul>
                     </>

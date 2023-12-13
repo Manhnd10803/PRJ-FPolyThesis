@@ -457,6 +457,12 @@ ul.request-list {
 	}
 }
 
+.iq-profile-avatar.status-invisible {
+	&:before {
+		background-color: $light;
+	}
+}
+
 .cover-container{
 	position: relative;
 }

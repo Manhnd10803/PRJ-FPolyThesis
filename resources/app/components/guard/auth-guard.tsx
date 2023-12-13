@@ -10,8 +10,6 @@ import { RealtimeMessage } from './realtime-message';
 import { PrepareData } from './prepare-data';
 import { RealtimeActivityUser } from './realtime-activity-user';
 import { UserService } from '@/apis/services/user.service';
-import { set } from 'lodash';
-import { StorageFunc } from '@/utilities/local-storage/storage-func';
 type AuthGuardProps = {
   children?: React.ReactNode;
 };

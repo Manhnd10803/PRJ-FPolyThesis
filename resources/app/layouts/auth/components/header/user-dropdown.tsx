@@ -1,4 +1,5 @@
 import { AuthService } from '@/apis/services/auth.service';
+import { UserService } from '@/apis/services/user.service';
 import { CustomToggle } from '@/components/custom';
 import { IUser } from '@/models/user';
 import { authActions } from '@/redux/slice';
@@ -101,8 +102,12 @@ export const UserDropdown = () => {
     ];
   }, []);
 
-  const handleChangeActivity = (item: (typeof listActivity)[0]) => {
-    console.log('change activity', item);
+  const handleChangeActivity = async (item: (typeof listActivity)[0]) => {
+    const data = {
+      activity_user: item.title,
+    };
+    await UserService.changeActivityUser(data);
+    toast.success(`Đã đổi trạng thái thành ${item.title}`);
   };
 
   //render

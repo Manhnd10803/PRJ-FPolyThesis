@@ -68,6 +68,13 @@ class AdminBlogController extends Controller
                 'objet_id' => $blog->id,
             ]);
             $avatar_sender = Auth::user()->avatar;
+            $score = config('default.user.score.reject_blog');
+            $user_id = $blog->user->id;
+            $user = User::find($user_id);
+            if ($user) {
+                $user->score += $score;
+                $user->save();
+            }
             broadcast(new ReceiveNotification($notification, $avatar_sender))->toOthers();
             DB::commit();
             return redirect()->route('admin.blogs.approve')
@@ -140,13 +147,13 @@ class AdminBlogController extends Controller
     }
     public function destroy(Blog $blog)
     {
-        // $score = config('default.user.score.reject_blog');
-        // $user_id = $blog->user->id;
-        // $user = User::find($user_id);
-        // if ($user) {
-        //     $user->score += $score;
-        //     $user->save();
-        // }
+        $score = config('default.user.score.reject_blog');
+        $user_id = $blog->user->id;
+        $user = User::find($user_id);
+        if ($user) {
+            $user->score += $score;
+            $user->save();
+        }
         $blog->delete();
         return redirect()->route('admin.blogs.index')
             ->with('success', 'Xóa blog thành công. ');
