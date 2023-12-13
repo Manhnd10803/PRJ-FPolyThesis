@@ -162,7 +162,7 @@ class PostsController extends Controller
         }
         $totalComment = Comment::where('post_id', $post->id)->count();
         // $comment = Comment::where('post_id', $post->id)->get();
-        $comment = Comment::with('user:id,username,first_name,last_name,avatar')->where('post_id', $post->id)->get();
+        $comment = Comment::with('user:id,username,first_name,last_name,avatar')->where('post_id', $post->id)->latest()->get();
         $postdata  = [
             'post' => $detailPost,
             'like_counts_by_emotion' => $likeCountsByEmotion['total_likes'],
@@ -212,7 +212,7 @@ class PostsController extends Controller
                 }
                 // Tổng số bình luận + 3 bình luận demo
                 $totalComment = Comment::where('post_id', $post->id)->count();
-                $commentDemos = Comment::where('post_id', $post->id)->where('parent_id', null)->limit(3)->get();
+                $commentDemos = Comment::where('post_id', $post->id)->where('parent_id', null)->limit(3)->latest()->get();
                 foreach ($commentDemos as $commentDemo) {
                     $commentDemo->user;
                     //số lượng reply

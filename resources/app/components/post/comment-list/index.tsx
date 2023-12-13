@@ -16,7 +16,7 @@ export const CommentList = ({ comments }: CommentListProps) => {
       {comments.map(comment => (
         <li className="mb-2" key={comment.id}>
           <div className="d-flex">
-            <div className="user-img">
+            <div className="user-img col-1">
               <img
                 src={comment?.user.avatar}
                 alt="user1"
@@ -24,14 +24,18 @@ export const CommentList = ({ comments }: CommentListProps) => {
                 loading="lazy"
               />
             </div>
-            <div className="comment-data-block ms-3">
-              <h6>{formatFullName(comment?.user)}</h6>
-              <p className="mb-0">{comment?.content}</p>
+            <div className="comment-data-block " style={{ width: '59vh' }}>
+              <strong>{formatFullName(comment?.user)}</strong>
+              <p className="mb-2">{comment?.content}</p>
               <div className="d-flex flex-wrap align-items-center comment-activity">
                 {/* =========== More actions =========== */}
-                <Link to="#">Thích</Link>
-                <Link to="#">Trả lời</Link>
-                <span> {momentVi(comment.created_at).fromNow()} </span>
+                <span style={{ marginRight: '10px' }}> {momentVi(comment.created_at).fromNow()} </span>
+                <strong style={{ marginRight: '10px' }}>
+                  <Link to="#">Thích</Link>
+                </strong>
+                <strong style={{ marginRight: '10px' }}>
+                  <Link to="#">Trả lời</Link>
+                </strong>
               </div>
             </div>
           </div>

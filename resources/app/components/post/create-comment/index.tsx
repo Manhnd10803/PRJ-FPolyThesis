@@ -37,8 +37,13 @@ export const CreateComment = ({ postId }: CreateCommentProps) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="comment-text d-flex align-items-center mt-3 relative">
-      <input {...register('content')} type="text" className="form-control rounded" placeholder="Nhập bình luận..." />
-
+      <input
+        {...register('content')}
+        type="text"
+        className="form-control rounded"
+        placeholder="Nhập bình luận..."
+        style={{ padding: '10px' }}
+      />
       <div className="comment-attagement d-flex align-items-center">
         <Link to="#" style={{ lineHeight: 1 }} className="me-3">
           <span className="material-symbols-outlined">sentiment_satisfied</span>
