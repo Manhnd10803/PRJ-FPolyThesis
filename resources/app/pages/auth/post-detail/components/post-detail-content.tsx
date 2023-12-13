@@ -23,7 +23,7 @@ export const PostDetailContent = () => {
   // render
   return (
     <Card className="card-block card-stretch card-height mt-3">
-      <Card.Body>
+      <Card.Body style={{ height: '77vh', overflowY: 'scroll' }}>
         <Header />
         <Content />
 
@@ -42,10 +42,14 @@ export const PostDetailContent = () => {
             <ShareOffCanvas />
           </div>
           <hr />
-          <CommentList comments={comments} />
-          <CreateComment postId={post.id} />
+          <div>
+            <CommentList comments={comments} />
+          </div>
         </div>
       </Card.Body>
+      <div className="" style={{ marginBottom: '15px' }}>
+        <CreateComment postId={post.id} />
+      </div>
     </Card>
   );
 };
