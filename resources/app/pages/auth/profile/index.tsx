@@ -1,17 +1,15 @@
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import Navbar from './components/navbar';
 import { Header } from './components/header';
 import { Timeline } from './timeline';
-import { Row, Col, Container, Nav, Tab, OverlayTrigger, Tooltip, Card } from 'react-bootstrap';
-import { useEffect, useState } from 'react';
+import { Row, Col, Container, Tab } from 'react-bootstrap';
 import { MyBlog } from './my-blog';
 import { ProfileService } from '@/apis/services/profile.service';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { MyListQa } from './question-and-answer';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { FriendsMyUserPage } from './friends';
-// images
-const imageUrl = 'https://picsum.photos/20';
+import { useState } from 'react';
 
 export const ProfilePage = () => {
   let { hash } = useLocation();

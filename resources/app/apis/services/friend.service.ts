@@ -9,8 +9,12 @@ const showAllFriendRequest = (quantity?: number) => {
   // Gửi yêu cầu HTTP mà không có quantity
   return httpRequest.get(ApiConstants.SHOW_FRIEND_REQUEST);
 };
-const showAllFriendMyUser = <T>(id: T) => {
-  return httpRequest.get(`${ApiConstants.SHOW_FRIEND_MY_USER}/${id}`);
+const showAllFriendMyUser = <T>(id: T, quantity?: T, page = 1) => {
+  if (quantity && page) {
+    return httpRequest.get(`${ApiConstants.SHOW_FRIEND_MY_USER}/${id}/${quantity}?page=${page}`);
+  } else {
+    return httpRequest.get(`${ApiConstants.SHOW_FRIEND_MY_USER}/${id}`);
+  }
 };
 const getSuggestFriends = () => {
   return httpRequest.get(ApiConstants.LIST_SUGGEST_FRIEND);

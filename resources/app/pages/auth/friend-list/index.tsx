@@ -1,47 +1,48 @@
-import { FriendService } from '@/apis/services/friend.service';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, Row, Col, Container, Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
-import { StorageFunc } from '@/utilities/local-storage/storage-func';
+import { useEffect, useState } from 'react';
 import { formatFullName } from '@/utilities/functions';
 import { ModalRequest } from '../friend-request/components/modal';
 import { pathName } from '@/routes/path-name';
-import { useSetListFriend } from '@/hooks/useFriendQuery';
+import { useFriendPaginate, useSetListFriend } from '@/hooks/useFriendQuery';
+import { FriendService } from '@/apis/services/friend.service';
+import { useMutation } from '@tanstack/react-query';
+import { useInView } from 'react-intersection-observer';
+import { CardLoad } from '@/utilities/funcLoadFriend/CardLoad';
 export const FriendListPage = () => {
   const [showDeleteFriendMap, setShowDeleteFriendMap] = useState({});
-  const queryClient = useQueryClient();
-  const { manuallySetListFriend } = useSetListFriend();
+  const [canceledFriendIds, setCanceledFriendIds] = useState<string[]>([]);
+  const { manuallySetListFriend, manuallySetListFriendPaginate } = useSetListFriend();
+  const { ref: endRef, inView: endInView } = useInView();
 
-  const idUser = StorageFunc.getUserId();
+  const {
+    data: friendsMyUser,
+    fetchNextPage,
+    isFetching,
+    hasNextPage,
+    isLoading: isLoadingMyFriend,
+  } = useFriendPaginate();
 
-  const fetchAllFriendMyUser = async () => {
-    const { data } = await FriendService.showAllFriendMyUser(idUser);
-    return data;
-  };
-  const FriendsMyUserQueryKey = ['myfriend'];
+  useEffect(() => {
+    if (endInView && hasNextPage && !isFetching) {
+      fetchNextPage();
+    }
+  }, [endInView, isFetching, hasNextPage, fetchNextPage]);
+  const listFriend = friendsMyUser?.pages.flatMap(page => page.data);
 
-  const { data: friendsMyUser, isLoading: isLoadingMyFriend } = useQuery(FriendsMyUserQueryKey, {
-    queryFn: fetchAllFriendMyUser,
-  });
-
-  const unFriendMutation = useMutation(FriendService.unFriend, {
-    onSettled: () => {
-      queryClient.invalidateQueries(FriendsMyUserQueryKey); // Chỉnh sửa tên query nếu cần
-    },
-  });
-
+  const unFriendMutation = useMutation(FriendService.unFriend);
   const HandleUnFriend = async (id: any) => {
     try {
+      setCanceledFriendIds(prevIds => [...prevIds, id]);
+      setShowDeleteFriendMap(prevState => ({ ...prevState, [id]: false }));
       const response = await unFriendMutation.mutateAsync(id);
       manuallySetListFriend('delete', response.data);
-      setShowDeleteFriendMap(prevState => ({ ...prevState, [id]: false }));
-      return response;
+      manuallySetListFriendPaginate('delete', id);
     } catch (error) {
       throw error;
     }
   };
-  console.log(friendsMyUser);
+  console.log(listFriend);
   return (
     <>
       <div id="content-page" className="content-page">
@@ -57,74 +58,84 @@ export const FriendListPage = () => {
                 <Card.Body>
                   {isLoadingMyFriend ? (
                     <>
-                      <Spinner animation="border" variant="primary" role="status" size="sm">
-                        <span className="visually-hidden">Loading...</span>
-                      </Spinner>
+                      <CardLoad />
                     </>
                   ) : (
                     <Row>
-                      {friendsMyUser && friendsMyUser.length > 0 ? (
-                        <>
-                          {friendsMyUser.map((itemFriend: any) => {
-                            return (
-                              <Col key={itemFriend.id} sm={3}>
-                                <Card className="mb-3">
+                      {listFriend && listFriend.length > 0 ? (
+                        listFriend.map((itemFriend: any) => {
+                          const isCanceled = canceledFriendIds.includes(itemFriend?.friend?.id);
+                          return (
+                            <Col key={itemFriend.id} sm={3}>
+                              <Card className="mb-3">
+                                <Link to={`${pathName.PROFILE}/${itemFriend?.friend?.id}`}>
+                                  <Card.Img
+                                    style={{
+                                      width: '100%',
+                                      aspectRatio: '4/3',
+                                      objectFit: 'cover',
+                                      objectPosition: 'center',
+                                    }}
+                                    className="img-fluid"
+                                    variant="top"
+                                    src={itemFriend.friend.avatar}
+                                    alt="ảnh đại diện"
+                                  />
+                                </Link>
+                                <Card.Body>
                                   <Link to={`${pathName.PROFILE}/${itemFriend?.friend?.id}`}>
-                                    <Card.Img
-                                      style={{
-                                        width: '100%',
-                                        aspectRatio: '4/3',
-                                        objectFit: 'cover',
-                                        objectPosition: 'center',
-                                      }}
-                                      className="img-fluid"
-                                      variant="top"
-                                      src={itemFriend.friend.avatar}
-                                      alt="ảnh đại diện"
-                                    />
+                                    {/* ... other card content ... */}
+                                    <Card.Title as="h5" className="card-title">
+                                      {formatFullName(itemFriend.friend)}
+                                    </Card.Title>
                                   </Link>
-                                  <Card.Body>
-                                    <Link to={`${pathName.PROFILE}/${itemFriend?.friend?.id}`}>
-                                      <Card.Title as="h5" className="card-title">
-                                        {formatFullName(itemFriend.friend)}
-                                      </Card.Title>
-                                    </Link>
-                                    <Card.Text className="card-text">@{itemFriend.friend.username}</Card.Text>
-                                    <div className="d-flex flex-column gap-2 mt-2 mt-md-0">
-                                      <Link
-                                        to="#"
-                                        onClick={() =>
-                                          setShowDeleteFriendMap(prevState => ({
-                                            ...prevState,
-                                            [itemFriend?.friend?.id]: true,
-                                          }))
-                                        }
-                                        className="btn btn-primary rounded confirm-btn"
-                                      >
-                                        Hủy bạn bè
-                                      </Link>
+                                  <Card.Text className="card-text">@{itemFriend.friend.username}</Card.Text>
+                                  <div className="d-flex flex-column gap-2 mt-2 mt-md-0">
+                                    {isCanceled ? (
+                                      <span className="btn btn-secondary rounded confirm-btn">Đã hủy</span>
+                                    ) : (
+                                      <>
+                                        <Link
+                                          to="#"
+                                          onClick={() =>
+                                            setShowDeleteFriendMap(prevState => ({
+                                              ...prevState,
+                                              [itemFriend?.friend?.id]: true,
+                                            }))
+                                          }
+                                          className="btn btn-primary rounded confirm-btn"
+                                        >
+                                          Hủy bạn bè
+                                        </Link>
 
-                                      <ModalRequest
-                                        show={showDeleteFriendMap[itemFriend?.friend?.id]}
-                                        onHide={() =>
-                                          setShowDeleteFriendMap(prevState => ({
-                                            ...prevState,
-                                            [itemFriend?.friend?.id]: false,
-                                          }))
-                                        }
-                                        onConfirm={() => HandleUnFriend(itemFriend?.friend?.id)}
-                                        title={`Bạn có chắc chắn muốn hủy kết bạn với ${itemFriend?.friend?.username}?`}
-                                      />
-                                    </div>
-                                  </Card.Body>
-                                </Card>
-                              </Col>
-                            );
-                          })}
-                        </>
+                                        <ModalRequest
+                                          show={showDeleteFriendMap[itemFriend?.friend?.id]}
+                                          onHide={() =>
+                                            setShowDeleteFriendMap(prevState => ({
+                                              ...prevState,
+                                              [itemFriend?.friend?.id]: false,
+                                            }))
+                                          }
+                                          onConfirm={() => HandleUnFriend(itemFriend?.friend?.id)}
+                                          title={`Bạn có chắc chắn muốn hủy kết bạn với ${itemFriend?.friend?.username}?`}
+                                        />
+                                      </>
+                                    )}
+                                  </div>
+                                </Card.Body>
+                              </Card>
+                            </Col>
+                          );
+                        })
                       ) : (
                         <Card.Body>Chưa có bạn bè</Card.Body>
                       )}
+                      {isFetching ? (
+                        <span>
+                          <CardLoad />
+                        </span>
+                      ) : null}
+                      <div ref={endRef}></div>
                     </Row>
                   )}
                 </Card.Body>

@@ -73,6 +73,7 @@ export const BlogPage = () => {
                     onChange={e => {
                       const newMajor = e.target.value;
                       handleMajorChange(newMajor);
+                      // Manually refetch the data with the updated major
                     }}
                   >
                     <option value="">Tất cả chuyên ngành</option>

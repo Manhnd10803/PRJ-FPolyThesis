@@ -1,5 +1,4 @@
-import { useRef, useState } from 'react';
-import { Card, Dropdown, Nav } from 'react-bootstrap';
+import { Card, Nav } from 'react-bootstrap';
 
 export const Navbar = ({ isUser }) => {
   return (

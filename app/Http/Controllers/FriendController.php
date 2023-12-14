@@ -267,24 +267,16 @@ class FriendController extends Controller
         $idLoginUser = Auth::id();
         $status = config('default.friend.status.accepted');
         if ($idLoginUser == $user->id) {
-            $friends = Friend::where('user_id_1', $idLoginUser)->where('status', $status)->with('friend')->get();
+            $friends = Friend::where('user_id_1', $idLoginUser)->where('status', $status)->with('friend');
         } else {
-            $friends = Friend::where('user_id_1', $user->id)->where('status', $status)->with('friend')->get();
+            $friends = Friend::where('user_id_1', $user->id)->where('status', $status)->with('friend');
         }
         if ($quantity != null) {
-            $currentPage = LengthAwarePaginator::resolveCurrentPage();
-            $perPage = $quantity;
-            $currentPageFriends = $friends->slice(($currentPage - 1) * $perPage, $perPage)->all();
-            $friendsPaginated = new LengthAwarePaginator(
-                $currentPageFriends,
-                count($friends),
-                $perPage,
-                $currentPage,
-                ['path' => LengthAwarePaginator::resolveCurrentPath()]
-            );
+            $friendsPaginated = $friends->paginate($quantity);
             return response()->json($friendsPaginated);
         }
-        return response()->json($friends);
+        $listFriend = $friends->get();
+        return response()->json($listFriend);
     }
 
     /**

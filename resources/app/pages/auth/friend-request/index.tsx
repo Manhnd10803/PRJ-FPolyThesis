@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import { formatFullName } from '@/utilities/functions';
 import { pathName } from '@/routes/path-name';
 import { useSetListFriend } from '@/hooks/useFriendQuery';
+import { Loading } from '@/components/shared/loading';
 interface FriendStates {
   [key: string]: string;
 }
@@ -93,9 +94,7 @@ export const FriendRequestPage = () => {
                 <Card.Body>
                   {isLoadingRequestFriend ? (
                     <>
-                      <Spinner animation="border" variant="primary" role="status" size="sm">
-                        <span className="visually-hidden">Loading...</span>
-                      </Spinner>
+                      <Loading size={100} textStyle={{ fontSize: '30px' }} textLoading="Đợi chút nè..." />
                     </>
                   ) : (
                     <Row>
@@ -168,9 +167,7 @@ export const FriendRequestPage = () => {
                 <Card.Body>
                   {isLoadingSuggestFriend ? (
                     <>
-                      <Spinner animation="border" variant="primary" role="status" size="sm">
-                        <span className="visually-hidden">Loading...</span>
-                      </Spinner>
+                      <Loading size={100} textStyle={{ fontSize: '30px' }} textLoading="Đợi chút nè..." />
                     </>
                   ) : (
                     <>
