@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { CustomToggle, ShareOffCanvas } from '@/components/custom';
+import { CustomToggle, ShareModal } from '@/components/custom';
 import { Card, Dropdown, OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 const imageUrl = 'https://picsum.photos/20';
@@ -121,7 +121,7 @@ export const PostItem = ({ data, index, aboutUser }) => {
                   </div>
                   <div className="total-comment-block">{data?.total_comments} comment</div>
                 </div>
-                <ShareOffCanvas />
+                <ShareModal />
               </div>
               <hr />
               <ul className="post-comments p-0 m-0">
