@@ -1,4 +1,4 @@
-import { ShareOffCanvas } from '@/components/custom';
+import { ShareModal } from '@/components/custom';
 import { ChosePostEmotion } from '@/components/post/choose-emotion';
 import { CommentList } from '@/components/post/comment-list';
 import { CreateComment } from '@/components/post/create-comment';
@@ -71,7 +71,7 @@ export const PostDetailContent = () => {
               <TotalComment totalComments={total_comments} comments={comments} />
             </div>
 
-            <ShareOffCanvas />
+            <ShareModal />
           </div>
           <hr />
           <div>

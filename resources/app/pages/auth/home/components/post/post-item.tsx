@@ -1,4 +1,4 @@
-import { ShareOffCanvas } from '@/components/custom';
+import { ShareModal } from '@/components/custom';
 import { GetNewPostResponseType } from '@/models/post';
 
 import { ChosePostEmotion } from '@/components/post/choose-emotion';
@@ -17,6 +17,7 @@ import { PostItemContextProvider } from '../../contexts';
 import { Content } from './content';
 import { Header } from './header';
 import { ImageGrid } from './image-grid';
+import { Link } from 'react-router-dom';
 
 type PostItemProps = {
   item: GetNewPostResponseType;
@@ -69,26 +70,45 @@ export const PostItem = ({ item }: PostItemProps) => {
             <Content />
 
             <ImageGrid />
-
+            {/* Render top 3 emotion ,total emotion and total comment */}
+            <hr />
+            <div className="d-flex justify-content-between align-items-center flex-wrap">
+              <div className="d-flex align-items-center">
+                <ChosePostEmotion
+                  onChange={handleChangeEmotion}
+                  defaultValue={emotionSelected}
+                  top3Emotion={top3Emotion}
+                />
+                <TotalLike
+                  totalLike={(like_counts_by_emotion && like_counts_by_emotion?.total_likes) || 0}
+                  likers={likers as ILiker[]}
+                />
+              </div>
+              <div>
+                <TotalComment totalComments={total_comments} comments={comments} />
+              </div>
+            </div>
+            <hr />
+            {/* Action  */}
             <div className="comment-area mt-3">
               <div className="d-flex justify-content-between align-items-center flex-wrap">
-                <div className="like-block position-relative d-flex align-items-center">
-                  <div className="d-flex align-items-center">
-                    <ChosePostEmotion
-                      onChange={handleChangeEmotion}
-                      defaultValue={emotionSelected}
-                      top3Emotion={top3Emotion}
-                    />
-
-                    <TotalLike
-                      totalLike={(like_counts_by_emotion && like_counts_by_emotion?.total_likes) || 0}
-                      likers={likers as ILiker[]}
-                    />
-                  </div>
-
-                  <TotalComment totalComments={total_comments} comments={comments} />
+                <div className="d-flex align-items-center feather-icon mt-2 mt-md-0">
+                  <Link to="#" className="d-flex align-items-center">
+                    <span className="material-symbols-outlined md-18">thumb_up</span>
+                    <span className="ms-1">
+                      <strong>Thích</strong>
+                    </span>
+                  </Link>
                 </div>
-                <ShareOffCanvas />
+                <div className="d-flex align-items-center feather-icon mt-2 mt-md-0">
+                  <Link to="#" className="d-flex align-items-center">
+                    <span className="material-symbols-outlined md-18">mode_comment</span>
+                    <span className="ms-1">
+                      <strong>Bình luận</strong>
+                    </span>
+                  </Link>
+                </div>
+                <ShareModal />
               </div>
               <hr />
 

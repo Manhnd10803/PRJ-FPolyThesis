@@ -2,6 +2,8 @@ import { formatFullName } from '@/utilities/functions';
 import { usePostItemContext } from '../../contexts';
 import { momentVi } from '@/utilities/functions/moment-locale';
 import { MoreActionDropdown } from '@/components/post/more-action';
+import { Link } from 'react-router-dom';
+import { pathName } from '@/routes/path-name';
 
 //======================== Component PostItemHeader ========================//
 export const Header = () => {
@@ -12,7 +14,9 @@ export const Header = () => {
     <div className="user-post-data">
       <div className="d-flex justify-content-between">
         <div className="me-3">
-          <img className="avatar-50 rounded-circle" src={post?.user?.avatar} alt="avatar" loading="lazy" />
+          <Link to={`${pathName.PROFILE}/${post?.user?.id}`}>
+            <img className="avatar-50 rounded-circle" src={post?.user?.avatar} alt="avatar" loading="lazy" />
+          </Link>
         </div>
         <div className="w-100">
           <div className="d-flex justify-content-between">
