@@ -1,35 +1,34 @@
 import { CustomToggle } from '@/components/custom';
-import { useAppSelector } from '@/redux/hook';
 import { Dropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useChatContext } from '../context';
-import { Loading } from '@/components/shared/loading';
+import { formatFullName } from '@/utilities/functions';
+import { useUserChatInfo } from '@/hooks/useChatQuery';
 
 export const HeaderChat = () => {
-  const { selectedUserInfo, isLoading } = useAppSelector(state => state.chat);
-
   const { onClickRemoveChat, chatId } = useChatContext();
 
-  if (isLoading) {
-    return <Loading size={30} textStyle={{ fontSize: '20px' }} />;
-  }
+  const { data: selectedUserInfo } = useUserChatInfo(Number(chatId));
+
+  const { user: currentUser } = selectedUserInfo || {};
+
   // render
   return (
     <>
-      {selectedUserInfo ? (
+      {currentUser ? (
         <div className="chat-head border-bottom border-2">
           <header className="d-flex justify-content-between align-items-center bg-white pt-3  ps-3 pe-3 pb-3">
-            <Link to={`/profile/${selectedUserInfo?.id}`} className="d-flex align-items-center">
+            <Link to={`/profile/${currentUser?.id}`} className="d-flex align-items-center">
               <div className="sidebar-toggle">
                 <i className="ri-menu-3-line"></i>
               </div>
               <div className="avatar chat-user-profile m-0 me-3">
-                <img loading="lazy" src={selectedUserInfo?.avatar} alt="avatar" className="avatar-50 " />
+                <img loading="lazy" src={currentUser?.avatar} alt="avatar" className="avatar-50 " />
                 <span className="avatar-status">
                   <i className="material-symbols-outlined text-success  md-14 filled">circle</i>
                 </span>
               </div>
-              <h5 className="mb-0">{selectedUserInfo?.username}</h5>
+              <h5 className="mb-0">{formatFullName(currentUser)}</h5>
             </Link>
             <div className="chat-header-icons d-flex">
               <Link

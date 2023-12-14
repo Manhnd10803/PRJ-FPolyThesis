@@ -1,7 +1,8 @@
 import receiveMessage from '@/assets/mp3/receive-message.mp3';
+import { useListPrivateChannel, useMutationPrivateChannel, useSetConversation } from '@/hooks/useChatQuery';
+import { realtimeChatActionType } from '@/models/messages';
 import { IUser } from '@/models/user';
-import { useAppDispatch, useAppSelector } from '@/redux/hook';
-import { chatActions } from '@/redux/slice';
+import { useAppSelector } from '@/redux/hook';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -11,8 +12,6 @@ const audioReceiveMessage = () => {
 };
 
 export const RealtimeMessage = () => {
-  const dispatch = useAppDispatch();
-
   const location = useLocation();
 
   const chatId = location.pathname.split('/')[2];
@@ -21,34 +20,43 @@ export const RealtimeMessage = () => {
 
   const localUserId = StorageFunc.getUserId();
 
-  const { listPrivateChannel } = useAppSelector(state => state.chat);
+  const { data: listPrivateChannel } = useListPrivateChannel();
+
+  const { manuallySetConversation } = useSetConversation();
+
+  const { manuallyAddPrivateChannel } = useMutationPrivateChannel();
 
   const handleStreamPrivateMessage = (event: any) => {
     try {
-      const { sender_id, action = 'send' } = event.message;
-
-      console.log('💬 Received message', event);
+      const { sender_id, action = 'send' }: { sender_id: number; action: realtimeChatActionType } = event.message;
 
       if (action === 'delete') {
-        return dispatch(chatActions.removeMessageFromConversation(event.message.id));
+        const data = {
+          data: event.message.id as number,
+          id: event.message.sender_id as number,
+        };
+        manuallySetConversation('delete', data);
+        return;
       }
-
       // check xem có phải người mới gửi tin nhắn không
-      const isNewSender = listPrivateChannel.findIndex((item: IUser) => +item.id === +sender_id) === -1;
+      const isNewSender =
+        listPrivateChannel && listPrivateChannel?.data?.findIndex(item => +item.id === +sender_id) === -1;
 
-      console.log('isNewSender ', isNewSender);
+      console.log('isNewSender', isNewSender);
 
-      if (isNewSender) {
-        // nếu là người mới gửi tin nhắn thì thêm vào listPrivateChannel
-        dispatch(chatActions.addPrivateChannel(event.message.sender));
+      if (isNewSender || !listPrivateChannel) {
+        manuallyAddPrivateChannel(event.message.sender as IUser);
+        return;
       }
-
-      audioReceiveMessage();
-
       const isChatting = Number(chatId) === Number(sender_id);
 
       if (isChatting) {
-        dispatch(chatActions.addMessageToConversation(event.message));
+        const data = {
+          data: event.message,
+          id: event.message.sender_id,
+        };
+        audioReceiveMessage();
+        manuallySetConversation('add', data);
       }
     } catch (error) {
       console.log('handlePrivateMessage', error);
@@ -58,6 +66,7 @@ export const RealtimeMessage = () => {
   useEffect(() => {
     if (!accessToken) return;
 
+    // hết hạn token thì set lại token
     window.Echo.connector.options.auth.headers['Authorization'] = `Bearer ${accessToken}`;
 
     window.Echo.private(`user.${localUserId}`).listen('.PrivateMessageSent', handleStreamPrivateMessage);
@@ -65,7 +74,7 @@ export const RealtimeMessage = () => {
     return () => {
       window.Echo.private(`user.${localUserId}`).stopListening('.PrivateMessageSent', handleStreamPrivateMessage);
     };
-  }, [accessToken, chatId, localUserId]);
+  }, [accessToken, chatId, localUserId, listPrivateChannel]);
 
-  return <div>{listPrivateChannel ? null : ''}</div>;
+  return null;
 };
