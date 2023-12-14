@@ -5,11 +5,12 @@ import { Timeline } from './timeline';
 import { Row, Col, Container, Tab } from 'react-bootstrap';
 import { MyBlog } from './my-blog';
 import { ProfileService } from '@/apis/services/profile.service';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 import { MyListQa } from './question-and-answer';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { FriendsMyUserPage } from './friends';
-import { useState } from 'react';
+import { useEffect } from 'react';
+import { useInView } from 'react-intersection-observer';
 
 export const ProfilePage = () => {
   let { hash } = useLocation();
@@ -56,21 +57,30 @@ export const ProfilePage = () => {
   const queryClient = useQueryClient();
   const { id } = useParams();
   const localUserId = StorageFunc.getUserId();
-  const isUser = id == undefined || id == localUserId ? true : false;
-  const idUser = id == undefined || id == localUserId ? localUserId : id;
+  const isUser = id == undefined || +id == localUserId ? true : false;
+  const idUser = id == undefined || +id == localUserId ? localUserId : id;
 
-  const getDetailProfile = async () => {
+  const getDetailProfile = async ({ pageParam = 1 }) => {
     const user_id = id || localUserId;
-    const { data } = await ProfileService.getDetailProfile(user_id, type, status);
+    const { data } = await ProfileService.getDetailProfile(user_id, type, status, pageParam);
     return data;
   };
 
-  const queryKey = ['profile', type, status, id];
-  const { data: detailProfile, isLoading } = useQuery(queryKey, getDetailProfile, {
-    onSuccess: () => {
-      queryClient.invalidateQueries([type, status]);
+  const queryKeyProfile = ['profile', type, status, id];
+
+  const { data, fetchNextPage, hasNextPage, isLoading, isFetching } = useInfiniteQuery({
+    queryKey: queryKeyProfile,
+    queryFn: getDetailProfile,
+    getNextPageParam: (lastPage, _) => {
+      console.log(lastPage);
+      if (lastPage.current_page === lastPage.last_page) {
+        return undefined;
+      }
+      return lastPage.current_page + 1;
     },
   });
+
+  const detailProfile = data?.pages.flatMap(page => page.datas);
 
   const getDetailUesrProfile = async () => {
     const user_id = id || localUserId;
@@ -81,6 +91,16 @@ export const ProfilePage = () => {
   const queryKeyUser = ['user', id];
   const { data: detailUserProfile, isLoading: isUserLoading } = useQuery(queryKeyUser, getDetailUesrProfile);
 
+  const { ref: endRef, inView: endInView } = useInView();
+  useEffect(() => {
+    if (endInView && hasNextPage && !isFetching) {
+      fetchNextPage();
+    }
+  }, [endInView, isFetching, hasNextPage, fetchNextPage]);
+  if (endInView) {
+    console.log('end');
+  }
+  console.log(detailProfile);
   return (
     <>
       <div id="content-page" className="content-page" style={{ overflow: 'visible' }}>
@@ -100,23 +120,41 @@ export const ProfilePage = () => {
                   <Tab.Pane eventKey="first">
                     <Timeline
                       about={detailUserProfile?.user}
-                      listImage={detailProfile?.detailTimeline?.images}
-                      listFriend={detailProfile?.detailTimeline?.friend_details}
+                      listImage={data?.detailTimeline?.images}
+                      listFriend={data?.detailTimeline?.friend_details}
                       isLoading={isLoading}
                       isUser={isUser}
                       idUser={idUser}
                     />
+                    <div ref={endRef}></div>
                   </Tab.Pane>
                   <Tab.Pane eventKey="second">
-                    {type === 'blog' && <MyBlog listBlog={detailProfile?.data[0]?.blog} isLoading={isLoading} />}
+                    {type === 'blog' && (
+                      <>
+                        <MyBlog
+                          endRef={endRef}
+                          endInView={endInView}
+                          isFetching={isFetching}
+                          hasNextPage={hasNextPage}
+                          fetchNextPage={fetchNextPage}
+                          listBlog={detailProfile}
+                          isLoading={isLoading}
+                        />
+                      </>
+                    )}
                   </Tab.Pane>
                   <Tab.Pane eventKey="third">
-                    <FriendsMyUserPage isUser={isUser} typeURL={type} />
+                    <FriendsMyUserPage isUser={isUser} />
                   </Tab.Pane>
                   <Tab.Pane eventKey="forth">
                     {(type === 'qa' || type === 'commentedQuestions') && (
                       <MyListQa
-                        listQa={type === 'qa' ? detailProfile?.data[0]?.qa : detailProfile?.data[0]?.qa?.data}
+                        listQa={detailProfile}
+                        endRef={endRef}
+                        endInView={endInView}
+                        isFetching={isFetching}
+                        hasNextPage={hasNextPage}
+                        fetchNextPage={fetchNextPage}
                         isLoading={isLoading}
                       />
                     )}

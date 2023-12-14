@@ -9,9 +9,22 @@ import { Skeleton } from '@mui/material';
 type MyQaProps = {
   listQa: any;
   isLoading: boolean;
+  isFetching: boolean;
+  hasNextPage: any;
+  fetchNextPage: any;
+  endRef: any;
+  endInView: any;
 };
 
-export const MyListQa = ({ listQa, isLoading }: MyQaProps) => {
+export const MyListQa = ({
+  listQa,
+  isLoading,
+  isFetching,
+  hasNextPage,
+  fetchNextPage,
+  endInView,
+  endRef,
+}: MyQaProps) => {
   const [searchQueries, setSearchQueries] = useState<any>({
     about1: '',
     about2: '',
@@ -85,6 +98,7 @@ export const MyListQa = ({ listQa, isLoading }: MyQaProps) => {
                     <hr />
                   </Row>
                 ))}
+                <div ref={endRef}></div>
               </>
             ) : (
               <h4>Không có data</h4>

@@ -17,48 +17,41 @@ class PrivateMessagesController extends Controller
     public function ShowListUserChat($quantity = null)
     {
         $user_id = Auth::id();
-        // Danh sách người gửi tin nhắn đến người dùng hiện tại
-        $sentMessages = PrivateMessage::where('sender_id', $user_id)
-            ->where(function ($query) use ($user_id) {
-                $query->whereNull('deleted_by')
-                    ->orWhereJsonDoesntContain('deleted_by', $user_id);
-            })
-            ->pluck('receiver_id');
-        // Danh sách người nhận tin nhắn từ người dùng hiện tại
-        $receivedMessages = PrivateMessage::where('receiver_id', $user_id)
-            ->where(function ($query) use ($user_id) {
-                $query->whereNull('deleted_by')
-                    ->orWhereJsonDoesntContain('deleted_by', $user_id);
-            })
-            ->pluck('sender_id');
-        $listUserIds = $sentMessages->merge($receivedMessages)->unique();
+
+        $listUserIds = PrivateMessage::where(function ($query) use ($user_id) {
+            $query->where('sender_id', $user_id)
+                ->orWhere('receiver_id', $user_id);
+        })
+        ->where(function ($query) use ($user_id) {
+            $query->whereNull('deleted_by')
+                ->orWhereJsonDoesntContain('deleted_by', $user_id);
+        })
+        ->pluck('sender_id', 'receiver_id')
+        ->map(function ($sender_id, $receiver_id) use ($user_id) {
+            return $sender_id == $user_id ? $receiver_id : $sender_id;
+        })
+        ->unique();
+
         $listUserChat = User::whereIn('id', $listUserIds)
             ->with(['major' => function ($query) {
-                $query->select('id', 'majors_name'); // Chọn các trường cần lấy từ bảng Major
+                $query->select('id', 'majors_name');
+            }])
+            ->withCount(['messages as unread_messages_count' => function ($query) use ($user_id) {
+                $query->where('sender_id', $user_id)
+                    ->where('status', '!=', config('default.private_messages.status.read'));
             }])
             ->when($quantity, function ($query) use ($quantity) {
                 return $query->paginate($quantity);
             }, function ($query) {
                 return $query->get();
-            })
-            ->map(function ($user) use ($user_id) {
-                $unreadMessagesCount = PrivateMessage::where('sender_id', $user->id)
-                    ->where('receiver_id', $user_id)
-                    ->where('status', '!=', config('default.private_messages.status.read'))
-                    ->count();
-
-                unset($user['major']); // Xóa trường major
-                return array_merge($user->toArray(), [
-                    'majors_name' => $user->major->majors_name,
-                    'unread_messages_count' => $unreadMessagesCount,
-                ]);
             });
+
         $totalunreadMessagesCount = PrivateMessage::where('receiver_id', $user_id)
             ->where('status', '!=', config('default.private_messages.status.read'))
             ->count();
+
         return response()->json(['data' => $listUserChat, 'total_mess_count' => $totalunreadMessagesCount]);
     }
-
 
 
     /**
@@ -109,20 +102,18 @@ class PrivateMessagesController extends Controller
         }
 
         $messages = PrivateMessage::where(function ($query) use ($user1Id, $user2Id) {
-            $query->where('sender_id', $user1Id)
-                ->where('receiver_id', $user2Id)
-                ->where(function ($query) use ($user1Id) {
-                    $query->whereNull('deleted_by')
-                        ->orWhereJsonDoesntContain('deleted_by', $user1Id);
-                });
-        })->orWhere(function ($query) use ($user1Id, $user2Id) {
-            $query->where('sender_id', $user2Id)
-                ->where('receiver_id', $user1Id)
-                ->where(function ($query) use ($user1Id) {
-                    $query->whereNull('deleted_by')
-                        ->orWhereJsonDoesntContain('deleted_by', $user1Id);
-                });
+            $query->where(function ($query) use ($user1Id, $user2Id) {
+                $query->where('sender_id', $user1Id)
+                    ->where('receiver_id', $user2Id);
+            })->orWhere(function ($query) use ($user1Id, $user2Id) {
+                $query->where('sender_id', $user2Id)
+                    ->where('receiver_id', $user1Id);
+            });
+        })->where(function ($query) use ($user1Id) {
+            $query->whereNull('deleted_by')
+                ->orWhereJsonDoesntContain('deleted_by', $user1Id);
         })->orderBy('created_at', 'desc')->with(['sender:id,avatar', 'receiver:id,avatar,username']);
+
         if ($quantity) {
             $messages = $messages->paginate($quantity);
         } else {

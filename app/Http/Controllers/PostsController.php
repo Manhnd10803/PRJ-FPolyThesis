@@ -176,27 +176,32 @@ class PostsController extends Controller
         try {
             // Lấy thông tin người đăng bài và thông tin bài viết nếu là bạn bè thì lấy status là 0 và 1.nếu không phải bạn bè lấy bài viết status =0
             $user = Auth::user();
-            $friends = $user->friends()->where('friends.status', config('default.friend.status.accepted'))->get();
-            $friendIds = $friends->pluck('id')->toArray();
-            $friendIds1 = $friends->pluck('id')->toArray();
-            $friendIds1[] = $user->id;
-            $memberIds = User::whereNotIn('id', $friendIds1)->pluck('id')->toArray();
-            $postWithUser = Post::where('user_id', $user->id)->whereIn('status', [0, 1, 2]);
-            $postWithFriend = Post::whereIn('user_id', $friendIds)->whereIn('status', [0, 1]);
-            $postWithNotFriend = Post::whereIn('user_id', $memberIds)->where('status', 0);
+            $friendIds = $user->friends()
+                ->where('friends.status', config('default.friend.status.accepted'))
+                ->pluck('friends.id') // specify the table name here
+                ->toArray();
+            $friendIds[] = $user->id;
+
+            $posts = Post::with(['user', 'likes.user', 'comments.user', 'comments.replies.user'])
+                ->whereIn('user_id', $friendIds)
+                ->whereIn('status', [0, 1, 2])
+                ->orWhere(function ($query) use ($friendIds) {
+                    $query->whereNotIn('user_id', $friendIds)
+                        ->where('status', 0);
+                });
+
             if ($quantity) {
-                $posts = $postWithFriend->union($postWithNotFriend)->union($postWithUser)->distinct()->latest()->paginate($quantity);
+                $posts = $posts->distinct()->latest()->paginate($quantity);
                 $last_page = $posts->lastPage();
                 $current_page = $posts->currentPage();
             } else {
-                $posts = $postWithFriend->union($postWithNotFriend)->union($postWithUser)->distinct()->latest()->get();
+                $posts = $posts->distinct()->latest()->get();
             }
+
             $result = [];
             foreach ($posts as $post) {
-                $user = $post->user;
                 $likeCountsByEmotion = [];
                 $likeCountsByEmotion['total_likes'] = $post->likes->count();
-                // Lấy danh sách người đã like bài viết và thông tin của họ
                 $likers = $post->likes->map(function ($like) {
                     return [
                         'user' => $like->user,
@@ -204,19 +209,16 @@ class PostsController extends Controller
                         'emotion' => $like->emotion,
                     ];
                 });
-                // Tính số lượt thích cho mỗi giá trị biểu cảm (emotion)
                 $emotions = $likers->pluck('emotion')->unique();
                 foreach ($emotions as $emotion) {
                     $likeCountsByEmotion[$emotion] = $likers->where('emotion', $emotion)->count();
                 }
-                // Tổng số bình luận + 3 bình luận demo
-                $totalComment = Comment::where('post_id', $post->id)->count();
-                $commentDemos = Comment::where('post_id', $post->id)->where('parent_id', null)->limit(3)->latest()->get();
+                $totalComment = $post->comments->count();
+                $commentDemos = $post->comments->where('parent_id', 0)->take(3);
                 foreach ($commentDemos as $commentDemo) {
-                    $commentDemo->user;
-                    //số lượng reply
-                    $commentDemo->reply = Comment::where('post_id', $post->id)->where('parent_id', $commentDemo->id)->count();
+                    $commentDemo->reply = $post->comments->where('parent_id', $commentDemo->id)->count();
                 }
+
                 // Tạo một mảng chứa thông tin về bài viết và các lượt thích, bình luận của nó
                 $postData = [
                     'post' => $post,

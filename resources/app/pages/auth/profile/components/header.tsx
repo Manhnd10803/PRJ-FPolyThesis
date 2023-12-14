@@ -22,8 +22,8 @@ type Props = {
   detailUser: IProfileUser;
   isLoading: boolean;
   isUser: boolean;
-  idUser: number;
-  queryKey: Array<string>;
+  idUser: any;
+  queryKey: any;
 };
 
 export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Props) => {
