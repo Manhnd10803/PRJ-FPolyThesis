@@ -83,10 +83,14 @@
                                     <option value="{{ config('default.report.status.resolved') }}" {{ old('status') == config('default.report.status.resolved') ? 'selected' : '' }}>Resolved</option>
                                     <option value="{{ config('default.report.status.dismissed') }}" {{ old('status') == config('default.report.status.dismissed') ? 'selected' : '' }}>Dismissed</option>
                                 </select>
-                            </div>                            
+                            </div> 
+                            <div class="col-xs-2">
+                                <br>
+                                <button type="submit" class="btn btn-primary pull-right form-control">Tìm kiếm</button>
+                            </div>
+                            
                         </div>
-                        <br>
-                        <button type="submit" class="btn btn-primary pull-right">Tìm kiếm</button>
+                        
                     </div>
                 </form>
             </div>
@@ -123,7 +127,21 @@
                                 <td style="text-align: left; vertical-align: middle;">{{ $stt }}</td>
                                 <td style="text-align: left; vertical-align: middle;">{{$report->reporter->first_name}} {{$report->reporter->last_name}}</td>
                                 <td style="text-align: left; vertical-align: middle;">{{$report->reported->first_name}} {{$report->reported->last_name}}</td>
-                                <td style="text-align: left; vertical-align: middle;">{{$report->report_title}}</td>
+                                <td style="text-align: left; vertical-align: middle;">
+                                    @if ($report->report_type === "blog")
+                                        <span class="btn btn-aqua pull-left"><a href="/blog/{{ $report->report_type_id }}">{{$report->report_title}}</a></span>
+                                    @elseif ($report->report_type === "qa")
+                                        <span class="btn btn-aqua pull-left"><a href="/quests/{{ $report->report_type_id }}">{{$report->report_title}}</a></span>
+                                    @elseif ($report->report_type === "user")
+                                        <span class="btn btn-aqua pull-left"><a href="/profile/{{ $report->report_type_id }}">{{$report->report_title}}</a></span>
+                                    @elseif ($report->report_type === "comment")
+                                        <span class="btn btn-aqua pull-left"><a href="/comment/{{ $report->report_type_id }}">{{$report->report_title}}</a></span>
+                                    @elseif ($report->report_type === "post")
+                                        <span class="btn btn-aqua pull-left"><a href="/post/{{ $report->report_type_id }}">{{$report->report_title}}</a></span>
+                                    @endif
+                                    
+                                </td>
+                                {{-- <td style="text-align: left; vertical-align: middle;">{{$report->report_title}}</td> --}}
                                 {{-- <td style="text-align: left; vertical-align: middle;">{{$report->content}}</td> --}}
                                 <td style="text-align: left; vertical-align: middle;">
                                     @if ($report->report_type === "blog")
