@@ -10,7 +10,7 @@
                     <span class="bg-red">
                         {{ $qa->created_at->format('d M. Y') }}
                     </span>
-                    <span class="btn btn-aqua pull-right"><a href="/quests/{{ $qa->id }}">Xem tại phía người dùng</a></span>
+                    <span class="btn btn-aqua pull-right"><a href="/quest/{{ $qa->id }}">Xem tại phía người dùng</a></span>
 
                 </li>
                 <li>

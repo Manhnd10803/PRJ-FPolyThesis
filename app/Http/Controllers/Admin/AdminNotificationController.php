@@ -20,6 +20,18 @@ class AdminNotificationController extends Controller
             $notification->update(['status' => 1]);
             return redirect()->route('admin.blogs.show', $notification->objet_id);
         }
+        if ($notification->notification_type == 'like_post' || $notification->notification_type == 'comment_post' || $notification->notification_type == 'reply_post') {
+            $notification->update(['status' => 1]);
+            return redirect()->route('admin.posts.show', $notification->objet_id);
+        }
+        if ($notification->notification_type == 'like_qa' || $notification->notification_type == 'comment_qa' || $notification->notification_type == 'reply_qa') {
+            $notification->update(['status' => 1]);
+            return redirect()->route('admin.qa.show', $notification->objet_id);
+        }
+        if ($notification->notification_type == 'friend') {
+            $notification->update(['status' => 1]);
+            return redirect('/profile/' .  $notification->objet_id);
+        }
     }
     public function listNotification()
     {

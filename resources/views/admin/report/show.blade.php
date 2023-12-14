@@ -25,15 +25,15 @@
                     {{-- <span class="btn btn-aqua pull-right"><a href="/profile/{{ $report->reported_id }}">Xem tại phía người dùng</a></span> --}}
                     <td style="text-align: left; vertical-align: middle;">
                         @if ($report->report_type === "blog")
-                            <span class="btn btn-aqua pull-left"><a href="/blog/{{ $report->report_type_id }}">Xem tại phía người dùng</a></span>
+                            <span class="btn btn-aqua pull-right"><a href="/blog/{{ $report->report_type_id }}">Xem tại phía người dùng</a></span>
                         @elseif ($report->report_type === "qa")
-                            <span class="btn btn-aqua pull-left"><a href="/quests/{{ $report->report_type_id }}">Xem tại phía người dùng</a></span>
+                            <span class="btn btn-aqua pull-right"><a href="/quest/{{ $report->report_type_id }}">Xem tại phía người dùng</a></span>
                         @elseif ($report->report_type === "user")
-                            <span class="btn btn-aqua pull-left"><a href="/profile/{{ $report->report_type_id }}">Xem tại phía người dùng</a></span>
+                            <span class="btn btn-aqua pull-right"><a href="/profile/{{ $report->report_type_id }}">Xem tại phía người dùng</a></span>
                         @elseif ($report->report_type === "comment")
-                            <span class="btn btn-aqua pull-left"><a href="/comment/{{ $report->report_type_id }}">Xem tại phía người dùng</a></span>
+                            {{-- <span class="btn btn-aqua pull-right"><a href="/comment/{{ $report->report_type_id }}">Xem tại phía người dùng</a></span> --}}
                         @elseif ($report->report_type === "post")
-                            <span class="btn btn-aqua pull-left"><a href="/post/{{ $report->report_type_id }}">Xem tại phía người dùng</a></span>
+                            <span class="btn btn-aqua pull-right"><a href="/post/{{ $report->report_type_id }}">Xem tại phía người dùng</a></span>
                         @endif
                         
                     </td>

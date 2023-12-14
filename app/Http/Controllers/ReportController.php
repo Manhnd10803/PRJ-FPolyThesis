@@ -52,6 +52,7 @@ class ReportController extends Controller
           foreach ($fields as $field) {
             if (!is_null($model->$field)) {
               $notificationType = config("default.notification.notification_type.comment_" . str_replace('_id', '', $field));
+              $model->id = $model->$field;
               break;
             }
           }
