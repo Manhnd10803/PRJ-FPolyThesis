@@ -4,7 +4,7 @@ import { IMessages } from '@/models/messages';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { chatActions } from '@/redux/slice';
 import { pathName } from '@/routes/path-name';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { Card, Col, Row } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';

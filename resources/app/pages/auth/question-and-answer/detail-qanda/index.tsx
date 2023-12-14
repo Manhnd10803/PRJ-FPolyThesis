@@ -343,7 +343,7 @@ export const DetailQandAPage = () => {
                                   {qAndAData?.total_comments} comments
                                 </Link>
                               </OverlayTrigger>
-                              <div className="bg-soft-primary rounded p-2 pointer text-center p-0">
+                              <div className="bg-soft-primary rounded p-2 pointer text-center">
                                 <div className="card-header-toolbar d-flex align-items-center">
                                   <Dropdown className="d-flex align-items-center">
                                     <Dropdown.Toggle

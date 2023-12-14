@@ -128,40 +128,45 @@ class ProfileController extends Controller
                         }
                     }
 
-                    $posts = $postsQuery->paginate(10);
+                    $posts = $postsQuery->with(['likes.user', 'comments'])->paginate(5);
                     $listPost = [];
                     foreach ($posts as $post) {
-
                         // Lấy tất cả like của bài viết
                         $likeCountsByEmotion = [];
                         $likeCountsByEmotion['total_likes'] = $post->likes->count();
                         $likers = $post->likes->map(function ($like) {
                             return [
                                 'user' => $like->user,
+                                'user_id' => $like->user->id,
                                 'emotion' => $like->emotion,
                             ];
                         });
                         $emotions = $likers->pluck('emotion')->unique();
-                        $emotionLikeCounts = [];
                         foreach ($emotions as $emotion) {
-                            $emotionLikeCounts[$emotion] = $likers->where('emotion', $emotion)->count();
+                            $likeCountsByEmotion[$emotion] = $likers->where('emotion', $emotion)->count();
                         }
-                        // Tổng số bình luận + 3 bình luận demo
-                        $totalComment = Comment::where('post_id', $post->id)->count();
-                        $commentDemos = Comment::where('post_id', $post->id)->where('parent_id', 0)->limit(3)->get();
+                        // Count the total number of comments associated with the post
+                        $totalComment = $post->comments->count();
+
+                        // Get the first 3 top-level comments
+                        $commentDemos = $post->comments->where('parent_id', 0)->take(3);
+
+                        // For each of these comments
                         foreach ($commentDemos as $commentDemo) {
+                            // Load the associated user
                             $commentDemo->user;
-                            // Số lượng reply
-                            $commentDemo->reply = Comment::where('post_id', $post->id)->where('parent_id', $commentDemo->id)->count();
+
+                            // Count the number of replies to the comment
+                            $commentDemo->reply = $post->comments->where('parent_id', $commentDemo->id)->count();
                         }
                         $postData = [
                             'post' => $post,
                             'like_counts_by_emotion' => $likeCountsByEmotion,
-                            'emotion_like_counts' => $emotionLikeCounts,
+                            'liker' => $likers,
                             'total_comments' => $totalComment,
-                            'democomments' => $commentDemos,
+                            'comments' => $commentDemos,
                         ];
-                        $listPost[] = $postData;
+                        array_push($listPost, $postData);
                     }
                     $detailTimeline = [
                         'user' => [
@@ -173,45 +178,55 @@ class ProfileController extends Controller
                         'friend_details' => $friendDetails,
                         'images' => $allImageUrls,
                     ];
+
                     DB::commit();
-                    return response()->json(['listPost' => $listPost, 'detailTimeline' => $detailTimeline], 200);
+                    return response()->json([
+                        'datas' => $listPost, 'current_page' => $posts->currentPage(),
+                        'last_page' => $posts->lastPage(), 'detailTimeline' => $detailTimeline
+                    ], 200);
                     break;
                     // Load blog
                 case 'blog':
                     $status = request('status') ?? 'approved';
                     $statuses = config('default.blog.status');
                     if (in_array($status, array_keys($statuses))) {
-                        // Xử lý logic cho trường hợp 'blog' dựa trên trạng thái (pending , approved , reject)
                         $statusValue = $statuses[$status];
-                        $query = Blog::where('user_id', $loggedInUser->id)->where('status', $statusValue)->orderBy('created_at', 'DESC');
-                        if (!$query->exists()) {
+                        $blogs = Blog::where('user_id', $loggedInUser->id)
+                            ->where('status', $statusValue)
+                            ->orderBy('created_at', 'DESC')
+                            ->paginate(7);
+
+                        if ($blogs->isEmpty()) {
                             $message = "Không có blog với trạng thái $status";
                             return response()->json(['data' => [], 'message' => $message], 200);
                         }
-                        $blogs = $query->get();
-                        $blogData = [
-                            'blog' => $blogs,
+
+                        $data = [
+                            'datas' => $blogs->items(),
+                            'current_page' => $blogs->currentPage(),
+                            'last_page' => $blogs->lastPage(),
                         ];
-                        array_push($result, $blogData);
+
+                        return response()->json($data, 200);
                     } else {
                         return response()->json(['error' => 'Trạng thái không hợp lệ'], 400);
                     }
                     break;
                 case 'qa':
-                    $qas = Qa::where('user_id', $loggedInUser->id)->orderBy('created_at', 'DESC')->get();
+                    $qas = Qa::where('user_id', $loggedInUser->id)->orderBy('created_at', 'DESC')->paginate(7);
                     if ($qas->isEmpty()) {
                         return response()->json(['data' => [], 'message' => 'Không có bài viết'], 200);
                     }
-                    $qaData = [
-                        'qa' => $qas,
+                    $data = [
+                        'datas' => $qas->items(),
+                        'current_page' => $qas->currentPage(),
+                        'last_page' => $qas->lastPage(),
                     ];
-                    array_push($result, $qaData);
+
+                    return response()->json($data, 200);
                     break;
                 case 'commentedQuestions':
-                    // Số lượng mục trên mỗi trang
-                    $perPage = 10;
-
-                    // Truy vấn ban đầu
+                    $perPage = 7;
                     $commentedQas = Comment::select('qa_id')
                         ->where('user_id', $loggedInUser->id)
                         ->whereNotNull('qa_id')
@@ -219,7 +234,7 @@ class ProfileController extends Controller
                             $query->select('id', 'title', 'user_id', 'updated_at');
                         }])
                         ->orderBy('qa_id')
-                        ->orderBy('created_at', 'ASC')
+                        ->orderBy('created_at', 'DESC')
                         ->get();
 
                     $groupedQas = $commentedQas->groupBy('qa_id');
@@ -237,8 +252,7 @@ class ProfileController extends Controller
                         return $userIdOfQa !== $loggedInUser->id;
                     });
 
-                    // Phân trang cho kết quả đã lọc
-                    $page = request()->get('page', 1); // Lấy trang hiện tại từ request
+                    $page = request()->get('page', 1);
                     $paginatedQas = new LengthAwarePaginator(
                         $filteredQas->forPage($page, $perPage),
                         $filteredQas->count(),
@@ -247,22 +261,12 @@ class ProfileController extends Controller
                         ['path' => request()->url(), 'query' => request()->query()]
                     );
 
-                    $qaData = [
-                        'data' => $paginatedQas->values()->all(),
-                        'pagination' => [
-                            'total' => $paginatedQas->total(),
-                            'per_page' => $paginatedQas->perPage(),
-                            'current_page' => $paginatedQas->currentPage(),
-                            'last_page' => $paginatedQas->lastPage(),
-                            'from' => $paginatedQas->firstItem(),
-                            'to' => $paginatedQas->lastItem(),
-                        ],
-                    ];
-
                     $data = [
-                        'qa' => $qaData
+                        'datas' => $paginatedQas->values()->all(),
+                        'current_page' => $paginatedQas->currentPage(),
+                        'last_page' => $paginatedQas->lastPage(),
                     ];
-                    array_push($result, $data);
+                    return response()->json($data, 200);
                     break;
             }
             DB::commit();

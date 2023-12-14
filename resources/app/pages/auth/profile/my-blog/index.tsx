@@ -5,13 +5,27 @@ import { formatTime } from '../components/format-time';
 import diacritics from 'diacritics';
 import { pathName } from '@/routes/path-name';
 import { Skeleton } from '@mui/material';
+import { useInView } from 'react-intersection-observer';
 
 type MyBlogProps = {
   listBlog: any;
   isLoading: boolean;
+  isFetching: boolean;
+  hasNextPage: any;
+  fetchNextPage: any;
+  endRef: any;
+  endInView: any;
 };
 
-export const MyBlog = ({ listBlog, isLoading }: MyBlogProps) => {
+export const MyBlog = ({
+  listBlog,
+  isLoading,
+  isFetching,
+  hasNextPage,
+  fetchNextPage,
+  endInView,
+  endRef,
+}: MyBlogProps) => {
   const [searchQueries, setSearchQueries] = useState<any>({
     about1: '',
     about2: '',
@@ -22,13 +36,8 @@ export const MyBlog = ({ listBlog, isLoading }: MyBlogProps) => {
     setSearchQueries({ ...searchQueries, [tabKey]: query });
   };
 
-  const clearSearch = (tabKey: any) => {
-    setSearchQueries({ ...searchQueries, [tabKey]: '' });
-  };
-
   const normalizeText = (text: any) => diacritics.remove(text.toLowerCase());
 
-  // Shared function to filter blog list based on tabKey
   const filteredBlogListAbout = (tabKey: any) => {
     const normalizedSearch = normalizeText(searchQueries[tabKey]);
     return listBlog?.filter((item: any) => normalizeText(item.title).includes(normalizedSearch));
@@ -111,47 +120,44 @@ export const MyBlog = ({ listBlog, isLoading }: MyBlogProps) => {
                         </div>
                       </div>
                       <hr />
-                      {isLoading ? (
-                        <>
-                          <Row className="mb-2">
-                            <div className="col-12">
-                              <Skeleton variant="text" width="100%" height={100} />
-                            </div>
-                            <hr />
-                          </Row>
-                          <Row className="mb-2">
-                            <div className="col-12">
-                              <Skeleton variant="text" width="100%" height={100} />
-                            </div>
-                          </Row>
-                        </>
-                      ) : (
-                        <div className={`${isSticky ? 'scroller-my-blog' : ''}`}>
-                          {filteredBlogListAbout(tabKey)?.length > 0 ? (
-                            <>
-                              {filteredBlogListAbout(tabKey).map((item, index) => (
-                                <Row className="mb-2" key={index}>
-                                  <div className="col-12">
-                                    <Link
-                                      className="text-dark font-bold"
-                                      style={{ fontSize: '20px' }}
-                                      to={`${pathName.BLOG}/${item.id}`}
-                                    >
-                                      {item.title}
-                                    </Link>
-                                  </div>
-                                  <div className="col-12">
-                                    <p className="mb-0">Cập nhật lần cuối: {formatTime(item.updated_at)}</p>
-                                  </div>
-                                  <hr />
-                                </Row>
-                              ))}
-                            </>
-                          ) : (
-                            <h4>Không có data</h4>
-                          )}
-                        </div>
-                      )}
+                      <div className={`${isSticky ? 'scroller-my-blog' : ''}`}>
+                        {isLoading ? (
+                          <>
+                            <Row className="mb-2">
+                              <div className="col-12">
+                                <Skeleton variant="text" width="100%" height={100} />
+                              </div>
+                              <hr />
+                            </Row>
+                            <Row className="mb-2">
+                              <div className="col-12">
+                                <Skeleton variant="text" width="100%" height={100} />
+                              </div>
+                            </Row>
+                          </>
+                        ) : (
+                          <>
+                            {filteredBlogListAbout(tabKey)?.map((item: any, index: number) => (
+                              <Row className="mb-2" key={index}>
+                                <div className="col-12">
+                                  <Link
+                                    className="text-dark font-bold"
+                                    style={{ fontSize: '20px' }}
+                                    to={`${pathName.BLOG}/${item.id}`}
+                                  >
+                                    {item.title}
+                                  </Link>
+                                </div>
+                                <div className="col-12">
+                                  <p className="mb-0">Cập nhật lần cuối: {formatTime(item.updated_at)}</p>
+                                </div>
+                                <hr />
+                              </Row>
+                            ))}
+                            <div ref={endRef} />
+                          </>
+                        )}
+                      </div>
                     </Tab.Pane>
                   ))}
                 </Tab.Content>
