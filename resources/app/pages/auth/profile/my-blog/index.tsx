@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { pathName } from '@/routes/path-name';
+import { Skeleton } from '@mui/material';
+import diacritics from 'diacritics';
+import React, { useEffect, useState } from 'react';
 import { Card, Col, Nav, Row, Tab } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { formatTime } from '../components/format-time';
-import diacritics from 'diacritics';
-import { pathName } from '@/routes/path-name';
-import { Skeleton } from '@mui/material';
 import { useInView } from 'react-intersection-observer';
 
 type MyBlogProps = {
@@ -13,19 +13,9 @@ type MyBlogProps = {
   isFetching: boolean;
   hasNextPage: any;
   fetchNextPage: any;
-  endRef: any;
-  endInView: any;
 };
 
-export const MyBlog = ({
-  listBlog,
-  isLoading,
-  isFetching,
-  hasNextPage,
-  fetchNextPage,
-  endInView,
-  endRef,
-}: MyBlogProps) => {
+export const MyBlog = ({ listBlog, isLoading, isFetching, hasNextPage, fetchNextPage }: MyBlogProps) => {
   const [searchQueries, setSearchQueries] = useState<any>({
     about1: '',
     about2: '',
@@ -102,8 +92,8 @@ export const MyBlog = ({
                           {tabKey === 'about1'
                             ? 'Bài viết công khai'
                             : tabKey === 'about2'
-                              ? 'Bài viết đang chờ xét duyệt'
-                              : 'Bài viết vi phạm'}
+                            ? 'Bài viết đang chờ xét duyệt'
+                            : 'Bài viết vi phạm'}
                         </h4>
                         <div className="d-flex align-items-center">
                           <div className="form-outline">
@@ -136,26 +126,12 @@ export const MyBlog = ({
                             </Row>
                           </>
                         ) : (
-                          <>
-                            {filteredBlogListAbout(tabKey)?.map((item: any, index: number) => (
-                              <Row className="mb-2" key={index}>
-                                <div className="col-12">
-                                  <Link
-                                    className="text-dark font-bold"
-                                    style={{ fontSize: '20px' }}
-                                    to={`${pathName.BLOG}/${item.id}`}
-                                  >
-                                    {item.title}
-                                  </Link>
-                                </div>
-                                <div className="col-12">
-                                  <p className="mb-0">Cập nhật lần cuối: {formatTime(item.updated_at)}</p>
-                                </div>
-                                <hr />
-                              </Row>
-                            ))}
-                            <div ref={endRef} />
-                          </>
+                          <ListBlog
+                            data={filteredBlogListAbout(tabKey)}
+                            fetchNextPage={fetchNextPage}
+                            hasNextPage={hasNextPage}
+                            isFetching={isFetching}
+                          />
                         )}
                       </div>
                     </Tab.Pane>
@@ -166,6 +142,37 @@ export const MyBlog = ({
           </Col>
         </Row>
       </Tab.Container>
+    </>
+  );
+};
+
+const ListBlog = ({ data, fetchNextPage, hasNextPage, isFetching }: any) => {
+  const { ref: endRefBlog, inView: endInViewBlog } = useInView();
+
+  useEffect(() => {
+    if (endInViewBlog && hasNextPage && !isFetching) {
+      fetchNextPage && fetchNextPage();
+    }
+    console.log('endInViewBlog', endInViewBlog);
+  }, [endInViewBlog, fetchNextPage, hasNextPage, isFetching]);
+  return (
+    <>
+      {data?.map((item: any, index: number) => (
+        <Row className="mb-2" key={index}>
+          <div className="col-12">
+            <Link className="text-dark font-bold" style={{ fontSize: '20px' }} to={`${pathName.BLOG}/${item.id}`}>
+              {item.title}
+            </Link>
+          </div>
+          <div className="col-12">
+            <p className="mb-0">Cập nhật lần cuối: {formatTime(item.updated_at)}</p>
+          </div>
+          <hr />
+        </Row>
+      ))}
+      <div style={{ background: 'red', height: 100, width: '100%', marginBottom: 200 }} ref={endRefBlog}>
+        {endInViewBlog}
+      </div>
     </>
   );
 };
