@@ -12,7 +12,7 @@ type MyQaProps = {
   isFetching: boolean;
   hasNextPage: any;
   fetchNextPage: any;
-  endRef: any;
+  innerRef: any;
   endInView: any;
 };
 
@@ -23,7 +23,7 @@ export const MyListQa = ({
   hasNextPage,
   fetchNextPage,
   endInView,
-  endRef,
+  innerRef,
 }: MyQaProps) => {
   const [searchQueries, setSearchQueries] = useState<any>({
     about1: '',
@@ -98,7 +98,7 @@ export const MyListQa = ({
                     <hr />
                   </Row>
                 ))}
-                <div ref={endRef}></div>
+                <div ref={innerRef}></div>
               </>
             ) : (
               <h4>Không có data</h4>
