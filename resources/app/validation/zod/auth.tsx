@@ -16,6 +16,7 @@ export const signUpSchema = z
     first_name: z
       .string()
       .min(1, 'Tên không được để trống')
+      .max(20, { message: 'Tên không được quá 20 ký tự' })
       .refine(value => containsNumberOrSymbol(value), {
         message: 'Không chứa ký tự hoặc số',
       })
@@ -25,6 +26,7 @@ export const signUpSchema = z
     last_name: z
       .string()
       .min(1, 'Họ không được để trống')
+      .max(20, { message: 'Họ không được quá 20 ký tự' })
       .refine(value => containsNumberOrSymbol(value), {
         message: 'Không chứa ký tự hoặc số',
       })
