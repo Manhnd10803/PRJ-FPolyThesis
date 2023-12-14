@@ -1,17 +1,24 @@
 import { FriendService } from '@/apis/services/friend.service';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 
 type activityFriend = {
   user_id: number;
   activity_user: string;
 };
 
+const queryKeyPaginate = ['ListFriendPaginate', true];
 const queryKeyFriends = ['friends'];
 
-export const fetchAllFriendMyUser = async () => {
+const fetchAllFriendMyUser = async () => {
   const idUser = StorageFunc.getUserId();
   const { data } = await FriendService.showAllFriendMyUser(idUser);
+  return data;
+};
+const fetchAllFriendMyUserPaginate = async ({ pageParam = 1 }) => {
+  const idUser = StorageFunc.getUserId();
+
+  const { data } = await FriendService.showAllFriendMyUser(idUser, 8, pageParam);
   return data;
 };
 
@@ -26,7 +33,23 @@ export const useFriend = () => {
     ...rest,
   };
 };
-
+export const useFriendPaginate = () => {
+  const { data, ...rest } = useInfiniteQuery({
+    queryKey: queryKeyPaginate,
+    queryFn: fetchAllFriendMyUserPaginate,
+    staleTime: 1000 * 60 * 5,
+    getNextPageParam: (lastPage, _) => {
+      if (lastPage.current_page === lastPage.last_page) {
+        return undefined;
+      }
+      return lastPage.current_page + 1;
+    },
+  });
+  return {
+    data,
+    ...rest,
+  };
+};
 export const useSetListFriend = () => {
   const queryClient = useQueryClient();
 
@@ -44,8 +67,26 @@ export const useSetListFriend = () => {
       return oldData;
     });
   };
+  const manuallySetListFriendPaginate = (action: string, friendId: number) => {
+    queryClient.setQueryData(queryKeyPaginate, (oldData: any) => {
+      if (!oldData) return oldData;
+
+      const updatedData = oldData.pages.map((page: any) => {
+        if (Array.isArray(page.data)) {
+          // Trang dữ liệu trả về mảng
+          const updatedPageData = page.data.filter((item: any) => item.friend.id !== friendId);
+          return { ...page, data: updatedPageData };
+        }
+
+        return page;
+      });
+
+      return { ...oldData, pages: updatedData };
+    });
+  };
   return {
     manuallySetListFriend,
+    manuallySetListFriendPaginate,
   };
 };
 

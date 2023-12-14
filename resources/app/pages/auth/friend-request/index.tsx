@@ -7,6 +7,8 @@ import toast from 'react-hot-toast';
 import { formatFullName } from '@/utilities/functions';
 import { pathName } from '@/routes/path-name';
 import { useSetListFriend } from '@/hooks/useFriendQuery';
+import { Loading } from '@/components/shared/loading';
+import { CardLoad } from '@/utilities/funcLoadFriend/CardLoad';
 interface FriendStates {
   [key: string]: string;
 }
@@ -20,7 +22,7 @@ export const FriendRequestPage = () => {
     const FriendRequestData = data;
     return FriendRequestData;
   };
-  const FriendsRequestQueryKey = ['friend'];
+  const FriendsRequestQueryKey = ['friendrequest'];
   const { data: friendRequest, isLoading: isLoadingRequestFriend } = useQuery(FriendsRequestQueryKey, {
     queryFn: fetchAllFriendRequest,
   });
@@ -93,9 +95,7 @@ export const FriendRequestPage = () => {
                 <Card.Body>
                   {isLoadingRequestFriend ? (
                     <>
-                      <Spinner animation="border" variant="primary" role="status" size="sm">
-                        <span className="visually-hidden">Loading...</span>
-                      </Spinner>
+                      <CardLoad />
                     </>
                   ) : (
                     <Row>
@@ -105,7 +105,7 @@ export const FriendRequestPage = () => {
                             return (
                               <Col key={itemFriend.id} sm={3}>
                                 <Card className="mb-3">
-                                  <Link to={`${pathName.PROFILE}/${itemFriend.id}`}>
+                                  <Link to={`${pathName.PROFILE}/${itemFriend.friend.id}`}>
                                     <Card.Img
                                       style={{
                                         width: '100%',
@@ -120,7 +120,7 @@ export const FriendRequestPage = () => {
                                     />
                                   </Link>
                                   <Card.Body>
-                                    <Link to={`${pathName.PROFILE}/${itemFriend.id}`}>
+                                    <Link to={`${pathName.PROFILE}/${itemFriend.friend.id}`}>
                                       <Card.Title as="h5" className="card-title">
                                         {formatFullName(itemFriend.friend)}
                                       </Card.Title>
@@ -168,9 +168,7 @@ export const FriendRequestPage = () => {
                 <Card.Body>
                   {isLoadingSuggestFriend ? (
                     <>
-                      <Spinner animation="border" variant="primary" role="status" size="sm">
-                        <span className="visually-hidden">Loading...</span>
-                      </Spinner>
+                      <CardLoad />
                     </>
                   ) : (
                     <>
