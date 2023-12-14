@@ -8,6 +8,7 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ListImage } from './components/list-image';
 import { PostDetailContent } from './components/post-detail-content';
 import { PostDetailContextProvider } from './contexts';
+import { Loading } from '@/components/shared/loading';
 
 type StateType = {
   data: GetNewPostResponseType;
@@ -27,24 +28,17 @@ export const PostDetail = () => {
   }, [dataModal]);
 
   // Nếu không có data thì sẽ gọi api để lấy data dựa vào điều kiện isShowModal
-  const {
-    data: dataDetail,
-    isLoading,
-    isError,
-  } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['post', id],
     queryFn: async () => {
       const { data } = await PostService.getPostDetail(Number(id));
       return data;
     },
-    enabled: !isShowModal,
-    // staleTime: 1000 * 60 * 5, // 5 minutes
+    initialData: isShowModal ? dataModal : undefined,
+    // enabled: !isShowModal,
+    staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
-  // Nếu có data thì sẽ lấy data từ location.state
-  const data = dataModal ? dataModal : dataDetail;
-
-  console.log(data);
   const handleClose = () => {
     navigate(-1);
   };
@@ -64,7 +58,12 @@ export const PostDetail = () => {
     };
   }, []);
 
-  // if (isLoading) return <div>Loading...</div>;
+  if (isLoading)
+    return (
+      <div className="relative overflow-hidden p-0">
+        <Loading />
+      </div>
+    );
 
   if (isError) return <div>Error...</div>;
 

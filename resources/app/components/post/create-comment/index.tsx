@@ -1,4 +1,4 @@
-import { useAddCommentPost, useCreateCommentPost } from '@/hooks/useCommentQuery';
+import { useAddCommentPost, useAddCommentPostDetail, useCreateCommentPost } from '@/hooks/useCommentQuery';
 import { TCommentSchema, createCommentSchema } from '@/validation/zod/comment';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -6,9 +6,10 @@ import { Link } from 'react-router-dom';
 
 type CreateCommentProps = {
   postId: number;
+  isDetail?: boolean;
 };
 
-export const CreateComment = ({ postId }: CreateCommentProps) => {
+export const CreateComment = ({ postId, isDetail = false }: CreateCommentProps) => {
   const { reset, register, handleSubmit } = useForm<TCommentSchema>({
     resolver: zodResolver(createCommentSchema),
   });
@@ -16,6 +17,8 @@ export const CreateComment = ({ postId }: CreateCommentProps) => {
   const { createComment, isLoading } = useCreateCommentPost();
 
   const { manuallyAddCommentPostItem } = useAddCommentPost();
+
+  const { manuallyAddCommentPostDetail } = useAddCommentPostDetail();
 
   const onSubmit: SubmitHandler<TCommentSchema> = async dataForm => {
     createComment(
@@ -25,10 +28,18 @@ export const CreateComment = ({ postId }: CreateCommentProps) => {
       },
       {
         onSuccess: ({ data }) => {
-          manuallyAddCommentPostItem({
-            newComment: data.comment,
-            postId: postId,
-          });
+          if (isDetail) {
+            manuallyAddCommentPostDetail({
+              newComment: data.comment,
+              postId: postId,
+            });
+          } else {
+            manuallyAddCommentPostItem({
+              newComment: data.comment,
+              postId: postId,
+            });
+          }
+
           reset();
         },
       },
