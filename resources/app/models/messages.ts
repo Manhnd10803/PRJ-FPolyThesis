@@ -40,3 +40,5 @@ export type SendMessageResponseType = {
   message: string;
   data: IMessages;
 };
+
+export type realtimeChatActionType = 'send' | 'delete';

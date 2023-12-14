@@ -11,7 +11,9 @@ type ListPrivateChannelProps = {
 
 export const ListPrivateChannel = ({ search }: ListPrivateChannelProps) => {
   const { data } = useListPrivateChannel();
+
   const listPrivateChannel = data?.data || [];
+
   console.log(listPrivateChannel);
   const { onClickRemoveChat } = useChatContext();
 

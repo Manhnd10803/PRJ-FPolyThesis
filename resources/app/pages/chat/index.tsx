@@ -11,7 +11,13 @@ import { HeaderChat } from './components/header-chat';
 import { PopUpDeleteChat } from './components/pop-up-delete-chat';
 import { SideBar } from './components/side-bar';
 import { ChatContextProvider } from './context';
-import { useSetConversation, useSetListPrivateChannel, useUserChatInfo } from '@/hooks/useChatQuery';
+import {
+  useSetConversation,
+  useMutationPrivateChannel,
+  useUserChatInfo,
+  useDeletePrivateChannel,
+} from '@/hooks/useChatQuery';
+import { IUser } from '@/models/user';
 
 const audioSend = new Promise<HTMLAudioElement>(resolve => {
   resolve(new Audio(sendMessageSound));
@@ -23,7 +29,10 @@ export const ChatPage = () => {
 
   const removeChannelId = useRef<number | null>(null);
 
-  const { manuallySetListPrivateChannel } = useSetListPrivateChannel();
+  const { manuallyAddPrivateChannel } = useMutationPrivateChannel();
+
+  const { deletePrivateChannel } = useDeletePrivateChannel();
+
   const { manuallySetConversation } = useSetConversation();
   // this will be inferred as `ChatBoxHandle`
   type ChatBoxHandle = React.ElementRef<typeof ChatBox>;
@@ -49,41 +58,34 @@ export const ChatPage = () => {
           data: data.data,
           id: data.data.receiver_id,
         };
+
+        // sửa lại thành 1 hook cho đỡ lỗi
         manuallySetConversation('add', newData);
-        const data2 = {
-          data: data.data.receiver,
-          id: data.data.receiver_id,
-        };
-        manuallySetListPrivateChannel('add', data2);
+
+        manuallyAddPrivateChannel(data.data.receiver as IUser);
         //scroll to bottom  chat box
         chatBoxRef.current?.scrollToBottom();
       },
     });
   };
 
-  const handleConfirmDeleteChat = (id: number) => {
+  // mở modal xoá channel
+  const onClickRemoveChat = (id: number) => {
     removeChannelId.current = Number(id);
     setShowModal(true);
   };
 
-  //xoá đoạn chat
-  const deleteMessageMutation = useMutation(
-    (channelId: number) => {
-      return MessagesService.deletePrivateChannel(channelId);
-    },
-    {
+  // Xoá channel và chuyển về trang chat
+  const handleConfirmDelete = () => {
+    deletePrivateChannel(removeChannelId.current as number, {
       onSuccess: () => {
-        manuallySetListPrivateChannel('delete', removeChannelId.current!);
         navigate(pathName.CHAT);
       },
-    },
-  );
-  const handleConfirmDelete = () => {
-    deleteMessageMutation.mutate(removeChannelId.current!);
+    });
 
     setShowModal(false);
   };
-  const { data: selectedUserInfo } = useUserChatInfo(Number(chatId));
+
   // render
   return (
     <>
@@ -93,7 +95,7 @@ export const ChatPage = () => {
             <Card className="mb-0">
               <Card.Body className="chat-page p-0">
                 <div className="chat-data-block">
-                  <ChatContextProvider value={{ chatId: Number(chatId), onClickRemoveChat: handleConfirmDeleteChat }}>
+                  <ChatContextProvider value={{ chatId: Number(chatId), onClickRemoveChat }}>
                     <Row>
                       <Col lg={3} className="chat-data-left scroller" style={{ paddingRight: '2px' }}>
                         <SideBar />
@@ -101,7 +103,7 @@ export const ChatPage = () => {
                       <Col lg={9} className="chat-data p-0 chat-data-right border-start">
                         {chatId ? (
                           <div style={{ position: 'relative', minHeight: '100%' }}>
-                            <HeaderChat selectedUserInfo={selectedUserInfo} />
+                            <HeaderChat />
 
                             <ChatBox ref={chatBoxRef} />
 

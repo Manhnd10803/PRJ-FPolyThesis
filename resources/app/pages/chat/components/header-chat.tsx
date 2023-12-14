@@ -3,14 +3,14 @@ import { Dropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useChatContext } from '../context';
 import { formatFullName } from '@/utilities/functions';
+import { useUserChatInfo } from '@/hooks/useChatQuery';
 
-type HeaderChatProps = {
-  selectedUserInfo: any;
-};
-
-export const HeaderChat = ({ selectedUserInfo }: HeaderChatProps) => {
-  const { user: currentUser } = selectedUserInfo || {};
+export const HeaderChat = () => {
   const { onClickRemoveChat, chatId } = useChatContext();
+
+  const { data: selectedUserInfo } = useUserChatInfo(Number(chatId));
+
+  const { user: currentUser } = selectedUserInfo || {};
 
   // render
   return (

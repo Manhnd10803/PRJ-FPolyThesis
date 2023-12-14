@@ -1,9 +1,9 @@
 import receiveMessage from '@/assets/mp3/receive-message.mp3';
-import { useListPrivateChannel, useSetConversation, useSetListPrivateChannel } from '@/hooks/useChatQuery';
+import { useListPrivateChannel, useMutationPrivateChannel, useSetConversation } from '@/hooks/useChatQuery';
+import { realtimeChatActionType } from '@/models/messages';
 import { IUser } from '@/models/user';
 import { useAppSelector } from '@/redux/hook';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
-import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -21,32 +21,31 @@ export const RealtimeMessage = () => {
   const localUserId = StorageFunc.getUserId();
 
   const { data: listPrivateChannel } = useListPrivateChannel();
-  const queryClient = useQueryClient();
+
   const { manuallySetConversation } = useSetConversation();
-  const { manuallySetListPrivateChannel } = useSetListPrivateChannel();
+
+  const { manuallyAddPrivateChannel } = useMutationPrivateChannel();
+
   const handleStreamPrivateMessage = (event: any) => {
     try {
-      const { sender_id, action = 'send' } = event.message;
+      const { sender_id, action = 'send' }: { sender_id: number; action: realtimeChatActionType } = event.message;
 
       if (action === 'delete') {
         const data = {
-          data: event.message.id,
-          id: event.message.sender_id,
+          data: event.message.id as number,
+          id: event.message.sender_id as number,
         };
         manuallySetConversation('delete', data);
         return;
       }
       // check xem có phải người mới gửi tin nhắn không
       const isNewSender =
-        listPrivateChannel &&
-        listPrivateChannel?.data?.findIndex((item: IUser) => Number(item.id) === Number(sender_id)) === -1;
+        listPrivateChannel && listPrivateChannel?.data?.findIndex(item => +item.id === +sender_id) === -1;
+
+      console.log('isNewSender', isNewSender);
+
       if (isNewSender || !listPrivateChannel) {
-        // queryClient.invalidateQueries(['list_private_channel']);
-        const data = {
-          data: event.message.sender,
-          id: event.message.sender_id,
-        };
-        manuallySetListPrivateChannel('add', data);
+        manuallyAddPrivateChannel(event.message.sender as IUser);
         return;
       }
       const isChatting = Number(chatId) === Number(sender_id);
@@ -67,6 +66,7 @@ export const RealtimeMessage = () => {
   useEffect(() => {
     if (!accessToken) return;
 
+    // hết hạn token thì set lại token
     window.Echo.connector.options.auth.headers['Authorization'] = `Bearer ${accessToken}`;
 
     window.Echo.private(`user.${localUserId}`).listen('.PrivateMessageSent', handleStreamPrivateMessage);
@@ -74,7 +74,7 @@ export const RealtimeMessage = () => {
     return () => {
       window.Echo.private(`user.${localUserId}`).stopListening('.PrivateMessageSent', handleStreamPrivateMessage);
     };
-  }, [accessToken, chatId, localUserId]);
+  }, [accessToken, chatId, localUserId, listPrivateChannel]);
 
-  return <div>{listPrivateChannel ? null : ''}</div>;
+  return null;
 };
