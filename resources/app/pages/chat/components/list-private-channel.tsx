@@ -1,23 +1,24 @@
-import { useAppSelector } from '@/redux/hook';
 import { pathName } from '@/routes/path-name';
 import diacritics from 'diacritics';
 import { Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useChatContext } from '../context';
+import { useListPrivateChannel } from '@/hooks/useChatQuery';
 
 type ListPrivateChannelProps = {
   search: string;
 };
 
 export const ListPrivateChannel = ({ search }: ListPrivateChannelProps) => {
-  const { listPrivateChannel } = useAppSelector(state => state.chat);
-
+  const { data } = useListPrivateChannel();
+  const listPrivateChannel = data?.data || [];
+  console.log(listPrivateChannel);
   const { onClickRemoveChat } = useChatContext();
 
   const normalizedSearch = diacritics.remove(search.toLowerCase());
 
   const filteredUsers = search
-    ? listPrivateChannel.filter(item => diacritics.remove(item.username.toLowerCase()).includes(normalizedSearch))
+    ? listPrivateChannel?.filter(item => diacritics.remove(item.username.toLowerCase()).includes(normalizedSearch))
     : listPrivateChannel;
 
   if (listPrivateChannel && listPrivateChannel.length === 0) return <div>Bạn chưa nhắn tin với ai</div>;

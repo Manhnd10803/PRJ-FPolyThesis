@@ -22,15 +22,15 @@ class PrivateMessagesController extends Controller
             $query->where('sender_id', $user_id)
                 ->orWhere('receiver_id', $user_id);
         })
-        ->where(function ($query) use ($user_id) {
-            $query->whereNull('deleted_by')
-                ->orWhereJsonDoesntContain('deleted_by', $user_id);
-        })
-        ->pluck('sender_id', 'receiver_id')
-        ->map(function ($sender_id, $receiver_id) use ($user_id) {
-            return $sender_id == $user_id ? $receiver_id : $sender_id;
-        })
-        ->unique();
+            ->where(function ($query) use ($user_id) {
+                $query->whereNull('deleted_by')
+                    ->orWhereJsonDoesntContain('deleted_by', $user_id);
+            })
+            ->pluck('sender_id', 'receiver_id')
+            ->map(function ($sender_id, $receiver_id) use ($user_id) {
+                return $sender_id == $user_id ? $receiver_id : $sender_id;
+            })
+            ->unique();
 
         $listUserChat = User::whereIn('id', $listUserIds)
             ->with(['major' => function ($query) {
@@ -232,7 +232,7 @@ class PrivateMessagesController extends Controller
             }
             $avatar_sender = Auth::user()->avatar;
             broadcast(new ReceiveNotification($notification, $avatar_sender))->toOthers();
-            return response()->json(['message' => 'Tin nhắn đã được gửi', 'data' => $message->load('sender')], 200);
+            return response()->json(['message' => 'Tin nhắn đã được gửi', 'data' => $message->load('receiver')], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 400);
@@ -310,7 +310,7 @@ class PrivateMessagesController extends Controller
     {
         $privateMessage->delete();
         broadcast(new PrivateMessageSent($privateMessage, 'delete'))->toOthers();
-        return response()->json(['message' => 'Tin nhắn đã được xóa'], 200);
+        return response()->json(['message' => 'Tin nhắn đã được xóa', 'data' => $privateMessage->load('sender')], 200);
     }
     /**
      * @OA\Delete(

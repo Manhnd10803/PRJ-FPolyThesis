@@ -1,11 +1,8 @@
 import { MessagesService } from '@/apis/services/messages.service';
 import sendMessageSound from '@/assets/mp3/send-message.mp3';
-import { IMessages } from '@/models/messages';
-import { useAppDispatch, useAppSelector } from '@/redux/hook';
-import { chatActions } from '@/redux/slice';
 import { pathName } from '@/routes/path-name';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useRef, useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
+import { useRef, useState } from 'react';
 import { Card, Col, Row } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ChatBox } from './components/chat-box';
@@ -14,8 +11,7 @@ import { HeaderChat } from './components/header-chat';
 import { PopUpDeleteChat } from './components/pop-up-delete-chat';
 import { SideBar } from './components/side-bar';
 import { ChatContextProvider } from './context';
-import { IUser } from '@/models/user';
-import { AuthService } from '@/apis/services/auth.service';
+import { useSetConversation, useSetListPrivateChannel, useUserChatInfo } from '@/hooks/useChatQuery';
 
 const audioSend = new Promise<HTMLAudioElement>(resolve => {
   resolve(new Audio(sendMessageSound));
@@ -23,20 +19,18 @@ const audioSend = new Promise<HTMLAudioElement>(resolve => {
 
 export const ChatPage = () => {
   //state
-  const { id: chatId } = useParams();
+  const { id: chatId = 0 } = useParams();
 
   const removeChannelId = useRef<number | null>(null);
 
-  const { listPrivateChannel, conversation } = useAppSelector(state => state.chat);
-
+  const { manuallySetListPrivateChannel } = useSetListPrivateChannel();
+  const { manuallySetConversation } = useSetConversation();
   // this will be inferred as `ChatBoxHandle`
   type ChatBoxHandle = React.ElementRef<typeof ChatBox>;
 
   const chatBoxRef = useRef<ChatBoxHandle>(null);
 
   const navigate = useNavigate();
-
-  const dispatch = useAppDispatch();
 
   const [showModal, setShowModal] = useState(false);
 
@@ -51,11 +45,18 @@ export const ChatPage = () => {
       onSuccess: ({ data }) => {
         // play sound
         audioSend.then(audio => audio.play());
-
+        const newData = {
+          data: data.data,
+          id: data.data.receiver_id,
+        };
+        manuallySetConversation('add', newData);
+        const data2 = {
+          data: data.data.receiver,
+          id: data.data.receiver_id,
+        };
+        manuallySetListPrivateChannel('add', data2);
         //scroll to bottom  chat box
         chatBoxRef.current?.scrollToBottom();
-
-        dispatch(chatActions.addMessageToConversation(data.data as IMessages));
       },
     });
   };
@@ -72,9 +73,7 @@ export const ChatPage = () => {
     },
     {
       onSuccess: () => {
-        dispatch(chatActions.removePrivateChannel(removeChannelId.current!));
-
-        dispatch(chatActions.clearConversation());
+        manuallySetListPrivateChannel('delete', removeChannelId.current!);
         navigate(pathName.CHAT);
       },
     },
@@ -84,29 +83,7 @@ export const ChatPage = () => {
 
     setShowModal(false);
   };
-
-  // trường hợp nhập id từ url cũng phải lấy thông tin user
-  useEffect(() => {
-    if (chatId) {
-      const isNewSender = listPrivateChannel.findIndex((item: IUser) => +item.id === +chatId) === -1;
-
-      if (isNewSender) {
-        // iife
-        (async () => {
-          dispatch(chatActions.setLoading(true));
-          const { data } = await AuthService.GetUserDetailById(+chatId);
-          dispatch(chatActions.setSelectedUserInfo(data.user));
-          dispatch(chatActions.addPrivateChannel(data.user));
-        })();
-      } else {
-        dispatch(chatActions.getDetailUserChatById(+chatId));
-      }
-    }
-    return () => {
-      dispatch(chatActions.clearConversation());
-    };
-  }, [chatId, listPrivateChannel]);
-
+  const { data: selectedUserInfo } = useUserChatInfo(Number(chatId));
   // render
   return (
     <>
@@ -124,7 +101,7 @@ export const ChatPage = () => {
                       <Col lg={9} className="chat-data p-0 chat-data-right border-start">
                         {chatId ? (
                           <div style={{ position: 'relative', minHeight: '100%' }}>
-                            <HeaderChat />
+                            <HeaderChat selectedUserInfo={selectedUserInfo} />
 
                             <ChatBox ref={chatBoxRef} />
 

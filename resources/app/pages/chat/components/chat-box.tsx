@@ -2,7 +2,6 @@ import { MessagesService } from '@/apis/services/messages.service';
 import { CustomToggle } from '@/components/custom';
 import { Loading } from '@/components/shared/loading';
 import { useAppDispatch, useAppSelector } from '@/redux/hook';
-import { chatActions } from '@/redux/slice';
 import { momentVi } from '@/utilities/functions/moment-locale';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
@@ -10,8 +9,8 @@ import parse from 'html-react-parser';
 import { ReactNode, forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { useInView } from 'react-intersection-observer';
-import { Link } from 'react-router-dom';
-import { useChatContext } from '../context';
+import { Link, useParams } from 'react-router-dom';
+import { useConversation, useSetConversation } from '@/hooks/useChatQuery';
 
 interface Props {
   children?: ReactNode;
@@ -22,16 +21,9 @@ type ChatBoxRef = {
 };
 
 export const ChatBox = forwardRef<ChatBoxRef, Props>((__, ref) => {
-  // state
-  const { chatId } = useChatContext();
-
   const localUserId = StorageFunc.getUserId();
-
+  const { id: chatId } = useParams();
   const dispatch = useAppDispatch();
-
-  const { conversation, isLoading: _ } = useAppSelector(state => state.chat);
-
-  const totalPageRef = useRef<number>(0);
 
   //scroll to last message
   const messageEndRef = useRef<HTMLDivElement>(null);
@@ -56,30 +48,15 @@ export const ChatBox = forwardRef<ChatBoxRef, Props>((__, ref) => {
 
   //======================================= get list message =======================================/
 
-  const getConversation = async ({ quantity = 15, pageParam = 1 }) => {
-    const { data } = await MessagesService.getConversationOfChannel(chatId, quantity, pageParam);
+  const {
+    data: conversation,
+    isLoading,
+    hasNextPage,
+    isFetching: isFetchingNextPage,
+    fetchNextPage,
+  } = useConversation(chatId);
 
-    totalPageRef.current = data.last_page;
-
-    return data;
-  };
-
-  const { fetchNextPage, hasNextPage, isFetchingNextPage, status, error, isLoading } = useInfiniteQuery({
-    queryKey: ['conversation', chatId],
-    queryFn: getConversation,
-    enabled: !!chatId,
-    getNextPageParam: (lastPage, _) => {
-      if (lastPage.current_page === lastPage.last_page) {
-        return undefined;
-      }
-      return lastPage.current_page + 1;
-    },
-    onSuccess: data => {
-      const newConversation = data?.pages.flatMap(page => page.data);
-
-      dispatch(chatActions.setConversation(newConversation));
-    },
-  });
+  const { manuallySetConversation } = useSetConversation();
 
   //xoá 1 tin nhắn
   const deleteMessageItemMutation = useMutation(
@@ -87,8 +64,12 @@ export const ChatBox = forwardRef<ChatBoxRef, Props>((__, ref) => {
       return MessagesService.deleteMessage(messageId);
     },
     {
-      onSuccess: (_, id) => {
-        dispatch(chatActions.removeMessageFromConversation(id));
+      onSuccess: ({ data }) => {
+        const newData = {
+          data: data.data.id,
+          id: data.data.receiver_id,
+        };
+        manuallySetConversation('delete', newData);
       },
     },
   );
@@ -101,7 +82,7 @@ export const ChatBox = forwardRef<ChatBoxRef, Props>((__, ref) => {
 
   // effect
   useEffect(() => {
-    if (endInView && conversation && conversation.length > 0) {
+    if (endInView && conversation && conversation?.length > 0) {
       scrollToBottom();
     }
   }, [conversation, startInView, endInView]);
@@ -143,7 +124,7 @@ export const ChatBox = forwardRef<ChatBoxRef, Props>((__, ref) => {
                 <div className="chat d-flex other-user" key={item.id}>
                   <div className="chat-user">
                     <Link className="avatar m-0" to="">
-                      <img loading="lazy" src={item.sender.avatar} alt="avatar" className="avatar-35 " />
+                      <img loading="lazy" src={item?.sender?.avatar} alt="avatar" className="avatar-35 " />
                     </Link>
                     <span className="chat-time mt-1 text-success">{momentVi(item.created_at).fromNow()}</span>
                   </div>
@@ -175,7 +156,7 @@ export const ChatBox = forwardRef<ChatBoxRef, Props>((__, ref) => {
                 <div className="chat chat-left" key={item.id}>
                   <div className="chat-user">
                     <Link className="avatar m-0" to="">
-                      <img loading="lazy" src={item.sender.avatar} alt="avatar" className="avatar-35 " />
+                      <img loading="lazy" src={item?.sender?.avatar} alt="avatar" className="avatar-35 " />
                     </Link>
                     <span className="chat-time mt-1 text-success">{momentVi(item.created_at).fromNow()}</span>
                   </div>

@@ -1,8 +1,9 @@
 import receiveMessage from '@/assets/mp3/receive-message.mp3';
+import { useListPrivateChannel, useSetConversation, useSetListPrivateChannel } from '@/hooks/useChatQuery';
 import { IUser } from '@/models/user';
-import { useAppDispatch, useAppSelector } from '@/redux/hook';
-import { chatActions } from '@/redux/slice';
+import { useAppSelector } from '@/redux/hook';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -11,8 +12,6 @@ const audioReceiveMessage = () => {
 };
 
 export const RealtimeMessage = () => {
-  const dispatch = useAppDispatch();
-
   const location = useLocation();
 
   const chatId = location.pathname.split('/')[2];
@@ -21,34 +20,44 @@ export const RealtimeMessage = () => {
 
   const localUserId = StorageFunc.getUserId();
 
-  const { listPrivateChannel } = useAppSelector(state => state.chat);
-
+  const { data: listPrivateChannel } = useListPrivateChannel();
+  const queryClient = useQueryClient();
+  const { manuallySetConversation } = useSetConversation();
+  const { manuallySetListPrivateChannel } = useSetListPrivateChannel();
   const handleStreamPrivateMessage = (event: any) => {
     try {
       const { sender_id, action = 'send' } = event.message;
 
-      console.log('💬 Received message', event);
-
       if (action === 'delete') {
-        return dispatch(chatActions.removeMessageFromConversation(event.message.id));
+        const data = {
+          data: event.message.id,
+          id: event.message.sender_id,
+        };
+        manuallySetConversation('delete', data);
+        return;
       }
-
       // check xem có phải người mới gửi tin nhắn không
-      const isNewSender = listPrivateChannel.findIndex((item: IUser) => +item.id === +sender_id) === -1;
-
-      console.log('isNewSender ', isNewSender);
-
-      if (isNewSender) {
-        // nếu là người mới gửi tin nhắn thì thêm vào listPrivateChannel
-        dispatch(chatActions.addPrivateChannel(event.message.sender));
+      const isNewSender =
+        listPrivateChannel &&
+        listPrivateChannel?.data?.findIndex((item: IUser) => Number(item.id) === Number(sender_id)) === -1;
+      if (isNewSender || !listPrivateChannel) {
+        // queryClient.invalidateQueries(['list_private_channel']);
+        const data = {
+          data: event.message.sender,
+          id: event.message.sender_id,
+        };
+        manuallySetListPrivateChannel('add', data);
+        return;
       }
-
-      audioReceiveMessage();
-
       const isChatting = Number(chatId) === Number(sender_id);
 
       if (isChatting) {
-        dispatch(chatActions.addMessageToConversation(event.message));
+        const data = {
+          data: event.message,
+          id: event.message.sender_id,
+        };
+        audioReceiveMessage();
+        manuallySetConversation('add', data);
       }
     } catch (error) {
       console.log('handlePrivateMessage', error);
