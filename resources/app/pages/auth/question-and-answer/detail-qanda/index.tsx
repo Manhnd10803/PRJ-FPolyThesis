@@ -48,7 +48,7 @@ export const DetailQandAPage = () => {
   // Create CMT
   const createCommentMutation = useMutation(CommentService.createCommentQA, {
     onSettled: () => {
-      queryClient.invalidateQueries(queryKeyQa);
+      queryClient.invalidateQueries(queryKeyDetailQa);
     },
   });
 
@@ -70,7 +70,7 @@ export const DetailQandAPage = () => {
   // Delete Comment
   const deleteCommentMutation = useMutation(CommentService.deleteComment, {
     onSettled: () => {
-      queryClient.invalidateQueries(queryKeyQa);
+      queryClient.invalidateQueries(queryKeyDetailQa);
     },
   });
 
@@ -85,7 +85,7 @@ export const DetailQandAPage = () => {
   // Edit Comment
   const editCommentMutation = useMutation(CommentService.editComment, {
     onSettled: () => {
-      queryClient.invalidateQueries(queryKeyQa);
+      queryClient.invalidateQueries(queryKeyDetailQa);
     },
   });
   const putComment = async (content: string, commentId: any) => {
@@ -105,7 +105,7 @@ export const DetailQandAPage = () => {
   // Create Like
   const LikeQandAMutation = useMutation(LikeService.postLikeQA, {
     onSettled: () => {
-      queryClient.invalidateQueries(queryKeyQa);
+      queryClient.invalidateQueries(queryKeyDetailQa);
     },
   });
   const createLike = async (emotion: string) => {
@@ -154,8 +154,8 @@ export const DetailQandAPage = () => {
     return data;
   };
 
-  const queryKeyQa = ['qanda'];
-  const { isLoading: isQaLoading } = useQuery(queryKeyQa, getDetailQandA, {
+  const queryKeyDetailQa = ['qanda'];
+  const { isLoading: isQaLoading } = useQuery(queryKeyDetailQa, getDetailQandA, {
     onSuccess: data => {
       setQandAData(data);
     },
@@ -164,6 +164,7 @@ export const DetailQandAPage = () => {
   const handleDelete = async () => {
     try {
       await QandAService.deleteQandA(id);
+      queryClient.invalidateQueries(['qa']);
       toast.success('Xóa câu hỏi thành công');
       navigate(pathName.QUESTS);
     } catch (error) {
@@ -227,7 +228,11 @@ export const DetailQandAPage = () => {
       toast.error(error.message);
     }
   };
-
+  const scrollToComment = () => {
+    if (commentRef.current) {
+      commentRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
   return (
     <>
       <div id="content-page" className="content-page">
@@ -259,20 +264,24 @@ export const DetailQandAPage = () => {
                   <li className="mb-2">
                     <div>
                       <div className="borderbox1 mt-3 rounded d-flex">
-                        <div className="user-img me-2">
-                          <img
-                            loading="lazy"
-                            src={qAndAData?.qa?.user?.avatar}
-                            alt="userimg"
-                            className="avatar-50 rounded-circle"
-                          />
-                        </div>
+                        <Link to={`${pathName.PROFILE}/${qAndAData?.qa?.user?.id}`}>
+                          <div className="user-img me-2">
+                            <img
+                              loading="lazy"
+                              src={qAndAData?.qa?.user?.avatar}
+                              alt="userimg"
+                              className="avatar-50 rounded-circle"
+                            />
+                          </div>
+                        </Link>
 
                         <div className="borderbox border rounded p-2">
                           <div className="d-flex align-items-center flex-wrap">
                             <div>
                               <div className="d-flex gap-2 align-items-center">
-                                <h5>{formatFullName(qAndAData?.qa?.user)}</h5>
+                                <Link to={`${pathName.PROFILE}/${qAndAData?.qa?.user?.id}`}>
+                                  <h5>{formatFullName(qAndAData?.qa?.user)}</h5>
+                                </Link>
                                 <OverlayTrigger
                                   placement="bottom"
                                   overlay={<Tooltip>Reputations: {qAndAData?.qa?.user?.score}</Tooltip>}
@@ -287,97 +296,53 @@ export const DetailQandAPage = () => {
                               </div>
                               <p>{qAndAData?.qa?.major?.majors_name}</p>
                             </div>
-
-                            <div className="ms-auto d-flex align-items-center">
-                              <div className="ms-auto d-flex align-items-center"></div>
-
-                              <div className="ms-auto d-flex align-items-center">
-                                <i className="material-symbols-outlined md-16"> chat_bubble_outline </i>
-                                <span className="mx-1">
-                                  <small>
-                                    {qAndAData && qAndAData?.total_comments ? qAndAData?.total_comments : '0'}
-                                  </small>
-                                </span>
+                          </div>
+                          <Row className="mt-2">
+                            <div className="d-flex gap-3">
+                              <div className="date date  d-flex align-items-center">
+                                <i className="material-symbols-outlined pe-2 md-18 text-primary">calendar_month</i>
+                                Đă đăng vào {momentVi(qAndAData?.qa?.created_at).fromNow()}
                               </div>
+                              <ButtonGroup aria-label="Basic example">
+                                <Button
+                                  className="d-flex align-items-center gap-2 "
+                                  style={{ backgroundColor: qAndAData?.user_like?.emotion === 'like' ? '#b2b5b8' : '' }}
+                                  variant="light"
+                                  onClick={handleLikeClick}
+                                >
+                                  {likeStatus === 'like' ? (
+                                    <ThumbUpIcon className="text-primary" sx={{ fontSize: 20 }} />
+                                  ) : (
+                                    <ThumbUpOutlinedIcon className="text-primary" sx={{ fontSize: 20 }} />
+                                  )}
+                                  <Badge bg="primary" className=" text-white ml-2">
+                                    {qAndAData?.emotion?.like || '0'}
+                                  </Badge>
+                                </Button>
 
-                              <i className="material-symbols-outlined md-16 text-primary">schedule</i>
-                              <span className="mx-1 text-primary">
-                                <small>{momentVi(qAndAData?.qa?.created_at).fromNow()}</small>
-                              </span>
-                            </div>
-                            {user_id === qAndAData?.qa?.user_id && (
-                              <button className=" btn">
-                                <div className="card-header-toolbar d-flex align-items-center">
-                                  <Dropdown>
-                                    <Dropdown.Toggle as="div" className="lh-1">
-                                      <span className="material-symbols-outlined">more_horiz</span>
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu>
-                                      <Dropdown.Item href="#" onClick={() => setShow(true)}>
-                                        Xóa câu hỏi
-                                      </Dropdown.Item>
-                                    </Dropdown.Menu>
-                                  </Dropdown>
-                                </div>
-                              </button>
-                            )}
-                          </div>
-
-                          <h3 style={{ fontWeight: '600', marginBottom: '15px' }}>{qAndAData?.qa?.title}</h3>
-
-                          <h4 style={{ marginBottom: '15px' }}>
-                            {qAndAData?.qa?.content && parse(String(JSON.parse(qAndAData?.qa?.content)))}
-                          </h4>
-                          <Row className="mt-2"></Row>
-                          {/* HashTag */}
-                          <div>
-                            {qAndAData?.qa?.hashtag.split(',').map((hashtag, index) => (
-                              <Badge
-                                as={Link}
-                                bg=""
-                                to="#"
-                                className="badge border border-danger text-danger mt-2 h-1 ms-2 me-2"
-                                key={index}
-                              >
-                                {hashtag}
-                              </Badge>
-                            ))}
-                          </div>
-
-                          {/* Icon like cmt */}
-                          <br />
-                          <div className="d-flex gap-3">
-                            <ButtonGroup aria-label="Basic example">
-                              <Button
-                                className="d-flex align-items-center gap-2 "
-                                style={{ backgroundColor: qAndAData?.user_like?.emotion === 'like' ? '#b2b5b8' : '' }}
-                                variant="light"
-                                onClick={handleLikeClick}
-                              >
-                                {likeStatus === 'like' ? (
-                                  <ThumbUpIcon className="text-primary" sx={{ fontSize: 20 }} />
-                                ) : (
-                                  <ThumbUpOutlinedIcon className="text-primary" sx={{ fontSize: 20 }} />
-                                )}
-                                <Badge bg="primary" className=" text-white ml-2">
-                                  {qAndAData?.emotion?.like || '0'}
-                                </Badge>
-                              </Button>
-
-                              <Button
-                                className="d-flex align-items-center"
-                                variant="light"
-                                onClick={handleDislikeClick}
-                                data-bs-placement="bottom"
-                              >
-                                {likeStatus === 'dislike' ? (
-                                  <ThumbDownIcon className="text-primary" sx={{ fontSize: 20 }} />
-                                ) : (
-                                  <ThumbDownOffAltOutlinedIcon className="text-primary" sx={{ fontSize: 20 }} />
-                                )}
-                              </Button>
-                            </ButtonGroup>
-                            {user_id !== qAndAData?.qa?.user_id && (
+                                <Button
+                                  className="d-flex align-items-center"
+                                  variant="light"
+                                  onClick={handleDislikeClick}
+                                  data-bs-placement="bottom"
+                                >
+                                  {likeStatus === 'dislike' ? (
+                                    <ThumbDownIcon className="text-primary" sx={{ fontSize: 20 }} />
+                                  ) : (
+                                    <ThumbDownOffAltOutlinedIcon className="text-primary" sx={{ fontSize: 20 }} />
+                                  )}
+                                </Button>
+                              </ButtonGroup>
+                              <OverlayTrigger placement="bottom" overlay={<Tooltip>Di chuyển tới bình luận</Tooltip>}>
+                                <Link
+                                  to={'#'}
+                                  className="d-flex align-items-center cursor-pointer"
+                                  onClick={scrollToComment}
+                                >
+                                  <i className="material-symbols-outlined pe-2 md-18 text-primary">mode_comment</i>
+                                  {qAndAData?.total_comments} comments
+                                </Link>
+                              </OverlayTrigger>
                               <div className="bg-soft-primary rounded p-2 pointer text-center p-0">
                                 <div className="card-header-toolbar d-flex align-items-center">
                                   <Dropdown className="d-flex align-items-center">
@@ -389,17 +354,27 @@ export const DetailQandAPage = () => {
                                       more_horiz
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu className="dropdown-menu-right">
-                                      <Dropdown.Item
-                                        eventKey="five"
-                                        className="d-flex align-items-center"
-                                        onClick={handleShowModalReport}
-                                      >
-                                        <span className="material-symbols-outlined">report</span>Tìm hỗ trợ hoặc báo cáo
-                                      </Dropdown.Item>
+                                      {user_id !== qAndAData?.qa?.user_id && (
+                                        <Dropdown.Item
+                                          eventKey="five"
+                                          className="d-flex align-items-center"
+                                          onClick={handleShowModalReport}
+                                        >
+                                          <span className="material-symbols-outlined">report</span>Tìm hỗ trợ hoặc báo
+                                          cáo
+                                        </Dropdown.Item>
+                                      )}
+                                      {user_id === qAndAData?.qa?.user_id && (
+                                        <Dropdown.Item
+                                          eventKey="five"
+                                          className="d-flex align-items-center"
+                                          onClick={handleDelete}
+                                        >
+                                          <span className="material-symbols-outlined">delete</span>Xóa câu hỏi này
+                                        </Dropdown.Item>
+                                      )}
                                     </Dropdown.Menu>
                                   </Dropdown>
-
-                                  {/* Modal  */}
                                   <Modal centered show={showModalReport} onHide={handleCloseModalReport}>
                                     <Modal.Header closeButton>
                                       <Modal.Title>Báo cáo</Modal.Title>
@@ -419,7 +394,6 @@ export const DetailQandAPage = () => {
                                     <Modal.Footer></Modal.Footer>
                                   </Modal>
 
-                                  {/* Modal item  */}
                                   <CustomModal show={showModal} onHide={handleClose} title={modalTitle}>
                                     <div className="mb-3"></div>
                                     <div className="mb-3">
@@ -451,10 +425,30 @@ export const DetailQandAPage = () => {
                                   </CustomModal>
                                 </div>
                               </div>
-                            )}
-                          </div>
+                            </div>
+                          </Row>
+                          <Row className="mt-2">
+                            <h3 style={{ fontWeight: '600', marginBottom: '15px' }}>{qAndAData?.qa?.title}</h3>
 
-                          {/* Câu trả lời */}
+                            <h4 style={{ marginBottom: '15px' }}>
+                              {qAndAData?.qa?.content && parse(String(JSON.parse(qAndAData?.qa?.content)))}
+                            </h4>
+                          </Row>
+                          {/* HashTag */}
+                          <div>
+                            {qAndAData?.qa?.hashtag.split(',').map((hashtag, index) => (
+                              <Badge
+                                as={Link}
+                                bg=""
+                                to="#"
+                                className="badge border border-danger text-danger mt-2 h-1 ms-2 me-2"
+                                key={index}
+                                style={{ fontSize: '16px' }}
+                              >
+                                {hashtag}
+                              </Badge>
+                            ))}
+                          </div>
 
                           <div ref={commentRef}>
                             <CommentsQandA

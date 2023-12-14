@@ -1,32 +1,59 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, Col, Nav, Row, Tab } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { formatTime } from '../components/format-time';
 import diacritics from 'diacritics';
 import { pathName } from '@/routes/path-name';
+import { Skeleton } from '@mui/material';
 
-export const MyBlog = ({ listBlog, isLoading }) => {
-  const [searchQueries, setSearchQueries] = useState({
+type MyBlogProps = {
+  listBlog: any;
+  isLoading: boolean;
+};
+
+export const MyBlog = ({ listBlog, isLoading }: MyBlogProps) => {
+  const [searchQueries, setSearchQueries] = useState<any>({
     about1: '',
     about2: '',
     about3: '',
   });
 
-  const handleSearchInputChange = (tabKey, query) => {
+  const handleSearchInputChange = (tabKey: any, query: any) => {
     setSearchQueries({ ...searchQueries, [tabKey]: query });
   };
 
-  const clearSearch = tabKey => {
+  const clearSearch = (tabKey: any) => {
     setSearchQueries({ ...searchQueries, [tabKey]: '' });
   };
 
-  const normalizeText = text => diacritics.remove(text.toLowerCase());
+  const normalizeText = (text: any) => diacritics.remove(text.toLowerCase());
 
   // Shared function to filter blog list based on tabKey
-  const filteredBlogListAbout = tabKey => {
+  const filteredBlogListAbout = (tabKey: any) => {
     const normalizedSearch = normalizeText(searchQueries[tabKey]);
-    return listBlog?.filter(item => normalizeText(item.title).includes(normalizedSearch));
+    return listBlog?.filter((item: any) => normalizeText(item.title).includes(normalizedSearch));
   };
+
+  const [isSticky, setSticky] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const offset = window.scrollY;
+      const topThreshold = 300;
+
+      if (offset >= topThreshold) {
+        setSticky(true);
+      } else {
+        setSticky(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   return (
     <>
@@ -86,10 +113,20 @@ export const MyBlog = ({ listBlog, isLoading }) => {
                       <hr />
                       {isLoading ? (
                         <>
-                          <h4>Loading...</h4>
+                          <Row className="mb-2">
+                            <div className="col-12">
+                              <Skeleton variant="text" width="100%" height={100} />
+                            </div>
+                            <hr />
+                          </Row>
+                          <Row className="mb-2">
+                            <div className="col-12">
+                              <Skeleton variant="text" width="100%" height={100} />
+                            </div>
+                          </Row>
                         </>
                       ) : (
-                        <>
+                        <div className={`${isSticky ? 'scroller-my-blog' : ''}`}>
                           {filteredBlogListAbout(tabKey)?.length > 0 ? (
                             <>
                               {filteredBlogListAbout(tabKey).map((item, index) => (
@@ -113,7 +150,7 @@ export const MyBlog = ({ listBlog, isLoading }) => {
                           ) : (
                             <h4>Không có data</h4>
                           )}
-                        </>
+                        </div>
                       )}
                     </Tab.Pane>
                   ))}

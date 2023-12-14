@@ -1,12 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, Col, Nav, Row, Tab } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { formatTime } from '../components/format-time';
 import diacritics from 'diacritics';
 import { pathName } from '@/routes/path-name';
+import { Skeleton } from '@mui/material';
 
-export const MyListQa = ({ listQa, isLoading }) => {
-  const [searchQueries, setSearchQueries] = useState({
+type MyQaProps = {
+  listQa: any;
+  isLoading: boolean;
+};
+
+export const MyListQa = ({ listQa, isLoading }: MyQaProps) => {
+  const [searchQueries, setSearchQueries] = useState<any>({
     about1: '',
     about2: '',
   });
@@ -45,9 +51,21 @@ export const MyListQa = ({ listQa, isLoading }) => {
         </div>
         <hr />
         {isLoading ? (
-          <h4>Loading...</h4>
-        ) : (
           <>
+            <Row className="mb-2">
+              <div className="col-12">
+                <Skeleton variant="text" width="100%" height={100} />
+              </div>
+              <hr />
+            </Row>
+            <Row className="mb-2">
+              <div className="col-12">
+                <Skeleton variant="text" width="100%" height={100} />
+              </div>
+            </Row>
+          </>
+        ) : (
+          <div className={`${isSticky ? 'scroller-my-blog' : ''}`}>
             {filteredList && filteredList.length > 0 ? (
               <>
                 {filteredList.map((item: any, index: number) => (
@@ -71,7 +89,7 @@ export const MyListQa = ({ listQa, isLoading }) => {
             ) : (
               <h4>Không có data</h4>
             )}
-          </>
+          </div>
         )}
       </>
     );
@@ -79,6 +97,27 @@ export const MyListQa = ({ listQa, isLoading }) => {
 
   const filteredListAbout1 = filterList(listQa, searchQueries.about1);
   const filteredListAbout2 = filterList(listQa, searchQueries.about2);
+
+  const [isSticky, setSticky] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const offset = window.scrollY;
+      const topThreshold = 300;
+
+      if (offset >= topThreshold) {
+        setSticky(true);
+      } else {
+        setSticky(false);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   return (
     <>
