@@ -50,3 +50,24 @@ export const useAddCommentPost = () => {
     manuallyAddCommentPostItem,
   };
 };
+
+export const useAddCommentPostDetail = () => {
+  const queryClient = useQueryClient();
+
+  const manuallyAddCommentPostDetail = async ({ newComment, postId }: TAddCommentPost) => {
+    queryClient.setQueryData(['post', postId.toString()], (oldData: GetNewPostResponseType | undefined) => {
+      if (!oldData) {
+        console.log('Chua cache post detail', postId);
+        return oldData;
+      }
+
+      return produce(oldData, draft => {
+        draft.comments?.unshift(newComment);
+      });
+    });
+  };
+
+  return {
+    manuallyAddCommentPostDetail,
+  };
+};

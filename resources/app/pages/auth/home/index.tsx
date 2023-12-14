@@ -12,9 +12,9 @@ export const HomePage = () => {
     <div id="content-page" className="content-page">
       <Container>
         <Row>
-          <Col lg={2} />
+          <Col lg={1} />
           {/* ==== render left content ==== */}
-          <Col lg={8} className="row m-0 p-0">
+          <Col lg={10} className="row m-0 p-0">
             <CreateNewPost />
             <PostContainer />
           </Col>
@@ -24,7 +24,7 @@ export const HomePage = () => {
             <ListBirthDay />
             <ListSuggestedPages />
           </Col> */}
-          <Col lg={2} />
+          <Col lg={1} />
         </Row>
       </Container>
     </div>

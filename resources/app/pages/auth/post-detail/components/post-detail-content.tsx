@@ -80,7 +80,7 @@ export const PostDetailContent = () => {
         </div>
       </Card.Body>
       <div className="" style={{ marginBottom: '15px' }}>
-        <CreateComment postId={post.id} />
+        <CreateComment postId={post.id} isDetail />
       </div>
     </Card>
   );
