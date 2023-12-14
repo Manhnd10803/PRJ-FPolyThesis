@@ -5,6 +5,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { formatFullName } from '@/utilities/functions';
 import parse from 'html-react-parser';
 import { momentVi } from '@/utilities/functions/moment-locale';
+import { hideImages } from '@/utilities/funcJsonImage';
+import { CardLoadFriendOther } from '@/utilities/funcLoadFriend/CardLoad';
 export const SearchPage = () => {
   const truncateTextStyle = {
     overflow: 'hidden',
@@ -26,10 +28,10 @@ export const SearchPage = () => {
     setSearchValue(searchValueFromURL);
   }, [searchValueFromURL]);
   useEffect(() => {
-    setSearchValue(searchValueFromURL);
+    // Kiểm tra nếu giá trị search mới khác với giá trị trước đó
 
     setLoading(true);
-    SearchService.getSearchEverything(type, searchValueFromURL)
+    SearchService.getSearchEverything(type, searchValue)
       .then(response => {
         console.log(response.data);
         setData(response.data);
@@ -37,10 +39,6 @@ export const SearchPage = () => {
       .finally(() => {
         setLoading(false);
       });
-
-    return () => {
-      setData([]);
-    };
   }, [type, searchValueFromURL]);
 
   const handleSearchSubmit = () => {
@@ -54,7 +52,6 @@ export const SearchPage = () => {
         setLoading(false);
       });
   };
-  console.log(data);
   const handleFormSubmit = (event: any) => {
     const newUrl = `/search?search=${searchValue}`;
     navigate(newUrl);
@@ -182,7 +179,7 @@ export const SearchPage = () => {
                                       </Link>
                                       <div style={truncateTextStyle}>
                                         {' '}
-                                        {item?.content ? parse(JSON.parse(item?.content)) : 'Content not available'}
+                                        {item?.content ? parse(hideImages(JSON.parse(item?.content))) : ''}
                                       </div>
                                       <Row className="mt-2"></Row>
                                       {/* Hashtag */}
@@ -301,23 +298,22 @@ export const SearchPage = () => {
                   <Card>
                     <Row className="p-4">
                       {loading ? (
-                        // Display a loading indicator if loading is true
-                        <p className="text-center">Loading...</p>
+                        <CardLoadFriendOther />
                       ) : (
                         <>
                           {data && data.length > 0 && type == 'user' ? (
                             data.map((item, index) => (
                               <Col sm={3} key={index}>
-                                <Link to={`/profile/${item.id}`} className="text-black">
+                                <Link to={`/profile/${item?.id}`} className="text-black">
                                   <Card className="mb-3">
-                                    <Card.Img variant="top" src={item.avatar} alt="ảnh đại diện" />
+                                    <Card.Img variant="top" src={item?.avatar} alt="ảnh đại diện" />
 
                                     <Card.Body>
                                       <Card.Title as="h5" className="card-title">
                                         {formatFullName(item)}
                                       </Card.Title>
 
-                                      <Card.Text className="card-text">@{item.username}</Card.Text>
+                                      <Card.Text className="card-text">@{item?.username}</Card.Text>
                                       <div className="d-flex flex-column gap-2 mt-2 mt-md-0"></div>
                                     </Card.Body>
                                   </Card>

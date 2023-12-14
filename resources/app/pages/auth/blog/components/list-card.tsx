@@ -5,6 +5,7 @@ import parse from 'html-react-parser';
 // import moment from 'moment';
 import { momentVi } from '@/utilities/functions/moment-locale';
 import { pathName } from '@/routes/path-name';
+import { hideImages } from '@/utilities/funcJsonImage';
 export const ListCard = ({ data }: any) => {
   const truncateTextStyle = {
     overflow: 'hidden',
@@ -38,7 +39,7 @@ export const ListCard = ({ data }: any) => {
                       </div>
                       <Link to={`${pathName.BLOG}/${itemblog.blog.id}`} style={{ textDecoration: 'none' }}>
                         <h5 className="mb-2">{itemblog.blog.title}</h5>
-                        <h6 style={truncateTextStyle}>{parse(JSON.parse(itemblog.blog.content))}</h6>
+                        <h6 style={truncateTextStyle}>{parse(hideImages(JSON.parse(itemblog.blog.content)))}</h6>
                       </Link>
 
                       <div className="group-smile mt-4 d-flex flex-wrap align-items-center justify-content-between position-right-side">

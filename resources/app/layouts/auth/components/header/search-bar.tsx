@@ -1,6 +1,7 @@
 import { SearchService } from '@/apis/services/search.service';
 import { useDebounce } from '@/hooks';
 import { pathName } from '@/routes/path-name';
+import { hideImages } from '@/utilities/funcJsonImage';
 import { formatFullName } from '@/utilities/functions';
 import { momentVi } from '@/utilities/functions/moment-locale';
 import parse from 'html-react-parser';
@@ -161,7 +162,7 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
                               <span className="text-black">{momentVi(item?.created_at).fromNow()}</span>
                             </div>
                             <div className="p text-black" style={truncateTextStyle}>
-                              {item?.content ? parse(JSON.parse(item?.content)) : 'Content not available'}
+                              {item?.content ? parse(hideImages(JSON.parse(item?.content))) : ''}
                             </div>
                           </div>
                         </div>
