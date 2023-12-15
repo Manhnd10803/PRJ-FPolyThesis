@@ -15,6 +15,8 @@ type MyBlogProps = {
   fetchNextPage: any;
 };
 
+const imageUrlLoading = 'https://i.gifer.com/ZKZg.gif';
+
 export const MyBlog = ({ listBlog, isLoading, isFetching, hasNextPage, fetchNextPage }: MyBlogProps) => {
   const [searchQueries, setSearchQueries] = useState<any>({
     about1: '',
@@ -155,6 +157,7 @@ const ListBlog = ({ data, fetchNextPage, hasNextPage, isFetching }: any) => {
     }
     console.log('endInViewBlog', endInViewBlog);
   }, [endInViewBlog, fetchNextPage, hasNextPage, isFetching]);
+
   return (
     <>
       {data?.map((item: any, index: number) => (
@@ -170,9 +173,17 @@ const ListBlog = ({ data, fetchNextPage, hasNextPage, isFetching }: any) => {
           <hr />
         </Row>
       ))}
-      <div style={{ background: 'red', height: 100, width: '100%', marginBottom: 200 }} ref={endRefBlog}>
-        {endInViewBlog}
-      </div>
+      {isFetching && (
+        <div className="col-sm-12 text-center">
+          <img src={imageUrlLoading} alt="loader" style={{ height: '50px' }} />
+        </div>
+      )}
+      {!isFetching && !hasNextPage && data && data.length > 0 && (
+        <div className="text-center">
+          <h5>Không còn dữ liệu cũ hơn !</h5>
+        </div>
+      )}
+      <div ref={endRefBlog} />
     </>
   );
 };

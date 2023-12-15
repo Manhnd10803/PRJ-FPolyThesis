@@ -21,7 +21,7 @@ export const RightSidebar = () => {
               <div className="media-height p-3" data-scrollbar="init">
                 {isLoading ? (
                   <>
-                    {Array.from({ length: 9 }).map((_, index) => (
+                    {Array.from({ length: 8 }).map((_, index) => (
                       <Card>
                         <Card.Body>
                           <div className="d-flex gap-2 align-items-center">
