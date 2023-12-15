@@ -151,7 +151,7 @@
               <li>
                 <img src="{{ $newUser->avatar }}" alt="User Image" width="73" height="73">
                 <a class="users-list-name" href="/profile/{{ $newUser->id }}">{{ $newUser->username }}</a>
-                <span class="users-list-date">{{ $newUser->updated_at }}</span>
+                <span class="users-list-date">{{ $newUser->created_at }}</span>
               </li>
               @endforeach
             </ul>
