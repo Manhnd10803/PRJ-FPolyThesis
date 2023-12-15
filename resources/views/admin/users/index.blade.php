@@ -80,7 +80,7 @@
                             </div>
                             <div class="col-xs-3">
                                 <label for="joined_to">Đến</label>
-                                <<input type="date" class="form-control" name="joined_to" value="{{ old('joined_to', request('joined_to')) }}" placeholder="">
+                                <input type="date" class="form-control" name="joined_to" value="{{ old('joined_to', request('joined_to')) }}" placeholder="">
                             </div>
                             <div class="col-xs-2">
                                 <label for="gender">Giới tính</label>

@@ -125,7 +125,6 @@ class AdminReportController extends Controller
 
         $reports = $query->orderBy('created_at', 'desc')->get();
         $title = $status == config('default.report.status.pending') ? 'Danh sách vi phạm chờ duyệt' : 'Danh sách vi phạm đã duyệt';
-
         return view('admin.report.index', compact('reports','title'));
     }
 

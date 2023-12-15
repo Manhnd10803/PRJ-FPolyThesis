@@ -49,15 +49,15 @@
                         <div class="row">
                             <div class="col-xs-3">
                                 <label for="full_name">Người tố cáo</label>
-                                <input type="text" class="form-control" name="reporter_name" value="{{ old('reporter_name') }}">
+                                <input type="text" class="form-control" name="reporter_name" value="{{ old('reporter_name', request('reporter_name')) }}">
                             </div>
                             <div class="col-xs-3">
                                 <label for="email">Người bị tố cáo</label>
-                                <input type="text" class="form-control" name="reported_name" value="{{ old('reported_name') }}">
+                                <input type="text" class="form-control" name="reported_name" value="{{ old('reported_name', request('reported_name')) }}">
                             </div>
                             <div class="col-xs-3">
                                 <label for="major">Tiêu đề</label>
-                                <input type="text" class="form-control" name="title" value="{{ old('title') }}">
+                                <input type="text" class="form-control" name="title" value="{{ old('title', request('title')) }}">
                             </div>   
                             {{-- <div class="col-xs-3">
                                 <label for="major">Nội dung</label>
@@ -68,10 +68,10 @@
                                 <label for="report_type">Loại tố cáo</label>
                                 <select name="report_type" class="form-control">
                                     <option value="">Tất cả</option>
-                                    <option value="blog" {{ old('report_type') == 'blog' ? 'selected' : '' }}>Blog</option>
-                                    <option value="post" {{ old('report_type') == 'post' ? 'selected' : '' }}>Post</option>
-                                    <option value="user" {{ old('report_type') == 'user' ? 'selected' : '' }}>User</option>
-                                    <option value="qa" {{ old('report_type') == 'qa' ? 'selected' : '' }}>QA</option>
+                                    <option value="blog" {{ old('report_type', request('report_type')) == 'blog' ? 'selected' : '' }}>Bài viết</option>
+                                    <option value="post" {{ old('report_type', request('report_type')) == 'post' ? 'selected' : '' }}>Dòng trạng thái</option>
+                                    <option value="user" {{ old('report_type', request('report_type')) == 'user' ? 'selected' : '' }}>Người dùng</option>
+                                    <option value="qa" {{ old('report_type', request('report_type')) == 'qa' ? 'selected' : '' }}>Câu hỏi</option>
                                 </select>
                             </div>
                         </div>
@@ -79,19 +79,19 @@
                         <div class="row">
                             <div class="col-xs-3">
                                 <label for="created_from">Ngày tạo từ</label>
-                                <input type="date" class="form-control" name="created_from" value="{{ old('created_from') }}" placeholder="">
+                                <input type="date" class="form-control" name="created_from" value="{{ old('created_from', request('created_from')) }}" placeholder="">
                             </div>
                             <div class="col-xs-3">
                                 <label for="created_to">Đến</label>
-                                <input type="date" class="form-control" name="created_to" value="{{ old('created_to') }}" placeholder="">
+                                <input type="date" class="form-control" name="created_to" value="{{ old('created_to', request('created_to')) }}" placeholder="">
                             </div>
                             
                             <div class="col-xs-2">
                                 <label for="status">Trạng thái</label>
                                 <select name="status" class="form-control">
                                     <option value="">Tất cả</option>
-                                    <option value="{{ config('default.report.status.resolved') }}" {{ old('status') == config('default.report.status.resolved') ? 'selected' : '' }}>Resolved</option>
-                                    <option value="{{ config('default.report.status.dismissed') }}" {{ old('status') == config('default.report.status.dismissed') ? 'selected' : '' }}>Dismissed</option>
+                                    <option value="{{ config('default.report.status.resolved') }}" {{ old('status', request('status')) == config('default.report.status.resolved') ? 'selected' : '' }}>Chấp nhận</option>
+                                    <option value="{{ config('default.report.status.dismissed') }}" {{ old('status', request('status')) == config('default.report.status.dismissed') ? 'selected' : '' }}>Từ chối</option>
                                 </select>
                             </div> 
                             <div class="col-xs-2">
