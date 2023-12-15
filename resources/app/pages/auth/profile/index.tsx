@@ -101,7 +101,9 @@ export const ProfilePage = () => {
     console.log('endInViewTimeLine', endInViewTimeLine);
   }, [endInViewTimeLine, isFetching, hasNextPage, fetchNextPage]);
 
-  console.log(detailProfile);
+  const listPosts = data?.pages.flatMap(page => page.datas);
+  const listFriend = data?.pages.flatMap(page => page.detailTimeline.friend_details);
+  const listImage = data?.pages.flatMap(page => page.detailTimeline.images);
   return (
     <>
       <div id="content-page" className="content-page" style={{ overflow: 'visible' }}>
@@ -123,8 +125,8 @@ export const ProfilePage = () => {
                       <>
                         <Timeline
                           about={detailUserProfile?.user}
-                          listImage={data?.detailTimeline?.images}
-                          listFriend={data?.detailTimeline?.friend_details}
+                          listImage={listImage}
+                          listFriend={listFriend}
                           isLoading={isLoading}
                           isUser={isUser}
                           idUser={idUser}
