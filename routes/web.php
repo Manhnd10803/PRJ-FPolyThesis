@@ -114,7 +114,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'authAdmin'], function () {
         Route::put('/dismissed/{report}', [AdminReportController::class, 'DismissedReport'])->name('admin.report.statusDismissed');
         Route::delete('/delete/{report}', [AdminReportController::class, 'DeleteReport'])->name('admin.report.delete');
 
-        Route::get('/admin/reports/search', [AdminReportController::class, 'search'])->name('admin.reports.search');
+        // Route::get('/admin/reports/search', [AdminReportController::class, 'search'])->name('admin.reports.search');
     });
     //Admin log
     Route::prefix('log')->group(function () {

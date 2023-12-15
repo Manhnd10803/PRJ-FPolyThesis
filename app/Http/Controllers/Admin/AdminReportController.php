@@ -19,11 +19,13 @@ class AdminReportController extends Controller
         $reporterName = $request->input('reporter_name');
         $reportedName = $request->input('reported_name');
         $title = $request->input('title');
-        $content = $request->input('content');
+        // $content = $request->input('content');
         $createdFrom = $request->input('created_from');
         $createdTo = $request->input('created_to');
         $reportType = $request->input('report_type');
         $status = $request->input('status');
+
+        // $query = Report::with('reporter:id,first_name,last_name', 'reported:id,first_name,last_name');
 
         if ($reporterName) {
             $nameParts = explode(' ', $reporterName);
@@ -53,9 +55,9 @@ class AdminReportController extends Controller
             $query->where('report_title', 'LIKE', "%$title%");
         }
 
-        if ($content) {
-            $query->where('report_content', 'LIKE', "%$content%");
-        }
+        // if ($content) {
+        //     $query->where('report_content', 'LIKE', "%$content%");
+        // }
 
         if ($createdFrom) {
             $query->whereDate('created_at', '>=', $createdFrom);
@@ -83,17 +85,21 @@ class AdminReportController extends Controller
     public function search(Request $request)
     {
         $request->flash();
+        $status = request()->is('admin/report/') ? config('default.report.status.pending') : config('default.report.status.resolved');
+        // $query = Report::query();
+        $query = Report::with('reporter:id,first_name,last_name', 'reported:id,first_name,last_name');
 
-        $query = Report::query();
         $this->applySearchFilters($query, $request);
 
         $reports = $query->get();
-
-        return view('admin.report.index', compact('reports'));
+        $title = $status == config('default.report.status.resolved') ? 'Danh sách vi phạm đã duyệt' : 'Danh sách vi phạm chờ duyệt';
+        return view('admin.report.index', compact('reports','title'));
     }
 
     public function index()
     {
+        $status = request()->is('admin/report/') ? config('default.report.status.pending') : config('default.report.status.resolved');
+
         $query = Report::with('reporter:id,first_name,last_name', 'reported:id,first_name,last_name');
         $this->applySearchFilters($query, request());
 
@@ -102,10 +108,14 @@ class AdminReportController extends Controller
             config('default.report.status.resolved'),
             config('default.report.status.dismissed')
         ])->get();
-        return view('admin.report.index', compact('reports'));
+        $title = $status == config('default.report.status.resolved') ? 'Danh sách vi phạm đã duyệt' : 'Danh sách vi phạm chờ duyệt';
+
+        return view('admin.report.index', compact('reports','title'));
     }
+
     public function pending()
     {
+        $status = request()->is('admin/report/pending') ? config('default.report.status.pending') : config('default.report.status.resolved');
 
         $query = Report::with('reporter:id,first_name,last_name', 'reported:id,first_name,last_name')
             ->where('report_status', config('default.report.status.pending'));
@@ -114,8 +124,9 @@ class AdminReportController extends Controller
         $this->applySearchFilters($query, request(), false);
 
         $reports = $query->orderBy('created_at', 'desc')->get();
+        $title = $status == config('default.report.status.pending') ? 'Danh sách vi phạm chờ duyệt' : 'Danh sách vi phạm đã duyệt';
 
-        return view('admin.report.index', compact('reports'));
+        return view('admin.report.index', compact('reports','title'));
     }
 
     public function show(Report $report)
@@ -143,7 +154,7 @@ class AdminReportController extends Controller
         $count = Report::where('report_status', config('default.report.status.pending'))->count();
         return $count;
     }
-    
+
     public function DeleteReport(Report $report)
     {
         $report->delete();
