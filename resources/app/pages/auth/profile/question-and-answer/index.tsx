@@ -39,7 +39,7 @@ export const MyListQa = ({ listQa, isLoading, isFetching, hasNextPage, fetchNext
   useEffect(() => {
     const handleScroll = () => {
       const offset = window.scrollY;
-      const topThreshold = 300;
+      const topThreshold = 280;
 
       if (offset >= topThreshold) {
         setSticky(true);
