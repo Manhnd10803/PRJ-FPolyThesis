@@ -31,7 +31,7 @@ export const AuthRouter: Array<AuthRouteType> = [
   {
     path: pathName.QUESTS_CREATE,
     element: <CreateQandA />,
-    noRightSidebar: true,
+    // noRightSidebar: true,
   },
   {
     path: pathName.QUEST_DETAIL_ROUTE,
@@ -44,7 +44,7 @@ export const AuthRouter: Array<AuthRouteType> = [
   {
     path: pathName.BLOG_CREATE,
     element: <CreateBlogPage />,
-    noRightSidebar: true,
+    // noRightSidebar: true,
   },
   {
     path: pathName.BLOG_DETAIL,

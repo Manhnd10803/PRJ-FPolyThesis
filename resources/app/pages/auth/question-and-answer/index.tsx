@@ -6,11 +6,9 @@ import { useInView } from 'react-intersection-observer';
 import { useCallback, useEffect, useState } from 'react';
 import { Navbar } from './components/navbar';
 import { QandAItem } from './components/qanda-item';
-import { Loading } from '@/components/shared/loading';
 import { MajorService } from '@/apis/services/major.service';
 import { pathName } from '@/routes/path-name';
-
-const imageUrlLoading = 'https://i.gifer.com/ZKZg.gif';
+import { Skeleton } from '@mui/material';
 
 export const QuestionAndAnswerPage = () => {
   let { hash } = useLocation();
@@ -153,14 +151,120 @@ export const QuestionAndAnswerPage = () => {
                   <Tab.Content>
                     <Tab.Pane eventKey={activeTab} className="fade show" id="Posts" role="tabpanel">
                       {isLoading ? (
-                        <Loading size={100} textStyle={{ fontSize: '30px' }} textLoading="Đang tải..." />
+                        <>
+                          <Card>
+                            <Card.Body>
+                              <div className="borderbox1 mt-3 rounded d-flex">
+                                <div className="user-img me-2">
+                                  <Skeleton variant="circular" width={50} height={50} animation="wave" />
+                                </div>
+                                <div className="borderbox border rounded p-2">
+                                  <div className="d-flex align-items-center flex-wrap mb-2">
+                                    <Link to="#" className="mb-0">
+                                      <Skeleton variant="text" width={150} height={23} animation="wave" />
+                                    </Link>
+                                    <div className="ms-auto d-flex align-items-center">
+                                      <Skeleton variant="text" width={150} height={25} animation="wave" />
+                                    </div>
+                                  </div>
+                                  <Link to="#" className="h3">
+                                    <Skeleton
+                                      variant="text"
+                                      width={500}
+                                      height={33}
+                                      className="mb-2"
+                                      animation="wave"
+                                    />
+                                  </Link>
+                                  <div className="d-flex justify-content-start">
+                                    <Skeleton
+                                      variant="text"
+                                      width={70}
+                                      height={50}
+                                      style={{ marginRight: '10px' }}
+                                      animation="wave"
+                                    />
+                                    <Skeleton variant="text" width={70} height={50} animation="wave" />
+                                  </div>
+                                </div>
+                              </div>
+                            </Card.Body>
+                          </Card>
+                          <Card>
+                            <Card.Body>
+                              <div className="borderbox1 mt-3 rounded d-flex">
+                                <div className="user-img me-2">
+                                  <Skeleton variant="circular" width={50} height={50} animation="wave" />
+                                </div>
+                                <div className="borderbox border rounded p-2">
+                                  <div className="d-flex align-items-center flex-wrap mb-2">
+                                    <Link to="#" className="mb-0">
+                                      <Skeleton variant="text" width={150} height={23} animation="wave" />
+                                    </Link>
+                                    <div className="ms-auto d-flex align-items-center">
+                                      <Skeleton variant="text" width={150} height={25} animation="wave" />
+                                    </div>
+                                  </div>
+                                  <Link to="#" className="h3">
+                                    <Skeleton
+                                      variant="text"
+                                      width={500}
+                                      height={33}
+                                      className="mb-2"
+                                      animation="wave"
+                                    />
+                                  </Link>
+                                  <div className="d-flex justify-content-start">
+                                    <Skeleton
+                                      variant="text"
+                                      width={70}
+                                      height={50}
+                                      style={{ marginRight: '10px' }}
+                                      animation="wave"
+                                    />
+                                    <Skeleton variant="text" width={70} height={50} animation="wave" />
+                                  </div>
+                                </div>
+                              </div>
+                            </Card.Body>
+                          </Card>
+                        </>
                       ) : (
                         listQanda && listQanda.map((item: any, index: number) => <QandAItem key={index} item={item} />)
                       )}
                       {isFetching && (
-                        <div className="col-sm-12 text-center">
-                          <img src={imageUrlLoading} alt="loader" style={{ height: '50px' }} />
-                        </div>
+                        <Card>
+                          <Card.Body>
+                            <div className="borderbox1 mt-3 rounded d-flex">
+                              <div className="user-img me-2">
+                                <Skeleton variant="circular" width={50} height={50} animation="wave" />
+                              </div>
+                              <div className="borderbox border rounded p-2">
+                                <div className="d-flex align-items-center flex-wrap mb-2">
+                                  <Link to="#" className="mb-0">
+                                    <Skeleton variant="text" width={150} height={23} animation="wave" />
+                                  </Link>
+                                  <div className="ms-auto d-flex align-items-center">
+                                    <Skeleton variant="text" width={150} height={25} animation="wave" />
+                                  </div>
+                                </div>
+                                <Link to="#" className="h3">
+                                  <Skeleton variant="text" width={500} height={33} className="mb-2" animation="wave" />
+                                </Link>
+                                <div className="d-flex justify-content-start  ">
+                                  <Skeleton
+                                    variant="text"
+                                    width={70}
+                                    height={50}
+                                    style={{ marginRight: '10px' }}
+                                    animation="wave"
+                                  />
+                                  <Skeleton variant="text" width={70} height={50} animation="wave" />
+                                </div>
+                              </div>
+                            </div>
+                          </Card.Body>
+                        </Card>
                       )}
                       {!isFetching && !hasNextPage && listQanda && listQanda.length > 0 && (
                         <div className="text-center">

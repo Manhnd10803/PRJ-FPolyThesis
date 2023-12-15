@@ -46,12 +46,8 @@ export const ListCard = ({ data }: any) => {
                         <div></div>
                         <div className="d-flex">
                           <div className="like date me-4 d-flex align-items-center">
-                            {itemblog.like_counts_by_emotion.total_likes > 0 ? (
-                              <>
-                                <i className="material-symbols-outlined pe-2 md-18 text-primary">thumb_up_alt</i>
-                                {itemblog.like_counts_by_emotion.total_likes} like
-                              </>
-                            ) : null}
+                            <i className="material-symbols-outlined pe-2 md-18 text-primary">thumb_up_alt</i>
+                            {itemblog.like_counts_by_emotion.total_likes} like
                           </div>
                           <div className="comment d-flex align-items-center">
                             <i className="material-symbols-outlined me-2 md-18">chat_bubble_outline</i>

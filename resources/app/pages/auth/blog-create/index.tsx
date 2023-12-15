@@ -13,7 +13,7 @@ import { MajorService } from '@/apis/services/major.service';
 import { IMajors } from '@/models/major';
 import { CloudiaryService } from '@/apis/services/cloudinary.service';
 import { pathName } from '@/routes/path-name';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { SupperEditor } from '@/components/shared/editor';
 import AvatarEditor from 'react-avatar-editor';
 import { $generateHtmlFromNodes } from '@lexical/html';
@@ -114,7 +114,7 @@ export const CreateBlogPage = () => {
     return (
       <Modal {...props} size="md" aria-labelledby="contained-modal-title-vcenter" centered animation={false}>
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">Cập nhật Thumbnai</Modal.Title>
+          <Modal.Title id="contained-modal-title-vcenter">Tải lên ảnh thumbnai</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <input
@@ -148,7 +148,7 @@ export const CreateBlogPage = () => {
     return (
       <Modal {...props} size="md" aria-labelledby="contained-modal-title-vcenter" centered animation={false}>
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">Chỉnh sửa ảnh ảnh đại diện</Modal.Title>
+          <Modal.Title id="contained-modal-title-vcenter">Chỉnh sửa nhanh thumbnail</Modal.Title>
         </Modal.Header>
         <Modal.Body className="text-center">
           <AvatarEditor
@@ -205,7 +205,7 @@ export const CreateBlogPage = () => {
     <div id="content-page" className="content-page">
       <UploadImage show={modalShow} onHide={() => setModalShow(false)} />
       <ResizeImage show={modalShow2} onHide={() => setModalShow2(false)} />
-      <Container>
+      <Container className="container">
         <Row>
           <Col sm="12" lg="12">
             <Card>
@@ -265,8 +265,6 @@ export const CreateBlogPage = () => {
                   <Form.Group className="mb-3 form-group">
                     <Form.Label>Nội dung:</Form.Label>
                     <SupperEditor ref={editorRef} />
-                    {/* <Form.Control type="text" id="content" {...register('content')} />
-                    <span className="text-danger">{errors?.content?.message}</span> */}
                   </Form.Group>
                   <div className="d-flex justify-content-end">
                     <Button
