@@ -91,7 +91,7 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
   }, [debouncedValue, type]);
 
   const handleFormSubmit = (event: any) => {
-    const newUrl = `/search?search=${searchValue}`;
+    const newUrl = `/search?search=${searchValue}#blog`;
     navigate(newUrl);
     event.preventDefault();
     setData([]);
