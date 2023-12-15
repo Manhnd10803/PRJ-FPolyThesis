@@ -119,15 +119,19 @@ export const ProfilePage = () => {
               <Col sm={12}>
                 <Tab.Content>
                   <Tab.Pane eventKey="first">
-                    <Timeline
-                      about={detailUserProfile?.user}
-                      listImage={data?.detailTimeline?.images}
-                      listFriend={data?.detailTimeline?.friend_details}
-                      isLoading={isLoading}
-                      isUser={isUser}
-                      idUser={idUser}
-                    />
-                    <div ref={endRefTimeLine}></div>
+                    {(type === 'post' || type === '') && (
+                      <>
+                        <Timeline
+                          about={detailUserProfile?.user}
+                          listImage={data?.detailTimeline?.images}
+                          listFriend={data?.detailTimeline?.friend_details}
+                          isLoading={isLoading}
+                          isUser={isUser}
+                          idUser={idUser}
+                        />
+                        <div ref={endRefTimeLine}></div>
+                      </>
+                    )}
                   </Tab.Pane>
                   <Tab.Pane eventKey="second">
                     {type === 'blog' && (
