@@ -1,6 +1,11 @@
 import receiveMessage from '@/assets/mp3/receive-message.mp3';
-import { useListPrivateChannel, useMutationPrivateChannel, useSetConversation } from '@/hooks/useChatQuery';
-import { realtimeChatActionType } from '@/models/messages';
+import {
+  useDeleteMessage,
+  useListPrivateChannel,
+  useMutationConversation,
+  useMutationPrivateChannel,
+} from '@/hooks/useChatQuery';
+import { IMessages, realtimeChatActionType } from '@/models/messages';
 import { IUser } from '@/models/user';
 import { useAppSelector } from '@/redux/hook';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
@@ -22,7 +27,8 @@ export const RealtimeMessage = () => {
 
   const { data: listPrivateChannel } = useListPrivateChannel();
 
-  const { manuallySetConversation } = useSetConversation();
+  const { manuallyAddMessageToConversation } = useMutationConversation();
+  const { mannuallyDeleteMessage } = useMutationConversation();
 
   const { manuallyAddPrivateChannel } = useMutationPrivateChannel();
 
@@ -31,11 +37,7 @@ export const RealtimeMessage = () => {
       const { sender_id, action = 'send' }: { sender_id: number; action: realtimeChatActionType } = event.message;
 
       if (action === 'delete') {
-        const data = {
-          data: event.message.id as number,
-          id: event.message.sender_id as number,
-        };
-        manuallySetConversation('delete', data);
+        mannuallyDeleteMessage(event.message.sender_id as number, event.message.id as number);
         return;
       }
       // check xem có phải người mới gửi tin nhắn không
@@ -51,12 +53,8 @@ export const RealtimeMessage = () => {
       const isChatting = Number(chatId) === Number(sender_id);
 
       if (isChatting) {
-        const data = {
-          data: event.message,
-          id: event.message.sender_id,
-        };
         audioReceiveMessage();
-        manuallySetConversation('add', data);
+        manuallyAddMessageToConversation(event.message as IMessages, event.message.sender_id as number);
       }
     } catch (error) {
       console.log('handlePrivateMessage', error);

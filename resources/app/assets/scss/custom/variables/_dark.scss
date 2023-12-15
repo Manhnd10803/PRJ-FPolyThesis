@@ -5,10 +5,12 @@ $body-color: #c7c7c7;
 $card-bg: #0f0f0f;
 $border-color: #2a2a2a;
 $dark: #60658a;
+$color-skeleton: #c7c7c7;
 
-$theme-colors: map-merge($theme-colors,
+$theme-colors: map-merge(
+  $theme-colors,
   (
-    "secondary": $secondary,
+    'secondary': $secondary,
   )
 );
 

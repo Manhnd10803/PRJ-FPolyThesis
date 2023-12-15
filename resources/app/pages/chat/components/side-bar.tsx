@@ -1,5 +1,3 @@
-import { Loading } from '@/components/shared/loading';
-import { useAppSelector } from '@/redux/hook';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { useState } from 'react';
 import { Form } from 'react-bootstrap';
@@ -8,8 +6,6 @@ import { PopUpSetting } from './popup-setting';
 
 export const SideBar = () => {
   const userInfo = StorageFunc.getUser();
-
-  const { isLoading } = useAppSelector(state => state.chat);
 
   const [showPopupSetting, setShowPopupSetting] = useState(false);
 
@@ -55,11 +51,7 @@ export const SideBar = () => {
       </div>
       <div className="chat-sidebar-channel scroller mt-4 ps-3">
         <h5 className="mt-3">Tin nhắn</h5>
-        {isLoading ? (
-          <Loading size={100} textStyle={{ fontSize: '30px' }} />
-        ) : (
-          <ListPrivateChannel search={searchText} />
-        )}
+        <ListPrivateChannel search={searchText} />
       </div>
     </>
   );

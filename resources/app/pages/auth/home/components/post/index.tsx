@@ -40,12 +40,13 @@ export const PostContainer = () => {
             <div className="user-post-data">
               <div className="d-flex justify-content-between">
                 <div className="me-3">
-                  <Skeleton variant="circular" width={40} height={40} animation="wave" />
+                  <Skeleton className="skeleton-color" variant="circular" width={40} height={40} animation="wave" />
                 </div>
                 <div className="w-100">
                   <div>
                     <h5 className="mb-2 ">
                       <Skeleton
+                        className="skeleton-color"
                         variant="rectangular"
                         width="50%"
                         height={15}
@@ -55,6 +56,7 @@ export const PostContainer = () => {
                     </h5>
                     <p className="mb-0 text-primary">
                       <Skeleton
+                        className="skeleton-color"
                         variant="rectangular"
                         width="20%"
                         height={15}
@@ -70,6 +72,7 @@ export const PostContainer = () => {
             <div className="my-3">
               <div className="mb-3">
                 <Skeleton
+                  className="skeleton-color"
                   variant="rectangular"
                   width="100%"
                   height={15}
@@ -81,6 +84,7 @@ export const PostContainer = () => {
             {/* Image */}
             <div className="mb-3">
               <Skeleton
+                className="skeleton-color"
                 variant="rectangular"
                 width="100%"
                 height={400}
@@ -91,9 +95,9 @@ export const PostContainer = () => {
             {/*Footer*/}
             <div className="comment-area mt-3">
               <div className="d-flex justify-content-between align-items-center flex-wrap">
-                <Skeleton variant="text" width={80} />
-                <Skeleton variant="text" width={80} />
-                <Skeleton variant="text" width={80} />
+                <Skeleton className="skeleton-color" variant="text" width={80} />
+                <Skeleton className="skeleton-color" variant="text" width={80} />
+                <Skeleton className="skeleton-color" variant="text" width={80} />
               </div>
               <hr />
               {/* comment */}
@@ -101,11 +105,12 @@ export const PostContainer = () => {
                 <li className="mb-3">
                   <div className="d-flex">
                     <div className="user-img col-1">
-                      <Skeleton variant="circular" width={35} height={35} animation="wave" />
+                      <Skeleton className="skeleton-color" variant="circular" width={35} height={35} animation="wave" />
                     </div>
                     <div className="comment-data-block " style={{ width: '59vh' }}>
                       <div className="mb-2">
                         <Skeleton
+                          className="skeleton-color"
                           variant="rectangular"
                           width="30%"
                           height={15}
@@ -115,6 +120,7 @@ export const PostContainer = () => {
                       </div>
                       <p>
                         <Skeleton
+                          className="skeleton-color"
                           variant="rectangular"
                           width="100%"
                           height={15}
@@ -129,11 +135,12 @@ export const PostContainer = () => {
                 <li className="mb-3">
                   <div className="d-flex">
                     <div className="user-img col-1">
-                      <Skeleton variant="circular" width={35} height={35} animation="wave" />
+                      <Skeleton className="skeleton-color" variant="circular" width={35} height={35} animation="wave" />
                     </div>
                     <div className="comment-data-block " style={{ width: '59vh' }}>
                       <div className="mb-2">
                         <Skeleton
+                          className="skeleton-color"
                           variant="rectangular"
                           width="30%"
                           height={15}
@@ -143,6 +150,7 @@ export const PostContainer = () => {
                       </div>
                       <p>
                         <Skeleton
+                          className="skeleton-color"
                           variant="rectangular"
                           width="100%"
                           height={15}
@@ -157,11 +165,12 @@ export const PostContainer = () => {
                 <li className="mb-3">
                   <div className="d-flex">
                     <div className="user-img col-1">
-                      <Skeleton variant="circular" width={35} height={35} animation="wave" />
+                      <Skeleton className="skeleton-color" variant="circular" width={35} height={35} animation="wave" />
                     </div>
                     <div className="comment-data-block " style={{ width: '59vh' }}>
                       <div className="mb-2">
                         <Skeleton
+                          className="skeleton-color"
                           variant="rectangular"
                           width="30%"
                           height={15}
@@ -171,6 +180,7 @@ export const PostContainer = () => {
                       </div>
                       <p>
                         <Skeleton
+                          className="skeleton-color"
                           variant="rectangular"
                           width="100%"
                           height={15}
@@ -214,12 +224,19 @@ export const PostContainer = () => {
                   <div className="user-post-data">
                     <div className="d-flex justify-content-between">
                       <div className="me-3">
-                        <Skeleton variant="circular" width={40} height={40} animation="wave" />
+                        <Skeleton
+                          className="skeleton-color"
+                          variant="circular"
+                          width={40}
+                          height={40}
+                          animation="wave"
+                        />
                       </div>
                       <div className="w-100">
                         <div>
                           <h5 className="mb-2 ">
                             <Skeleton
+                              className="skeleton-color"
                               variant="rectangular"
                               width="50%"
                               height={15}
@@ -229,6 +246,7 @@ export const PostContainer = () => {
                           </h5>
                           <p className="mb-0 text-primary">
                             <Skeleton
+                              className="skeleton-color"
                               variant="rectangular"
                               width="20%"
                               height={15}
@@ -244,6 +262,7 @@ export const PostContainer = () => {
                   <div className="my-3">
                     <div className="mb-3">
                       <Skeleton
+                        className="skeleton-color"
                         variant="rectangular"
                         width="100%"
                         height={15}
@@ -255,6 +274,7 @@ export const PostContainer = () => {
                   {/* Image */}
                   <div className="mb-3">
                     <Skeleton
+                      className="skeleton-color"
                       variant="rectangular"
                       width="100%"
                       height={400}
@@ -265,9 +285,9 @@ export const PostContainer = () => {
                   {/*Footer*/}
                   <div className="comment-area mt-3">
                     <div className="d-flex justify-content-between align-items-center flex-wrap">
-                      <Skeleton variant="text" width={80} />
-                      <Skeleton variant="text" width={80} />
-                      <Skeleton variant="text" width={80} />
+                      <Skeleton className="skeleton-color" variant="text" width={80} />
+                      <Skeleton className="skeleton-color" variant="text" width={80} />
+                      <Skeleton className="skeleton-color" variant="text" width={80} />
                     </div>
                     <hr />
                     {/* comment */}
@@ -275,11 +295,18 @@ export const PostContainer = () => {
                       <li className="mb-3">
                         <div className="d-flex">
                           <div className="user-img col-1">
-                            <Skeleton variant="circular" width={35} height={35} animation="wave" />
+                            <Skeleton
+                              className="skeleton-color"
+                              variant="circular"
+                              width={35}
+                              height={35}
+                              animation="wave"
+                            />
                           </div>
                           <div className="comment-data-block " style={{ width: '59vh' }}>
                             <div className="mb-2">
                               <Skeleton
+                                className="skeleton-color"
                                 variant="rectangular"
                                 width="30%"
                                 height={15}
@@ -289,6 +316,7 @@ export const PostContainer = () => {
                             </div>
                             <p>
                               <Skeleton
+                                className="skeleton-color"
                                 variant="rectangular"
                                 width="100%"
                                 height={15}
@@ -303,11 +331,18 @@ export const PostContainer = () => {
                       <li className="mb-3">
                         <div className="d-flex">
                           <div className="user-img col-1">
-                            <Skeleton variant="circular" width={35} height={35} animation="wave" />
+                            <Skeleton
+                              className="skeleton-color"
+                              variant="circular"
+                              width={35}
+                              height={35}
+                              animation="wave"
+                            />
                           </div>
                           <div className="comment-data-block " style={{ width: '59vh' }}>
                             <div className="mb-2">
                               <Skeleton
+                                className="skeleton-color"
                                 variant="rectangular"
                                 width="30%"
                                 height={15}
@@ -317,6 +352,7 @@ export const PostContainer = () => {
                             </div>
                             <p>
                               <Skeleton
+                                className="skeleton-color"
                                 variant="rectangular"
                                 width="100%"
                                 height={15}
@@ -331,11 +367,18 @@ export const PostContainer = () => {
                       <li className="mb-3">
                         <div className="d-flex">
                           <div className="user-img col-1">
-                            <Skeleton variant="circular" width={35} height={35} animation="wave" />
+                            <Skeleton
+                              className="skeleton-color"
+                              variant="circular"
+                              width={35}
+                              height={35}
+                              animation="wave"
+                            />
                           </div>
                           <div className="comment-data-block " style={{ width: '59vh' }}>
                             <div className="mb-2">
                               <Skeleton
+                                className="skeleton-color"
                                 variant="rectangular"
                                 width="30%"
                                 height={15}
@@ -345,6 +388,7 @@ export const PostContainer = () => {
                             </div>
                             <p>
                               <Skeleton
+                                className="skeleton-color"
                                 variant="rectangular"
                                 width="100%"
                                 height={15}

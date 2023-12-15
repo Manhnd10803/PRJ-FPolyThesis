@@ -4,18 +4,40 @@ import { Link } from 'react-router-dom';
 import { useChatContext } from '../context';
 import { formatFullName } from '@/utilities/functions';
 import { useUserChatInfo } from '@/hooks/useChatQuery';
+import { Skeleton } from '@mui/material';
 
 export const HeaderChat = () => {
   const { onClickRemoveChat, chatId } = useChatContext();
 
-  const { data: selectedUserInfo } = useUserChatInfo(Number(chatId));
+  const { data: selectedUserInfo, isFetching } = useUserChatInfo(Number(chatId));
 
   const { user: currentUser } = selectedUserInfo || {};
-
+  console.log(isFetching);
   // render
   return (
     <>
-      {currentUser ? (
+      {isFetching && (
+        <div className="chat-head border-bottom border-2">
+          <header className="d-flex justify-content-between align-items-center bg-white px-3">
+            <div className="d-flex align-items-center gap-2">
+              <Skeleton
+                className="skeleton-color"
+                style={{ backgroundColor: 'red !important' }}
+                width={50}
+                height={80}
+              />
+              <h5 className="mb-0">
+                <Skeleton className="skeleton-color" width={200} height={30} />
+              </h5>
+            </div>
+            <div className="chat-header-icons d-flex">
+              <Skeleton className="skeleton-color" width={40} height={70} />
+              <Skeleton className="skeleton-color" width={40} height={70} />
+            </div>
+          </header>
+        </div>
+      )}
+      {currentUser && (
         <div className="chat-head border-bottom border-2">
           <header className="d-flex justify-content-between align-items-center bg-white pt-3  ps-3 pe-3 pb-3">
             <Link to={`/profile/${currentUser?.id}`} className="d-flex align-items-center">
@@ -53,10 +75,6 @@ export const HeaderChat = () => {
               </Dropdown>
             </div>
           </header>
-        </div>
-      ) : (
-        <div style={{ height: 78, width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <h3>Không tìm thấy người dùng này</h3>
         </div>
       )}
     </>

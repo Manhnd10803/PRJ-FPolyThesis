@@ -286,7 +286,7 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
                     </div>
                     <div className="profile-detail">
                       <h3 className="d-flex justify-content-center">
-                        <Skeleton height={30} width={200} />
+                        <Skeleton className="skeleton-color" height={30} width={200} />
                       </h3>
                     </div>
                   </div>

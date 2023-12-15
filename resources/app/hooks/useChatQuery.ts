@@ -1,8 +1,9 @@
 import { AuthService } from '@/apis/services/auth.service';
 import { MessagesService } from '@/apis/services/messages.service';
-import { GetListPrivateChannelResponseType } from '@/models/messages';
+import { GetListPrivateChannelResponseType, IMessages } from '@/models/messages';
+import { Paginate } from '@/models/pagination';
 import { IUser } from '@/models/user';
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { InfiniteData, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { produce } from 'immer';
 
 const queryKeyListPrivateChannel = ['list_private_channel'];
@@ -27,16 +28,17 @@ export const useUserChatInfo = (userId: number) => {
 
   const existUserInfo = listPrivateChannel?.data?.find(item => +item.id === +userId);
 
-  console.log({ existUserInfo, listPrivateChannel });
-
-  const result = useQuery({
+  const { data, ...rest } = useQuery({
     queryKey: ['user_chat_info', userId],
     queryFn: () => getUserChatInfo(userId),
     enabled: userId !== 0 && !existUserInfo,
     initialData: { user: existUserInfo },
   });
 
-  return result;
+  return {
+    data,
+    ...rest,
+  };
 };
 
 export const useListPrivateChannel = () => {
@@ -134,38 +136,60 @@ export const useConversation = (chatId: number) => {
   };
 };
 
-export const useSetConversation = () => {
+export const useMutationConversation = () => {
   const queryClient = useQueryClient();
 
-  const manuallySetConversation = (action: any, data: any) => {
-    queryClient.setQueryData([queryKeyConversation, data.id], (oldData: any) => {
-      if (!oldData) return data; // Nếu không có dữ liệu cũ, trả về dữ liệu mới
+  const manuallyAddMessageToConversation = (data: IMessages, idChannel: number) => {
+    queryClient.setQueryData(
+      [queryKeyConversation, idChannel],
+      (oldData: InfiniteData<Paginate<IMessages>> | undefined) => {
+        if (!oldData) return oldData;
 
-      if (action === 'send') {
-        const [firstPage, ...rest] = oldData?.pages;
-        firstPage.data.unshift(data.data);
+        const [firstPage, ...rest] = oldData.pages;
+        firstPage.data.unshift(data);
 
         return {
           ...oldData,
           pages: [{ ...firstPage }, ...rest],
         };
-      }
+      },
+    );
+  };
 
-      if (action === 'delete') {
+  const mannuallyDeleteMessage = (idChannel: number, id: number) => {
+    queryClient.setQueryData(
+      [queryKeyConversation, idChannel],
+      (oldData: InfiniteData<Paginate<IMessages>> | undefined) => {
+        if (!oldData) return oldData;
+
         const updatedData = produce(oldData, draft => {
           draft.pages.forEach(page => {
-            page.data = page.data.filter(message => message.id !== data.data);
+            page.data = page.data.filter(message => message.id !== id);
           });
         });
 
         return updatedData;
-      }
-
-      return oldData;
-    });
+      },
+    );
   };
 
   return {
-    manuallySetConversation,
+    manuallyAddMessageToConversation,
+    mannuallyDeleteMessage,
+  };
+};
+
+export const useDeleteMessage = () => {
+  const { mannuallyDeleteMessage } = useMutationConversation();
+
+  const { mutate, ...rest } = useMutation(async (variables: { idChannel: number; id: number }) => {
+    const { idChannel, id } = variables;
+    mannuallyDeleteMessage(Number(idChannel), id);
+
+    await MessagesService.deleteMessage(id);
+  });
+  return {
+    deleteMessageMutation: mutate,
+    ...rest,
   };
 };
