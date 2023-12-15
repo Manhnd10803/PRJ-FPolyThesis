@@ -67,13 +67,13 @@ export const MyListQa = ({
           <>
             <Row className="mb-2">
               <div className="col-12">
-                <Skeleton variant="text" width="100%" height={100} />
+                <Skeleton className="skeleton-color" variant="text" width="100%" height={100} />
               </div>
               <hr />
             </Row>
             <Row className="mb-2">
               <div className="col-12">
-                <Skeleton variant="text" width="100%" height={100} />
+                <Skeleton className="skeleton-color" variant="text" width="100%" height={100} />
               </div>
             </Row>
           </>

@@ -103,14 +103,14 @@ export const BlogPage = () => {
           {isLoading ? (
             // <Loading size={100} textStyle={{ fontSize: '30px' }} textLoading="Đang tải..." />
             <Row>
-              <Skeleton style={{ width: '100%', height: '300px' }} />
+              <Skeleton className="skeleton-color" style={{ width: '100%', height: '300px' }} />
             </Row>
           ) : (
             <>
               <ListCard data={data?.pages.flatMap(page => page.blogs)} />
               {isFetching ? (
                 <Row>
-                  <Skeleton style={{ width: '100%', height: '300px' }} />
+                  <Skeleton className="skeleton-color" style={{ width: '100%', height: '300px' }} />
                 </Row>
               ) : null}{' '}
             </>

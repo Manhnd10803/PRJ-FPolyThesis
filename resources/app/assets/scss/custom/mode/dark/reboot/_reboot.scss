@@ -1,38 +1,53 @@
-&{
-    color: $body-color;
-    background-color: $body-bg !important;
+& {
+  color: $body-color;
+  background-color: $body-bg !important;
 }
-h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
-    color: $body-color;
+h1,
+.h1,
+h2,
+.h2,
+h3,
+.h3,
+h4,
+.h4,
+h5,
+.h5,
+h6,
+.h6 {
+  color: $body-color;
 }
 .border {
-    border-color: $border-color !important;
+  border-color: $border-color !important;
 }
 .border-bottom {
-    border-color: $border-color !important;
+  border-color: $border-color !important;
 }
 .datepicker-picker {
+  background-color: $card-bg;
+  .datepicker-title {
     background-color: $card-bg;
-    .datepicker-title {
-        background-color: $card-bg;
+  }
+  .datepicker-controls {
+    .button {
+      background-color: $card-bg;
+      color: $body-color;
     }
-    .datepicker-controls {
-        .button {
-            background-color: $card-bg;
-            color: $body-color;
-        }
-    }
+  }
 }
 .table {
-    border-color: $border-color;
-    color: $body-color;
+  border-color: $border-color;
+  color: $body-color;
 }
 .offcanvas {
-    background-color: $card-bg;
-    color: $body-color;
+  background-color: $card-bg;
+  color: $body-color;
 }
 button {
-    &.close-btn-res {
-        color: $light;
-    }
+  &.close-btn-res {
+    color: $light;
+  }
+}
+
+.skeleton-color {
+  background-color: $color-skeleton !important;
 }

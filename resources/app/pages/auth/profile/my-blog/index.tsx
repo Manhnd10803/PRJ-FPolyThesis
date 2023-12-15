@@ -92,8 +92,8 @@ export const MyBlog = ({ listBlog, isLoading, isFetching, hasNextPage, fetchNext
                           {tabKey === 'about1'
                             ? 'Bài viết công khai'
                             : tabKey === 'about2'
-                            ? 'Bài viết đang chờ xét duyệt'
-                            : 'Bài viết vi phạm'}
+                              ? 'Bài viết đang chờ xét duyệt'
+                              : 'Bài viết vi phạm'}
                         </h4>
                         <div className="d-flex align-items-center">
                           <div className="form-outline">
@@ -115,13 +115,13 @@ export const MyBlog = ({ listBlog, isLoading, isFetching, hasNextPage, fetchNext
                           <>
                             <Row className="mb-2">
                               <div className="col-12">
-                                <Skeleton variant="text" width="100%" height={100} />
+                                <Skeleton className="skeleton-color" variant="text" width="100%" height={100} />
                               </div>
                               <hr />
                             </Row>
                             <Row className="mb-2">
                               <div className="col-12">
-                                <Skeleton variant="text" width="100%" height={100} />
+                                <Skeleton className="skeleton-color" variant="text" width="100%" height={100} />
                               </div>
                             </Row>
                           </>
