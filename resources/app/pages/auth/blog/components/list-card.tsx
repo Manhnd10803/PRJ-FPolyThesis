@@ -14,8 +14,6 @@ export const ListCard = ({ data }: any) => {
     WebkitLineClamp: 4,
     WebkitBoxOrient: 'vertical',
   };
-  // Handle blog detail
-
   return (
     <Row>
       {data &&

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Container, Col, Form, Row } from 'react-bootstrap';
+import { Container, Col, Form, Row, Card } from 'react-bootstrap';
 import { ListCard } from './components/list-card';
 import { Link } from 'react-router-dom';
 import { BlogService } from '@/apis/services/blog.service';
@@ -9,6 +9,7 @@ import { Loading } from '@/components/shared/loading';
 import { MajorService } from '@/apis/services/major.service';
 import { IMajors } from '@/models/major';
 import { Skeleton } from '@mui/material';
+import { CardLoadBlog } from '@/utilities/funcLoadFriend/CardLoad';
 
 export const BlogPage = () => {
   const [totalPage, setTotalPage] = useState(0);
@@ -101,18 +102,11 @@ export const BlogPage = () => {
             </div>
           </Col>
           {isLoading ? (
-            // <Loading size={100} textStyle={{ fontSize: '30px' }} textLoading="Đang tải..." />
-            <Row>
-              <Skeleton style={{ width: '100%', height: '300px' }} />
-            </Row>
+            <CardLoadBlog />
           ) : (
             <>
               <ListCard data={data?.pages.flatMap(page => page.blogs)} />
-              {isFetching ? (
-                <Row>
-                  <Skeleton style={{ width: '100%', height: '300px' }} />
-                </Row>
-              ) : null}{' '}
+              {isFetching ? <CardLoadBlog /> : null}
             </>
           )}
         </Container>
