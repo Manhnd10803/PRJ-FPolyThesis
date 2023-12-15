@@ -9,7 +9,7 @@ import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-quer
 import { MyListQa } from './question-and-answer';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { FriendsMyUserPage } from './friends';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 export const ProfilePage = () => {
@@ -72,7 +72,7 @@ export const ProfilePage = () => {
     queryKey: queryKeyProfile,
     queryFn: getDetailProfile,
     getNextPageParam: (lastPage, _) => {
-      console.log(lastPage);
+      // console.log(lastPage);
       if (lastPage.current_page === lastPage.last_page) {
         return undefined;
       }
@@ -91,15 +91,16 @@ export const ProfilePage = () => {
   const queryKeyUser = ['user', id];
   const { data: detailUserProfile, isLoading: isUserLoading } = useQuery(queryKeyUser, getDetailUesrProfile);
 
-  const { ref: endRef, inView: endInView } = useInView();
+  const { ref: endRefTimeLine, inView: endInViewTimeLine } = useInView();
+
   useEffect(() => {
-    if (endInView && hasNextPage && !isFetching) {
+    if (endInViewTimeLine && hasNextPage && !isFetching) {
       fetchNextPage();
     }
-  }, [endInView, isFetching, hasNextPage, fetchNextPage]);
-  if (endInView) {
-    console.log('end');
-  }
+
+    console.log('endInViewTimeLine', endInViewTimeLine);
+  }, [endInViewTimeLine, isFetching, hasNextPage, fetchNextPage]);
+
   console.log(detailProfile);
   return (
     <>
@@ -118,22 +119,24 @@ export const ProfilePage = () => {
               <Col sm={12}>
                 <Tab.Content>
                   <Tab.Pane eventKey="first">
-                    <Timeline
-                      about={detailUserProfile?.user}
-                      listImage={data?.detailTimeline?.images}
-                      listFriend={data?.detailTimeline?.friend_details}
-                      isLoading={isLoading}
-                      isUser={isUser}
-                      idUser={idUser}
-                    />
-                    <div ref={endRef}></div>
+                    {(type === 'post' || type === '') && (
+                      <>
+                        <Timeline
+                          about={detailUserProfile?.user}
+                          listImage={data?.detailTimeline?.images}
+                          listFriend={data?.detailTimeline?.friend_details}
+                          isLoading={isLoading}
+                          isUser={isUser}
+                          idUser={idUser}
+                        />
+                        <div ref={endRefTimeLine}></div>
+                      </>
+                    )}
                   </Tab.Pane>
                   <Tab.Pane eventKey="second">
                     {type === 'blog' && (
                       <>
                         <MyBlog
-                          endRef={endRef}
-                          endInView={endInView}
                           isFetching={isFetching}
                           hasNextPage={hasNextPage}
                           fetchNextPage={fetchNextPage}
@@ -150,8 +153,6 @@ export const ProfilePage = () => {
                     {(type === 'qa' || type === 'commentedQuestions') && (
                       <MyListQa
                         listQa={detailProfile}
-                        endRef={endRef}
-                        endInView={endInView}
                         isFetching={isFetching}
                         hasNextPage={hasNextPage}
                         fetchNextPage={fetchNextPage}

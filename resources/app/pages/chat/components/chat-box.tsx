@@ -1,16 +1,15 @@
 import { MessagesService } from '@/apis/services/messages.service';
 import { CustomToggle } from '@/components/custom';
 import { Loading } from '@/components/shared/loading';
-import { useAppDispatch, useAppSelector } from '@/redux/hook';
 import { momentVi } from '@/utilities/functions/moment-locale';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
-import { useInfiniteQuery, useMutation } from '@tanstack/react-query';
 import parse from 'html-react-parser';
 import { ReactNode, forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { useInView } from 'react-intersection-observer';
 import { Link, useParams } from 'react-router-dom';
-import { useConversation, useSetConversation } from '@/hooks/useChatQuery';
+import { useConversation, useDeleteMessage } from '@/hooks/useChatQuery';
+import { Skeleton } from '@mui/material';
 
 interface Props {
   children?: ReactNode;
@@ -23,7 +22,6 @@ type ChatBoxRef = {
 export const ChatBox = forwardRef<ChatBoxRef, Props>((__, ref) => {
   const localUserId = StorageFunc.getUserId();
   const { id: chatId } = useParams();
-  const dispatch = useAppDispatch();
 
   //scroll to last message
   const messageEndRef = useRef<HTMLDivElement>(null);
@@ -54,29 +52,15 @@ export const ChatBox = forwardRef<ChatBoxRef, Props>((__, ref) => {
     hasNextPage,
     isFetching: isFetchingNextPage,
     fetchNextPage,
-  } = useConversation(chatId);
+  } = useConversation(Number(chatId));
 
-  const { manuallySetConversation } = useSetConversation();
-
-  //xoá 1 tin nhắn
-  const deleteMessageItemMutation = useMutation(
-    (messageId: number) => {
-      return MessagesService.deleteMessage(messageId);
-    },
-    {
-      onSuccess: ({ data }) => {
-        const newData = {
-          data: data.data.id,
-          id: data.data.receiver_id,
-        };
-        manuallySetConversation('delete', newData);
-      },
-    },
-  );
+  const { deleteMessageMutation } = useDeleteMessage();
 
   const handleDeleteMessage = (messageId: number) => {
     return () => {
-      deleteMessageItemMutation.mutate(messageId);
+      if (chatId && messageId) {
+        deleteMessageMutation({ idChannel: Number(chatId), id: Number(messageId) });
+      }
     };
   };
 
@@ -97,7 +81,7 @@ export const ChatBox = forwardRef<ChatBoxRef, Props>((__, ref) => {
   if (isLoading) {
     return (
       <div className="chat-content scroller d-flex flex-column-reverse">
-        <Loading size={100} textStyle={{ fontSize: '30px' }} />;
+        <Loading size={120} textLoading="Chờ chút đang tìm ..." textStyle={{ fontSize: '30px' }} />;
       </div>
     );
   }

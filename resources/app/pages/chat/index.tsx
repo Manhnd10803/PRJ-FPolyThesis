@@ -11,13 +11,9 @@ import { HeaderChat } from './components/header-chat';
 import { PopUpDeleteChat } from './components/pop-up-delete-chat';
 import { SideBar } from './components/side-bar';
 import { ChatContextProvider } from './context';
-import {
-  useSetConversation,
-  useMutationPrivateChannel,
-  useUserChatInfo,
-  useDeletePrivateChannel,
-} from '@/hooks/useChatQuery';
+import { useMutationPrivateChannel, useDeletePrivateChannel, useMutationConversation } from '@/hooks/useChatQuery';
 import { IUser } from '@/models/user';
+import { IMessages } from '@/models/messages';
 
 const audioSend = new Promise<HTMLAudioElement>(resolve => {
   resolve(new Audio(sendMessageSound));
@@ -33,7 +29,7 @@ export const ChatPage = () => {
 
   const { deletePrivateChannel } = useDeletePrivateChannel();
 
-  const { manuallySetConversation } = useSetConversation();
+  const { manuallyAddMessageToConversation } = useMutationConversation();
   // this will be inferred as `ChatBoxHandle`
   type ChatBoxHandle = React.ElementRef<typeof ChatBox>;
 
@@ -54,13 +50,8 @@ export const ChatPage = () => {
       onSuccess: ({ data }) => {
         // play sound
         audioSend.then(audio => audio.play());
-        const newData = {
-          data: data.data,
-          id: data.data.receiver_id,
-        };
 
-        // sửa lại thành 1 hook cho đỡ lỗi
-        manuallySetConversation('add', newData);
+        manuallyAddMessageToConversation(data.data as IMessages, data.data.receiver_id as number);
 
         manuallyAddPrivateChannel(data.data.receiver as IUser);
         //scroll to bottom  chat box

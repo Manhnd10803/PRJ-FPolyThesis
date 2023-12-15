@@ -16,8 +16,8 @@ export const About = ({ aboutUser, isLoading }) => {
             <>
               <ul className="list-inline p-0 m-0">
                 <>
-                  <Skeleton height={20} width="100%" />
-                  <Skeleton height={20} width="100%" />
+                  <Skeleton className="skeleton-color" height={20} width="100%" />
+                  <Skeleton className="skeleton-color" height={20} width="100%" />
                 </>
               </ul>
             </>

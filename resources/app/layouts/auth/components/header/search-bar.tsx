@@ -116,7 +116,7 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
             type="text"
             className="text search-input form-control bg-soft-primary d-none d-lg-block"
             placeholder="Tìm kiếm trên FpolyZone"
-            value={searchValue}
+            defaultValue={searchValue}
             disabled={isDropdownOpen}
           />
           <Link className="d-lg-none d-flex d-none d-lg-block" to="/" onClick={handleToggleDropdown}>

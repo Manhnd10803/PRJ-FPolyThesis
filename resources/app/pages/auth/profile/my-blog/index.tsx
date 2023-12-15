@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { pathName } from '@/routes/path-name';
+import { Skeleton } from '@mui/material';
+import diacritics from 'diacritics';
+import React, { useEffect, useState } from 'react';
 import { Card, Col, Nav, Row, Tab } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { formatTime } from '../components/format-time';
-import diacritics from 'diacritics';
-import { pathName } from '@/routes/path-name';
-import { Skeleton } from '@mui/material';
 import { useInView } from 'react-intersection-observer';
 
 type MyBlogProps = {
@@ -13,19 +13,11 @@ type MyBlogProps = {
   isFetching: boolean;
   hasNextPage: any;
   fetchNextPage: any;
-  endRef: any;
-  endInView: any;
 };
 
-export const MyBlog = ({
-  listBlog,
-  isLoading,
-  isFetching,
-  hasNextPage,
-  fetchNextPage,
-  endInView,
-  endRef,
-}: MyBlogProps) => {
+const imageUrlLoading = 'https://i.gifer.com/ZKZg.gif';
+
+export const MyBlog = ({ listBlog, isLoading, isFetching, hasNextPage, fetchNextPage }: MyBlogProps) => {
   const [searchQueries, setSearchQueries] = useState<any>({
     about1: '',
     about2: '',
@@ -125,37 +117,23 @@ export const MyBlog = ({
                           <>
                             <Row className="mb-2">
                               <div className="col-12">
-                                <Skeleton variant="text" width="100%" height={100} />
+                                <Skeleton className="skeleton-color" variant="text" width="100%" height={100} />
                               </div>
                               <hr />
                             </Row>
                             <Row className="mb-2">
                               <div className="col-12">
-                                <Skeleton variant="text" width="100%" height={100} />
+                                <Skeleton className="skeleton-color" variant="text" width="100%" height={100} />
                               </div>
                             </Row>
                           </>
                         ) : (
-                          <>
-                            {filteredBlogListAbout(tabKey)?.map((item: any, index: number) => (
-                              <Row className="mb-2" key={index}>
-                                <div className="col-12">
-                                  <Link
-                                    className="text-dark font-bold"
-                                    style={{ fontSize: '20px' }}
-                                    to={`${pathName.BLOG}/${item.id}`}
-                                  >
-                                    {item.title}
-                                  </Link>
-                                </div>
-                                <div className="col-12">
-                                  <p className="mb-0">Cập nhật lần cuối: {formatTime(item.updated_at)}</p>
-                                </div>
-                                <hr />
-                              </Row>
-                            ))}
-                            <div ref={endRef} />
-                          </>
+                          <ListBlog
+                            data={filteredBlogListAbout(tabKey)}
+                            fetchNextPage={fetchNextPage}
+                            hasNextPage={hasNextPage}
+                            isFetching={isFetching}
+                          />
                         )}
                       </div>
                     </Tab.Pane>
@@ -166,6 +144,46 @@ export const MyBlog = ({
           </Col>
         </Row>
       </Tab.Container>
+    </>
+  );
+};
+
+const ListBlog = ({ data, fetchNextPage, hasNextPage, isFetching }: any) => {
+  const { ref: endRefBlog, inView: endInViewBlog } = useInView();
+
+  useEffect(() => {
+    if (endInViewBlog && hasNextPage && !isFetching) {
+      fetchNextPage && fetchNextPage();
+    }
+    console.log('endInViewBlog', endInViewBlog);
+  }, [endInViewBlog, fetchNextPage, hasNextPage, isFetching]);
+
+  return (
+    <>
+      {data?.map((item: any, index: number) => (
+        <Row className="mb-2" key={index}>
+          <div className="col-12">
+            <Link className="text-dark font-bold" style={{ fontSize: '20px' }} to={`${pathName.BLOG}/${item.id}`}>
+              {item.title}
+            </Link>
+          </div>
+          <div className="col-12">
+            <p className="mb-0">Cập nhật lần cuối: {formatTime(item.updated_at)}</p>
+          </div>
+          <hr />
+        </Row>
+      ))}
+      {isFetching && (
+        <div className="col-sm-12 text-center">
+          <img src={imageUrlLoading} alt="loader" style={{ height: '50px' }} />
+        </div>
+      )}
+      {!isFetching && !hasNextPage && data && data.length > 0 && (
+        <div className="text-center">
+          <h5>Không còn dữ liệu cũ hơn !</h5>
+        </div>
+      )}
+      <div ref={endRefBlog} />
     </>
   );
 };

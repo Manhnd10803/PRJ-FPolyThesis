@@ -21,28 +21,24 @@ export const RightSidebar = () => {
               <div className="media-height p-3" data-scrollbar="init">
                 {isLoading ? (
                   <>
-                    <Card>
-                      <Card.Body>
-                        <div className="d-flex gap-2 align-items-center">
-                          <Skeleton variant="circular" height={50} width={50} />
-                          <div>
-                            <Skeleton height={15} width={100} style={{ marginBottom: '5px' }} />
-                            <Skeleton height={10} width={100} />
+                    {Array.from({ length: 8 }).map((_, index) => (
+                      <Card>
+                        <Card.Body>
+                          <div className="d-flex gap-2 align-items-center">
+                            <Skeleton className="skeleton-color" variant="circular" height={50} width={50} />
+                            <div>
+                              <Skeleton
+                                className="skeleton-color"
+                                height={15}
+                                width={100}
+                                style={{ marginBottom: '5px' }}
+                              />
+                              <Skeleton className="skeleton-color" height={10} width={100} />
+                            </div>
                           </div>
-                        </div>
-                      </Card.Body>
-                    </Card>
-                    <Card>
-                      <Card.Body>
-                        <div className="d-flex gap-2 align-items-center">
-                          <Skeleton variant="circular" height={50} width={50} />
-                          <div>
-                            <Skeleton height={15} width={100} style={{ marginBottom: '5px' }} />
-                            <Skeleton height={10} width={100} />
-                          </div>
-                        </div>
-                      </Card.Body>
-                    </Card>
+                        </Card.Body>
+                      </Card>
+                    ))}
                   </>
                 ) : (
                   <>
