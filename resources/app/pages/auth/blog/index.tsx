@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Container, Col, Form, Row } from 'react-bootstrap';
+import { SetStateAction, useCallback, useEffect, useState } from 'react';
+import { Container, Col, Form, Row, Card } from 'react-bootstrap';
 import { ListCard } from './components/list-card';
 import { Link } from 'react-router-dom';
 import { BlogService } from '@/apis/services/blog.service';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { pathName } from '@/routes/path-name';
-import { Loading } from '@/components/shared/loading';
 import { MajorService } from '@/apis/services/major.service';
 import { IMajors } from '@/models/major';
 import { Skeleton } from '@mui/material';
@@ -25,7 +24,7 @@ export const BlogPage = () => {
     }
   };
 
-  const handleMajorChange = useCallback(newMajor => {
+  const handleMajorChange = useCallback((newMajor: SetStateAction<string>) => {
     setSelectedMajor(newMajor === '' ? '' : newMajor);
   }, []);
 
@@ -37,7 +36,7 @@ export const BlogPage = () => {
   useEffect(() => {
     const handleScroll = () => {
       const isAtBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 200;
-      if (isAtBottom && !isFetching && totalPage > data?.pages.length) {
+      if (isAtBottom && !isFetching && totalPage > (data?.pages.length ?? 0)) {
         fetchNextPage();
       }
     };
@@ -74,7 +73,6 @@ export const BlogPage = () => {
                     onChange={e => {
                       const newMajor = e.target.value;
                       handleMajorChange(newMajor);
-                      // Manually refetch the data with the updated major
                     }}
                   >
                     <option value="">Tất cả chuyên ngành</option>
@@ -101,17 +99,234 @@ export const BlogPage = () => {
             </div>
           </Col>
           {isLoading ? (
-            // <Loading size={100} textStyle={{ fontSize: '30px' }} textLoading="Đang tải..." />
-            <Row>
-              <Skeleton style={{ width: '100%', height: '300px' }} />
-            </Row>
+            <>
+              <Col lg="12">
+                <Card className="card-block card-stretch card-height blog-list">
+                  <Card.Body>
+                    <Row className="align-items-center">
+                      <Col md="6">
+                        <div className="image-block">
+                          <Skeleton
+                            variant="rectangular"
+                            width="100%"
+                            height="250px"
+                            animation="wave"
+                            style={{ borderRadius: '8px' }}
+                          />
+                        </div>
+                      </Col>
+                      <Col md="6">
+                        <div className="blog-description rounded p-2">
+                          <div className="date">
+                            <Skeleton
+                              variant="rectangular"
+                              width="20%"
+                              height="17px"
+                              animation="wave"
+                              style={{ borderRadius: '8px' }}
+                              className="mb-3 mt-0"
+                            />
+                          </div>
+                          <Skeleton
+                            variant="rectangular"
+                            width="70%"
+                            height="25px"
+                            animation="wave"
+                            style={{ borderRadius: '8px' }}
+                            className="mb-4"
+                          />
+                          <Skeleton
+                            variant="rectangular"
+                            width="100%"
+                            height="20px"
+                            animation="wave"
+                            style={{ borderRadius: '8px' }}
+                            className="mb-3"
+                          />
+                          <Skeleton
+                            variant="rectangular"
+                            width="100%"
+                            height="20px"
+                            animation="wave"
+                            style={{ borderRadius: '8px' }}
+                            className="mb-4"
+                          />
+                          <div className="d-flex justify-content-end">
+                            <Skeleton
+                              variant="rectangular"
+                              width="20%"
+                              height="20px"
+                              animation="wave"
+                              className="mt-3"
+                              style={{ marginRight: '20px' }}
+                            />
+                            <Skeleton
+                              variant="rectangular"
+                              width="20%"
+                              height="20px"
+                              animation="wave"
+                              className="mt-3"
+                            />
+                          </div>
+                        </div>
+                      </Col>
+                    </Row>
+                  </Card.Body>
+                </Card>
+              </Col>
+              <Col lg="12">
+                <Card className="card-block card-stretch card-height blog-list">
+                  <Card.Body>
+                    <Row className="align-items-center">
+                      <Col md="6">
+                        <div className="blog-description rounded p-2">
+                          <div className="date">
+                            <Skeleton
+                              variant="rectangular"
+                              width="20%"
+                              height="17px"
+                              animation="wave"
+                              style={{ borderRadius: '8px' }}
+                              className="mb-3 mt-0"
+                            />
+                          </div>
+                          <Skeleton
+                            variant="rectangular"
+                            width="70%"
+                            height="25px"
+                            animation="wave"
+                            style={{ borderRadius: '8px' }}
+                            className="mb-4"
+                          />
+                          <Skeleton
+                            variant="rectangular"
+                            width="100%"
+                            height="20px"
+                            animation="wave"
+                            style={{ borderRadius: '8px' }}
+                            className="mb-3"
+                          />
+                          <Skeleton
+                            variant="rectangular"
+                            width="100%"
+                            height="20px"
+                            animation="wave"
+                            style={{ borderRadius: '8px' }}
+                            className="mb-4"
+                          />
+                          <div className="d-flex justify-content-end">
+                            <Skeleton
+                              variant="rectangular"
+                              width="20%"
+                              height="20px"
+                              animation="wave"
+                              className="mt-3"
+                              style={{ marginRight: '20px' }}
+                            />
+                            <Skeleton
+                              variant="rectangular"
+                              width="20%"
+                              height="20px"
+                              animation="wave"
+                              className="mt-3"
+                            />
+                          </div>
+                        </div>
+                      </Col>
+                      <Col md="6">
+                        <div className="image-block">
+                          <Skeleton
+                            variant="rectangular"
+                            width="100%"
+                            height="250px"
+                            animation="wave"
+                            style={{ borderRadius: '8px' }}
+                          />
+                        </div>
+                      </Col>
+                    </Row>
+                  </Card.Body>
+                </Card>
+              </Col>
+            </>
           ) : (
             <>
               <ListCard data={data?.pages.flatMap(page => page.blogs)} />
               {isFetching ? (
-                <Row>
-                  <Skeleton style={{ width: '100%', height: '300px' }} />
-                </Row>
+                <Col lg="12">
+                  <Card className="card-block card-stretch card-height blog-list">
+                    <Card.Body>
+                      <Row className="align-items-center">
+                        <Col md="6">
+                          <div className="image-block">
+                            <Skeleton
+                              variant="rectangular"
+                              width="100%"
+                              height="250px"
+                              animation="wave"
+                              style={{ borderRadius: '8px' }}
+                            />
+                          </div>
+                        </Col>
+                        <Col md="6">
+                          <div className="blog-description rounded p-2">
+                            <div className="date">
+                              <Skeleton
+                                variant="rectangular"
+                                width="20%"
+                                height="17px"
+                                animation="wave"
+                                style={{ borderRadius: '8px' }}
+                                className="mb-3 mt-0"
+                              />
+                            </div>
+                            <Skeleton
+                              variant="rectangular"
+                              width="70%"
+                              height="25px"
+                              animation="wave"
+                              style={{ borderRadius: '8px' }}
+                              className="mb-4"
+                            />
+                            <Skeleton
+                              variant="rectangular"
+                              width="100%"
+                              height="20px"
+                              animation="wave"
+                              style={{ borderRadius: '8px' }}
+                              className="mb-3"
+                            />
+                            <Skeleton
+                              variant="rectangular"
+                              width="100%"
+                              height="20px"
+                              animation="wave"
+                              style={{ borderRadius: '8px' }}
+                              className="mb-4"
+                            />
+                            <div className="d-flex justify-content-end">
+                              <Skeleton
+                                variant="rectangular"
+                                width="20%"
+                                height="20px"
+                                animation="wave"
+                                className="mt-3"
+                                style={{ marginRight: '20px' }}
+                              />
+                              <Skeleton
+                                variant="rectangular"
+                                width="20%"
+                                height="20px"
+                                animation="wave"
+                                className="mt-3"
+                              />
+                            </div>
+                          </div>
+                        </Col>
+                      </Row>
+                    </Card.Body>
+                  </Card>
+                </Col>
               ) : null}{' '}
             </>
           )}

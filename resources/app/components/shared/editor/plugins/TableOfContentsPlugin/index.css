@@ -66,11 +66,11 @@
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */
-.headings::-webkit-scrollbar {
+/* .headings::-webkit-scrollbar {
   display: none;
-}
+} */
 
-.headings::before {
+/* .headings::before {
   content: ' ';
   position: absolute;
   height: 220px;
@@ -79,7 +79,7 @@
   margin-top: 5px;
   background-color: #ccd0d5;
   border-radius: 2px;
-}
+} */
 
 .normal-heading-wrapper {
   margin-left: 32px;
