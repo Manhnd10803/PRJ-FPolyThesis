@@ -1,5 +1,5 @@
 @extends('admin.layouts.app')
-@section('title') Quản lý Vi Phạm @endsection
+@section('title') {{ $title }} @endsection
 @section('content')
 @push('css')
 <link rel="stylesheet" href="../../bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css">
@@ -35,8 +35,16 @@
             <div class="box-header">
                 <h3 class="box-title">Tìm kiếm</h3>
             </div>
+            
             <div class="box-body">
-                <form action="{{ route('admin.reports.search') }}" method="get">
+                    @php
+                        if(request()->is('admin/report/pending')){
+                            $route = route('admin.report.pending');
+                        }else{
+                            $route = route('admin.report.index');
+                        }
+                    @endphp
+                <form action="{{ $route }}" method="get">
                     <div class="box-body">
                         <div class="row">
                             <div class="col-xs-3">
@@ -51,10 +59,21 @@
                                 <label for="major">Tiêu đề</label>
                                 <input type="text" class="form-control" name="title" value="{{ old('title') }}">
                             </div>   
-                            <div class="col-xs-3">
+                            {{-- <div class="col-xs-3">
                                 <label for="major">Nội dung</label>
                                 <input type="text" class="form-control" name="content" value="{{ old('content') }}">
-                            </div>                        
+                            </div>                         --}}
+
+                            <div class="col-xs-3">
+                                <label for="report_type">Loại tố cáo</label>
+                                <select name="report_type" class="form-control">
+                                    <option value="">Tất cả</option>
+                                    <option value="blog" {{ old('report_type') == 'blog' ? 'selected' : '' }}>Blog</option>
+                                    <option value="post" {{ old('report_type') == 'post' ? 'selected' : '' }}>Post</option>
+                                    <option value="user" {{ old('report_type') == 'user' ? 'selected' : '' }}>User</option>
+                                    <option value="qa" {{ old('report_type') == 'qa' ? 'selected' : '' }}>QA</option>
+                                </select>
+                            </div>
                         </div>
                         <br>
                         <div class="row">
@@ -66,16 +85,7 @@
                                 <label for="created_to">Đến</label>
                                 <input type="date" class="form-control" name="created_to" value="{{ old('created_to') }}" placeholder="">
                             </div>
-                            <div class="col-xs-2">
-                                <label for="report_type">Loại tố cáo</label>
-                                <select name="report_type" class="form-control">
-                                    <option value="">Tất cả</option>
-                                    <option value="blog" {{ old('report_type') == 'blog' ? 'selected' : '' }}>Blog</option>
-                                    <option value="post" {{ old('report_type') == 'post' ? 'selected' : '' }}>Post</option>
-                                    <option value="user" {{ old('report_type') == 'user' ? 'selected' : '' }}>User</option>
-                                    <option value="qa" {{ old('report_type') == 'qa' ? 'selected' : '' }}>QA</option>
-                                </select>
-                            </div>
+                            
                             <div class="col-xs-2">
                                 <label for="status">Trạng thái</label>
                                 <select name="status" class="form-control">
