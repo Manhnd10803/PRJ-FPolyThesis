@@ -9,7 +9,7 @@ type activityFriend = {
 
 const queryKeyPaginate = ['ListFriendPaginate', true];
 const queryKeyFriends = ['friends'];
-
+const queryKeySuggestFriend = ['suggestFriend'];
 const fetchAllFriendMyUser = async () => {
   const idUser = StorageFunc.getUserId();
   const { data } = await FriendService.showAllFriendMyUser(idUser);
@@ -17,7 +17,6 @@ const fetchAllFriendMyUser = async () => {
 };
 const fetchAllFriendMyUserPaginate = async ({ pageParam = 1 }) => {
   const idUser = StorageFunc.getUserId();
-
   const { data } = await FriendService.showAllFriendMyUser(idUser, 8, pageParam);
   return data;
 };
@@ -50,9 +49,9 @@ export const useFriendPaginate = () => {
     ...rest,
   };
 };
+
 export const useSetListFriend = () => {
   const queryClient = useQueryClient();
-
   const manuallySetListFriend = (action: string, data: any) => {
     queryClient.setQueryData(queryKeyFriends, (oldData: any) => {
       if (!oldData) return oldData;
@@ -84,9 +83,28 @@ export const useSetListFriend = () => {
       return { ...oldData, pages: updatedData };
     });
   };
+  const manuallySetListSuggestFriend = (action: string, friendId: number) => {
+    queryClient.setQueryData(queryKeySuggestFriend, (oldData: any) => {
+      if (!oldData) return oldData;
+
+      if (action === 'add') {
+        // Thêm mới vào danh sách
+        return [...oldData, { data: { id: friendId } }];
+      }
+
+      if (action === 'delete') {
+        // Lọc bỏ mục có id tương ứng khỏi danh sách
+        const updatedData = oldData.filter((item: any) => item.id !== friendId);
+        return updatedData;
+      }
+
+      return oldData;
+    });
+  };
   return {
     manuallySetListFriend,
     manuallySetListFriendPaginate,
+    manuallySetListSuggestFriend,
   };
 };
 

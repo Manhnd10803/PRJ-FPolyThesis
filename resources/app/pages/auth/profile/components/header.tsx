@@ -17,6 +17,7 @@ import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { ResizeImage, UploadImage } from './component';
 import { Skeleton, Tooltip } from '@mui/material';
 import imageUrl from '../../../../assets/images/profile-default.jpg';
+import { useSetListFriend } from '@/hooks/useFriendQuery';
 
 type Props = {
   detailUser: IProfileUser;
@@ -40,10 +41,10 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
   const [contentReport, setContentReport] = useState('');
   const imagesRef = useRef<File[]>([]);
   const [showModalOptionReport, setShowModalOptionReport] = useState(false);
+  const { manuallySetListFriend, manuallySetListFriendPaginate } = useSetListFriend();
 
   const [showModalFormReport, setShowModalFormReport] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
-
   const handleClose = () => {
     setShowModalFormReport(false);
   };
@@ -184,8 +185,6 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
   const HandleAddFriend = async (id: any) => {
     try {
       const response = await FriendService.addFriend(id);
-      // Toggle the friend status and trigger a re-render
-      console.log(response?.data.message);
       setCheckAddFriend(response?.data.message);
       return response;
     } catch (error) {
@@ -195,35 +194,73 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
   const HandleUnFriend = async (id: any) => {
     try {
       const response = await FriendService.unFriend(id);
-      // Toggle the friend status and trigger a re-render
       setCheckAddFriend('Thêm bạn bè');
+      manuallySetListFriend('delete', response.data);
+      manuallySetListFriendPaginate('delete', id);
       return response;
     } catch (error) {
       console.error(error);
     }
   };
+  const HandleDeleteFriendRequest = async (id: any) => {
+    try {
+      setCheckAddFriend('Thêm bạn bè');
+      const { data } = await FriendService.deleteFriendRequest(id);
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  };
   const getStatusFriend = async () => {
     try {
       const { data } = await FriendService.statusFriend(user?.id);
-      return data; // Assuming isFriend is a boolean value
+      console.log(data);
+      return data;
     } catch (error) {
       console.error(error);
-      return false; // Set to false in case of an error
+      return false;
+    }
+  };
+  const HandleConfirmFriendRequest = async (id: any) => {
+    try {
+      setCheckAddFriend('Bạn bè');
+      const { data } = await FriendService.confirmFriendRequest(id);
+      manuallySetListFriend('add', data);
+      return data;
+    } catch (error) {
+      throw error;
     }
   };
 
   useEffect(() => {
-    if (!isUser && user?.id) {
-      getStatusFriend().then(isFriend => {
-        if (isFriend == 'Không phải bạn bè') {
-          setCheckAddFriend('Thêm bạn bè');
-        } else if (isFriend == 'Đã gửi lời mời kết bạn') {
-          setCheckAddFriend('Đã gửi lời mời kết bạn');
-        } else if (isFriend == 'Bạn bè') {
-          setCheckAddFriend('Bạn bè');
+    const fetchData = async () => {
+      if (!isUser && user?.id) {
+        try {
+          const isFriend = await getStatusFriend();
+
+          switch (isFriend) {
+            case 'Không phải bạn bè':
+              setCheckAddFriend('Thêm bạn bè');
+              break;
+            case 'Đã gửi lời mời kết bạn':
+              setCheckAddFriend('Đã gửi lời mời kết bạn');
+              break;
+            case 'Bạn bè':
+              setCheckAddFriend('Bạn bè');
+              break;
+            case 'Chờ xác nhận':
+              setCheckAddFriend('Xác nhận');
+              break;
+            default:
+              break;
+          }
+        } catch (error) {
+          console.log(error);
         }
-      });
-    }
+      }
+    };
+
+    fetchData();
   }, [isUser, user]);
 
   return (
@@ -414,6 +451,28 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
                             Thêm bạn bè
                           </button>
                         )
+                      )}
+                      {checkAddFriend === 'Xác nhận' && (
+                        <div className="card-header-toolbar d-flex align-items-center justify-content-center">
+                          <Dropdown show={showFriendDropdown} onToggle={setShowFriendDropdown}>
+                            <Dropdown.Toggle
+                              variant="secondary"
+                              id="dropdown-friend"
+                              className="d-flex align-items-center gap-1"
+                            >
+                              <span class="material-symbols-outlined">person_edit</span>
+                              Phản hồi
+                            </Dropdown.Toggle>
+                            <Dropdown.Menu>
+                              <Dropdown.Item onClick={() => HandleConfirmFriendRequest(user?.id)}>
+                                Xác nhận
+                              </Dropdown.Item>
+                              <Dropdown.Item onClick={() => HandleDeleteFriendRequest(user?.id)}>
+                                Xóa lời mời
+                              </Dropdown.Item>
+                            </Dropdown.Menu>
+                          </Dropdown>
+                        </div>
                       )}
                       {checkAddFriend === 'Bạn bè' && (
                         <div className="card-header-toolbar d-flex align-items-center justify-content-center">

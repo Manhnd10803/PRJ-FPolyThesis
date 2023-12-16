@@ -157,7 +157,7 @@ class FriendController extends Controller
             broadcast(new ReceiveNotification($notification, $avatar_sender))->toOthers();
             $detailfriend = User::where('id', $sender->id)->select('id', 'first_name', 'last_name', 'avatar', 'activity_user')->first();
             DB::commit();
-            return response()->json(['friend'=>$detailfriend], 200);
+            return response()->json(['friend' => $detailfriend], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 400);
@@ -206,8 +206,9 @@ class FriendController extends Controller
             })->first();
             if ($friendship) {
                 $friendship->delete(); // Xóa lời mời kết bạn
+                $detailfriend = User::where('id', $sender->id)->select('id', 'first_name', 'last_name', 'avatar', 'activity_user')->first();
                 DB::commit();
-                return response()->json(['message' => 'Đã hủy lời mời kết bạn'], 200);
+                return response()->json(['message' => 'Không tìm thấy lời mời để hủy', 'friend' => $detailfriend], 200);
             } else {
                 DB::rollBack();
                 return response()->json(['message' => 'Không tìm thấy lời mời để hủy'], 400);
@@ -429,11 +430,20 @@ class FriendController extends Controller
                     ->where('user_id_2', $user_id2)
                     ->where('status', 0);
             })->first();
+            $friendenemyRequest = Friend::where(function ($query) use ($self, $user_id2) {
+                $query->where('user_id_1', $user_id2)
+                    ->where('user_id_2', $self)
+                    ->where('status', 0);
+            })->first();
 
             if ($friendshipRequest) {
                 return 'Đã gửi lời mời kết bạn';
             } else {
-                return 'Không phải bạn bè';
+                if ($friendenemyRequest) {
+                    return 'Chờ xác nhận';
+                } else {
+                    return 'Không phải bạn bè';
+                }
             }
         }
     }
