@@ -219,7 +219,13 @@ class PrivateMessagesController extends Controller
             $messageWithSender = $message->load(['sender.major' => function ($query) {
                 $query->select('id', 'majors_name');
             }]);
+
             $messageWithSender->sender->majors_name = $messageWithSender->sender->major->majors_name;
+            $lastMessage = [
+                'sender_id' => $message->sender_id,
+                'content' => $message->content,
+            ];
+            $messageWithSender->sender->last_message = $lastMessage;
             unset($messageWithSender->sender->major);
             broadcast(new PrivateMessageSent($messageWithSender))->toOthers();
             //Thông báo
@@ -244,7 +250,13 @@ class PrivateMessagesController extends Controller
             }
             $avatar_sender = Auth::user()->avatar;
             broadcast(new ReceiveNotification($notification, $avatar_sender))->toOthers();
-            return response()->json(['message' => 'Tin nhắn đã được gửi', 'data' => $message->load('receiver')], 200);
+            $lastSendMessage = $message->load('receiver');
+            $detailLastMessage = [
+                'sender_id' => $lastSendMessage->sender_id,
+                'content' => $lastSendMessage->content,
+            ];
+            $lastSendMessage->receiver->last_message = $detailLastMessage;
+            return response()->json(['message' => 'Tin nhắn đã được gửi', 'data' => $lastSendMessage], 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 400);
