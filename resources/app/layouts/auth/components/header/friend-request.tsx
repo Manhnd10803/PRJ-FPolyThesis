@@ -3,6 +3,7 @@ import { CustomToggle } from '@/components/custom';
 import { useSetListFriend } from '@/hooks/useFriendQuery';
 import { pathName } from '@/routes/path-name';
 import { formatFullName } from '@/utilities/functions';
+import { Skeleton } from '@mui/material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Card, Dropdown, Image, Spinner } from 'react-bootstrap';
@@ -67,16 +68,26 @@ export const FriendRequest = () => {
           </Card.Header>
           <Card.Body className="p-0">
             {isLoadingRequestFriend ? (
-              <>
-                <Spinner animation="border" variant="primary" role="status" size="sm">
-                  <span className="visually-hidden">Loading...</span>
-                </Spinner>
-              </>
+              <div className="iq-friend-request">
+                <div className="iq-sub-card iq-sub-card-big d-flex align-items-center justify-content-between">
+                  <div className="d-flex align-items-center">
+                    <Skeleton className="skeleton-color" variant="circular" width={50} height={50} />
+                    <div className="ms-3">
+                      <Skeleton className="skeleton-color" width={120} />
+                      <Skeleton className="skeleton-color" width={70} />
+                    </div>
+                  </div>
+                  <div className="d-flex align-items-center gap-2">
+                    <Skeleton className="skeleton-color" width={80} height={60} />
+                    <Skeleton className="skeleton-color" width={80} height={60} />
+                  </div>
+                </div>
+              </div>
             ) : (
               <>
-                {friendRequest && friendRequest.length > 0 ? (
+                {friendRequest && friendRequest.data.length > 0 ? (
                   <>
-                    {friendRequest.map((itemFriend: any) => {
+                    {friendRequest.data.map((itemFriend: any) => {
                       return (
                         <div className="iq-friend-request" key={itemFriend.id}>
                           <div className="iq-sub-card iq-sub-card-big d-flex align-items-center justify-content-between">
