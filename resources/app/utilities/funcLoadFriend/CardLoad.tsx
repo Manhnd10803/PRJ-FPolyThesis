@@ -20,16 +20,16 @@ export const CardLoad = () => {
         </Link>
         <Card.Body>
           <Link to={`#`}>
-            <Card.Title as="h5" className="card-title">
-              <Skeleton height={15} width={150} variant="rounded" />
+            <Card.Title as="h5" className="card-title ">
+              <Skeleton height={15} width="100%" variant="rounded" />
             </Card.Title>
           </Link>
-          <Card.Text className="card-text">
-            <Skeleton height={15} width={150} variant="rounded" />
+          <Card.Text className="card-text mt-3">
+            <Skeleton height={15} width="100%" variant="rounded" />
           </Card.Text>
           <div className="d-flex flex-column gap-2 mt-2 mt-md-0">
             <Link to="#" className=" rounded confirm-btn">
-              <Skeleton height={34} width={160} variant="rounded" />
+              <Skeleton height={34} width="100%" variant="rounded" />
             </Link>
           </div>
         </Card.Body>

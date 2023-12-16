@@ -105,7 +105,7 @@ export const ChatBox = forwardRef<ChatBoxRef, Props>((__, ref) => {
           {conversation?.map(item => {
             if (localUserId === item.sender_id) {
               return (
-                <div className="chat d-flex other-user" key={item.id}>
+                <div className="chat d-flex other-user text-end" key={item.id}>
                   <div className="chat-user">
                     <Link className="avatar m-0" to="">
                       <img
@@ -115,9 +115,8 @@ export const ChatBox = forwardRef<ChatBoxRef, Props>((__, ref) => {
                         className="avatar-45 rounded-circle"
                       />
                     </Link>
-                    <span className="chat-time mt-1 text-success">{momentVi(item.created_at).fromNow()}</span>
                   </div>
-                  <div className="chat-detail" style={{ maxWidth: '60%' }}>
+                  <div className="chat-detail" style={{ maxWidth: '50%', marginRight: '0.5rem' }}>
                     <div>
                       <Dropdown className="d-flex justify-content-center align-items-center" as="span">
                         <Dropdown.Toggle
@@ -134,36 +133,40 @@ export const ChatBox = forwardRef<ChatBoxRef, Props>((__, ref) => {
                         </Dropdown.Menu>
                       </Dropdown>
                     </div>
-                    <div className="chat-message">
+                    <div className="chat-message mb-1">
                       <div>{parse(item.content.replace('</br>', '<br />'))}</div>
+                      <span className="chat-time mt-1 text-success">{momentVi(item.created_at).fromNow()}</span>
                     </div>
                   </div>
                 </div>
               );
             } else {
               return (
-                <div className="chat chat-left" key={item.id}>
+                <div
+                  className="chat chat-left flex-start "
+                  key={item.id}
+                  style={{ display: 'flex', alignItems: 'flex-start' }}
+                >
                   <div className="chat-user">
                     <Link className="avatar m-0" to="">
                       <img
                         loading="lazy"
                         src={item?.sender?.avatar}
                         alt="avatar"
-                        className="avatar-45 rounded-circle "
+                        className="avatar-45 rounded-circle"
                       />
                     </Link>
-                    <span className="chat-time mt-1 text-success">{momentVi(item.created_at).fromNow()}</span>
                   </div>
-                  <div className="chat-detail" style={{ maxWidth: '50%' }}>
-                    <div className="chat-message">
-                      <div>{parse(item.content.replace('</br>', '<br />'))}</div>
+                  <div className="chat-detail" style={{ maxWidth: '50%', marginLeft: '0' }}>
+                    <div className="chat-message mb-1">
+                      <div style={{ verticalAlign: 'top' }}>{parse(item.content.replace('</br>', '<br />'))}</div>
+                      <span className="chat-time mt-1 text-success">{momentVi(item.created_at).fromNow()}</span>
                     </div>
                   </div>
                 </div>
               );
             }
           })}
-          {/* <div>{isFetching && !isFetchingNextPage ? 'Background Updating...' : null}</div> */}
           <div ref={startRef}>
             {isFetchingNextPage ? (
               <Loading size={60} textStyle={{ fontSize: '20px' }} textLoading="Đang tải tin nhắn cũ hơn ..." />

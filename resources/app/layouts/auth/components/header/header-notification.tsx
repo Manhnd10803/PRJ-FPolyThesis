@@ -9,6 +9,7 @@ import { INotification, NotificationStatus } from '@/models/notifications';
 import { pathName } from '@/routes/path-name';
 import { formatNotificationLink } from '@/utilities/functions';
 import { momentVi } from '@/utilities/functions/moment-locale';
+import { Skeleton } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Card, Dropdown, Image } from 'react-bootstrap';
 import { useInView } from 'react-intersection-observer';
@@ -115,7 +116,37 @@ export const HeaderNotification = () => {
           </Card.Header>
           <Card.Body className="p-0 scroller border-bottom" style={{ maxHeight: 280 }}>
             {isError ? <span>Error...</span> : null}
-            {isLoading && <Loading size={100} textStyle={{ fontSize: '30px' }} />}
+            {isLoading && (
+              <div className="d-flex align-items-center p-3">
+                <div className="">
+                  <Skeleton
+                    variant="rectangular"
+                    width={40}
+                    height={40}
+                    animation="wave"
+                    style={{ borderRadius: '5px' }}
+                  />
+                </div>
+                <div className="ms-3 w-100">
+                  <Skeleton
+                    variant="rectangular"
+                    width="70%"
+                    height={17}
+                    animation="wave"
+                    style={{ borderRadius: '8px' }}
+                  />
+                  <div className="d-flex justify-content-between align-items-center mt-1">
+                    <Skeleton
+                      variant="rectangular"
+                      width={100}
+                      height={15}
+                      animation="wave"
+                      style={{ borderRadius: '8px' }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
             {!isLoading &&
               !isError &&
               data &&
@@ -123,9 +154,66 @@ export const HeaderNotification = () => {
                 return <NotificationItem key={item.id} item={item} />;
               })}
             {isFetchingNextPage ? (
-              <div className="w-100 h-100 d-flex align-items-center justify-content-center">
-                <Loading size={40} textStyle={{ fontSize: '16px' }} textLoading="Đang tải thông báo cũ hơn ..." />
-              </div>
+              <>
+                <div className="d-flex align-items-center p-3">
+                  <div className="">
+                    <Skeleton
+                      variant="rectangular"
+                      width={40}
+                      height={40}
+                      animation="wave"
+                      style={{ borderRadius: '5px' }}
+                    />
+                  </div>
+                  <div className="ms-3 w-100">
+                    <Skeleton
+                      variant="rectangular"
+                      width="70%"
+                      height={17}
+                      animation="wave"
+                      style={{ borderRadius: '8px' }}
+                    />
+                    <div className="d-flex justify-content-between align-items-center mt-1">
+                      <Skeleton
+                        variant="rectangular"
+                        width={100}
+                        height={15}
+                        animation="wave"
+                        style={{ borderRadius: '8px' }}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="d-flex align-items-center p-3">
+                  <div className="">
+                    <Skeleton
+                      variant="rectangular"
+                      width={40}
+                      height={40}
+                      animation="wave"
+                      style={{ borderRadius: '5px' }}
+                    />
+                  </div>
+                  <div className="ms-3 w-100">
+                    <Skeleton
+                      variant="rectangular"
+                      width="70%"
+                      height={17}
+                      animation="wave"
+                      style={{ borderRadius: '8px' }}
+                    />
+                    <div className="d-flex justify-content-between align-items-center mt-1">
+                      <Skeleton
+                        variant="rectangular"
+                        width={100}
+                        height={15}
+                        animation="wave"
+                        style={{ borderRadius: '8px' }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </>
             ) : (
               <div className="d-flex align-items-center justify-content-center mt-2 py-4">
                 <h6 className="mb-0">Không còn thông báo cũ hơn</h6>

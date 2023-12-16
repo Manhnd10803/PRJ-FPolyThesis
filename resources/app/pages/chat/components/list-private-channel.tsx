@@ -82,7 +82,7 @@ export const ListPrivateChannel = ({ search }: ListPrivateChannelProps) => {
                         WebkitBoxOrient: 'vertical',
                       }}
                     >
-                      {item.last_message.sender_id === userId ? 'Bạn:' : ''} {item.last_message.content}
+                      {item.last_message?.sender_id === userId ? 'Bạn:' : ''} {item.last_message?.content}
                     </h6>
                     {/* <span className="text-primary">{item?.activity_user}</span> */}
                   </div>

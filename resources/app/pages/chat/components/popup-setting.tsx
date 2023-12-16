@@ -42,7 +42,7 @@ export const PopUpSetting = ({ show, setShow }: PopUpSettingProps) => {
 
         <div className="user text-center mb-4 ">
           <Link className="avatar m-0 " to="">
-            <div className="position-relative" style={{ width: '140px', margin: 'auto' }}>
+            <div className="position-relative" style={{ width: '141px', margin: 'auto' }}>
               <img
                 loading="lazy"
                 src={userInfo?.avatar}
