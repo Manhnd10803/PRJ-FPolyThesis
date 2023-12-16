@@ -1,21 +1,23 @@
 import { useState } from 'react';
-import { Row, Col, Container, Spinner, Button, Card } from 'react-bootstrap';
+import { Row, Col, Container, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FriendService } from '@/apis/services/friend.service';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
 import { formatFullName } from '@/utilities/functions';
 import { pathName } from '@/routes/path-name';
 import { useSetListFriend } from '@/hooks/useFriendQuery';
-import { Loading } from '@/components/shared/loading';
 import { CardLoad } from '@/utilities/funcLoadFriend/CardLoad';
 interface FriendStates {
   [key: string]: string;
 }
+interface ConfirmFriend {
+  [key: string]: string;
+}
 export const FriendRequestPage = () => {
   const queryClient = useQueryClient();
-  const { manuallySetListFriend } = useSetListFriend();
+  const { manuallySetListFriend, manuallySetListSuggestFriend, manuallySetListFriendPaginate } = useSetListFriend();
   const [addFriendStates, setAddFriendStates] = useState<FriendStates>({});
+  const [confirmFriend, setConfirmFriend] = useState<ConfirmFriend>({});
 
   const fetchAllFriendRequest = async () => {
     const { data } = await FriendService.showAllFriendRequest();
@@ -34,24 +36,25 @@ export const FriendRequestPage = () => {
   });
   const HandleConfirmFriendRequest = async (id: any) => {
     try {
+      setConfirmFriend(prevStates => {
+        const newState = { ...prevStates };
+        newState[id] = newState[id] === 'Đã chấp nhận bạn bè' ? 'Xác nhận' : 'Đã chấp nhận bạn bè';
+        return newState;
+      });
       const { data } = await confirmFriendRequestMutation.mutateAsync(id);
       manuallySetListFriend('add', data);
-      toast.success('Xác nhận thành công');
+      manuallySetListFriendPaginate('add', id);
       return data;
     } catch (error) {
       throw error;
     }
   };
-  //Delete friend
-  const deleteFriendRequestMutation = useMutation(FriendService.deleteFriendRequest, {
-    onSettled: () => {
-      queryClient.invalidateQueries(FriendsRequestQueryKey); // Chỉnh sửa tên query nếu cần
-    },
-  });
+
   const HandleDeleteFriendRequest = async (id: any) => {
     try {
-      const response = await deleteFriendRequestMutation.mutateAsync(id);
-      return response;
+      const { data } = await FriendService.deleteFriendRequest(id);
+      manuallySetListFriend('add', data);
+      return data;
     } catch (error) {
       throw error;
     }
@@ -60,24 +63,27 @@ export const FriendRequestPage = () => {
   // LIST_SUGGEST_FRIEND
   const fetchSuggestFriend = async () => {
     const { data } = await FriendService.getSuggestFriends();
-    const FriendSuggestData = data;
-    return FriendSuggestData;
+    return data;
   };
   const FriendsSuggestQueryKey = ['suggestFriend'];
-  const { data: friendSuggest, isLoading: isLoadingSuggestFriend } = useQuery(FriendsSuggestQueryKey, {
+  const { data: friendSuggest, isLoading: isLoadingSuggestFriend } = useQuery({
+    queryKey: FriendsSuggestQueryKey,
     queryFn: fetchSuggestFriend,
   });
 
   const HandleAddFriend = async (id: any) => {
     try {
-      await FriendService.addFriend(id);
       setAddFriendStates(prevStates => {
         const newState = { ...prevStates };
         newState[id] = newState[id] === 'Hủy lời mời' ? 'Thêm bạn bè' : 'Hủy lời mời';
         return newState;
       });
+
+      const response = await FriendService.addFriend(id);
+      manuallySetListSuggestFriend('delete', id);
+      console.log(response.data);
     } catch (error) {
-      console.error(error);
+      throw error;
     }
   };
   return (
@@ -94,9 +100,10 @@ export const FriendRequestPage = () => {
                 </Card.Header>
                 <Card.Body>
                   {isLoadingRequestFriend ? (
-                    <>
+                    <Row>
                       <CardLoad />
-                    </>
+                      <CardLoad />
+                    </Row>
                   ) : (
                     <Row>
                       {friendRequest && friendRequest.length > 0 ? (
@@ -127,23 +134,41 @@ export const FriendRequestPage = () => {
                                     </Link>
                                     <Card.Text className="card-text">@{itemFriend.friend.username}</Card.Text>
                                     <div className="d-flex flex-column gap-2 mt-2 mt-md-0">
+                                      {confirmFriend[itemFriend.friend.id] === 'Đã chấp nhận bạn bè' ? (
+                                        <div></div>
+                                      ) : (
+                                        <></>
+                                      )}
                                       <Link
                                         to="#"
-                                        onClick={() => HandleConfirmFriendRequest(itemFriend.friend.id)}
-                                        className="btn btn-primary rounded confirm-btn"
+                                        onClick={() => {
+                                          if (confirmFriend[itemFriend.friend.id] !== 'Đã chấp nhận bạn bè') {
+                                            HandleConfirmFriendRequest(itemFriend.friend.id);
+                                          }
+                                        }}
+                                        className={`btn ${
+                                          confirmFriend[itemFriend.friend.id] === 'Đã chấp nhận bạn bè'
+                                            ? 'btn btn-soft-secondary'
+                                            : 'btn btn-primary'
+                                        } rounded confirm-btn`}
                                       >
-                                        Xác nhận
+                                        {confirmFriend[itemFriend.friend.id] || 'Xác nhận'}
                                       </Link>
-
-                                      <Link
-                                        to="#"
-                                        className="btn btn-soft-secondary rounded"
-                                        data-extra-toggle="delete"
-                                        data-closest-elem=".item"
-                                        onClick={() => HandleDeleteFriendRequest(itemFriend.friend.id)}
-                                      >
-                                        Xóa, gỡ
-                                      </Link>
+                                      {confirmFriend[itemFriend.friend.id] !== 'Đã chấp nhận bạn bè' ? (
+                                        <>
+                                          <Link
+                                            to="#"
+                                            className="btn btn-soft-secondary rounded"
+                                            data-extra-toggle="delete"
+                                            data-closest-elem=".item"
+                                            onClick={() => HandleDeleteFriendRequest(itemFriend.friend.id)}
+                                          >
+                                            Xóa, gỡ
+                                          </Link>
+                                        </>
+                                      ) : (
+                                        <></>
+                                      )}
                                     </div>
                                   </Card.Body>
                                 </Card>
@@ -167,9 +192,10 @@ export const FriendRequestPage = () => {
                 </Card.Header>
                 <Card.Body>
                   {isLoadingSuggestFriend ? (
-                    <>
+                    <Row>
                       <CardLoad />
-                    </>
+                      <CardLoad />
+                    </Row>
                   ) : (
                     <>
                       {friendSuggest && friendSuggest.length > 0 ? (

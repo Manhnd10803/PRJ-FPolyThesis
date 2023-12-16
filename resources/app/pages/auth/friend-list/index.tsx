@@ -1,4 +1,4 @@
-import { Card, Row, Col, Container, Spinner } from 'react-bootstrap';
+import { Card, Row, Col, Container } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { formatFullName } from '@/utilities/functions';
@@ -57,9 +57,10 @@ export const FriendListPage = () => {
                 </Card.Header>
                 <Card.Body>
                   {isLoadingMyFriend ? (
-                    <>
+                    <Row>
                       <CardLoad />
-                    </>
+                      <CardLoad />
+                    </Row>
                   ) : (
                     <Row>
                       {listFriend && listFriend.length > 0 ? (
@@ -130,11 +131,7 @@ export const FriendListPage = () => {
                       ) : (
                         <Card.Body>Chưa có bạn bè</Card.Body>
                       )}
-                      {isFetching ? (
-                        <span>
-                          <CardLoad />
-                        </span>
-                      ) : null}
+                      {isFetching ? <CardLoad /> : null}
                       <div ref={endRef}></div>
                     </Row>
                   )}
