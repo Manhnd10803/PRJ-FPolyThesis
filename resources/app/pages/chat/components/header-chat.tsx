@@ -21,18 +21,31 @@ export const HeaderChat = () => {
           <header className="d-flex justify-content-between align-items-center bg-white px-3">
             <div className="d-flex align-items-center gap-2">
               <Skeleton
+                variant="circular"
                 className="skeleton-color"
                 style={{ backgroundColor: 'red !important' }}
-                width={50}
-                height={80}
+                width={55}
+                height={55}
+                animation="wave"
               />
-              <h5 className="mb-0">
-                <Skeleton className="skeleton-color" width={200} height={30} />
-              </h5>
+              <div className="d-flex flex-column">
+                <h5 className="mb-0">
+                  <Skeleton
+                    className="skeleton-color"
+                    width={200}
+                    height={30}
+                    animation="wave"
+                    style={{ borderRadius: '8px' }}
+                  />
+                </h5>
+                <h6 style={{ fontSize: '12px' }}>
+                  <Skeleton className="skeleton-color" width={100} height={20} animation="wave" />
+                </h6>
+              </div>
             </div>
             <div className="chat-header-icons d-flex">
-              <Skeleton className="skeleton-color" width={40} height={70} />
-              <Skeleton className="skeleton-color" width={40} height={70} />
+              <Skeleton className="skeleton-color" width={40} height={70} animation="wave" />
+              <Skeleton className="skeleton-color" width={40} height={70} animation="wave" />
             </div>
           </header>
         </div>
@@ -41,17 +54,41 @@ export const HeaderChat = () => {
         <div className="chat-head border-bottom border-2">
           <header className="d-flex justify-content-between align-items-center bg-white pt-3  ps-3 pe-3 pb-3">
             <Link to={`/profile/${currentUser?.id}`} className="d-flex align-items-center">
-              <div className="sidebar-toggle">
-                <i className="ri-menu-3-line"></i>
+              <div className="avatar chat-user-profile m-0 me-3 position-relative">
+                <img loading="lazy" src={currentUser?.avatar} alt="avatar" className="avatar-55 rounded-circle" />
+                {currentUser?.activity_user && (
+                  <i
+                    className={`material-symbols-outlined md-14 filled position-absolute bottom-0 end-0 text-${
+                      currentUser.activity_user === 'Đang hoạt động'
+                        ? 'success'
+                        : currentUser.activity_user === 'Đang bận'
+                          ? 'warning'
+                          : currentUser.activity_user === 'Ẩn'
+                            ? 'light'
+                            : 'danger'
+                    }`}
+                    style={{ fontSize: '20px' }}
+                  >
+                    circle
+                  </i>
+                )}
               </div>
-              <div className="avatar chat-user-profile m-0 me-3">
-                <img loading="lazy" src={currentUser?.avatar} alt="avatar" className="avatar-50 " />
-                <span className="avatar-status">
-                  <i className="material-symbols-outlined text-success  md-14 filled">circle</i>
-                </span>
+              <div className="d-flex flex-column">
+                <h5 className="mb-0">{formatFullName(currentUser)}</h5>
+                {currentUser?.activity_user && (
+                  <h6 style={{ fontSize: '12px' }}>
+                    {currentUser?.activity_user === 'Đang hoạt động'
+                      ? 'Đang hoạt động'
+                      : currentUser?.activity_user === 'Đang bận'
+                        ? 'Đang bận'
+                        : currentUser?.activity_user === 'Ẩn'
+                          ? 'Ẩn'
+                          : 'Ngoại tuyến'}
+                  </h6>
+                )}
               </div>
-              <h5 className="mb-0">{formatFullName(currentUser)}</h5>
             </Link>
+
             <div className="chat-header-icons d-flex">
               <Link
                 to="#"
@@ -69,7 +106,7 @@ export const HeaderChat = () => {
                 </Dropdown.Toggle>
                 <Dropdown.Menu className="dropdown-menu-right">
                   <Dropdown.Item className="d-flex align-items-center" href="#">
-                    <i className="material-symbols-outlined md-18 me-1">watch_later</i>Chặn
+                    <i className="material-symbols-outlined md-18 me-1">error</i>Báo cáo
                   </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
