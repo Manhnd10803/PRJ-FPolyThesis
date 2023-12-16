@@ -22,7 +22,7 @@ export const RightSidebar = () => {
                 {isLoading ? (
                   <>
                     {Array.from({ length: 8 }).map((_, index) => (
-                      <Card>
+                      <Card key={index}>
                         <Card.Body>
                           <div className="d-flex gap-2 align-items-center">
                             <Skeleton className="skeleton-color" variant="circular" height={50} width={50} />
