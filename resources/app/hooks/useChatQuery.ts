@@ -110,6 +110,44 @@ export const useDeletePrivateChannel = () => {
   };
 };
 
+export const useMutationLastMessageChannel = () => {
+  const queryClient = useQueryClient();
+
+  const manuallyAddLastMessageToChannel = (data: IMessages, idChannel: number) => {
+    queryClient.setQueryData(queryKeyListPrivateChannel, (oldData: GetListPrivateChannelResponseType | undefined) => {
+      if (!oldData) return oldData;
+
+      return produce(oldData, draft => {
+        const existingItem = draft.data.find(item => item.id === idChannel);
+
+        if (existingItem) {
+          existingItem.last_message = data;
+        }
+      });
+    });
+  };
+
+  const mannuallyDeleteLastMessageFromChannel = (idChannel: number) => {
+    queryClient.setQueryData(queryKeyListPrivateChannel, (oldData: GetListPrivateChannelResponseType | undefined) => {
+      if (!oldData) return oldData;
+
+      return produce(oldData, draft => {
+        const existingItem = draft.data.find(item => item.id === idChannel);
+
+        if (existingItem) {
+          existingItem.last_message.content = 'đã xóa tin nhắn';
+          existingItem.last_message.id = idChannel;
+        }
+      });
+    });
+  };
+
+  return {
+    manuallyAddLastMessageToChannel,
+    mannuallyDeleteLastMessageFromChannel,
+  };
+};
+
 //===================================== Conversation =====================================//
 
 const getConversation = async ({ chatId = 0, quantity = 15, pageParam = 1 }) => {
@@ -138,6 +176,7 @@ export const useConversation = (chatId: number) => {
 
 export const useMutationConversation = () => {
   const queryClient = useQueryClient();
+  const { manuallyAddLastMessageToChannel, mannuallyDeleteLastMessageFromChannel } = useMutationLastMessageChannel();
 
   const manuallyAddMessageToConversation = (data: IMessages, idChannel: number) => {
     queryClient.setQueryData(
@@ -147,6 +186,7 @@ export const useMutationConversation = () => {
 
         const [firstPage, ...rest] = oldData.pages;
         firstPage.data.unshift(data);
+        manuallyAddLastMessageToChannel(data, idChannel);
 
         return {
           ...oldData,
@@ -162,6 +202,7 @@ export const useMutationConversation = () => {
       (oldData: InfiniteData<Paginate<IMessages>> | undefined) => {
         if (!oldData) return oldData;
 
+        mannuallyDeleteLastMessageFromChannel(idChannel);
         const updatedData = produce(oldData, draft => {
           draft.pages.forEach(page => {
             page.data = page.data.filter(message => message.id !== id);

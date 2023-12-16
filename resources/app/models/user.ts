@@ -1,3 +1,5 @@
+import { IMessages } from './messages';
+
 export interface IUser {
   id: number;
   username: string;
@@ -17,6 +19,7 @@ export interface IUser {
   major_id: null;
   majors_name?: string;
   permissions: null;
+  last_message: IMessages;
   verification_code: string;
   created_at: null;
   updated_at: Date;
