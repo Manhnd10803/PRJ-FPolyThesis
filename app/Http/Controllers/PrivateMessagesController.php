@@ -31,8 +31,8 @@ class PrivateMessagesController extends Controller
                 return $sender_id == $user_id ? $receiver_id : $sender_id;
             })
             ->unique();
-
-        $listUserChat = User::whereIn('id', $listUserIds)
+        $listUserChat = User::select('id', 'username', 'first_name', 'last_name', 'email', 'birthday', 'avatar', 'phone', 'address', 'biography', 'gender', 'status', 'activity_user', 'major_id')
+            ->whereIn('id', $listUserIds)
             ->with(['major' => function ($query) {
                 $query->select('id', 'majors_name');
             }])
@@ -49,8 +49,24 @@ class PrivateMessagesController extends Controller
         $totalunreadMessagesCount = PrivateMessage::where('receiver_id', $user_id)
             ->where('status', '!=', config('default.private_messages.status.read'))
             ->count();
-
-        return response()->json(['data' => $listUserChat, 'total_mess_count' => $totalunreadMessagesCount]);
+        // Lấy tin nhắn cuối cùng giữa hai người dùng
+        $listLastMessages = PrivateMessage::whereIn('id', function ($query) use ($user_id) {
+            $query->select(DB::raw('MAX(id)'))
+                ->from('private_messages')
+                ->where(function ($query) use ($user_id) {
+                    $query->where('sender_id', $user_id)
+                        ->orWhere('receiver_id', $user_id);
+                })
+                ->where(function ($query) use ($user_id) {
+                    $query->whereNull('deleted_by')
+                        ->orWhereJsonDoesntContain('deleted_by', $user_id);
+                })
+                ->groupBy(DB::raw('IF(sender_id > receiver_id, sender_id, receiver_id)'))
+                ->groupBy(DB::raw('IF(sender_id > receiver_id, receiver_id, sender_id)'));
+        })
+            ->with(['sender:id,avatar', 'receiver:id,avatar,username'])
+            ->get();
+        return response()->json(['data' => $listUserChat, 'total_mess_count' => $totalunreadMessagesCount, 'list' => $listLastMessages], 200);
     }
 
 

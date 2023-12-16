@@ -108,7 +108,12 @@ export const ChatBox = forwardRef<ChatBoxRef, Props>((__, ref) => {
                 <div className="chat d-flex other-user" key={item.id}>
                   <div className="chat-user">
                     <Link className="avatar m-0" to="">
-                      <img loading="lazy" src={item?.sender?.avatar} alt="avatar" className="avatar-35 " />
+                      <img
+                        loading="lazy"
+                        src={item?.sender?.avatar}
+                        alt="avatar"
+                        className="avatar-45 rounded-circle"
+                      />
                     </Link>
                     <span className="chat-time mt-1 text-success">{momentVi(item.created_at).fromNow()}</span>
                   </div>
@@ -140,7 +145,12 @@ export const ChatBox = forwardRef<ChatBoxRef, Props>((__, ref) => {
                 <div className="chat chat-left" key={item.id}>
                   <div className="chat-user">
                     <Link className="avatar m-0" to="">
-                      <img loading="lazy" src={item?.sender?.avatar} alt="avatar" className="avatar-35 " />
+                      <img
+                        loading="lazy"
+                        src={item?.sender?.avatar}
+                        alt="avatar"
+                        className="avatar-45 rounded-circle "
+                      />
                     </Link>
                     <span className="chat-time mt-1 text-success">{momentVi(item.created_at).fromNow()}</span>
                   </div>

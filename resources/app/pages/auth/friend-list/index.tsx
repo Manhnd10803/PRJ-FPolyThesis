@@ -1,4 +1,4 @@
-import { Card, Row, Col, Container, Spinner } from 'react-bootstrap';
+import { Card, Row, Col, Container } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { formatFullName } from '@/utilities/functions';

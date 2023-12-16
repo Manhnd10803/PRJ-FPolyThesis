@@ -30,15 +30,15 @@ export const ListPrivateChannel = ({ search }: ListPrivateChannelProps) => {
     <Nav as="ul" variant="pills" className="iq-chat-ui nav flex-column">
       {isFetching &&
         Array.from({ length: 8 }).map((_, index) => (
-          <Nav.Item as="li" className="item" key={index}>
+          <Nav.Item as="li" className="item mb-3 mt-3" key={index}>
             <div className="d-flex align-items-center">
               <div className="avatar me-2">
-                <Skeleton className="skeleton-color" width={50} height={80} />
+                <Skeleton variant="circular" className="skeleton-color" width={50} height={50} animation="wave" />
               </div>
 
               <div className="chat-sidebar-name">
-                <Skeleton className="skeleton-color" width="50%" height={20} />
-                <Skeleton className="skeleton-color" width="30%" height={20} />
+                <Skeleton className="skeleton-color" width="50%" height={20} animation="wave" />
+                <Skeleton className="skeleton-color" width="30%" height={20} animation="wave" />
               </div>
             </div>
           </Nav.Item>
@@ -47,20 +47,43 @@ export const ListPrivateChannel = ({ search }: ListPrivateChannelProps) => {
       {filteredUsers &&
         filteredUsers?.map((item, index) => {
           return (
-            <Nav.Item as="li" key={index} className="item">
+            <Nav.Item as="li" key={index} className="item " style={{ width: '98%' }}>
               <Nav.Link as={Link} eventKey={item.id} to={`${pathName.CHAT}/${item.id}`}>
-                <div className="d-flex align-items-center">
+                <div className="d-flex align-items-center" style={{ paddingLeft: '10px' }}>
                   <div className="avatar me-2">
-                    <img loading="lazy" src={item?.avatar} alt="chatuserimage" className="avatar-50 " />
-                    <span className="avatar-status">
-                      <i className="material-symbols-outlined text-success  md-14 filled">circle</i>
-                    </span>
+                    <img loading="lazy" src={item?.avatar} alt="chatuserimage" className="avatar-55 rounded-circle" />
+                    {item?.activity_user && (
+                      <i
+                        className={`material-symbols-outlined md-14 filled position-absolute bottom-0 end-0 text-${
+                          item.activity_user === 'Đang hoạt động'
+                            ? 'success'
+                            : item.activity_user === 'Đang bận'
+                              ? 'warning'
+                              : item.activity_user === 'Ẩn'
+                                ? 'light'
+                                : 'danger'
+                        }`}
+                        style={{ fontSize: '20px' }}
+                      >
+                        circle
+                      </i>
+                    )}
                   </div>
-
                   <div className="chat-sidebar-name">
                     <h6 className="mb-0">{formatFullName(item)}</h6>
-                    <h6 className="mb-0">{item?.majors_name}</h6>
-                    <span className="text-primary">{item?.activity_user}</span>
+                    {/* <h6 className="mb-0">{formatFullName(item)} ({item?.major?.majors_name})</h6> */}
+                    <span
+                      style={{
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 1,
+                        WebkitBoxOrient: 'vertical',
+                      }}
+                    >
+                      Thêm tin nhắn cuối cùng ở đây
+                    </span>
+                    {/* <span className="text-primary">{item?.activity_user}</span> */}
                   </div>
 
                   <div className="chat-meta float-right text-center mt-2 me-1">
