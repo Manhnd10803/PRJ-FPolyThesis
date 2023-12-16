@@ -73,14 +73,8 @@ export const FriendRequestPage = () => {
 
   const HandleAddFriend = async (id: any) => {
     try {
-      setAddFriendStates(prevStates => {
-        const newState = { ...prevStates };
-        newState[id] = newState[id] === 'Hủy lời mời' ? 'Thêm bạn bè' : 'Hủy lời mời';
-        return newState;
-      });
-
       const response = await FriendService.addFriend(id);
-      manuallySetListSuggestFriend('delete', id);
+      queryClient.invalidateQueries(FriendsSuggestQueryKey);
       console.log(response.data);
     } catch (error) {
       throw error;
@@ -231,12 +225,10 @@ export const FriendRequestPage = () => {
                                         to="#"
                                         onClick={() => HandleAddFriend(itemFriend.id)}
                                         className={`btn ${
-                                          addFriendStates[itemFriend.id] === 'Hủy lời mời'
-                                            ? 'btn btn-soft-secondary'
-                                            : 'btn btn-soft-primary'
+                                          itemFriend.friendship ? 'btn-soft-secondary' : 'btn-soft-primary'
                                         } rounded confirm-btn`}
                                       >
-                                        {addFriendStates[itemFriend.id] || 'Thêm bạn bè'}
+                                        {itemFriend.friendship ? 'Huỷ lời mời' : 'Thêm bạn bè'}
                                       </Link>
                                     </div>
                                   </Card.Body>
