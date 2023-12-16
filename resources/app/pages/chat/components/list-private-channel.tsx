@@ -6,6 +6,7 @@ import { useChatContext } from '../context';
 import { useListPrivateChannel } from '@/hooks/useChatQuery';
 import { Skeleton } from '@mui/material';
 import { formatFullName } from '@/utilities/functions';
+import { StorageFunc } from '@/utilities/local-storage/storage-func';
 
 type ListPrivateChannelProps = {
   search: string;
@@ -16,8 +17,8 @@ export const ListPrivateChannel = ({ search }: ListPrivateChannelProps) => {
 
   const listPrivateChannel = data?.data || [];
 
-  console.log(listPrivateChannel);
   const { onClickRemoveChat } = useChatContext();
+  const userId = StorageFunc.getUserId();
 
   const normalizedSearch = diacritics.remove(search.toLowerCase());
 
@@ -72,7 +73,7 @@ export const ListPrivateChannel = ({ search }: ListPrivateChannelProps) => {
                   <div className="chat-sidebar-name">
                     <h6 className="mb-0">{formatFullName(item)}</h6>
                     {/* <h6 className="mb-0">{formatFullName(item)} ({item?.major?.majors_name})</h6> */}
-                    <span
+                    <h6
                       style={{
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
@@ -81,8 +82,8 @@ export const ListPrivateChannel = ({ search }: ListPrivateChannelProps) => {
                         WebkitBoxOrient: 'vertical',
                       }}
                     >
-                      Thêm tin nhắn cuối cùng ở đây
-                    </span>
+                      {item.last_message.sender_id === userId ? 'Bạn:' : ''} {item.last_message.content}
+                    </h6>
                     {/* <span className="text-primary">{item?.activity_user}</span> */}
                   </div>
 
