@@ -11,6 +11,7 @@ import toast from 'react-hot-toast';
 import { CloudiaryService } from '@/apis/services/cloudinary.service';
 import AvatarEditor from 'react-avatar-editor';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Loading } from '@/components/shared/loading';
 export const EditProfilePage = () => {
   const [DataMajor, setDataMajor] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -216,9 +217,7 @@ export const EditProfilePage = () => {
                 <Card.Body>
                   <Row>
                     {loading ? (
-                      <Spinner animation="border" variant="primary" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                      </Spinner>
+                      <Loading size={100} textStyle={{ fontSize: '30px' }} textLoading="Đợi chút nè..." />
                     ) : (
                       <>
                         <Form
@@ -229,7 +228,7 @@ export const EditProfilePage = () => {
                         >
                           <Col md="6">
                             <Form.Group className="form-group">
-                              <Form.Label>Tên: *</Form.Label>
+                              <Form.Label>Tên: </Form.Label>
                               <Form.Control
                                 type="text"
                                 name="first_name"
@@ -241,7 +240,7 @@ export const EditProfilePage = () => {
                               <div className="error-message text-danger">{errors.first_name?.message}</div>
                             </Form.Group>
                             <Form.Group className="form-group">
-                              <Form.Label>Họ: *</Form.Label>
+                              <Form.Label>Họ: </Form.Label>
                               <Form.Control
                                 type="text"
                                 name="last_name"
@@ -252,7 +251,7 @@ export const EditProfilePage = () => {
                               <div className="error-message text-danger">{errors.last_name?.message}</div>
                             </Form.Group>
                             <Form.Group className="form-group">
-                              <Form.Label>Username: *</Form.Label>
+                              <Form.Label>Username: </Form.Label>
                               <Form.Control
                                 type="text"
                                 name="username"
@@ -262,12 +261,12 @@ export const EditProfilePage = () => {
                               />
                             </Form.Group>
                             <Form.Group className="form-group">
-                              <Form.Label>Email: *</Form.Label>
+                              <Form.Label>Email: </Form.Label>
                               <Form.Control type="text" defaultValue={DataUser?.email || ''} disabled />
                               <div className="error-message text-danger">{errors.major_id?.message}</div>
                             </Form.Group>
                             <Form.Group className="form-group">
-                              <Form.Label>Số điện thoại: *</Form.Label>
+                              <Form.Label>Số điện thoại: </Form.Label>
                               <Form.Control
                                 type="text"
                                 id="ccno"
@@ -299,7 +298,7 @@ export const EditProfilePage = () => {
                             <div className="error-message text-danger">{errors.major_id?.message}</div>
 
                             <Form.Group className="form-group mt-4">
-                              <Form.Label>Giới tính: *</Form.Label>
+                              <Form.Label>Giới tính: </Form.Label>
                               <Form.Check className="form-check">
                                 <Form.Check className="form-check form-check-inline">
                                   <Form.Check.Input
@@ -328,7 +327,7 @@ export const EditProfilePage = () => {
                             </Form.Group>
 
                             <Form.Group className="form-group">
-                              <Form.Label>Ngày sinh: *</Form.Label>
+                              <Form.Label>Ngày sinh: </Form.Label>
                               <Form.Control
                                 type="date"
                                 name="birthday"
@@ -339,7 +338,7 @@ export const EditProfilePage = () => {
                             </Form.Group>
 
                             <Form.Group className="form-group">
-                              <Form.Label>Bio: *</Form.Label>
+                              <Form.Label>Bio: </Form.Label>
                               <Form.Control
                                 as="textarea"
                                 name="biography"
@@ -349,7 +348,7 @@ export const EditProfilePage = () => {
                               <div className="error-message text-danger">{errors.biography?.message}</div>
                             </Form.Group>
                             <Form.Group className="col-md-12 form-group mb-3 ">
-                              <Form.Label>Địa chỉ: *</Form.Label>
+                              <Form.Label>Địa chỉ: </Form.Label>
                               <Form.Control
                                 as="textarea"
                                 name="address"

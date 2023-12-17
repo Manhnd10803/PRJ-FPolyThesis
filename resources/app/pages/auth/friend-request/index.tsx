@@ -6,7 +6,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { formatFullName } from '@/utilities/functions';
 import { pathName } from '@/routes/path-name';
 import { useSetListFriend } from '@/hooks/useFriendQuery';
-import { CardLoad } from '@/utilities/funcLoadFriend/CardLoad';
+import { CardLoad, CardLoadFriendRequest } from '@/utilities/funcLoadFriend/CardLoad';
 import { ConfirmFriend, FriendStates, RequestFriend } from '@/models/friend';
 
 export const FriendRequestPage = () => {
@@ -96,8 +96,10 @@ export const FriendRequestPage = () => {
                 <Card.Body>
                   {isLoadingRequestFriend ? (
                     <Row>
-                      <CardLoad />
-                      <CardLoad />
+                      <CardLoadFriendRequest />
+                      <CardLoadFriendRequest />
+                      <CardLoadFriendRequest />
+                      <CardLoadFriendRequest />
                     </Row>
                   ) : (
                     <Row>
@@ -198,6 +200,8 @@ export const FriendRequestPage = () => {
                 <Card.Body>
                   {isLoadingSuggestFriend ? (
                     <Row>
+                      <CardLoad />
+                      <CardLoad />
                       <CardLoad />
                       <CardLoad />
                     </Row>

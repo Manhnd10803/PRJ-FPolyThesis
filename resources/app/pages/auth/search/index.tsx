@@ -6,7 +6,7 @@ import { formatFullName } from '@/utilities/functions';
 import parse from 'html-react-parser';
 import { momentVi } from '@/utilities/functions/moment-locale';
 import { hideImages } from '@/utilities/funcJsonImage';
-import { CardLoadFriendOther } from '@/utilities/funcLoadFriend/CardLoad';
+import { CardLoadBlogSearch, CardLoadFriendOther, CardLoadQaSearch } from '@/utilities/funcLoadFriend/CardLoad';
 import { useQuery } from '@tanstack/react-query';
 export const SearchPage = () => {
   const truncateTextStyle = {
@@ -114,7 +114,11 @@ export const SearchPage = () => {
                     <Card>
                       {isLoading ? (
                         // Display a loading indicator if loading is true
-                        <p className="text-center">Loading...</p>
+                        <>
+                          <CardLoadBlogSearch />
+                          <CardLoadBlogSearch />
+                          <CardLoadBlogSearch />
+                        </>
                       ) : (
                         <>
                           {dataSearch && dataSearch.length > 0 && type == 'blog' ? (
@@ -205,8 +209,11 @@ export const SearchPage = () => {
                   <Tab.Pane eventKey="qa">
                     <Card>
                       {isLoading ? (
-                        // Display a loading indicator if loading is true
-                        <p className="text-center">Loading...</p>
+                        <>
+                          <CardLoadQaSearch />
+                          <CardLoadQaSearch />
+                          <CardLoadQaSearch />
+                        </>
                       ) : (
                         <>
                           {dataSearch && dataSearch.length > 0 && type == 'qa' ? (
@@ -294,7 +301,11 @@ export const SearchPage = () => {
                     <Card>
                       <Row className="p-4">
                         {isLoading ? (
-                          <CardLoadFriendOther />
+                          <>
+                            <CardLoadFriendOther />
+                            <CardLoadFriendOther />
+                            <CardLoadFriendOther />
+                          </>
                         ) : (
                           <>
                             {dataSearch && dataSearch.length > 0 && type == 'user' ? (
