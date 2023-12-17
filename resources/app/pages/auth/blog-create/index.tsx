@@ -130,7 +130,7 @@ export const CreateBlogPage = () => {
               className="active done btn"
               id="bank-tab"
               data-toggle="tab"
-              onClick={() => document.getElementById('thumbnail').click()}
+              onClick={() => document.getElementById('thumbnail')?.click()}
             >
               <i className="material-symbols-outlined bg-soft-success text-success">photo_camera</i>
               <span>Tải ảnh lên</span>

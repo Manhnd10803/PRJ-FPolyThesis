@@ -5,6 +5,7 @@ import { Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 export const FriendList = ({ listFriend, idUser }) => {
+  console.log(listFriend);
   return (
     <>
       <Card>
@@ -21,14 +22,18 @@ export const FriendList = ({ listFriend, idUser }) => {
         <Card.Body>
           <ul className="profile-img-gallary p-0 m-0 list-unstyled">
             {listFriend &&
-              listFriend.map((item: IUser, index: number) => (
-                <li key={index} className={`${listFriend?.length === 1 ? 'col-4' : ''}`}>
-                  <Link to={`/profile/${item.id}`}>
-                    <img loading="lazy" src={item.avatar} alt="gallary" className="img-fluid" />
-                  </Link>
-                  <h6 className="mt-2 text-center">{formatFullName(item)}</h6>
-                </li>
-              ))}
+              listFriend.map((item: IUser, index: number) => {
+                if (index < 9) {
+                  return (
+                    <li key={index} className={`${listFriend?.length === 1 ? 'col-4' : ''}`}>
+                      <Link to={`/profile/${item.id}`}>
+                        <img loading="lazy" src={item.avatar} alt="gallary" className="img-fluid" />
+                      </Link>
+                      <h6 className="mt-2 text-center">{formatFullName(item)}</h6>
+                    </li>
+                  );
+                }
+              })}
           </ul>
         </Card.Body>
       </Card>

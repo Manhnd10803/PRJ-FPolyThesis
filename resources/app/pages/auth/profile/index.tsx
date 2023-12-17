@@ -11,6 +11,7 @@ import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { FriendsMyUserPage } from './friends';
 import { useEffect, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { IPost } from '@/models/post';
 
 export const ProfilePage = () => {
   let { hash } = useLocation();
@@ -72,7 +73,6 @@ export const ProfilePage = () => {
     queryKey: queryKeyProfile,
     queryFn: getDetailProfile,
     getNextPageParam: (lastPage, _) => {
-      // console.log(lastPage);
       if (lastPage.current_page === lastPage.last_page) {
         return undefined;
       }
@@ -90,20 +90,9 @@ export const ProfilePage = () => {
 
   const queryKeyUser = ['user', id];
   const { data: detailUserProfile, isLoading: isUserLoading } = useQuery(queryKeyUser, getDetailUesrProfile);
-
-  const { ref: endRefTimeLine, inView: endInViewTimeLine } = useInView();
-
-  useEffect(() => {
-    if (endInViewTimeLine && hasNextPage && !isFetching) {
-      fetchNextPage();
-    }
-
-    console.log('endInViewTimeLine', endInViewTimeLine);
-  }, [endInViewTimeLine, isFetching, hasNextPage, fetchNextPage]);
-
-  //data list post
-  // const listPosts = data?.pages.flatMap(page => page.datas);
-
+  // const listImage = data?.pages.flatMap(page => page.detailTimeline.images);
+  // const listFriend = data?.pages.flatMap(page => page.detailTimeline.friend_details);
+  // console.log(listFriend);
   return (
     <>
       <div id="content-page" className="content-page" style={{ overflow: 'visible' }}>
@@ -125,13 +114,16 @@ export const ProfilePage = () => {
                       <>
                         <Timeline
                           about={detailUserProfile?.user}
-                          listImage={data?.pages.flatMap(page => page.detailTimeline.images)}
-                          listFriend={data?.pages.flatMap(page => page.detailTimeline.friend_details)}
-                          isLoading={isLoading}
+                          listImage={detailUserProfile?.list_image}
+                          listFriend={detailUserProfile?.list_friend}
+                          listPost={detailProfile}
                           isUser={isUser}
                           idUser={idUser}
+                          isFetching={isFetching}
+                          hasNextPage={hasNextPage}
+                          fetchNextPage={fetchNextPage}
+                          isLoading={isLoading}
                         />
-                        <div ref={endRefTimeLine}></div>
                       </>
                     )}
                   </Tab.Pane>

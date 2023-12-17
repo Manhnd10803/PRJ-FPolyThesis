@@ -1,38 +1,25 @@
-.col-lg-4.sticky-col-4 {
+.about-profile {
   position: sticky;
   top: 80px;
-  height: 100vh;
+  max-height: 80vh;
+  transition: all 0.5s ease-in-out;
+  z-index: 9999;
 }
-.col-lg-4 {
-  transition: transform 0.3s ease-in-out;
+@media (max-width: 1024px) {
+  .about-profile {
+    position: static;
+    z-index:100;
+  }
 }
-
-/* Đối với phần nội dung */
-/* .history-page {
-  position: fixed;
-  top: 80px; 
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow-y: auto; 
-} */
-
 .scroller-history {
   transition: all 0.5s ease-in-out;
-  /* Thiết lập chiều cao cố định và cho phép cuộn */
-  max-height: calc(100vh - 320px); /* Chiều cao cố định với 80px trừ đi từ chiều cao cửa sổ */
-  overflow-y: auto; /* Cho phép cuộn khi nội dung vượt quá kích thước */
+  max-height: calc(100vh - 320px);
+  overflow-y: auto;
 }
 
 .scroller-my-blog {
   transition: all 0.5s ease-in-out;
-  /* Thiết lập chiều cao cố định và cho phép cuộn */
-  max-height: calc(100vh - 330px); /* Chiều cao cố định với 80px trừ đi từ chiều cao cửa sổ */
-  overflow-y: auto; /* Cho phép cuộn khi nội dung vượt quá kích thước */
+  max-height: calc(100vh - 330px);
+  overflow-y: auto;
   overflow-x: hidden;
 }
-/* .scroller-profile {
-  max-height: calc(100vh - 140px); 
-  overflow-y: auto; 
-  transition: transform 3s ease-in-out;
-} */
