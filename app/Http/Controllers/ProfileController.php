@@ -22,17 +22,29 @@ class ProfileController extends Controller
     {
         DB::beginTransaction();
         try {
-            $loggedInUser = Auth::user();
-            $user = User::withCount(['posts', 'blogs', 'friends'])->find($user->id);
+            $loggedInUser = Auth::user()->load(['friends' => function ($query) {
+                $query->select('users.id');
+            }]);
+
+            $user = User::with(['posts' => function ($query) {
+                $query->select('posts.id', 'user_id', 'created_at', 'status');
+            }, 'blogs' => function ($query) {
+                $query->select('blogs.id', 'user_id');
+            }, 'friends' => function ($query) {
+                $query->select('users.id', 'first_name', 'last_name', 'avatar');
+            }])->withCount(['posts', 'blogs', 'friends'])->find($user->id);
+
             $countposts = $user->posts_count;
             $countblogs = $user->blogs_count;
             $countfriends = $user->friends_count;
             $major = $user->major;
+
             // Lấy danh sách bạn bè của người dùng
             $friends = $user->friends;
             $loginfriends = $loggedInUser->friends;
             $friendDetails = [];
-            $postsQuery = Post::where('user_id', $user->id)->orderBy('created_at', 'DESC');
+
+            $postsQuery = $user->posts()->orderBy('created_at', 'DESC');
 
             // Duyệt qua danh sách bạn bè để lấy thông tin ID, firstname, lastname và avatar
             foreach ($friends as $friend) {
