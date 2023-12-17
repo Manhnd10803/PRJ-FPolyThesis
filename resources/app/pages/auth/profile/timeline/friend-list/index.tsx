@@ -4,8 +4,12 @@ import { formatFullName } from '@/utilities/functions';
 import { Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-export const FriendList = ({ listFriend, idUser }) => {
-  console.log(listFriend);
+type FriendListProps = {
+  listFriend: IUser[];
+  idUser: string;
+};
+
+export const FriendList = ({ listFriend, idUser }: FriendListProps) => {
   return (
     <>
       <Card>

@@ -12,6 +12,7 @@ import { FriendsMyUserPage } from './friends';
 import { useEffect, useRef } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { IPost } from '@/models/post';
+import { getQueryKeyPostProfile } from '@/hooks/usePostQuery';
 
 export const ProfilePage = () => {
   let { hash } = useLocation();
@@ -55,9 +56,9 @@ export const ProfilePage = () => {
       break;
   }
 
-  const queryClient = useQueryClient();
-  const { id } = useParams();
   const localUserId = StorageFunc.getUserId();
+  const { id } = useParams();
+
   const isUser = id == undefined || +id == localUserId ? true : false;
   const idUser = id == undefined || +id == localUserId ? localUserId : id;
 
@@ -66,10 +67,10 @@ export const ProfilePage = () => {
     const { data } = await ProfileService.getDetailProfile(user_id, type, status, pageParam);
     return data;
   };
+  const userId = id || localUserId;
+  const queryKeyProfile = getQueryKeyPostProfile({ userId: +userId!, type: type, status: status });
 
-  const queryKeyProfile = ['profile', type, status, id];
-
-  const { data, fetchNextPage, hasNextPage, isLoading, isFetching } = useInfiniteQuery({
+  const { data, fetchNextPage, isError, hasNextPage, isLoading, isFetching, isFetchingNextPage } = useInfiniteQuery({
     queryKey: queryKeyProfile,
     queryFn: getDetailProfile,
     getNextPageParam: (lastPage, _) => {
@@ -80,7 +81,7 @@ export const ProfilePage = () => {
     },
   });
 
-  const detailProfile = data?.pages.flatMap(page => page.datas);
+  const detailProfile = data?.pages.flatMap(page => page.data);
 
   const getDetailUesrProfile = async () => {
     const user_id = id || localUserId;
@@ -90,9 +91,7 @@ export const ProfilePage = () => {
 
   const queryKeyUser = ['user', id];
   const { data: detailUserProfile, isLoading: isUserLoading } = useQuery(queryKeyUser, getDetailUesrProfile);
-  // const listImage = data?.pages.flatMap(page => page.detailTimeline.images);
-  // const listFriend = data?.pages.flatMap(page => page.detailTimeline.friend_details);
-  // console.log(listFriend);
+
   return (
     <>
       <div id="content-page" className="content-page" style={{ overflow: 'visible' }}>
@@ -113,13 +112,14 @@ export const ProfilePage = () => {
                     {(type === 'post' || type === '') && (
                       <>
                         <Timeline
+                          isError={isError}
                           about={detailUserProfile?.user}
                           listImage={detailUserProfile?.list_image}
                           listFriend={detailUserProfile?.list_friend}
                           listPost={detailProfile}
                           isUser={isUser}
                           idUser={idUser}
-                          isFetching={isFetching}
+                          isFetchingNextPage={isFetchingNextPage}
                           hasNextPage={hasNextPage}
                           fetchNextPage={fetchNextPage}
                           isLoading={isLoading}

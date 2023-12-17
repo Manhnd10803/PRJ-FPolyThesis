@@ -4,10 +4,8 @@ import { About } from './about';
 import MyPhoto from './my-photo';
 import { FriendList } from './friend-list';
 import './index.css';
-import { CreateNewPost } from '../../home/components/create-new-post';
-import { PostContainer } from '../../home/components/post';
-import { IPost } from '@/models/post';
-import { useInView } from 'react-intersection-observer';
+import { CreateNewPost } from './post/components/create-new-post';
+import { PostContainer } from './post/components/post';
 
 type TimelineProps = {
   about: any;
@@ -17,9 +15,10 @@ type TimelineProps = {
   idUser: any;
   listPost: any;
   hasNextPage: any;
-  isFetching: boolean;
+  isFetchingNextPage: boolean;
   fetchNextPage: any;
   listImage: any;
+  isError?: boolean;
 };
 
 export const Timeline = ({
@@ -29,10 +28,11 @@ export const Timeline = ({
   idUser,
   listPost,
   hasNextPage,
-  isFetching,
+  isFetchingNextPage,
   fetchNextPage,
   listFriend,
   listImage,
+  isError,
 }: TimelineProps) => {
   const [isSticky, setSticky] = useState(false);
 
@@ -55,14 +55,6 @@ export const Timeline = ({
     };
   }, []);
 
-  const { ref: endRefPost, inView: endInViewPost } = useInView();
-
-  useEffect(() => {
-    if (endInViewPost && hasNextPage && !isFetching) {
-      fetchNextPage && fetchNextPage();
-    }
-  }, [endInViewPost, fetchNextPage, hasNextPage, isFetching]);
-
   return (
     <Card.Body>
       <Row>
@@ -73,8 +65,14 @@ export const Timeline = ({
         </Col>
         <Col lg={8}>
           {isUser ? <CreateNewPost /> : ''}
-          <PostContainer />
-          <div ref={endRefPost} />
+          <PostContainer
+            isError={isError}
+            isLoading={isLoading}
+            isFetchingNextPage={isFetchingNextPage}
+            hasNextPage={hasNextPage}
+            data={listPost}
+            fetchNextPage={fetchNextPage}
+          />
         </Col>
       </Row>
     </Card.Body>

@@ -1,5 +1,5 @@
 import { DropZoneField } from '@/components/custom/drop-zone-field';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Modal } from 'react-bootstrap';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
@@ -14,7 +14,9 @@ import { CloudiaryService } from '@/apis/services/cloudinary.service';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { useAddPost } from '@/hooks/usePostQuery';
 import { IUser } from '@/models/user';
-import { GetNewPostResponseType, IPost } from '@/models/post';
+import { is } from 'date-fns/locale';
+import { useQueryClient } from '@tanstack/react-query';
+import { GetNewPostResponseType } from '@/models/post';
 
 type CreatePostModalProps = {
   handleClose: () => void;
@@ -23,7 +25,7 @@ type CreatePostModalProps = {
 
 export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => {
   //state
-  const { manuallyAddPost } = useAddPost();
+  const { manuallyAddPost } = useAddPost('profile');
   const fullName = StorageFunc.getFullName();
   const userInfo = StorageFunc.getUser();
 
@@ -95,7 +97,7 @@ export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => 
                 <img src={userInfo?.avatar} alt="story-img" className="rounded-circle img-fluid avatar-60" />
                 <div className="stories-data ms-3">
                   <h5>{fullName}</h5>
-                  <DropdownPrivacy onChangePrivacy={onChangePrivacy} privacy={privacy} />
+                  <DropdownPrivacy onChangePrivacy={onChangePrivacy} />
                 </div>
               </div>
 

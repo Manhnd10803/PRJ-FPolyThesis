@@ -4,7 +4,10 @@ import { Paginate } from '@/models/pagination';
 import { GetNewPostResponseType } from '@/models/post';
 import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query';
 import { produce } from 'immer';
-import { queryKeyPosts } from './usePostQuery';
+import { getQueryKeyPostProfile, queryKeyPosts } from './usePostQuery';
+import { StorageFunc } from '@/utilities/local-storage/storage-func';
+
+const localUserId = StorageFunc.getUserId();
 
 export const useChooseEmotionPost = () => {
   const { mutate, ...rest } = useMutation({
@@ -19,11 +22,12 @@ export const useChooseEmotionPost = () => {
   };
 };
 
-export const useIncreaseTotalLikePost = () => {
+export const useIncreaseTotalLikePost = (typeQueryKey: 'profile' | 'posts' = 'posts') => {
   const queryClient = useQueryClient();
-
+  const queryKey =
+    typeQueryKey === 'profile' ? getQueryKeyPostProfile({ userId: localUserId!, type: 'post' }) : queryKeyPosts;
   const manuallyIncreaseTotalLikePost = (postId: number) => {
-    queryClient.setQueryData(queryKeyPosts, (oldData: InfiniteData<Paginate<GetNewPostResponseType>> | undefined) => {
+    queryClient.setQueryData(queryKey, (oldData: InfiniteData<Paginate<GetNewPostResponseType>> | undefined) => {
       if (!oldData) return oldData;
 
       return produce(oldData, draft => {
@@ -39,7 +43,7 @@ export const useIncreaseTotalLikePost = () => {
   };
 
   const manuallyDecreaseTotalLikePost = (postId: number) => {
-    queryClient.setQueryData(queryKeyPosts, (oldData: InfiniteData<Paginate<GetNewPostResponseType>> | undefined) => {
+    queryClient.setQueryData(queryKey, (oldData: InfiniteData<Paginate<GetNewPostResponseType>> | undefined) => {
       if (!oldData) return oldData;
 
       return produce(oldData, draft => {

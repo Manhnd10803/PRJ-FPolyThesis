@@ -1,9 +1,19 @@
 import { PostService } from '@/apis/services/post.service';
 import { Paginate } from '@/models/pagination';
 import { GetNewPostResponseType, IPost } from '@/models/post';
+import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { InfiniteData, useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
 
 export const queryKeyPosts = ['posts'];
+const localUserId = StorageFunc.getUserId();
+
+type PostProfileType = {
+  userId: number;
+  type: string;
+  status?: string;
+};
+
+export const getQueryKeyPostProfile = ({ userId, type, status }: PostProfileType) => ['profile', type, status, userId];
 
 const fetchPosts = async ({ quantity = 5, pageParam = 1 }) => {
   const { data } = await PostService.getPostsNewFeed(quantity, pageParam);
@@ -29,11 +39,13 @@ export default function useInfinitePosts() {
   };
 }
 
-export const useAddPost = () => {
+export const useAddPost = (typeQueryKey: 'profile' | 'posts' = 'posts') => {
   const queryClient = useQueryClient();
+  const queryKey =
+    typeQueryKey === 'profile' ? getQueryKeyPostProfile({ userId: localUserId!, type: 'post' }) : queryKeyPosts;
 
   const manuallyAddPost = async (newPost: GetNewPostResponseType) => {
-    queryClient.setQueryData(queryKeyPosts, (oldData: InfiniteData<Paginate<GetNewPostResponseType>> | undefined) => {
+    queryClient.setQueryData(queryKey, (oldData: InfiniteData<Paginate<GetNewPostResponseType>> | undefined) => {
       if (!oldData) return oldData;
 
       const [firstPage, ...rest] = oldData?.pages;
