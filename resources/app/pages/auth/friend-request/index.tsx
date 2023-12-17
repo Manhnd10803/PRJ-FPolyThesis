@@ -7,17 +7,14 @@ import { formatFullName } from '@/utilities/functions';
 import { pathName } from '@/routes/path-name';
 import { useSetListFriend } from '@/hooks/useFriendQuery';
 import { CardLoad } from '@/utilities/funcLoadFriend/CardLoad';
-interface FriendStates {
-  [key: string]: string;
-}
-interface ConfirmFriend {
-  [key: string]: string;
-}
+import { ConfirmFriend, FriendStates, RequestFriend } from '@/models/friend';
+
 export const FriendRequestPage = () => {
   const queryClient = useQueryClient();
-  const { manuallySetListFriend, manuallySetListSuggestFriend, manuallySetListFriendPaginate } = useSetListFriend();
+  const { manuallySetListFriend, manuallySetListFriendPaginate } = useSetListFriend();
   const [addFriendStates, setAddFriendStates] = useState<FriendStates>({});
   const [confirmFriend, setConfirmFriend] = useState<ConfirmFriend>({});
+  const [deleteRequestFriend, setdeleteRequestFriend] = useState<RequestFriend>({});
 
   const fetchAllFriendRequest = async () => {
     const { data } = await FriendService.showAllFriendRequest();
@@ -38,7 +35,7 @@ export const FriendRequestPage = () => {
     try {
       setConfirmFriend(prevStates => {
         const newState = { ...prevStates };
-        newState[id] = newState[id] === 'Đã chấp nhận bạn bè' ? 'Xác nhận' : 'Đã chấp nhận bạn bè';
+        newState[id] = 'Đã chấp nhận bạn bè';
         return newState;
       });
       const { data } = await confirmFriendRequestMutation.mutateAsync(id);
@@ -52,8 +49,12 @@ export const FriendRequestPage = () => {
 
   const HandleDeleteFriendRequest = async (id: any) => {
     try {
+      setdeleteRequestFriend(prevStates => {
+        const newState = { ...prevStates };
+        newState[id] = 'Gỡ lời mời';
+        return newState;
+      });
       const { data } = await FriendService.deleteFriendRequest(id);
-      manuallySetListFriend('add', data);
       return data;
     } catch (error) {
       throw error;
@@ -128,40 +129,50 @@ export const FriendRequestPage = () => {
                                     </Link>
                                     <Card.Text className="card-text">@{itemFriend.friend.username}</Card.Text>
                                     <div className="d-flex flex-column gap-2 mt-2 mt-md-0">
-                                      {confirmFriend[itemFriend.friend.id] === 'Đã chấp nhận bạn bè' ? (
-                                        <div></div>
+                                      {deleteRequestFriend[itemFriend.friend.id] !== 'Gỡ lời mời' ? (
+                                        <>
+                                          <Link
+                                            to="#"
+                                            onClick={() => {
+                                              if (confirmFriend[itemFriend.friend.id] !== 'Đã chấp nhận bạn bè') {
+                                                HandleConfirmFriendRequest(itemFriend.friend.id);
+                                              }
+                                            }}
+                                            className={`btn ${
+                                              confirmFriend[itemFriend.friend.id] === 'Đã chấp nhận bạn bè'
+                                                ? 'btn btn-soft-secondary'
+                                                : 'btn btn-primary'
+                                            } rounded confirm-btn`}
+                                          >
+                                            {confirmFriend[itemFriend.friend.id] || 'Xác nhận'}
+                                          </Link>
+                                          {confirmFriend[itemFriend.friend.id] !== 'Đã chấp nhận bạn bè' ? (
+                                            <>
+                                              <Link
+                                                to="#"
+                                                className="btn btn-soft-secondary rounded"
+                                                data-extra-toggle="delete"
+                                                data-closest-elem=".item"
+                                                onClick={() => HandleDeleteFriendRequest(itemFriend.friend.id)}
+                                              >
+                                                Xóa, gỡ
+                                              </Link>
+                                            </>
+                                          ) : (
+                                            <></>
+                                          )}
+                                        </>
                                       ) : (
-                                        <></>
-                                      )}
-                                      <Link
-                                        to="#"
-                                        onClick={() => {
-                                          if (confirmFriend[itemFriend.friend.id] !== 'Đã chấp nhận bạn bè') {
-                                            HandleConfirmFriendRequest(itemFriend.friend.id);
-                                          }
-                                        }}
-                                        className={`btn ${
-                                          confirmFriend[itemFriend.friend.id] === 'Đã chấp nhận bạn bè'
-                                            ? 'btn btn-soft-secondary'
-                                            : 'btn btn-primary'
-                                        } rounded confirm-btn`}
-                                      >
-                                        {confirmFriend[itemFriend.friend.id] || 'Xác nhận'}
-                                      </Link>
-                                      {confirmFriend[itemFriend.friend.id] !== 'Đã chấp nhận bạn bè' ? (
                                         <>
                                           <Link
                                             to="#"
                                             className="btn btn-soft-secondary rounded"
                                             data-extra-toggle="delete"
                                             data-closest-elem=".item"
-                                            onClick={() => HandleDeleteFriendRequest(itemFriend.friend.id)}
                                           >
-                                            Xóa, gỡ
+                                            Đã gỡ yêu cầu
                                           </Link>
                                         </>
-                                      ) : (
-                                        <></>
                                       )}
                                     </div>
                                   </Card.Body>
