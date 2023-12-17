@@ -1,16 +1,16 @@
-import { ShareModal } from '@/components/custom';
+import { CustomToggle, ShareModal } from '@/components/custom';
 import { GetNewPostResponseType } from '@/models/post';
 
 import { ChosePostEmotion } from '@/components/post/choose-emotion';
 import { TotalComment } from '@/components/post/total-comment';
 import { TotalLike } from '@/components/post/total-like';
 import { useChooseEmotionPost, useIncreaseTotalLikePost } from '@/hooks/useLikeQuery';
-import { EmotionUnionType, ILiker } from '@/models/like';
+import { EmotionUnionType, ILiker, emotionData, emotionSource, EmotionType } from '@/models/like';
 import { IUser } from '@/models/user';
 import { checkIfReacted, getTopEmotions } from '@/utilities/functions/post';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
-import { useRef } from 'react';
-import { Card, Col } from 'react-bootstrap';
+import { useEffect, useRef, useState } from 'react';
+import { Card, Col, Dropdown, Image, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import { CommentList } from '../../../../../components/post/comment-list';
 import { CreateComment } from '../../../../../components/post/create-comment';
 import { PostItemContextProvider } from '../../contexts';
@@ -18,6 +18,7 @@ import { Content } from './content';
 import { Header } from './header';
 import { ImageGrid } from './image-grid';
 import { Link } from 'react-router-dom';
+import { el } from 'date-fns/locale';
 
 type PostItemProps = {
   item: GetNewPostResponseType;
@@ -27,19 +28,49 @@ export const PostItem = ({ item }: PostItemProps) => {
   const userInfo = StorageFunc.getUser();
 
   const { mutate } = useChooseEmotionPost();
-  const { manuallyIncreaseTotalLikePost } = useIncreaseTotalLikePost();
+  const { manuallyIncreaseTotalLikePost, manuallyDecreaseTotalLikePost } = useIncreaseTotalLikePost();
 
   const { like_counts_by_emotion, likers, total_comments, comments, post } = item;
 
-  const emotionSelected = checkIfReacted(likers as ILiker[], userInfo as IUser);
+  const emotion = checkIfReacted(likers as ILiker[], userInfo as IUser);
+  const [emotionSelected, setEmotionSelected] = useState<EmotionUnionType | undefined>(emotion);
 
+  const nameEmotionDefault = emotionData.find(e => e.id === emotionSelected)?.name;
+
+  const [nameEmotion, setNameEmotion] = useState<string | undefined>(nameEmotionDefault);
   const isIncrease = useRef(Boolean(emotionSelected));
-
+  const [top3Emotion, setTop3Emotion] = useState<EmotionUnionType[]>([]);
   // lấy ra 3 loại emotion được like nhiều nhất
-  const top3Emotion = getTopEmotions(like_counts_by_emotion);
+  useEffect(() => {
+    setTop3Emotion(getTopEmotions(like_counts_by_emotion));
+  }, [emotionSelected]);
 
+  // function
   const handleChangeEmotion = (emotion: EmotionUnionType) => {
-    // Kiểm tra xem đã like chưa
+    const condition = `${emotionSelected === emotion ? 'A' : 'B'}-${isIncrease.current ? '1' : '2'}`;
+
+    switch (condition) {
+      case 'A-1':
+        setEmotionSelected(undefined);
+        setNameEmotion(undefined);
+        manuallyDecreaseTotalLikePost(post.id);
+        isIncrease.current = false;
+        break;
+      case 'B-1':
+      case 'B-2':
+        setEmotionSelected(emotion);
+        emotionData.forEach(item => {
+          if (item.id === emotion) {
+            setNameEmotion(item.name);
+          }
+        });
+        isIncrease.current = true;
+        if (condition === 'B-2') {
+          manuallyIncreaseTotalLikePost(post.id);
+        }
+        break;
+    }
+
     if (!emotionSelected && !isIncrease.current) {
       isIncrease.current = true;
       manuallyIncreaseTotalLikePost(post.id);
@@ -70,15 +101,11 @@ export const PostItem = ({ item }: PostItemProps) => {
             <Content />
 
             <ImageGrid />
+
             {/* Render top 3 emotion ,total emotion and total comment */}
-            <hr />
-            <div className="d-flex justify-content-between align-items-center flex-wrap">
+            <div className="d-flex justify-content-between align-items-center flex-wrap mt-3 border-top pt-2">
               <div className="d-flex align-items-center">
-                <ChosePostEmotion
-                  onChange={handleChangeEmotion}
-                  defaultValue={emotionSelected}
-                  top3Emotion={top3Emotion}
-                />
+                <ChosePostEmotion top3Emotion={top3Emotion} />
                 <TotalLike
                   totalLike={(like_counts_by_emotion && like_counts_by_emotion?.total_likes) || 0}
                   likers={likers as ILiker[]}
@@ -88,29 +115,61 @@ export const PostItem = ({ item }: PostItemProps) => {
                 <TotalComment totalComments={total_comments} comments={comments} />
               </div>
             </div>
-            <hr />
-            {/* Action  */}
-            <div className="comment-area mt-3">
-              <div className="d-flex justify-content-between align-items-center flex-wrap">
-                <div className="d-flex align-items-center feather-icon mt-2 mt-md-0">
-                  <Link to="#" className="d-flex align-items-center">
-                    <span className="material-symbols-outlined md-18">thumb_up</span>
-                    <span className="ms-1">
-                      <strong>Thích</strong>
-                    </span>
-                  </Link>
-                </div>
-                <div className="d-flex align-items-center feather-icon mt-2 mt-md-0">
-                  <Link to="#" className="d-flex align-items-center">
-                    <span className="material-symbols-outlined md-18">mode_comment</span>
-                    <span className="ms-1">
-                      <strong>Bình luận</strong>
-                    </span>
-                  </Link>
-                </div>
-                <ShareModal />
-              </div>
-              <hr />
+            <div className="comment-area">
+              <Row className="d-flex justify-content-between align-items-center mb-5 border-top border-bottom py-2">
+                <Col sm={4} className="d-flex justify-content-center align-items-center">
+                  <Dropdown autoClose={true} drop="up-centered">
+                    <Dropdown.Toggle as={CustomToggle}>
+                      <div className="d-flex align-items-center feather-icon mt-2 mt-md-0">
+                        <Link to="#" className="d-flex align-items-center">
+                          {/* <span className="material-symbols-outlined md-18">thumb_up</span> */}
+                          {emotionSelected ? (
+                            <Image
+                              className="img-fluid rounded-circle avatar-30"
+                              src={emotionSource[emotionSelected]}
+                              alt=""
+                            />
+                          ) : (
+                            <span className="material-symbols-outlined md-18">thumb_up</span>
+                          )}
+                          <span className={`ms-1 ${isIncrease.current !== true ? '' : 'text-primary'}`}>
+                            <strong>{nameEmotion || 'Thích'}</strong>
+                          </span>
+                        </Link>
+                      </div>
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu className="dropdown-menu-top-like">
+                      {emotionData.map(e => {
+                        return (
+                          <OverlayTrigger key={e.id} placement="top" overlay={<Tooltip>{e.name}</Tooltip>}>
+                            <span className="hover-span" onClick={() => handleChangeEmotion(e.id)}>
+                              <Image
+                                className="img-fluid rounded-circle avatar-30 me-2 hover-image"
+                                src={e.emotion}
+                                alt=""
+                              />
+                            </span>
+                          </OverlayTrigger>
+                        );
+                      })}
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </Col>
+
+                <Col sm={4} className="d-flex justify-content-center align-items-center">
+                  <div className="d-flex align-items-center feather-icon mt-2 mt-md-0">
+                    <Link to="#" className="d-flex align-items-center">
+                      <span className="material-symbols-outlined md-18">mode_comment</span>
+                      <span className="ms-1">
+                        <strong>Bình luận</strong>
+                      </span>
+                    </Link>
+                  </div>
+                </Col>
+                <Col sm={4} className="d-flex justify-content-center align-items-center">
+                  <ShareModal />
+                </Col>
+              </Row>
 
               <CommentList comments={comments} />
 

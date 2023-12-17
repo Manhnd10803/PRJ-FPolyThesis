@@ -38,7 +38,24 @@ export const useIncreaseTotalLikePost = () => {
     });
   };
 
+  const manuallyDecreaseTotalLikePost = (postId: number) => {
+    queryClient.setQueryData(queryKeyPosts, (oldData: InfiniteData<Paginate<GetNewPostResponseType>> | undefined) => {
+      if (!oldData) return oldData;
+
+      return produce(oldData, draft => {
+        draft.pages.forEach(page => {
+          page.data.forEach(postItem => {
+            if (postItem.post.id === postId) {
+              postItem.like_counts_by_emotion.total_likes -= 1;
+            }
+          });
+        });
+      });
+    });
+  };
+
   return {
     manuallyIncreaseTotalLikePost,
+    manuallyDecreaseTotalLikePost,
   };
 };
