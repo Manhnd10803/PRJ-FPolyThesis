@@ -6,7 +6,7 @@ export const DropdownPrivacy = () => {
     <div className="card-post-toolbar">
       <Dropdown>
         <Dropdown.Toggle as={CustomToggle} role="button">
-          <span className="btn btn-outline-primary px-2 py-1 mt-1">Bạn bè</span>
+          <span className="btn btn-outline-primary px-2 py-1 mt-1">Mọi người</span>
         </Dropdown.Toggle>
         <Dropdown.Menu className=" m-0 p-0">
           <Dropdown.Item className=" p-3" href="#">

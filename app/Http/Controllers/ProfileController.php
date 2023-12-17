@@ -332,7 +332,7 @@ class ProfileController extends Controller
             'image' => json_encode($avatar),
         ]);
         $post->save();
-        activity('users')
+        activity('auths')
             ->tap(function (Activity $activity) use ($avatar) {
                 $activity->subject_type = class_basename(User::class); // Lấy tên lớp của đối tượng $user
                 $activity->subject_id = Auth::id();
@@ -360,7 +360,7 @@ class ProfileController extends Controller
             'image' => json_encode($cover_photo),
         ]);
         $post->save();
-        activity('users')
+        activity('auths')
             ->tap(function (Activity $activity) use ($cover_photo) {
                 $activity->properties = $cover_photo;
                 $activity->event = 'updated';
@@ -386,7 +386,7 @@ class ProfileController extends Controller
                 $inputData['avatar'] = $user->avatar;
             }
             $user->update($inputData);
-            activity('users')
+            activity('auths')
                 ->tap(function (Activity $activity) use ($user) {
                     $activity->properties = $user;
                     $activity->event = 'updated';
