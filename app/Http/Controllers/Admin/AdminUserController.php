@@ -186,8 +186,9 @@ class AdminUserController extends Controller
     }
     public function createMember()
     {
+        $users = User::select('email')->where('group_id', 3)->orWhere('group_id', 4)->get();
         $roles = Role::all();
-        return view('admin.users.createMember', compact('roles'));
+        return view('admin.users.createMember', compact('roles', 'users'));
     }
     public function getInforMember($email)
     {

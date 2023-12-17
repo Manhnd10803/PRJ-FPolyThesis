@@ -46,8 +46,8 @@
                         </span>
                         <h3 class="timeline-header"><a href="#"> <img src="{{ $blog->user->avatar }}"
                                     class="img-circle" width="30" height="30" alt="User Image">
-                                @if ($blog->user && $blog->user->first_name)
-                                    {{ $blog->user->first_name }}  
+                                @if ($blog->user && $blog->user->username)
+                                    {{ $blog->user->username }}  
                                 @else
                                     Không có người dùng
                                 @endif

@@ -11,7 +11,13 @@
         <div class="box-body">
             <div class="form-group">
                 <label for="exampleInputEmail1">Nhập email user</label>
-                <input type="text" name="email" class="form-control" id="exampleInputEmail1" placeholder="Email">
+                {{-- <input type="text" name="email" class="form-control" id="exampleInputEmail1" placeholder="Email"> --}}
+                <select name="email" class="form-control">
+                    <option value="">--Chọn email--</option>
+                    @foreach ($users as $user)
+                        <option value="{{ $user->email }}">{{ $user->email }}</option>
+                    @endforeach
+                </select>
                 @error('email')
                 <p style="color: red">{{ $message }}</p>
                 @enderror
@@ -70,7 +76,7 @@
 @endphp
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-      var emailInput = document.querySelector('input[name="email"]');
+      var emailInput = document.querySelector('select[name="email"]');
       var usernameInput = document.querySelector('input[name="username"]');
       var nameInput = document.querySelector('input[name="name"]');
       var birthdayInput = document.querySelector('input[name="birthday"]');
