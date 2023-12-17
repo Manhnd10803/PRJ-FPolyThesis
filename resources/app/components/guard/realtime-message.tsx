@@ -1,10 +1,5 @@
 import receiveMessage from '@/assets/mp3/receive-message.mp3';
-import {
-  useDeleteMessage,
-  useListPrivateChannel,
-  useMutationConversation,
-  useMutationPrivateChannel,
-} from '@/hooks/useChatQuery';
+import { useListPrivateChannel, useMutationConversation, useMutationPrivateChannel } from '@/hooks/useChatQuery';
 import { IMessages, realtimeChatActionType } from '@/models/messages';
 import { IUser } from '@/models/user';
 import { useAppSelector } from '@/redux/hook';

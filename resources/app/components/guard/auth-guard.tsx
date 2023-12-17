@@ -1,3 +1,4 @@
+import { UserService } from '@/apis/services/user.service';
 import '@/bootstrap';
 import { useAppSelector } from '@/redux/hook';
 import { pathName } from '@/routes/path-name';
@@ -5,11 +6,10 @@ import { load } from '@/utilities/local-storage';
 import { storageKeys } from '@/utilities/local-storage/storage-keys';
 import React, { FC, useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
-import { RealtimeNotification } from './realtime-notification';
-import { RealtimeMessage } from './realtime-message';
-import { PrepareData } from './prepare-data';
 import { RealtimeActivityUser } from './realtime-activity-user';
-import { UserService } from '@/apis/services/user.service';
+import { RealtimeMessage } from './realtime-message';
+import { RealtimeNotification } from './realtime-notification';
+
 type AuthGuardProps = {
   children?: React.ReactNode;
 };
@@ -63,11 +63,11 @@ export const AuthGuard: FC<AuthGuardProps> = ({ children }) => {
     return <Navigate to={pathName.LOGIN} />;
   }
   return (
-    <PrepareData>
+    <>
       <RealtimeNotification />
       <RealtimeMessage />
       <RealtimeActivityUser />
       {children}
-    </PrepareData>
+    </>
   );
 };
