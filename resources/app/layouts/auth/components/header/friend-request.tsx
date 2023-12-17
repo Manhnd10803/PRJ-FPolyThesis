@@ -71,7 +71,7 @@ export const FriendRequest = () => {
               <div className="iq-friend-request">
                 <div className="iq-sub-card iq-sub-card-big d-flex align-items-center justify-content-between">
                   <div className="d-flex align-items-center">
-                    <Skeleton className="skeleton-color" variant="circular" width={50} height={50} />
+                    <Skeleton className="skeleton-color" variant="rectangular" width={40} height={40} />
                     <div className="ms-3">
                       <Skeleton className="skeleton-color" width={120} />
                       <Skeleton className="skeleton-color" width={70} />

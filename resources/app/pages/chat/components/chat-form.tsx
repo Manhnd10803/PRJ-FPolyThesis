@@ -68,9 +68,9 @@ export const ChatForm = ({ onSend }: ChatFormProps) => {
       </div>
       <Form className="d-flex align-items-center" onSubmit={handleSubmit(handleSendMessage)}>
         <div className="chat-attagement d-flex align-items-center me-2">
-          <Link to="#" style={{ lineHeight: 0 }}>
+          {/* <Link to="#" style={{ lineHeight: 0 }}>
             <span className="icon material-symbols-outlined p-1 py-2">attach_file</span>
-          </Link>
+          </Link> */}
           <Link to="#" style={{ lineHeight: 0 }} onClick={handleToggleEmoji}>
             <span className="icon material-symbols-outlined p-1">emoji_emotions</span>
           </Link>
