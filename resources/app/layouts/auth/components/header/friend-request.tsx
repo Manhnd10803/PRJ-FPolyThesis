@@ -99,7 +99,7 @@ export const FriendRequest = () => {
                   <>
                     {friendRequest.map((itemFriend: any) => {
                       return (
-                        <div className="iq-friend-request" key={itemFriend.id}>
+                        <div className="iq-friend-request" key={itemFriend.friend.id}>
                           <div className="iq-sub-card iq-sub-card-big d-flex align-items-center justify-content-between">
                             <div className="d-flex align-items-center">
                               <Image

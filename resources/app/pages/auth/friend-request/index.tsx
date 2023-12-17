@@ -96,8 +96,10 @@ export const FriendRequestPage = () => {
                 <Card.Body>
                   {isLoadingRequestFriend ? (
                     <Row>
-                      <CardLoad />
-                      <CardLoad />
+                      <CardLoadFriendRequest />
+                      <CardLoadFriendRequest />
+                      <CardLoadFriendRequest />
+                      <CardLoadFriendRequest />
                     </Row>
                   ) : (
                     <Row>
@@ -198,6 +200,8 @@ export const FriendRequestPage = () => {
                 <Card.Body>
                   {isLoadingSuggestFriend ? (
                     <Row>
+                      <CardLoad />
+                      <CardLoad />
                       <CardLoad />
                       <CardLoad />
                     </Row>

@@ -60,6 +60,8 @@ export const FriendListPage = () => {
                     <Row>
                       <CardLoad />
                       <CardLoad />
+                      <CardLoad />
+                      <CardLoad />
                     </Row>
                   ) : (
                     <Row>
