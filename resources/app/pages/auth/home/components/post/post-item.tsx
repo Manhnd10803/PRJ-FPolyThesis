@@ -118,7 +118,7 @@ export const PostItem = ({ item }: PostItemProps) => {
             <div className="comment-area">
               <Row className="d-flex justify-content-between align-items-center mb-5 border-top border-bottom py-2">
                 <Col sm={4} className="d-flex justify-content-center align-items-center">
-                  <Dropdown autoClose={true} drop="up-centered">
+                  <Dropdown drop="up-centered">
                     <Dropdown.Toggle as={CustomToggle}>
                       <div className="d-flex align-items-center feather-icon mt-2 mt-md-0">
                         <Link to="#" className="d-flex align-items-center">

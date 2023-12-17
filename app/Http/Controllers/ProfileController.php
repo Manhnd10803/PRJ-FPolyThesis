@@ -22,12 +22,78 @@ class ProfileController extends Controller
     {
         DB::beginTransaction();
         try {
+            $loggedInUser = Auth::user();
             $user = User::withCount(['posts', 'blogs', 'friends'])->find($user->id);
-
             $countposts = $user->posts_count;
             $countblogs = $user->blogs_count;
             $countfriends = $user->friends_count;
             $major = $user->major;
+            // Lấy danh sách bạn bè của người dùng
+            $friends = $user->friends;
+            $loginfriends = $loggedInUser->friends;
+            $friendDetails = [];
+            $postsQuery = Post::where('user_id', $user->id)->orderBy('created_at', 'DESC');
+
+            // Duyệt qua danh sách bạn bè để lấy thông tin ID, firstname, lastname và avatar
+            foreach ($friends as $friend) {
+                $friendInfo = [
+                    'id' => $friend->id,
+                    'first_name' => $friend->first_name,
+                    'last_name' => $friend->last_name,
+                    'avatar' => $friend->avatar,
+                ];
+                // Thêm thông tin của người bạn vào mảng friendDetails
+                $friendDetails[] = $friendInfo;
+            }
+            $friendIds = $loginfriends->pluck('id')->toArray();
+            //nếu không phải người đăng nhập
+
+            if ($user->id != $loggedInUser->id) {
+                //nhưng là bạn bè
+                if (in_array($user->id, $friendIds)) {
+                    // Nếu là bạn bè, lấy các bài viết có status là 0 và 1
+                    $postsQuery->whereIn('status', [0, 1]);
+                    //không phải bạn bè
+                } else {
+                    // Nếu không phải là bạn bè, lấy các bài viết có status là 0
+                    $postsQuery->where('status', 0);
+                }
+            } elseif ($user->id == $loggedInUser->id) {
+                $postsQuery->whereIn('status', [0, 1, 2]);
+            }
+            $images = [];
+            $postList = $postsQuery->get();
+            foreach ($postList as $post) {
+                $postImages = $post->image;
+                if (!is_null($postImages) && is_array($postImages)) {
+                    foreach ($postImages as $image) {
+                        $images[] = $image;
+                    }
+                } elseif (!is_null($postImages) && is_string($postImages)) {
+                    if ($postImages == "null") {
+                        continue;
+                    }
+                    $images[] = $postImages;
+                }
+            }
+            $allImageUrls = [];
+            foreach ($images as $imageString) {
+                // Xử lý chuỗi JSON để lấy danh sách URL hình ảnh
+                $imageArray = json_decode($imageString);
+
+                // Kiểm tra nếu là một chuỗi JSON hợp lệ
+                if (json_last_error() === JSON_ERROR_NONE && is_array($imageArray)) {
+                    foreach ($imageArray as $imageUrl) {
+                        // Xử lý các đường dẫn hình ảnh và thêm vào mảng tất cả các đường dẫn
+                        $imageUrl = str_replace(['\\"', '"'], ['', ''], $imageUrl); // Loại bỏ ký tự \ và "
+                        $allImageUrls[] = $imageUrl;
+                    }
+                } else {
+                    // Nếu không phải là chuỗi JSON, xử lý trực tiếp URL và thêm vào mảng
+                    $imageUrl = str_replace(['\\"', '"'], ['', ''], $imageString); // Loại bỏ ký tự \ và "
+                    $allImageUrls[] = $imageUrl;
+                }
+            }
             $profileData = [
                 'user' => [
                     'id' => $user->id,
@@ -40,6 +106,8 @@ class ProfileController extends Controller
                     'bio' => $user->biography,
                     'score' => $user->score,
                 ],
+                'list_image' => $allImageUrls,
+                'list_friend' => $friendDetails,
                 'total_post' => $countposts,
                 'total_blog' => $countblogs,
                 'total_friend' => $countfriends,
@@ -60,21 +128,6 @@ class ProfileController extends Controller
             switch ($type) {
                     // Lấy post với friend và images
                 case 'post':
-                    // Lấy danh sách bạn bè của người dùng
-                    $friends = $user->friends;
-                    $friendDetails = [];
-
-                    // Duyệt qua danh sách bạn bè để lấy thông tin ID, firstname, lastname và avatar
-                    foreach ($friends as $friend) {
-                        $friendInfo = [
-                            'id' => $friend->id,
-                            'first_name' => $friend->first_name,
-                            'last_name' => $friend->last_name,
-                            'avatar' => $friend->avatar,
-                        ];
-                        // Thêm thông tin của người bạn vào mảng friendDetails
-                        $friendDetails[] = $friendInfo;
-                    }
                     // Lấy danh sách bài viết của người dùng
                     $postsQuery = Post::where('user_id', $user->id)->orderBy('created_at', 'DESC');
                     //lấy bạn bè của người dùng
@@ -168,21 +221,12 @@ class ProfileController extends Controller
                         ];
                         array_push($listPost, $postData);
                     }
-                    $detailTimeline = [
-                        'user' => [
-                            'id' => $user->id,
-                            'first_name' => $user->first_name,
-                            'last_name' => $user->last_name,
-                            'avatar' => $user->avatar,
-                        ],
-                        'friend_details' => $friendDetails,
-                        'images' => $allImageUrls,
-                    ];
 
                     DB::commit();
+
                     return response()->json([
                         'datas' => $listPost, 'current_page' => $posts->currentPage(),
-                        'last_page' => $posts->lastPage(), 'detailTimeline' => $detailTimeline
+                        'last_page' => $posts->lastPage()
                     ], 200);
                     break;
                     // Load blog
