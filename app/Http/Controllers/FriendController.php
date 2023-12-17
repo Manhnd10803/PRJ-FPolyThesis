@@ -69,7 +69,7 @@ class FriendController extends Controller
                     'friendship_type' =>  config('default.friend.friendship_type.follow')
                 ]);
                 //Thông báo
-                $content = Auth::user()->username . ' đã gửi cho bạn lời mời kết bạn.';
+                $content = ' đã gửi cho bạn lời mời kết bạn.';
                 $notification = Notification::create([
                     'sender' => Auth::id(),
                     'recipient' => $recipient->id,
@@ -144,7 +144,7 @@ class FriendController extends Controller
                     'friendship_type' => config('default.friend.friendship_type.friend'),
                 ]);
             }
-            $content = Auth::user()->username . ' đã đồng ý lời mời kết bạn.';
+            $content = ' đã đồng ý lời mời kết bạn.';
             $notification = Notification::create([
                 'sender' => Auth::id(),
                 'recipient' => $sender->id,
@@ -476,10 +476,10 @@ class FriendController extends Controller
                     unset($user->major);
                     $friendship = Friend::where(function ($query) use ($self, $user) {
                         $query->where('user_id_1', $self->id)
-                              ->where('user_id_2', $user->id);
+                            ->where('user_id_2', $user->id);
                     })->orWhere(function ($query) use ($self, $user) {
                         $query->where('user_id_1', $user->id)
-                              ->where('user_id_2', $self->id);
+                            ->where('user_id_2', $self->id);
                     })->first();
                     $user->friendship = $friendship;
                     return $user;
