@@ -286,8 +286,19 @@ class PostsController extends Controller
                 'status' => $status,
             ]);
             $post->save();
+            $newPost = Post::with(['user', 'likes'])->where('id', $post->id)->first();
+            $likeCountsByEmotion = [];
+            $likeCountsByEmotion['total_likes'] = 0;
+            //fake data
+            $postdata  = [
+                'post' => $newPost,
+                'like_counts_by_emotion' => $likeCountsByEmotion['total_likes'],
+                'likers' => [],
+                'total_comments' => 0,
+                'comments' => []
+            ];
             DB::commit();
-            return response()->json($post, 200);
+            return response()->json($postdata, 200);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['errors' => $e->getMessage()], 400);
