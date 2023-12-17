@@ -1,5 +1,4 @@
 import { CustomToggle } from '@/components/custom';
-import { Loading } from '@/components/shared/loading';
 import useInfiniteNotifications, {
   useCountNotificationsNotSeen,
   useSeeAllNotification,
@@ -7,7 +6,7 @@ import useInfiniteNotifications, {
 } from '@/hooks/useNotificationQuery';
 import { INotification, NotificationStatus } from '@/models/notifications';
 import { pathName } from '@/routes/path-name';
-import { formatNotificationLink } from '@/utilities/functions';
+import { formatFullName, formatNotificationLink } from '@/utilities/functions';
 import { momentVi } from '@/utilities/functions/moment-locale';
 import { Skeleton } from '@mui/material';
 import { useEffect, useState } from 'react';
@@ -42,7 +41,9 @@ const NotificationItem = ({ item }: NotificationItemProps) => {
           <Image className="avatar-40 rounded" src={item.user.avatar} alt="" loading="lazy" />
         </div>
         <div className="ms-3 w-100">
-          <h6 className="mb-0 ">{item.content}</h6>
+          <h6 className="mb-0 ">
+            {formatFullName(item?.user)} {item.content}
+          </h6>
           <div className="d-flex justify-content-between align-items-center">
             <small className="float-right font-size-12 text-primary mt-1">{momentVi(item.updated_at).fromNow()}</small>
           </div>

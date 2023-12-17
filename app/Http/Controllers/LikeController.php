@@ -122,7 +122,7 @@ class LikeController extends Controller
                         if ($detailModel) {
                             $user = User::find($detailModel->user_id);
                             if ($user) {
-                                $user->score += (1+$score);
+                                $user->score += (1 + $score);
                                 $user->save();
                             }
                         }
@@ -149,7 +149,7 @@ class LikeController extends Controller
                 case 'post':
                     $model = Post::find($item);
                     $notificationType = config('default.notification.notification_type.like_post');
-                    $message = Auth::user()->username . ' đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
+                    $message =  ' đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
                     $participants[] = Auth::id();
                     break;
                 case 'blog':
@@ -163,7 +163,7 @@ class LikeController extends Controller
                         $user->save();
                     }
                     $notificationType = config('default.notification.notification_type.like_blog');
-                    $message = Auth::user()->username . ' đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
+                    $message =  ' đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
                     $participants[] = Auth::id();
                     break;
                 case 'qa':
@@ -177,7 +177,7 @@ class LikeController extends Controller
                         $user->save();
                     }
                     $notificationType = config('default.notification.notification_type.like_qa');
-                    $message = Auth::user()->username . ' đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
+                    $message =  ' đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
                     $participants[] = Auth::id();
                     break;
                 default:
@@ -194,7 +194,7 @@ class LikeController extends Controller
                     //Cập nhật nội dung thông báo
                     $latestLiker = User::find(array_shift($participants));
                     $remainingLikesCount = count($participants);
-                    $message = $latestLiker->username . ' và ' . $remainingLikesCount . ' người khác đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
+                    $message =  ' và ' . $remainingLikesCount . ' người khác đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
                     if (!is_null($notification)) {
                         //Update thời gian thông báo
                         $notification->update([
