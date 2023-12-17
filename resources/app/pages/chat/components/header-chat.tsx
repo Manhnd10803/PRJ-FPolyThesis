@@ -62,10 +62,10 @@ export const HeaderChat = () => {
                       currentUser.activity_user === 'Đang hoạt động'
                         ? 'success'
                         : currentUser.activity_user === 'Đang bận'
-                          ? 'warning'
-                          : currentUser.activity_user === 'Ẩn'
-                            ? 'light'
-                            : 'danger'
+                        ? 'warning'
+                        : currentUser.activity_user === 'Ẩn'
+                        ? 'light'
+                        : 'danger'
                     }`}
                     style={{ fontSize: '20px' }}
                   >
@@ -80,10 +80,10 @@ export const HeaderChat = () => {
                     {currentUser?.activity_user === 'Đang hoạt động'
                       ? 'Đang hoạt động'
                       : currentUser?.activity_user === 'Đang bận'
-                        ? 'Đang bận'
-                        : currentUser?.activity_user === 'Ẩn'
-                          ? 'Ẩn'
-                          : 'Ngoại tuyến'}
+                      ? 'Đang bận'
+                      : currentUser?.activity_user === 'Ẩn'
+                      ? 'Ẩn'
+                      : 'Ngoại tuyến'}
                   </h6>
                 )}
               </div>

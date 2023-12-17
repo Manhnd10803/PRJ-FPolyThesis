@@ -4,6 +4,7 @@ import { Form } from 'react-bootstrap';
 import { ListPrivateChannel } from './list-private-channel';
 import { PopUpSetting } from './popup-setting';
 import { formatFullName } from '@/utilities/functions';
+import { IUser } from '@/models/user';
 
 export const SideBar = () => {
   const userInfo = StorageFunc.getUser();
@@ -36,10 +37,10 @@ export const SideBar = () => {
                   userInfo.activity_user === 'Đang hoạt động'
                     ? 'success'
                     : userInfo.activity_user === 'Đang bận'
-                      ? 'warning'
-                      : userInfo.activity_user === 'Ẩn'
-                        ? 'light'
-                        : 'danger'
+                    ? 'warning'
+                    : userInfo.activity_user === 'Ẩn'
+                    ? 'light'
+                    : 'danger'
                 }`}
                 style={{ fontSize: '20px' }}
               >
@@ -48,17 +49,17 @@ export const SideBar = () => {
             )}
           </div>
           <div className="chat-caption">
-            <h5 className="mb-0">{formatFullName(userInfo)}</h5>
+            <h5 className="mb-0">{formatFullName(userInfo as IUser)}</h5>
             <p className="m-0">{userInfo?.majors_name ?? ''}</p>
             {userInfo?.activity_user && (
               <h6 style={{ fontSize: '12px' }}>
                 {userInfo?.activity_user === 'Đang hoạt động'
                   ? 'Đang hoạt động'
                   : userInfo?.activity_user === 'Đang bận'
-                    ? 'Đang bận'
-                    : userInfo?.activity_user === 'Ẩn'
-                      ? 'Ẩn'
-                      : 'Ngoại tuyến'}
+                  ? 'Đang bận'
+                  : userInfo?.activity_user === 'Ẩn'
+                  ? 'Ẩn'
+                  : 'Ngoại tuyến'}
               </h6>
             )}
           </div>
