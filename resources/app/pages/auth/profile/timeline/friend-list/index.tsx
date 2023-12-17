@@ -23,7 +23,7 @@ export const FriendList = ({ listFriend, idUser }) => {
           <ul className="profile-img-gallary p-0 m-0 list-unstyled">
             {listFriend &&
               listFriend.map((item: IUser, index: number) => {
-                if (index < 9) {
+                if (index < 3) {
                   return (
                     <li key={index} className={`${listFriend?.length === 1 ? 'col-4' : ''}`}>
                       <Link to={`/profile/${item.id}`}>

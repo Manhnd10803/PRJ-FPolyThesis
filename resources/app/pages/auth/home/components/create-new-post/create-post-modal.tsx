@@ -27,6 +27,7 @@ export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => 
   const userInfo = StorageFunc.getUser();
 
   const [isShowDrop, setShowDrop] = useState(false);
+  const [privacy, setPrivacy] = useState(0);
   const imagesRef = useRef<File[]>([]);
   const {
     register,
@@ -41,15 +42,20 @@ export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => 
     imagesRef.current = files;
   };
 
+  const onChangePrivacy = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPrivacy(+e.target.value);
+  };
+
   const onSubmit = async (dataForm: TCreateNewPostSchema) => {
     let bodyData = dataForm;
+    console.log(typeof +privacy);
     try {
       if (imagesRef.current.length) {
         const urlImages = await CloudiaryService.uploadImages(imagesRef.current, 'post');
         bodyData = { ...dataForm, image: urlImages };
       }
 
-      const { data: dataPost } = await PostService.createNewPost(bodyData);
+      const { data: dataPost } = await PostService.createNewPost({ ...bodyData, status: +privacy });
 
       toast.success('Đăng bài thành công');
 
@@ -88,7 +94,7 @@ export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => 
                 <img src={userInfo?.avatar} alt="story-img" className="rounded-circle img-fluid avatar-60" />
                 <div className="stories-data ms-3">
                   <h5>{fullName}</h5>
-                  <DropdownPrivacy />
+                  <DropdownPrivacy onChangePrivacy={onChangePrivacy} privacy={privacy} />
                 </div>
               </div>
 
