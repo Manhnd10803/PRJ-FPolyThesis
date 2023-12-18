@@ -5,13 +5,10 @@ import { Timeline } from './timeline';
 import { Row, Col, Container, Tab } from 'react-bootstrap';
 import { MyBlog } from './my-blog';
 import { ProfileService } from '@/apis/services/profile.service';
-import { useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { MyListQa } from './question-and-answer';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { FriendsMyUserPage } from './friends';
-import { useEffect, useRef } from 'react';
-import { useInView } from 'react-intersection-observer';
-import { IPost } from '@/models/post';
 import { getQueryKeyPostProfile } from '@/hooks/usePostQuery';
 
 export const ProfilePage = () => {
