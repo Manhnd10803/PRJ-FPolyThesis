@@ -146,7 +146,7 @@ class CommentController extends Controller
                         //Cập nhật nội dung thông báo
                         $latestComment = User::find(array_shift($participants));
                         $remainingCommentsCount = count($participants);
-                        $message = $latestComment->first_name . '' . $latestComment->last_name . ' và ' . $remainingCommentsCount . ' người khác đã bình luận về ' . $type . ' của bạn.';
+                        $message = $latestComment->first_name . ' ' . $latestComment->last_name . ' và ' . $remainingCommentsCount . ' người khác đã bình luận về ' . $type . ' của bạn.';
                         if (!is_null($notification)) {
                             $notification->update([
                                 'content' => $message,

@@ -193,7 +193,7 @@ class LikeController extends Controller
                     //Cập nhật nội dung thông báo
                     $latestLiker = User::find(array_shift($participants));
                     $remainingLikesCount = count($participants);
-                    $message = $latestLiker->first_name . '' . $latestLiker->last_name . ' và ' . $remainingLikesCount . ' người khác đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
+                    $message = $latestLiker->first_name . ' ' . $latestLiker->last_name . ' và ' . $remainingLikesCount . ' người khác đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
                     if (!is_null($notification)) {
                         //Update thời gian thông báo
                         $notification->update([
