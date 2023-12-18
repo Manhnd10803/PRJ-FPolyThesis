@@ -70,7 +70,7 @@ class FriendController extends Controller
                 ]);
                 //Thông báo
                 $user = Auth::user();
-                $content = $user->first_name . '' . $user->last_name . ' đã gửi cho bạn lời mời kết bạn.';
+                $content = $user->first_name . ' ' . $user->last_name . ' đã gửi cho bạn lời mời kết bạn.';
                 $notification = Notification::create([
                     'sender' => Auth::id(),
                     'recipient' => $recipient->id,
@@ -146,7 +146,7 @@ class FriendController extends Controller
                 ]);
             }
             $user = Auth::user();
-            $content = $user->first_name . '' . $user->last_name . ' đã đồng ý lời mời kết bạn.';
+            $content = $user->first_name . ' ' . $user->last_name . ' đã đồng ý lời mời kết bạn.';
             $notification = Notification::create([
                 'sender' => Auth::id(),
                 'recipient' => $sender->id,

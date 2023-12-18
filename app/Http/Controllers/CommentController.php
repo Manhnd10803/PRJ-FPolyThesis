@@ -110,19 +110,19 @@ class CommentController extends Controller
                     case 'post':
                         $model = Post::find($id);
                         $notificationType = config('default.notification.notification_type.comment_post');
-                        $message = $user->first_name . '' . $user->last_name . ' đã bình luận về ' . $type . ' của bạn.';
+                        $message = $user->first_name . ' ' . $user->last_name . ' đã bình luận về ' . $type . ' của bạn.';
                         $participants[] = Auth::id();
                         break;
                     case 'blog':
                         $model = Blog::find($id);
                         $notificationType = config('default.notification.notification_type.comment_blog');
-                        $message = $user->first_name . '' . $user->last_name . ' đã bình luận về ' . $type . ' của bạn.';
+                        $message = $user->first_name . ' ' . $user->last_name . ' đã bình luận về ' . $type . ' của bạn.';
                         $participants[] = Auth::id();
                         break;
                     case 'qa':
                         $model = Qa::find($id);
                         $notificationType = config('default.notification.notification_type.comment_qa');
-                        $message = $user->first_name . '' . $user->last_name . ' đã bình luận về ' . $type . ' của bạn.';
+                        $message = $user->first_name . ' ' . $user->last_name . ' đã bình luận về ' . $type . ' của bạn.';
                         $participants[] = Auth::id();
                         break;
                     default:
@@ -146,7 +146,7 @@ class CommentController extends Controller
                         //Cập nhật nội dung thông báo
                         $latestComment = User::find(array_shift($participants));
                         $remainingCommentsCount = count($participants);
-                        $message = $latestComment->first_name . '' . $latestComment->last_name . ' và ' . $remainingCommentsCount . ' người khác đã bình luận về ' . $type . ' của bạn.';
+                        $message = $latestComment->first_name . ' ' . $latestComment->last_name . ' và ' . $remainingCommentsCount . ' người khác đã bình luận về ' . $type . ' của bạn.';
                         if (!is_null($notification)) {
                             $notification->update([
                                 'content' => $message,
@@ -202,19 +202,19 @@ class CommentController extends Controller
                     case 'post':
                         $model = Post::find($id);
                         $notificationType = config('default.notification.notification_type.reply_post');
-                        $message = $user->first_name . '' . $user->last_name . ' đã phản hồi về bình luận ' . $type . ' của bạn.';
+                        $message = $user->first_name . ' ' . $user->last_name . ' đã phản hồi về bình luận ' . $type . ' của bạn.';
                         $participants[] = Auth::id();
                         break;
                     case 'blog':
                         $model = Blog::find($id);
                         $notificationType = config('default.notification.notification_type.reply_blog');
-                        $message = $user->first_name . '' . $user->last_name . ' đã phản hồi về bình luận ' . $type . ' của bạn.';
+                        $message = $user->first_name . ' ' . $user->last_name . ' đã phản hồi về bình luận ' . $type . ' của bạn.';
                         $participants[] = Auth::id();
                         break;
                     case 'qa':
                         $model = Qa::find($id);
                         $notificationType = config('default.notification.notification_type.reply_qa');
-                        $message = $user->first_name . '' . $user->last_name . ' đã phản hồi về bình luận ' . $type . ' của bạn.';
+                        $message = $user->first_name . ' ' . $user->last_name . ' đã phản hồi về bình luận ' . $type . ' của bạn.';
                         $participants[] = Auth::id();
                         break;
                     default:
@@ -238,7 +238,7 @@ class CommentController extends Controller
                         //Cập nhật nội dung thông báo
                         $latestComment = User::find(array_shift($participants));
                         $remainingCommentsCount = count($participants);
-                        $message = $latestComment->username . ' và ' . $remainingCommentsCount . ' người khác đã phản hồi về bình luận ' . $type . ' của bạn.';
+                        $message = $latestComment->first_name . ' ' . $latestComment->last_name . ' và ' . $remainingCommentsCount . ' người khác đã phản hồi về bình luận ' . $type . ' của bạn.';
                         if (!is_null($notification)) {
                             $notification->update([
                                 'content' => $message,
