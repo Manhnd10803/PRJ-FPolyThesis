@@ -148,7 +148,7 @@ class LikeController extends Controller
                 case 'post':
                     $model = Post::find($item);
                     $notificationType = config('default.notification.notification_type.like_post');
-                    $message = $user->first_name . '' . $user->last_name .  ' đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
+                    $message = $user->first_name . ' ' . $user->last_name .  ' đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
                     $participants[] = Auth::id();
                     break;
                 case 'blog':
@@ -162,7 +162,7 @@ class LikeController extends Controller
                         $user->save();
                     }
                     $notificationType = config('default.notification.notification_type.like_blog');
-                    $message = $user->first_name . '' . $user->last_name . ' đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
+                    $message = $user->first_name . ' ' . $user->last_name . ' đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
                     $participants[] = Auth::id();
                     break;
                 case 'qa':
@@ -176,7 +176,7 @@ class LikeController extends Controller
                         $user->save();
                     }
                     $notificationType = config('default.notification.notification_type.like_qa');
-                    $message = $user->first_name . '' . $user->last_name . ' đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
+                    $message = $user->first_name . ' ' . $user->last_name . ' đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
                     $participants[] = Auth::id();
                     break;
                 default:

@@ -160,19 +160,28 @@ const ListBlog = ({ data, fetchNextPage, hasNextPage, isFetching }: any) => {
 
   return (
     <>
-      {data?.map((item: any, index: number) => (
-        <Row className="mb-2" key={index}>
-          <div className="col-12">
-            <Link className="text-dark font-bold" style={{ fontSize: '20px' }} to={`${pathName.BLOG}/${item.id}`}>
-              {item?.title}
-            </Link>
-          </div>
-          <div className="col-12">
-            <p className="mb-0">Cập nhật lần cuối: {formatTime(item?.updated_at)}</p>
-          </div>
-          <hr />
-        </Row>
-      ))}
+      {data && data.length > 0 && (
+        <>
+          {data?.map((item: any, index: number) => (
+            <Row className="mb-2" key={index}>
+              <div className="col-12">
+                <Link className="text-dark font-bold" style={{ fontSize: '20px' }} to={`${pathName.BLOG}/${item.id}`}>
+                  {item?.title}
+                </Link>
+              </div>
+              <div className="col-12">
+                <p className="mb-0">Cập nhật lần cuối: {formatTime(item?.updated_at)}</p>
+              </div>
+              <hr />
+            </Row>
+          ))}
+        </>
+      )}
+      {!isFetching && !hasNextPage && data && data.length === 0 && (
+        <div className="text-center">
+          <h5>Không có dữ liệu !</h5>
+        </div>
+      )}
 
       {isFetching && (
         <div className="col-sm-12 text-center">
