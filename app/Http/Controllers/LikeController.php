@@ -73,7 +73,6 @@ class LikeController extends Controller
         $existingLike = Like::where('user_id', $user->id)->where($modelName . '_id', $item)->first();
 
 
-
         if ($existingLike) {
             // Nếu đã tồn tại và cảm xúc trùng khớp với cảm xúc hiện tại, xóa cảm xúc
             $modelClass = null;
@@ -149,7 +148,7 @@ class LikeController extends Controller
                 case 'post':
                     $model = Post::find($item);
                     $notificationType = config('default.notification.notification_type.like_post');
-                    $message =  ' đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
+                    $message = $user->first_name . '' . $user->last_name .  ' đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
                     $participants[] = Auth::id();
                     break;
                 case 'blog':
@@ -163,7 +162,7 @@ class LikeController extends Controller
                         $user->save();
                     }
                     $notificationType = config('default.notification.notification_type.like_blog');
-                    $message =  ' đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
+                    $message = $user->first_name . '' . $user->last_name . ' đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
                     $participants[] = Auth::id();
                     break;
                 case 'qa':
@@ -177,7 +176,7 @@ class LikeController extends Controller
                         $user->save();
                     }
                     $notificationType = config('default.notification.notification_type.like_qa');
-                    $message =  ' đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
+                    $message = $user->first_name . '' . $user->last_name . ' đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
                     $participants[] = Auth::id();
                     break;
                 default:
@@ -194,7 +193,7 @@ class LikeController extends Controller
                     //Cập nhật nội dung thông báo
                     $latestLiker = User::find(array_shift($participants));
                     $remainingLikesCount = count($participants);
-                    $message =  ' và ' . $remainingLikesCount . ' người khác đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
+                    $message = $latestLiker->first_name . '' . $latestLiker->last_name . ' và ' . $remainingLikesCount . ' người khác đã bày tỏ cảm xúc về ' . $modelName . ' của bạn.';
                     if (!is_null($notification)) {
                         //Update thời gian thông báo
                         $notification->update([
@@ -246,153 +245,6 @@ class LikeController extends Controller
         }
         return response()->json(['message' => $message]);
     }
-    /**
-     * @OA\Post(
-     *     path="/api/like/blog/{item}/{action}",
-     *     summary="Thích hoặc bỏ thích câu hỏi",
-     *     description="Thích hoặc bỏ thích một câu hỏi với một cảm xúc cụ thể.",
-     *     operationId="likeItemBlog",
-     *     tags={"Likes"},
-     *     @OA\Parameter(
-     *         name="item",
-     *         in="path",
-     *         description="ID của câu hỏi",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Parameter(
-     *         name="action",
-     *         in="path",
-     *         description="Loại cảm xúc (emotion)",
-     *         required=true,
-     *         @OA\Schema(type="string", enum={"like", "dislike"})
-     *     ),
-     *     @OA\Response(
-     *         response="200",
-     *         description="Cảm xúc được cập nhật thành công",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response="400",
-     *         description="Lỗi",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="error", type="string")
-     *         )
-     *     )
-     * )
-     */
-    public function LikeItemBlog(Request $request, $item, $action)
-    {
-        $user = Auth::user();
-        $validEmotions = config('default.valid_emotions');
-
-        if (!in_array($action, $validEmotions)) {
-            return response()->json(['error' => 'Invalid emotion type'], 400);
-        }
-
-        $existingReaction = Like::where('user_id', $user->id)->where('blog_id', $item)->first();
-
-        if ($existingReaction) {
-            // Nếu đã có phản ứng trước đó
-            if ($existingReaction->emotion === $action) {
-                // Nếu cảm xúc hiện tại là giống với hành động người dùng, xóa cảm xúc
-                $existingReaction->delete();
-                $message = 'Removed reaction successfully';
-            } else {
-                // Nếu cảm xúc hiện tại khác với hành động người dùng, cập nhật thành cảm xúc mới
-                $existingReaction->emotion = $action;
-                $existingReaction->save();
-                $message = 'Updated reaction successfully';
-            }
-        } else {
-            // Nếu không có phản ứng trước đó, tạo phản ứng mới
-            $like = new Like([
-                'user_id' => $user->id,
-                'blog_id' => $item,
-                'emotion' => $action,
-            ]);
-            $like->save();
-            $message = 'Added ' . $action . ' successfully';
-        }
-        return response()->json(['message' => $message]);
-    }
-
-    /**
-     * @OA\Post(
-     *     path="/api/like/qa/{item}/{action}",
-     *     summary="Thích hoặc bỏ thích câu hỏi và câu trả lời",
-     *     description="Thích hoặc bỏ thích một câu hỏi hoặc câu trả lời với một cảm xúc cụ thể.",
-     *     operationId="likeItemQandA",
-     *     tags={"Likes"},
-     *     @OA\Parameter(
-     *         name="item",
-     *         in="path",
-     *         description="ID của câu hỏi hoặc câu trả lời",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Parameter(
-     *         name="action",
-     *         in="path",
-     *         description="Loại cảm xúc (emotion)",
-     *         required=true,
-     *         @OA\Schema(type="string", enum={"like", "dislike"})
-     *     ),
-     *     @OA\Response(
-     *         response="200",
-     *         description="Cảm xúc được cập nhật thành công",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response="400",
-     *         description="Lỗi",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="error", type="string")
-     *         )
-     *     )
-     * )
-     */
-
-    public function LikeItemQandA(Request $request, $item, $action)
-    {
-        $user = Auth::user();
-        $validEmotions = config('default.valid_emotions');
-
-        if (!in_array($action, $validEmotions)) {
-            return response()->json(['error' => 'Invalid emotion type'], 400);
-        }
-
-        $existingReaction = Like::where('user_id', $user->id)->where('qa_id', $item)->first();
-
-        if ($existingReaction) {
-            // Nếu đã có phản ứng trước đó
-            if ($existingReaction->emotion === $action) {
-                // Nếu cảm xúc hiện tại là giống với hành động người dùng, xóa cảm xúc
-                $existingReaction->delete();
-                $message = 'Removed reaction successfully';
-            } else {
-                // Nếu cảm xúc hiện tại khác với hành động người dùng, cập nhật thành cảm xúc mới
-                $existingReaction->emotion = $action;
-                $existingReaction->save();
-                $message = 'Updated reaction successfully';
-            }
-        } else {
-            // Nếu không có phản ứng trước đó, tạo phản ứng mới
-            $like = new Like([
-                'user_id' => $user->id,
-                'qa_id' => $item,
-                'emotion' => $action,
-            ]);
-            $like->save();
-            $message = 'Added ' . $action . ' successfully';
-        }
-        return response()->json(['message' => $message]);
-    }
-
     /**
      * @OA\Get(
      *     path="/api/like",

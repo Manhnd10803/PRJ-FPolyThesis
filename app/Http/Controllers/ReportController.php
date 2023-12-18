@@ -81,7 +81,7 @@ class ReportController extends Controller
       ]);
       //send noti admin
       $admin = User::where('email', 'admin@gmail.com')->first();
-      $message =  ' đã báo cáo 1 ' . $modelName . ".";
+      $message = Auth::user()->username . ' đã báo cáo 1 ' . $modelName . ".";
       $notification = Notification::create([
         'sender' => Auth::id(),
         'recipient' => $admin->id,

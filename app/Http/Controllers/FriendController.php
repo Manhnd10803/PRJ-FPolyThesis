@@ -69,7 +69,8 @@ class FriendController extends Controller
                     'friendship_type' =>  config('default.friend.friendship_type.follow')
                 ]);
                 //Thông báo
-                $content = ' đã gửi cho bạn lời mời kết bạn.';
+                $user = Auth::user();
+                $content = $user->first_name . '' . $user->last_name . ' đã gửi cho bạn lời mời kết bạn.';
                 $notification = Notification::create([
                     'sender' => Auth::id(),
                     'recipient' => $recipient->id,
@@ -144,7 +145,8 @@ class FriendController extends Controller
                     'friendship_type' => config('default.friend.friendship_type.friend'),
                 ]);
             }
-            $content = ' đã đồng ý lời mời kết bạn.';
+            $user = Auth::user();
+            $content = $user->first_name . '' . $user->last_name . ' đã đồng ý lời mời kết bạn.';
             $notification = Notification::create([
                 'sender' => Auth::id(),
                 'recipient' => $sender->id,

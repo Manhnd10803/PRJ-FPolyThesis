@@ -232,7 +232,7 @@ class BlogController extends Controller
             $blog->save();
             //send noti admin
             $admin = User::where('email', 'admin@gmail.com')->first();
-            $message = ' đã tạo một blog mới.';
+            $message = Auth::user()->username . ' đã tạo một blog mới.';
             $notificationType = config('default.notification.notification_type.like_blog');
             $notification = Notification::create([
                 'sender' => Auth::id(),
