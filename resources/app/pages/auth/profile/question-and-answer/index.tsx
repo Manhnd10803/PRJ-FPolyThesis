@@ -31,7 +31,7 @@ export const MyListQa = ({ listQa, isLoading, isFetching, hasNextPage, fetchNext
 
   const filteredQaListAbout = (tabKey: any) => {
     const normalizedSearch = normalizeText(searchQueries[tabKey]);
-    return listQa?.filter((item: any) => normalizeText(item.title).includes(normalizedSearch));
+    return listQa?.filter((item: any) => item?.title && normalizeText(item.title).includes(normalizedSearch));
   };
 
   const [isSticky, setSticky] = useState(false);

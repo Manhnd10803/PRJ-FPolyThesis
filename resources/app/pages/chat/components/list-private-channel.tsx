@@ -59,10 +59,10 @@ export const ListPrivateChannel = ({ search }: ListPrivateChannelProps) => {
                           item.activity_user === 'Đang hoạt động'
                             ? 'success'
                             : item.activity_user === 'Đang bận'
-                            ? 'warning'
-                            : item.activity_user === 'Ẩn'
-                            ? 'light'
-                            : 'danger'
+                              ? 'warning'
+                              : item.activity_user === 'Ẩn'
+                                ? 'light'
+                                : 'danger'
                         }`}
                         style={{ fontSize: '20px' }}
                       >
