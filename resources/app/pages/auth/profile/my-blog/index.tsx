@@ -28,11 +28,11 @@ export const MyBlog = ({ listBlog, isLoading, isFetching, hasNextPage, fetchNext
     setSearchQueries({ ...searchQueries, [tabKey]: query });
   };
 
-  const normalizeText = (text: any) => diacritics.remove(text.toLowerCase());
+  const normalizeText = (text: any) => diacritics.remove(text?.toLowerCase());
 
   const filteredBlogListAbout = (tabKey: any) => {
     const normalizedSearch = normalizeText(searchQueries[tabKey]);
-    return listBlog?.filter((item: any) => normalizeText(item.title).includes(normalizedSearch));
+    return listBlog?.filter((item: any) => item?.title && normalizeText(item.title).includes(normalizedSearch));
   };
 
   const [isSticky, setSticky] = useState(false);
@@ -94,8 +94,8 @@ export const MyBlog = ({ listBlog, isLoading, isFetching, hasNextPage, fetchNext
                           {tabKey === 'about1'
                             ? 'Bài viết công khai'
                             : tabKey === 'about2'
-                            ? 'Bài viết đang chờ xét duyệt'
-                            : 'Bài viết vi phạm'}
+                              ? 'Bài viết đang chờ xét duyệt'
+                              : 'Bài viết vi phạm'}
                         </h4>
                         <div className="d-flex align-items-center">
                           <div className="form-outline">
@@ -164,15 +164,16 @@ const ListBlog = ({ data, fetchNextPage, hasNextPage, isFetching }: any) => {
         <Row className="mb-2" key={index}>
           <div className="col-12">
             <Link className="text-dark font-bold" style={{ fontSize: '20px' }} to={`${pathName.BLOG}/${item.id}`}>
-              {item.title}
+              {item?.title}
             </Link>
           </div>
           <div className="col-12">
-            <p className="mb-0">Cập nhật lần cuối: {formatTime(item.updated_at)}</p>
+            <p className="mb-0">Cập nhật lần cuối: {formatTime(item?.updated_at)}</p>
           </div>
           <hr />
         </Row>
       ))}
+
       {isFetching && (
         <div className="col-sm-12 text-center">
           <img src={imageUrlLoading} alt="loader" style={{ height: '50px' }} />

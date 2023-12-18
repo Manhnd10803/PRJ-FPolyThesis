@@ -57,10 +57,10 @@ export const PopUpSetting = ({ show, setShow }: PopUpSettingProps) => {
                     userInfo.activity_user === 'Đang hoạt động'
                       ? 'success'
                       : userInfo.activity_user === 'Đang bận'
-                      ? 'warning'
-                      : userInfo.activity_user === 'Ẩn'
-                      ? 'light'
-                      : 'danger'
+                        ? 'warning'
+                        : userInfo.activity_user === 'Ẩn'
+                          ? 'light'
+                          : 'danger'
                   }`}
                   style={{ fontSize: '40px' }}
                 >
