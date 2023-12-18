@@ -11,8 +11,8 @@ import { checkIfReacted, getTopEmotions } from '@/utilities/functions/post';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { useEffect, useRef, useState } from 'react';
 import { Card, Col, Dropdown, Image, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
-import { CommentList } from '../../../../../components/post/comment-list';
-import { CreateComment } from '../../../../../components/post/create-comment';
+import { CommentList } from '@/components/post/comment-list';
+import { CreateComment } from '@/components/post/create-comment';
 import { PostItemContextProvider } from '../../contexts';
 import { Content } from './content';
 import { Header } from './header';
@@ -23,13 +23,11 @@ type PostItemProps = {
   item: GetNewPostResponseType;
 };
 export const PostItem = ({ item }: PostItemProps) => {
-  if (item.post.status === 2) return null;
-
   // state
   const userInfo = StorageFunc.getUser();
 
   const { mutate } = useChooseEmotionPost();
-  const { manuallyIncreaseTotalLikePost, manuallyDecreaseTotalLikePost } = useIncreaseTotalLikePost();
+  const { manuallyIncreaseTotalLikePost, manuallyDecreaseTotalLikePost } = useIncreaseTotalLikePost('profile');
 
   const { like_counts_by_emotion, likers, total_comments, comments, post } = item;
 
@@ -47,13 +45,15 @@ export const PostItem = ({ item }: PostItemProps) => {
   }, [emotionSelected]);
 
   // function
-  const handleChangeEmotion = (emotion: EmotionUnionType) => {
+  const handleChangeEmotionProfile = (emotion: EmotionUnionType) => {
+    console.log(emotionSelected, emotion, post.id);
     const condition = `${emotionSelected === emotion ? 'A' : 'B'}-${isIncrease.current ? '1' : '2'}`;
 
     switch (condition) {
       case 'A-1':
         setEmotionSelected(undefined);
         setNameEmotion(undefined);
+        console.log('giảm like');
         manuallyDecreaseTotalLikePost(post.id);
         isIncrease.current = false;
         break;
@@ -66,12 +66,17 @@ export const PostItem = ({ item }: PostItemProps) => {
           }
         });
         isIncrease.current = true;
+
+        console.log('tăng like');
+
         manuallyIncreaseTotalLikePost(post.id);
         break;
     }
 
     if (!emotionSelected && !isIncrease.current) {
       isIncrease.current = true;
+      console.log('tăng like');
+
       manuallyIncreaseTotalLikePost(post.id);
     }
     mutate({
@@ -141,7 +146,7 @@ export const PostItem = ({ item }: PostItemProps) => {
                       {emotionData.map(e => {
                         return (
                           <OverlayTrigger key={e.id} placement="top" overlay={<Tooltip>{e.name}</Tooltip>}>
-                            <span className="hover-span" onClick={() => handleChangeEmotion(e.id)}>
+                            <span className="hover-span" onClick={() => handleChangeEmotionProfile(e.id)}>
                               <Image
                                 className="img-fluid rounded-circle avatar-30 me-2 hover-image"
                                 src={e.emotion}

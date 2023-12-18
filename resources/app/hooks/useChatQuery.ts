@@ -184,14 +184,11 @@ export const useMutationConversation = () => {
       (oldData: InfiniteData<Paginate<IMessages>> | undefined) => {
         if (!oldData) return oldData;
 
-        const [firstPage, ...rest] = oldData.pages;
-        firstPage.data.unshift(data);
         manuallyAddLastMessageToChannel(data, idChannel);
 
-        return {
-          ...oldData,
-          pages: [{ ...firstPage }, ...rest],
-        };
+        return produce(oldData, draft => {
+          draft.pages[0].data.unshift(data);
+        });
       },
     );
   };

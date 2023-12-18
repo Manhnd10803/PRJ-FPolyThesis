@@ -8,7 +8,10 @@ export const checkIfReacted = (likers: ILiker[], userInfo: IUser) => {
   return userReacted?.emotion;
 };
 
-export function getTopEmotions(likeCountsByEmotion: GetNewPostResponseType['like_counts_by_emotion']) {
+export function getTopEmotions(
+  likeCountsByEmotion: GetNewPostResponseType['like_counts_by_emotion'],
+): EmotionUnionType[] {
+  if (!likeCountsByEmotion) return ['like'];
   // Xóa thuộc tính "total_likes" khỏi đối tượng
   const { total_likes, ...rest } = likeCountsByEmotion;
 

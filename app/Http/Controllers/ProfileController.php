@@ -22,17 +22,29 @@ class ProfileController extends Controller
     {
         DB::beginTransaction();
         try {
-            $loggedInUser = Auth::user();
-            $user = User::withCount(['posts', 'blogs', 'friends'])->find($user->id);
+            $loggedInUser = Auth::user()->load(['friends' => function ($query) {
+                $query->select('users.id');
+            }]);
+
+            $user = User::with(['posts' => function ($query) {
+                $query->select('posts.id', 'user_id', 'created_at', 'status');
+            }, 'blogs' => function ($query) {
+                $query->select('blogs.id', 'user_id');
+            }, 'friends' => function ($query) {
+                $query->select('users.id', 'first_name', 'last_name', 'avatar');
+            }])->withCount(['posts', 'blogs', 'friends'])->find($user->id);
+
             $countposts = $user->posts_count;
             $countblogs = $user->blogs_count;
             $countfriends = $user->friends_count;
             $major = $user->major;
+
             // Lấy danh sách bạn bè của người dùng
             $friends = $user->friends;
             $loginfriends = $loggedInUser->friends;
             $friendDetails = [];
-            $postsQuery = Post::where('user_id', $user->id)->orderBy('created_at', 'DESC');
+
+            $postsQuery = $user->posts()->orderBy('created_at', 'DESC');
 
             // Duyệt qua danh sách bạn bè để lấy thông tin ID, firstname, lastname và avatar
             foreach ($friends as $friend) {
@@ -213,9 +225,9 @@ class ProfileController extends Controller
                             $commentDemo->reply = $post->comments->where('parent_id', $commentDemo->id)->count();
                         }
                         $postData = [
-                            'post' => $post,
+                            'post' => $post->load(['user', 'likes.user', 'comments.user']),
                             'like_counts_by_emotion' => $likeCountsByEmotion,
-                            'liker' => $likers,
+                            'likers' => $likers,
                             'total_comments' => $totalComment,
                             'comments' => $commentDemos,
                         ];
@@ -225,7 +237,7 @@ class ProfileController extends Controller
                     DB::commit();
 
                     return response()->json([
-                        'datas' => $listPost, 'current_page' => $posts->currentPage(),
+                        'data' => $listPost, 'current_page' => $posts->currentPage(),
                         'last_page' => $posts->lastPage()
                     ], 200);
                     break;
@@ -246,7 +258,7 @@ class ProfileController extends Controller
                         }
 
                         $data = [
-                            'datas' => $blogs->items(),
+                            'data' => $blogs->items(),
                             'current_page' => $blogs->currentPage(),
                             'last_page' => $blogs->lastPage(),
                         ];
@@ -262,7 +274,7 @@ class ProfileController extends Controller
                         return response()->json(['data' => [], 'message' => 'Không có bài viết'], 200);
                     }
                     $data = [
-                        'datas' => $qas->items(),
+                        'data' => $qas->items(),
                         'current_page' => $qas->currentPage(),
                         'last_page' => $qas->lastPage(),
                     ];
@@ -306,7 +318,7 @@ class ProfileController extends Controller
                     );
 
                     $data = [
-                        'datas' => $paginatedQas->values()->all(),
+                        'data' => $paginatedQas->values()->all(),
                         'current_page' => $paginatedQas->currentPage(),
                         'last_page' => $paginatedQas->lastPage(),
                     ];

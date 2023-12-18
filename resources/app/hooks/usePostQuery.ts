@@ -1,9 +1,22 @@
 import { PostService } from '@/apis/services/post.service';
 import { Paginate } from '@/models/pagination';
 import { GetNewPostResponseType, IPost } from '@/models/post';
+import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { InfiniteData, useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { produce } from 'immer';
 
 export const queryKeyPosts = ['posts'];
+const localUserId = StorageFunc.getUserId();
+
+type PostProfileType = {
+  userId: number;
+  type: string;
+  status?: string;
+};
+
+export const getQueryKeyPostProfile = ({ userId, type, status = '' }: PostProfileType) => {
+  return ['profile', type, status, userId];
+};
 
 const fetchPosts = async ({ quantity = 5, pageParam = 1 }) => {
   const { data } = await PostService.getPostsNewFeed(quantity, pageParam);
@@ -29,24 +42,44 @@ export default function useInfinitePosts() {
   };
 }
 
-export const useAddPost = () => {
+export const usePost = (typeQueryKey: 'profile' | 'posts' = 'posts') => {
   const queryClient = useQueryClient();
+  const queryKey =
+    typeQueryKey === 'profile' ? getQueryKeyPostProfile({ userId: localUserId!, type: 'post' }) : queryKeyPosts;
 
   const manuallyAddPost = async (newPost: GetNewPostResponseType) => {
-    queryClient.setQueryData(queryKeyPosts, (oldData: InfiniteData<Paginate<GetNewPostResponseType>> | undefined) => {
+    queryClient.setQueryData(queryKey, (oldData: InfiniteData<Paginate<GetNewPostResponseType>> | undefined) => {
       if (!oldData) return oldData;
+      return produce(oldData, draft => {
+        draft.pages[0].data.unshift(newPost);
+      });
+    });
+  };
 
-      const [firstPage, ...rest] = oldData?.pages;
-      firstPage.data.unshift(newPost);
-
-      return {
-        ...oldData,
-        pages: [{ ...firstPage }, ...rest],
-      };
+  const manuallyChangeStatusPost = async (postId: number, newStatus: number) => {
+    queryClient.setQueryData(queryKey, (oldData: InfiniteData<Paginate<GetNewPostResponseType>> | undefined) => {
+      if (!oldData) return oldData;
+      return produce(oldData, draft => {
+        draft.pages.forEach(page => {
+          page.data = page.data.map(postItem => {
+            if (postItem.post.id === postId) {
+              return {
+                ...postItem,
+                post: {
+                  ...postItem.post,
+                  status: newStatus,
+                },
+              };
+            }
+            return postItem;
+          });
+        });
+      });
     });
   };
 
   return {
     manuallyAddPost,
+    manuallyChangeStatusPost,
   };
 };

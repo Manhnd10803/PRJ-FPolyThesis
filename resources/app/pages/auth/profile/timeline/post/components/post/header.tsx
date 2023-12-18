@@ -24,7 +24,7 @@ export const Header = () => {
               <h5 className="mb-0 d-inline-block">{formatFullName(post?.user)}</h5>
               <span className="mb-0 ps-1 d-inline-block">{actionType}</span>
               <div className="d-flex align-items-center">
-                <span className="mb-0 text-primary">{momentVi(post?.updated_at).fromNow()}</span>
+                <span className="text-primary">{momentVi(post?.updated_at).fromNow()}</span>
 
                 <span className="material-symbols-outlined " style={{ marginLeft: '10px', fontSize: '20px' }}>
                   {post?.status === 0 ? 'public' : post?.status === 1 ? 'group' : 'lock'}
@@ -32,9 +32,9 @@ export const Header = () => {
               </div>
             </div>
             <MoreActionDropdown
+              postStatus={post?.status}
               friendId={post?.user?.id}
               postId={post?.id}
-              postStatus={post?.status}
               username={post?.user?.username}
             />
           </div>

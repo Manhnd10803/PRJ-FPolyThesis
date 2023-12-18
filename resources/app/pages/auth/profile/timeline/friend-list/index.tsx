@@ -4,8 +4,12 @@ import { formatFullName } from '@/utilities/functions';
 import { Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-export const FriendList = ({ listFriend, idUser }) => {
-  console.log(listFriend);
+type FriendListProps = {
+  listFriend: IUser[];
+  idUser: string;
+};
+
+export const FriendList = ({ listFriend, idUser }: FriendListProps) => {
   return (
     <>
       <Card>
@@ -23,7 +27,7 @@ export const FriendList = ({ listFriend, idUser }) => {
           <ul className="profile-img-gallary p-0 m-0 list-unstyled">
             {listFriend &&
               listFriend.map((item: IUser, index: number) => {
-                if (index < 9) {
+                if (index < 3) {
                   return (
                     <li key={index} className={`${listFriend?.length === 1 ? 'col-4' : ''}`}>
                       <Link to={`/profile/${item.id}`}>

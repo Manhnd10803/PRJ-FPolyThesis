@@ -9,7 +9,7 @@ import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
 import toast from 'react-hot-toast';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const audioReceiverNotification = () => {
   new Audio(mp3NotificationCommon).play();
@@ -70,8 +70,6 @@ const showNotification = ({
 };
 
 export const RealtimeNotification = () => {
-  const navigate = useNavigate();
-
   const location = useLocation();
 
   const isChatPage = useMemo(() => {
@@ -109,8 +107,9 @@ export const RealtimeNotification = () => {
           showNotification({
             content,
             onClick: (id: string) => {
-              navigate(formatNotificationLink(event.notification));
               toast.dismiss(id);
+
+              window.open(formatNotificationLink(event.notification), '_blank');
             },
             avatarSender: avatar_sender || notifyImageDefault,
           });

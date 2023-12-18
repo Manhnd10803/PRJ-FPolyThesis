@@ -1,5 +1,5 @@
 import { DropZoneField } from '@/components/custom/drop-zone-field';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Modal } from 'react-bootstrap';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router-dom';
@@ -14,7 +14,9 @@ import { CloudiaryService } from '@/apis/services/cloudinary.service';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { usePost } from '@/hooks/usePostQuery';
 import { IUser } from '@/models/user';
-import { GetNewPostResponseType, IPost } from '@/models/post';
+import { is } from 'date-fns/locale';
+import { useQueryClient } from '@tanstack/react-query';
+import { GetNewPostResponseType } from '@/models/post';
 
 type CreatePostModalProps = {
   handleClose: () => void;
@@ -23,7 +25,7 @@ type CreatePostModalProps = {
 
 export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => {
   //state
-  const { manuallyAddPost } = usePost();
+  const { manuallyAddPost } = usePost('profile');
   const fullName = StorageFunc.getFullName();
   const userInfo = StorageFunc.getUser();
 
@@ -49,6 +51,7 @@ export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => 
 
   const onSubmit = async (dataForm: TCreateNewPostSchema) => {
     let bodyData = dataForm;
+    console.log(typeof +privacy);
     try {
       if (imagesRef.current.length) {
         const urlImages = await CloudiaryService.uploadImages(imagesRef.current, 'post');

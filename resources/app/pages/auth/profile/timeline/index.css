@@ -1,14 +1,15 @@
 .about-profile {
   position: sticky;
   top: 80px;
-  max-height: 80vh;
+  max-height: 75vh;
   transition: all 0.5s ease-in-out;
   z-index: 9999;
+  margin-bottom: 12vh;
 }
 @media (max-width: 1024px) {
   .about-profile {
     position: static;
-    z-index:100;
+    z-index: 100;
   }
 }
 .scroller-history {

@@ -25,6 +25,7 @@ export const ApiConstants = {
   POSTS: '/posts',
   POSTS_DETAIL: '/posts/detail',
   GET_POSTS_NEW_FEED: `/posts/newfeed`,
+  POST_UPDATE_STATUS: `/posts/update-status`,
 
   // blog
   BLOGS: '/blogs',
