@@ -84,11 +84,11 @@ export const CardLoadFriendOther = () => {
 
           <Card.Body>
             <Card.Title as="h5" className="card-title">
-              <Skeleton height={15} width={150} variant="rounded" />
+              <Skeleton height={15} width="100%" variant="rounded" />
             </Card.Title>
             <Card.Text className="card-text">
               {' '}
-              <Skeleton height={13} width={150} variant="rounded" />
+              <Skeleton height={13} width="100%" variant="rounded" />
             </Card.Text>
             <div className="d-flex flex-column gap-2 mt-2 mt-md-0"></div>
           </Card.Body>

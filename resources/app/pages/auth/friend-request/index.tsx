@@ -46,7 +46,6 @@ export const FriendRequestPage = () => {
       throw error;
     }
   };
-
   const HandleDeleteFriendRequest = async (id: any) => {
     try {
       setdeleteRequestFriend(prevStates => {
