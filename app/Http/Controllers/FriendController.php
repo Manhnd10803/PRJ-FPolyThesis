@@ -449,7 +449,7 @@ class FriendController extends Controller
             }
         }
     }
-    public function getFriendSuggestions()
+    public function getFriendSuggestions($quantity)
     {
         try {
             $self = Auth::user();
@@ -469,11 +469,20 @@ class FriendController extends Controller
             // Kết hợp danh sách ID của bạn bè và người đã gửi lời mời kết bạn
             $combinedIds = array_merge($friendIds, $friendRequestsIds);
             // Lấy gợi ý kết bạn dựa trên cùng một chuyên ngành và không phải là bạn bè hoặc người đã gửi lời mời kết bạn
-            $friendSuggestions = User::where('major_id', $self->major_id)
+            $friendSuggestionsQuery = User::where('major_id', $self->major_id)
                 ->where('id', '!=', $self->id)
-                ->whereNotIn('id', $combinedIds)
-                ->get()
-                ->map(function ($user) use ($self) {
+                ->whereNotIn('id', $combinedIds);
+               
+                if ($quantity) {
+                    // Áp dụng phân trang nếu $quantity có giá trị
+                    $friendSuggestions = $friendSuggestionsQuery->paginate($quantity);
+                } else {
+                    // Không áp dụng phân trang nếu $quantity không có giá trị
+                    $friendSuggestions = $friendSuggestionsQuery->get();
+                }
+
+                
+                $friendSuggestions->map(function ($user) use ($self) {
                     $user->major_name = $user->major ? $user->major->name : null;
                     unset($user->major);
                     $friendship = Friend::where(function ($query) use ($self, $user) {

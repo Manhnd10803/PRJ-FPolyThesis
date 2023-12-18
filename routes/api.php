@@ -132,7 +132,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get('/friend/count-friend-request', [FriendController::class, 'countFriendRequest']);
     //notification
     Route::get('/notifications/{quantity?}', [NotificationController::class, 'listNotification']);
-    Route::get('/see-notification/{notification}', [NotificationController::class, 'seeNotification']);
+    Route::get('/see-notification/{notification}', [NotificationController::class, 'seeNotification'
+]);
     Route::delete('/notification/{notification}', [NotificationController::class, 'deleteNotification']);
     Route::get('/notification/count-not-seen', [NotificationController::class, 'countNotificationNotSeen']);
     Route::put('/notification/mark-as-read', [NotificationController::class, 'MarkHasBeenRead']);
