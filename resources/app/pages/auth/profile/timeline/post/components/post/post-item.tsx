@@ -67,9 +67,9 @@ export const PostItem = ({ item }: PostItemProps) => {
         });
         isIncrease.current = true;
 
-        console.log('tăng like');
-
-        manuallyIncreaseTotalLikePost(post.id);
+        if (condition === 'B-2') {
+          manuallyIncreaseTotalLikePost(post.id);
+        }
         break;
     }
 

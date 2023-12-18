@@ -66,7 +66,10 @@ export const PostItem = ({ item }: PostItemProps) => {
           }
         });
         isIncrease.current = true;
-        manuallyIncreaseTotalLikePost(post.id);
+
+        if (condition === 'B-2') {
+          manuallyIncreaseTotalLikePost(post.id);
+        }
         break;
     }
 
