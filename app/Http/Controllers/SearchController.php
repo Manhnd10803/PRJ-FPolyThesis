@@ -159,7 +159,7 @@ class SearchController extends Controller
                         $queryBuilder->where('username', 'like', '%' . $query . '%')
                             ->orWhere('first_name', 'like', '%' . $query . '%')
                             ->orWhere('last_name', 'like', '%' . $query . '%');
-                    })->where('id', '!=', $user)->get();
+                    })->where('id', '!=', $user)->paginate(6);
                     break;
                 case 'post':
                     $model = Post::with('user:id,username,first_name,last_name,avatar')
@@ -169,7 +169,7 @@ class SearchController extends Controller
                             $queryBuilder->where('content', 'like', '%' . $query . '%')
                                 ->orWhere('hashtag', 'like', '%' . $query . '%');
                                 // ->orWhere('username', 'like', '%' . $query . '%');
-                        })->get();                   
+                        })->paginate(6);;                   
                     break;
                 case 'blog':
                     $model = Blog::with('user:id,username,first_name,last_name,avatar', 'major:id,majors_name')
@@ -178,7 +178,7 @@ class SearchController extends Controller
                             $queryBuilder->where('title', 'like', '%' . $query . '%')
                                 ->orWhere('content', 'like', '%' . $query . '%')
                                 ->orWhere('hashtag', 'like', '%' . $query . '%');
-                        })->where('status', config('default.blog.status.approved'))->get();
+                        })->where('status', config('default.blog.status.approved'))->paginate(6);
                     break;
                 case 'qa':
                     $model = Qa::with('user:id,username,first_name,last_name,avatar', 'major:id,majors_name')
@@ -187,7 +187,7 @@ class SearchController extends Controller
                             $queryBuilder->where('title', 'like', '%' . $query . '%')
                                 ->orWhere('content', 'like', '%' . $query . '%')
                                 ->orWhere('hashtag', 'like', '%' . $query . '%');
-                        })->get();
+                        })->paginate(6);
                     break;
                 default:
                     // Trường hợp mặc định: Tìm kiếm theo tất cả các model url có dạng api/search/default

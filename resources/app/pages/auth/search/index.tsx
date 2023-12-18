@@ -7,8 +7,9 @@ import parse from 'html-react-parser';
 import { momentVi } from '@/utilities/functions/moment-locale';
 import { hideImages } from '@/utilities/funcJsonImage';
 import { CardLoadBlogSearch, CardLoadFriendOther, CardLoadQaSearch } from '@/utilities/funcLoadFriend/CardLoad';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { pathName } from '@/routes/path-name';
+import { useInView } from 'react-intersection-observer';
 export const SearchPage = () => {
   const truncateTextStyle = {
     overflow: 'hidden',
@@ -25,22 +26,45 @@ export const SearchPage = () => {
   const [searchValue, setSearchValue] = useState(searchValueFromURL);
   let { hash } = useLocation();
   let activeTab = hash.split('#')[1] || 'blog';
-
+  const { ref: endRef, inView: endInView } = useInView();
   useEffect(() => {
     setSearchValue(searchValueFromURL);
   }, [searchValueFromURL]);
 
-  const fetchSearch = async () => {
-    const { data } = await SearchService.getSearchEverything(type, searchValueFromURL);
+  const fetchSearch = async ({ pageParam = 1 }) => {
+    const { data } = await SearchService.getSearchEverything(type, searchValueFromURL, pageParam);
     return data;
   };
 
   const queryKeySearchBar = ['search', type, searchValueFromURL];
 
-  const { data: dataSearch, isLoading } = useQuery(queryKeySearchBar, {
+  const {
+    data: dataSearch,
+    isLoading,
+    fetchNextPage,
+    isFetching,
+    hasNextPage,
+  } = useInfiniteQuery(queryKeySearchBar, {
     queryFn: fetchSearch,
+
+    getNextPageParam: (lastPage, _) => {
+      if (lastPage.current_page === lastPage.last_page) {
+        return undefined;
+      }
+      return lastPage.current_page + 1;
+    },
     enabled: searchValueFromURL !== '',
+    keepPreviousData: true,
+    staleTime: 600000,
   });
+
+  useEffect(() => {
+    if (endInView && hasNextPage && !isFetching) {
+      fetchNextPage();
+    }
+  }, [endInView, isFetching, hasNextPage, fetchNextPage]);
+
+  const listFriend = dataSearch?.pages.flatMap(page => page.data);
 
   const handleSubmitForm = (event: any) => {
     event.preventDefault();
@@ -53,7 +77,6 @@ export const SearchPage = () => {
   const handleNavClick = (newType: any) => {
     setType(newType);
   };
-  console.log(dataSearch);
   return (
     <>
       <Container>
@@ -128,8 +151,8 @@ export const SearchPage = () => {
                         </>
                       ) : (
                         <>
-                          {dataSearch && dataSearch.length > 0 && type == 'blog' ? (
-                            dataSearch.map((item, index) => (
+                          {listFriend && listFriend.length > 0 && type == 'blog' ? (
+                            listFriend.map((item, index) => (
                               <Row key={index}>
                                 <Link to={`${pathName.BLOG}/${item.id}`} className="text-black">
                                   <Card.Body className="p-3">
@@ -205,10 +228,11 @@ export const SearchPage = () => {
                               </Row>
                             ))
                           ) : (
-                            <p className="text-center">Mời bạn thực hiện tìm kiếm</p>
+                            <span className="text-center my-3">Mời bạn thực hiện tìm kiếm</span>
                           )}
                         </>
                       )}
+                      {isFetching && listFriend && listFriend.length > 0 ? <CardLoadBlogSearch /> : null}
                     </Card>
                   </Tab.Pane>
                   <Tab.Pane eventKey="qa">
@@ -221,8 +245,8 @@ export const SearchPage = () => {
                         </>
                       ) : (
                         <>
-                          {dataSearch && dataSearch.length > 0 && type == 'qa' ? (
-                            dataSearch.map((item, index) => (
+                          {listFriend && listFriend.length > 0 && type == 'qa' ? (
+                            listFriend.map((item, index) => (
                               <Row key={index}>
                                 <Link to={`${pathName.QUESTS_DETAIL}/${item.id}`} className="text-black">
                                   <Card.Body className="p-3">
@@ -296,10 +320,11 @@ export const SearchPage = () => {
                               </Row>
                             ))
                           ) : (
-                            <p className="text-center">Mời bạn thực hiện tìm kiếm</p>
+                            <span className="text-center my-3">Mời bạn thực hiện tìm kiếm</span>
                           )}
                         </>
                       )}
+                      {isFetching && listFriend && listFriend.length > 0 ? <CardLoadQaSearch /> : null}
                     </Card>
                   </Tab.Pane>
                   <Tab.Pane eventKey="post">
@@ -312,8 +337,8 @@ export const SearchPage = () => {
                         </>
                       ) : (
                         <>
-                          {dataSearch && dataSearch.length > 0 && type == 'post' ? (
-                            dataSearch.map((item, index) => (
+                          {listFriend && listFriend.length > 0 && type == 'post' ? (
+                            listFriend.map((item, index) => (
                               <Row key={index}>
                                 <Link to={`${pathName.POST}/${item.id}`} className="text-black">
                                   <Card.Body className="p-3">
@@ -380,10 +405,11 @@ export const SearchPage = () => {
                               </Row>
                             ))
                           ) : (
-                            <p className="text-center">Mời bạn thực hiện tìm kiếm</p>
+                            <span className="text-center my-3">Mời bạn thực hiện tìm kiếm</span>
                           )}
                         </>
                       )}
+                      {isFetching && listFriend && listFriend.length > 0 ? <CardLoadQaSearch /> : null}
                     </Card>
                   </Tab.Pane>
                   <Tab.Pane eventKey="friend">
@@ -397,8 +423,8 @@ export const SearchPage = () => {
                           </>
                         ) : (
                           <>
-                            {dataSearch && dataSearch.length > 0 && type == 'user' ? (
-                              dataSearch.map((item, index) => (
+                            {listFriend && listFriend.length > 0 && type == 'user' ? (
+                              listFriend.map((item, index) => (
                                 <Col sm={3} key={index}>
                                   <Link to={`${pathName.PROFILE}/${item.id}`} className="text-black">
                                     <Card className="mb-3">
@@ -416,16 +442,18 @@ export const SearchPage = () => {
                                 </Col>
                               ))
                             ) : (
-                              <p className="text-center">Mời bạn thực hiện tìm kiếm</p>
+                              <span className="text-center my-3">Mời bạn thực hiện tìm kiếm</span>
                             )}
                           </>
                         )}
+                        {isFetching && listFriend && listFriend.length > 0 ? <CardLoadFriendOther /> : null}
                       </Row>
                     </Card>
                   </Tab.Pane>
                 </Tab.Content>
               </Col>
             </Tab.Container>
+            <div ref={endRef}></div>
           </Row>
         </div>
       </Container>
