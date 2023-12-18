@@ -24,14 +24,19 @@ export const Header = () => {
               <h5 className="mb-0 d-inline-block">{formatFullName(post?.user)}</h5>
               <span className="mb-0 ps-1 d-inline-block">{actionType}</span>
               <div className="d-flex align-items-center">
-                <p className="mb-0 text-primary">{momentVi(post?.updated_at).fromNow()}</p>
+                <span className="mb-0 text-primary">{momentVi(post?.updated_at).fromNow()}</span>
 
                 <span className="material-symbols-outlined " style={{ marginLeft: '10px', fontSize: '20px' }}>
                   {post?.status === 0 ? 'public' : post?.status === 1 ? 'group' : 'lock'}
                 </span>
               </div>
             </div>
-            <MoreActionDropdown friendId={post?.user?.id} postId={post?.id} username={post?.user?.username} />
+            <MoreActionDropdown
+              friendId={post?.user?.id}
+              postId={post?.id}
+              postStatus={post?.status}
+              username={post?.user?.username}
+            />
           </div>
         </div>
       </div>

@@ -19,13 +19,24 @@ export const Header = () => {
           </Link>
         </div>
         <div className="w-100">
-          <div className="d-flex justify-content-between">
+          <div className="d-flex justify-content-between ">
             <div>
               <h5 className="mb-0 d-inline-block">{formatFullName(post?.user)}</h5>
               <span className="mb-0 ps-1 d-inline-block">{actionType}</span>
-              <p className="mb-0 text-primary">{momentVi(post?.updated_at).fromNow()}</p>
+              <div className="d-flex align-items-center">
+                <span className="text-primary">{momentVi(post?.updated_at).fromNow()}</span>
+
+                <span className="material-symbols-outlined " style={{ marginLeft: '10px', fontSize: '20px' }}>
+                  {post?.status === 0 ? 'public' : post?.status === 1 ? 'group' : 'lock'}
+                </span>
+              </div>
             </div>
-            <MoreActionDropdown friendId={post?.user?.id} postId={post?.id} username={post?.user?.username} />
+            <MoreActionDropdown
+              postStatus={post?.status}
+              friendId={post?.user?.id}
+              postId={post?.id}
+              username={post?.user?.username}
+            />
           </div>
         </div>
       </div>

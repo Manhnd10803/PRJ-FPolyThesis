@@ -18,12 +18,13 @@ import { Content } from './content';
 import { Header } from './header';
 import { ImageGrid } from './image-grid';
 import { Link } from 'react-router-dom';
-import { el } from 'date-fns/locale';
 
 type PostItemProps = {
   item: GetNewPostResponseType;
 };
 export const PostItem = ({ item }: PostItemProps) => {
+  if (item.post.status === 2) return null;
+
   // state
   const userInfo = StorageFunc.getUser();
 

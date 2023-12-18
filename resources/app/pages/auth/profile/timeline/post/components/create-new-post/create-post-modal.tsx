@@ -12,7 +12,7 @@ import { useForm } from 'react-hook-form';
 import { CreateNewPostChoice } from './create-post-choice';
 import { CloudiaryService } from '@/apis/services/cloudinary.service';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
-import { useAddPost } from '@/hooks/usePostQuery';
+import { usePost } from '@/hooks/usePostQuery';
 import { IUser } from '@/models/user';
 import { is } from 'date-fns/locale';
 import { useQueryClient } from '@tanstack/react-query';
@@ -25,7 +25,7 @@ type CreatePostModalProps = {
 
 export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => {
   //state
-  const { manuallyAddPost } = useAddPost('profile');
+  const { manuallyAddPost } = usePost('profile');
   const fullName = StorageFunc.getFullName();
   const userInfo = StorageFunc.getUser();
 
@@ -62,7 +62,7 @@ export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => 
 
       toast.success('Đăng bài thành công');
 
-      manuallyAddPost({ post: { ...dataPost, user: userInfo } } as GetNewPostResponseType);
+      manuallyAddPost(dataPost);
 
       reset();
       handleClose();

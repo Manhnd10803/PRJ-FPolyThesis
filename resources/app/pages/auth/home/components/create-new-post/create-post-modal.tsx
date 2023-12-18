@@ -12,7 +12,7 @@ import { useForm } from 'react-hook-form';
 import { CreateNewPostChoice } from './create-post-choice';
 import { CloudiaryService } from '@/apis/services/cloudinary.service';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
-import { useAddPost } from '@/hooks/usePostQuery';
+import { usePost } from '@/hooks/usePostQuery';
 import { IUser } from '@/models/user';
 import { GetNewPostResponseType, IPost } from '@/models/post';
 
@@ -23,7 +23,7 @@ type CreatePostModalProps = {
 
 export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => {
   //state
-  const { manuallyAddPost } = useAddPost();
+  const { manuallyAddPost } = usePost();
   const fullName = StorageFunc.getFullName();
   const userInfo = StorageFunc.getUser();
 
@@ -49,7 +49,6 @@ export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => 
 
   const onSubmit = async (dataForm: TCreateNewPostSchema) => {
     let bodyData = dataForm;
-    console.log(typeof +privacy);
     try {
       if (imagesRef.current.length) {
         const urlImages = await CloudiaryService.uploadImages(imagesRef.current, 'post');
@@ -60,7 +59,7 @@ export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => 
 
       toast.success('Đăng bài thành công');
 
-      manuallyAddPost({ post: { ...dataPost, user: userInfo } } as GetNewPostResponseType);
+      manuallyAddPost(dataPost);
 
       reset();
       handleClose();
@@ -95,7 +94,7 @@ export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => 
                 <img src={userInfo?.avatar} alt="story-img" className="rounded-circle img-fluid avatar-60" />
                 <div className="stories-data ms-3">
                   <h5>{fullName}</h5>
-                  <DropdownPrivacy onChangePrivacy={onChangePrivacy} privacy={privacy} />
+                  <DropdownPrivacy onChangePrivacy={onChangePrivacy} />
                 </div>
               </div>
 

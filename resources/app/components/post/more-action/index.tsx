@@ -1,15 +1,17 @@
 import { CloudiaryService } from '@/apis/services/cloudinary.service';
+import { PostService } from '@/apis/services/post.service';
 import { ReportService } from '@/apis/services/report.service';
 import { DropZoneField } from '@/components/custom/drop-zone-field';
+import { usePost } from '@/hooks/usePostQuery';
 import { CustomListItem } from '@/utilities/funcReport/listItem';
 import { CustomModal } from '@/utilities/funcReport/modalCustomReport';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Dropdown, ListGroup, Modal } from 'react-bootstrap';
 import toast from 'react-hot-toast';
 
-export const MoreActionDropdown = ({ friendId, postId, username }: any) => {
+export const MoreActionDropdown = ({ friendId, postId, username, postStatus }: any) => {
   const queryClient = useQueryClient();
   const [contentReport, setContentReport] = useState('');
   const imagesRef = useRef<File[]>([]);
@@ -23,6 +25,8 @@ export const MoreActionDropdown = ({ friendId, postId, username }: any) => {
   const handleCloseModalReport = () => setShowModalReport(false);
   const [showCustomModal, setShowCustomModal] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
+
+  const { manuallyChangeStatusPost } = usePost();
 
   const handleShowTitle = (title: any) => {
     setModalTitle(title);
@@ -72,6 +76,45 @@ export const MoreActionDropdown = ({ friendId, postId, username }: any) => {
       toast.error(error.message);
     }
   };
+
+  useEffect(() => {
+    if (showModalReport || showCustomModal) {
+      const headerElements = document.getElementsByClassName('about-profile');
+      // Kiểm tra xem phần tử có tồn tại không và chỉ định rõ phần tử cụ thể từ HTMLCollection
+      if (headerElements.length > 0) {
+        const headerElement = headerElements[0] as HTMLElement;
+        headerElement.style.setProperty('z-index', '0');
+        headerElement.style.setProperty('transition', 'none');
+      }
+    } else {
+      const headerElements = document.getElementsByClassName('about-profile');
+      if (headerElements.length > 0) {
+        const headerElement = headerElements[0] as HTMLElement;
+        headerElement.style.setProperty('z-index', '9999');
+        headerElement.style.setProperty('transition', 'all 0.5s ease-in-out');
+      }
+    }
+
+    return () => {
+      const headerElements = document.getElementsByClassName('about-profile');
+      if (headerElements.length > 0) {
+        const headerElement = headerElements[0] as HTMLElement;
+        headerElement.style.setProperty('z-index', '9999');
+        headerElement.style.setProperty('transition', 'all 0.5s ease-in-out');
+      }
+    };
+  }, [showModalReport, showCustomModal]);
+
+  const handleChangeStatusPost = async (postId: number, status: number) => {
+    try {
+      toast.success('Thay đổi trạng thái bài viết thành công');
+      manuallyChangeStatusPost(postId, status);
+      await PostService.updateStatusPost(postId, status);
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <div className="card-post-toolbar">
       <Dropdown>
@@ -79,42 +122,13 @@ export const MoreActionDropdown = ({ friendId, postId, username }: any) => {
           <span className="material-symbols-outlined">more_horiz</span>
         </Dropdown.Toggle>
         <Dropdown.Menu className="dropdown-menu m-0 p-0">
-          <Dropdown.Item className=" p-3" href="#">
-            <div className="d-flex align-items-top">
-              <div className="h4 material-symbols-outlined">
-                <i className="ri-save-line"></i>
-              </div>
-              <div className="data ms-2">
-                <h6>Lưu bài viết</h6>
-                <p className="mb-0">Thêm vào danh sách yêu thích của bạn </p>
-              </div>
-            </div>
-          </Dropdown.Item>
-          <Dropdown.Item className="p-3" href="#">
-            <div className="d-flex align-items-top">
-              <i className="ri-close-circle-line h4"></i>
-              <div className="data ms-2">
-                <h6>Ẩn bài viết</h6>
-                <p className="mb-0">Xem ít hơn các bài viết tương tự.</p>
-              </div>
-            </div>
-          </Dropdown.Item>
-          <Dropdown.Item className=" p-3" href="#">
-            <div className="d-flex align-items-top">
-              <i className="ri-user-unfollow-line h4"></i>
-              <div className="data ms-2">
-                <h6>Bỏ theo dõi</h6>
-                <p className="mb-0">Ngừng xem bài viết nhưng vẫn là bạn bè.</p>
-              </div>
-            </div>
-          </Dropdown.Item>
           {idUser != friendId ? (
             <>
-              <Dropdown.Item className=" p-3" onClick={() => handleShowModalReport(postId)}>
+              <Dropdown.Item className="p-1" onClick={() => handleShowModalReport(postId)}>
                 <div className="d-flex align-items-top">
                   <i className="ri-user-unfollow-line h4"></i>
                   <div className="data ms-2">
-                    <h6>Báo cáo</h6>
+                    <h5 className="fw-bold">Báo cáo</h5>
                     <p className="mb-0">Chúng tôi sẽ không cho đối phương biết ai báo cáo.</p>
                   </div>
                 </div>
@@ -168,18 +182,41 @@ export const MoreActionDropdown = ({ friendId, postId, username }: any) => {
               </CustomModal>
             </>
           ) : (
-            <></>
+            <>
+              {postStatus !== 2 ? (
+                <Dropdown.Item className="p-1" href="#" onClick={() => handleChangeStatusPost(postId, 2)}>
+                  <div className="d-flex align-items-top">
+                    <i className="ri-notification-line h4"></i>
+                    <div className="data ms-2">
+                      <h5 className="fw-bold">Ẩn bài viết</h5>
+                      <p className="mb-0">Ẩn bài viết khỏi bảng tin</p>
+                    </div>
+                  </div>
+                </Dropdown.Item>
+              ) : (
+                <>
+                  <Dropdown.Item className="p-1" href="#" onClick={() => handleChangeStatusPost(postId, 0)}>
+                    <div className="d-flex align-items-top">
+                      <i className="ri-notification-line h4"></i>
+                      <div className="data ms-2">
+                        <h5 className="fw-bold">Hiển thị bài viết công khai</h5>
+                        <p className="mb-0">Hiển thị bài viết lên bảng tin</p>
+                      </div>
+                    </div>
+                  </Dropdown.Item>
+                  <Dropdown.Item className="p-1" href="#" onClick={() => handleChangeStatusPost(postId, 1)}>
+                    <div className="d-flex align-items-top">
+                      <i className="ri-notification-line h4"></i>
+                      <div className="data ms-2">
+                        <h5 className="fw-bold">Chỉ hiển thị với bạn bè</h5>
+                        <p className="mb-0">Hiển thị bài viết lên bảng tin</p>
+                      </div>
+                    </div>
+                  </Dropdown.Item>
+                </>
+              )}
+            </>
           )}
-
-          <Dropdown.Item className=" p-3" href="#">
-            <div className="d-flex align-items-top">
-              <i className="ri-notification-line h4"></i>
-              <div className="data ms-2">
-                <h6>Bật thông báo</h6>
-                <p className="mb-0">Bật thông báo với bài viết này</p>
-              </div>
-            </div>
-          </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     </div>

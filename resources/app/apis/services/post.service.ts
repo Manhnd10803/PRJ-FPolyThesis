@@ -14,10 +14,16 @@ const getPostDetail = (id: number) => {
 };
 
 const createNewPost = <T>(data: T) => {
-  return httpRequest.post<IPost>(ApiConstants.POSTS, data);
+  return httpRequest.post<GetNewPostResponseType>(ApiConstants.POSTS, data);
 };
+
+const updateStatusPost = (id: number, status: number) => {
+  return httpRequest.put(`${ApiConstants.POST_UPDATE_STATUS}/${id}`, { status });
+};
+
 export const PostService = {
   getPostsNewFeed,
   createNewPost,
   getPostDetail,
+  updateStatusPost,
 };

@@ -42,7 +42,7 @@ export default function useInfinitePosts() {
   };
 }
 
-export const useAddPost = (typeQueryKey: 'profile' | 'posts' = 'posts') => {
+export const usePost = (typeQueryKey: 'profile' | 'posts' = 'posts') => {
   const queryClient = useQueryClient();
   const queryKey =
     typeQueryKey === 'profile' ? getQueryKeyPostProfile({ userId: localUserId!, type: 'post' }) : queryKeyPosts;
@@ -50,14 +50,36 @@ export const useAddPost = (typeQueryKey: 'profile' | 'posts' = 'posts') => {
   const manuallyAddPost = async (newPost: GetNewPostResponseType) => {
     queryClient.setQueryData(queryKey, (oldData: InfiniteData<Paginate<GetNewPostResponseType>> | undefined) => {
       if (!oldData) return oldData;
-
       return produce(oldData, draft => {
         draft.pages[0].data.unshift(newPost);
       });
     });
   };
 
+  const manuallyChangeStatusPost = async (postId: number, newStatus: number) => {
+    queryClient.setQueryData(queryKey, (oldData: InfiniteData<Paginate<GetNewPostResponseType>> | undefined) => {
+      if (!oldData) return oldData;
+      return produce(oldData, draft => {
+        draft.pages.forEach(page => {
+          page.data = page.data.map(postItem => {
+            if (postItem.post.id === postId) {
+              return {
+                ...postItem,
+                post: {
+                  ...postItem.post,
+                  status: newStatus,
+                },
+              };
+            }
+            return postItem;
+          });
+        });
+      });
+    });
+  };
+
   return {
     manuallyAddPost,
+    manuallyChangeStatusPost,
   };
 };

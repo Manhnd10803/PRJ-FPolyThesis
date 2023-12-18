@@ -292,7 +292,7 @@ class PostsController extends Controller
             //fake data
             $postdata  = [
                 'post' => $newPost,
-                'like_counts_by_emotion' => $likeCountsByEmotion['total_likes'],
+                'like_counts_by_emotion' => $likeCountsByEmotion,
                 'likers' => [],
                 'total_comments' => 0,
                 'comments' => []
@@ -335,12 +335,14 @@ class PostsController extends Controller
     {
         DB::beginTransaction();
         try {
-            // cập nhật trạng thái bài viết
             $status = $request->input('status');
-            // Cập nhật thông tin bài đăng
+
+            // Update the post
             $post->update([
                 'status' => $status,
             ]);
+            $post->save();
+
             DB::commit();
             return response()->json($post, 200);
         } catch (\Exception $e) {

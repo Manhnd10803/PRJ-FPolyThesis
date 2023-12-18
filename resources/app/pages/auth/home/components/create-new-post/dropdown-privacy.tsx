@@ -2,10 +2,9 @@ import { Form } from 'react-bootstrap';
 
 type DropdownPrivacyProps = {
   onChangePrivacy: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  privacy: number;
 };
 
-export const DropdownPrivacy = ({ onChangePrivacy, privacy }: DropdownPrivacyProps) => {
+export const DropdownPrivacy = ({ onChangePrivacy }: DropdownPrivacyProps) => {
   return (
     <div className="card-post-toolbar">
       <Form.Select aria-label="Default select example" onChange={onChangePrivacy}>
