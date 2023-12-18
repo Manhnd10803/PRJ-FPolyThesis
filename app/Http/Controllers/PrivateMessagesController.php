@@ -229,7 +229,8 @@ class PrivateMessagesController extends Controller
             unset($messageWithSender->sender->major);
             broadcast(new PrivateMessageSent($messageWithSender))->toOthers();
             //Thông báo
-            $content = ' đã gửi cho bạn tin nhắn mới.';
+            $user = Auth::user();
+            $content = $user->first_name . '' . $user->last_name . ' đã gửi cho bạn tin nhắn mới.';
             $notification = Notification::where('notification_type', config('default.notification.notification_type.message'))->where('sender', Auth::id())->where('recipient', $receiverId)->where('objet_id', Auth::id())->orderByDesc('id')->first();
             if (!is_null($notification)) {
                 //Update thông báo

@@ -332,14 +332,6 @@ class ProfileController extends Controller
             'image' => json_encode($avatar),
         ]);
         $post->save();
-        activity('auths')
-            ->tap(function (Activity $activity) use ($avatar) {
-                $activity->subject_type = class_basename(User::class); // Lấy tên lớp của đối tượng $user
-                $activity->subject_id = Auth::id();
-                $activity->properties = $avatar;
-                $activity->event = 'updated';
-            })
-            ->log('User has been updated');
         activity('posts')
             ->tap(function (Activity $activity) use ($post) {
                 $activity->properties = $post;
@@ -360,12 +352,6 @@ class ProfileController extends Controller
             'image' => json_encode($cover_photo),
         ]);
         $post->save();
-        activity('auths')
-            ->tap(function (Activity $activity) use ($cover_photo) {
-                $activity->properties = $cover_photo;
-                $activity->event = 'updated';
-            })
-            ->log('User has been updated');
         activity('posts')
             ->tap(function (Activity $activity) use ($post) {
                 $activity->properties = $post;
@@ -386,12 +372,7 @@ class ProfileController extends Controller
                 $inputData['avatar'] = $user->avatar;
             }
             $user->update($inputData);
-            activity('auths')
-                ->tap(function (Activity $activity) use ($user) {
-                    $activity->properties = $user;
-                    $activity->event = 'updated';
-                })
-                ->log('User has been updated');
+           
             DB::commit();
             return response()->json($user, 200);
         } catch (\Exception $e) {
