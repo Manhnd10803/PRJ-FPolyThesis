@@ -259,13 +259,15 @@ class AdminUserController extends Controller
             return redirect()->route('admin.members.list')->with('error', 'Có lỗi xảy ra');
         }
     }
-    public function getChartUserData()
+    public function getChartUserData(Request $request)
     {
+        $selectedDays = $request->input('days', 90);
         $data = User::select(
             DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month"),
             DB::raw('count(*) as user_count')
         )
             ->where('group_id', '<>', 1)
+            ->where('created_at', '>=', Carbon::now()->subDays($selectedDays))
             ->groupBy('month')
             ->orderBy('month') // Sắp xếp theo thứ tự tăng dần theo tháng
             ->get();

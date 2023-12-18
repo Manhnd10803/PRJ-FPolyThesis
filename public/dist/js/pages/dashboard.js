@@ -148,6 +148,22 @@ $(function () {
         console.log(error);
     }
   });
+  $('#time-range').on('change', function () {
+    var selectedDays = $(this).val() || 90; // Nếu không có giá trị, sử dụng mặc định là 90 ngày
+
+    // Gọi Ajax để lấy dữ liệu mới dựa trên khoảng thời gian được chọn
+    $.ajax({
+        url: '/admin/user/getChartUserData?days=' + selectedDays,
+        method: 'GET',
+        success: function (response) {
+            // Cập nhật dữ liệu cho biểu đồ
+            area.setData(response);
+        },
+        error: function (error) {
+            console.log(error);
+        },
+    });
+});
 
   var line = new Morris.Line({
     element: 'line-chart',
