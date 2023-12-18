@@ -72,6 +72,7 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
   const handleOverlayClick = () => {
     setDropdownOpen(false);
     setData([]);
+    setSearchValue('');
   };
 
   useEffect(() => {
@@ -104,6 +105,7 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
     setData([]);
   };
 
+  console.log(data);
   return (
     <>
       {isDropdownOpen && <Overlay onClick={handleOverlayClick} />}
@@ -158,11 +160,11 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
                           <div>
                             <h4>{item.title}</h4>
                             <div className="d-flex flex-wrap-reverse gap-2">
-                              <div className="text-black">{formatFullName(item.user)}</div>{' '}
-                              <span className="text-black">{momentVi(item?.created_at).fromNow()}</span>
+                              <div className="text-primary">{formatFullName(item.user)}</div>{' '}
+                              <span className="text-secondary">đăng vào {momentVi(item?.created_at).fromNow()}</span>
                             </div>
                             <div className="p text-black" style={truncateTextStyle}>
-                              {item?.content ? parse(hideImages(JSON.parse(item?.content))) : ''}
+                              {item?.content ? parse(hideImages(JSON.parse(item?.content))) : '...'}
                             </div>
                           </div>
                         </div>
@@ -189,11 +191,50 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
                           <div>
                             <h4>{item.title}</h4>
                             <div className="d-flex flex-wrap-reverse gap-2">
-                              <div className="text-black">{formatFullName(item.user)}</div>{' '}
-                              <span className="text-black">{momentVi(item?.created_at).fromNow()}</span>
+                              <div className="text-primary">{formatFullName(item.user)}</div>{' '}
+                              <span className="text-secondary">đăng vào {momentVi(item?.created_at).fromNow()}</span>
                             </div>
                             <div className="p text-black" style={truncateTextStyle}>
-                              {item?.content ? parse(JSON.parse(item?.content)) : 'Content not available'}
+                              {item?.content ? parse(JSON.parse(item?.content)) : '...'}
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <></>
+              )}
+              {data?.post && data.post.length > 0 ? (
+                <>
+                  <div className="mt-2">
+                    <h4 className="px-3 py-2 bg-primary text-white">Bảng tin </h4>
+                    {data?.post.map((item, index) => (
+                      <Link
+                        to={`${pathName.POST}/${item.id}`}
+                        onClick={handleLinkClick}
+                        key={index}
+                        className="text-black"
+                      >
+                        <div className="d-flex align-items-center search-hover py-2 border-bottom">
+                          <div className="flex-shrink-0">
+                            <Image
+                              className="align-self-center img-fluid avatar-50 rounded-pill"
+                              src={item.user.avatar}
+                              alt=""
+                              loading="lazy"
+                            />
+                          </div>
+                          <div className="suggestion-card px-3 d-flex" key={index}>
+                            <div>
+                              <div className="d-flex flex-wrap-reverse gap-2">
+                                <div className="text-primary">{formatFullName(item.user)}</div>{' '}
+                                <span className="text-secondary">đăng vào {momentVi(item?.created_at).fromNow()}</span>
+                              </div>
+                              <div className="p text-black" style={truncateTextStyle}>
+                                {item?.content ? item?.content : '...'}
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -221,13 +262,9 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
                                 loading="lazy"
                               />
                             </div>
-
                             <div className="d-flex flex-column ms-3">
-                              <Link to={`/profile/${item.id}`} className="h5">
-                                {formatFullName(item)}
-                              </Link>
-
-                              <span>@{item.username}</span>
+                              <h5 className="text-black fw-bold">{formatFullName(item)}</h5>
+                              <span className="text-secondary">@{item.username}</span>
                             </div>
                           </div>
                         </Link>
@@ -239,11 +276,13 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
                 <></>
               )}
 
-              {debouncedValue.trim() && !loading && !(data?.blog?.length || data?.qa?.length || data?.user?.length) && (
-                <div className="mt-2">
-                  <p className="text-center">Không tìm thấy dữ liệu.</p>
-                </div>
-              )}
+              {debouncedValue.trim() &&
+                !loading &&
+                !(data?.blog?.length || data?.qa?.length || data?.user?.length || data?.user?.length) && (
+                  <div className="mt-2">
+                    <p className="text-center">Không tìm thấy dữ liệu.</p>
+                  </div>
+                )}
             </Modal.Body>
           </div>
         )}

@@ -8,6 +8,7 @@ import { momentVi } from '@/utilities/functions/moment-locale';
 import { hideImages } from '@/utilities/funcJsonImage';
 import { CardLoadBlogSearch, CardLoadFriendOther, CardLoadQaSearch } from '@/utilities/funcLoadFriend/CardLoad';
 import { useQuery } from '@tanstack/react-query';
+import { pathName } from '@/routes/path-name';
 export const SearchPage = () => {
   const truncateTextStyle = {
     overflow: 'hidden',
@@ -52,7 +53,7 @@ export const SearchPage = () => {
   const handleNavClick = (newType: any) => {
     setType(newType);
   };
-
+  console.log(dataSearch);
   return (
     <>
       <Container>
@@ -93,6 +94,12 @@ export const SearchPage = () => {
                             </Nav.Link>
                           </Col>
                           <Col sm={3} className=" p-0">
+                            <Nav.Link eventKey="post" href="#post" role="button" onClick={() => handleNavClick('post')}>
+                              Bảng tin
+                            </Nav.Link>
+                          </Col>
+
+                          <Col sm={3} className=" p-0">
                             <Nav.Link
                               eventKey="friend"
                               href="#friend"
@@ -124,7 +131,7 @@ export const SearchPage = () => {
                           {dataSearch && dataSearch.length > 0 && type == 'blog' ? (
                             dataSearch.map((item, index) => (
                               <Row key={index}>
-                                <Link to={`/blog/${item.id}`} className="text-black">
+                                <Link to={`${pathName.BLOG}/${item.id}`} className="text-black">
                                   <Card.Body className="p-3">
                                     <div className="borderbox1 mt-3 rounded d-flex rounded">
                                       <div className="user-img me-2">
@@ -138,19 +145,19 @@ export const SearchPage = () => {
                                       <div className="borderbox border rounded p-2">
                                         <div className="d-flex flex-wrap mb-1">
                                           <div>
-                                            <div>
-                                              {formatFullName(item?.user)} <p>@{item?.user?.username}</p>
+                                            <div className="d-flex gap-2">
+                                              <div>{formatFullName(item?.user)}</div>{' '}
+                                              <span className="text-secondary">@{item?.user?.username}</span>
                                             </div>
+                                            <span className="text-primary ms-1 d-flex  align-items-center">
+                                              <i className="material-symbols-outlined me-2 text-primary md-16">
+                                                check_circle
+                                              </i>
+                                              <Link to="#" className="mb-0">
+                                                {item?.major?.majors_name}
+                                              </Link>
+                                            </span>
                                           </div>
-                                          <span className="text-primary ms-1 d-flex  align-items-start">
-                                            <i className="material-symbols-outlined me-2 text-primary md-16">
-                                              check_circle
-                                            </i>
-
-                                            <Link to="#" className="mb-0">
-                                              {item?.major?.majors_name}
-                                            </Link>
-                                          </span>
                                           <div className="ms-auto d-flex">
                                             <div className="ms-auto d-flex ">
                                               <>
@@ -174,25 +181,23 @@ export const SearchPage = () => {
                                             </div>
                                           </div>
                                         </div>
-                                        <Link to={'#'} className="h5">
-                                          {item?.title}
-                                        </Link>
+                                        <h5>{item?.title}</h5>
                                         <div style={truncateTextStyle}>
-                                          {' '}
                                           {item?.content ? parse(hideImages(JSON.parse(item?.content))) : ''}
                                         </div>
                                         <Row className="mt-2"></Row>
-                                        {/* Hashtag */}
-                                        <div>
-                                          <Badge
-                                            as={Link}
-                                            bg=""
-                                            to="#"
-                                            className="badge border border-danger text-danger mt-2 h-1 ms-2 me-2"
-                                          >
-                                            {item?.hashtag}
-                                          </Badge>
-                                        </div>
+                                        {item?.hashtag && (
+                                          <div>
+                                            <Badge
+                                              as={Link}
+                                              bg=""
+                                              to="#"
+                                              className="badge border border-danger text-danger mt-2 h-1 ms-2 me-2"
+                                            >
+                                              {item?.hashtag}
+                                            </Badge>
+                                          </div>
+                                        )}
                                       </div>
                                     </div>
                                   </Card.Body>
@@ -219,7 +224,7 @@ export const SearchPage = () => {
                           {dataSearch && dataSearch.length > 0 && type == 'qa' ? (
                             dataSearch.map((item, index) => (
                               <Row key={index}>
-                                <Link to={`/quests/${item.id}`} className="text-black">
+                                <Link to={`${pathName.QUESTS_DETAIL}/${item.id}`} className="text-black">
                                   <Card.Body className="p-3">
                                     <div className="borderbox1 mt-3 rounded d-flex rounded">
                                       <div className="user-img me-2">
@@ -233,19 +238,19 @@ export const SearchPage = () => {
                                       <div className="borderbox border rounded p-2">
                                         <div className="d-flex flex-wrap mb-1">
                                           <div>
-                                            <div>
-                                              {formatFullName(item?.user)} <p>@{item?.user?.username}</p>
+                                            <div className="d-flex gap-2">
+                                              <div>{formatFullName(item?.user)}</div>{' '}
+                                              <span className="text-secondary">@{item?.user?.username}</span>
                                             </div>
+                                            <span className="text-primary ms-1 d-flex  align-items-center">
+                                              <i className="material-symbols-outlined me-2 text-primary md-16">
+                                                check_circle
+                                              </i>
+                                              <Link to="#" className="mb-0">
+                                                {item?.major?.majors_name}
+                                              </Link>
+                                            </span>
                                           </div>
-                                          <span className="text-primary ms-1 d-flex  align-items-start">
-                                            <i className="material-symbols-outlined me-2 text-primary md-16">
-                                              check_circle
-                                            </i>
-
-                                            <Link to="#" className="mb-0">
-                                              {item?.major?.majors_name}
-                                            </Link>
-                                          </span>
                                           <div className="ms-auto d-flex">
                                             <div className="ms-auto d-flex ">
                                               <>
@@ -269,21 +274,105 @@ export const SearchPage = () => {
                                             </div>
                                           </div>
                                         </div>
-                                        <Link to={'#'} className="h5">
-                                          {item?.title}
-                                        </Link>
+                                        <h5>{item?.title}</h5>
                                         <Row className="mt-2"></Row>
                                         {/* Hashtag */}
-                                        <div>
-                                          <Badge
-                                            as={Link}
-                                            bg=""
-                                            to="#"
-                                            className="badge border border-danger text-danger mt-2 h-1 ms-2 me-2"
-                                          >
-                                            {item?.hashtag}
-                                          </Badge>
+                                        {item?.hashtag && (
+                                          <div>
+                                            <Badge
+                                              as={Link}
+                                              bg=""
+                                              to="#"
+                                              className="badge border border-danger text-danger mt-2 h-1 ms-2 me-2"
+                                            >
+                                              {item?.hashtag}
+                                            </Badge>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </Card.Body>
+                                </Link>
+                              </Row>
+                            ))
+                          ) : (
+                            <p className="text-center">Mời bạn thực hiện tìm kiếm</p>
+                          )}
+                        </>
+                      )}
+                    </Card>
+                  </Tab.Pane>
+                  <Tab.Pane eventKey="post">
+                    <Card>
+                      {isLoading ? (
+                        <>
+                          <CardLoadQaSearch />
+                          <CardLoadQaSearch />
+                          <CardLoadQaSearch />
+                        </>
+                      ) : (
+                        <>
+                          {dataSearch && dataSearch.length > 0 && type == 'post' ? (
+                            dataSearch.map((item, index) => (
+                              <Row key={index}>
+                                <Link to={`${pathName.POST}/${item.id}`} className="text-black">
+                                  <Card.Body className="p-3">
+                                    <div className="borderbox1 mt-3 rounded d-flex rounded">
+                                      <div className="user-img me-2">
+                                        <img
+                                          loading="lazy"
+                                          src={item?.user?.avatar}
+                                          alt="userimg"
+                                          className="avatar-40 rounded-circle"
+                                        />
+                                      </div>
+                                      <div className="borderbox border rounded p-2">
+                                        <div className="d-flex flex-wrap mb-1">
+                                          <div>
+                                            <div>
+                                              {formatFullName(item?.user)}{' '}
+                                              <p className="text-secondary">@{item?.user?.username}</p>
+                                            </div>
+                                          </div>
+                                          <div className="ms-auto d-flex">
+                                            <div className="ms-auto d-flex ">
+                                              <>
+                                                <i className="material-symbols-outlined md-16"> thumb_up </i>
+                                                <span className="mx-1">
+                                                  <small>{item?.likes_count}</small>
+                                                </span>
+                                              </>
+                                            </div>
+                                            <div className="ms-auto d-flex ">
+                                              <i className="material-symbols-outlined md-16"> chat_bubble_outline </i>
+                                              <span className="mx-1">
+                                                <small>{item?.comments_count}</small>
+                                              </span>
+                                            </div>
+                                            <div className="ms-auto d-flex ">
+                                              <i className="material-symbols-outlined md-16">schedule</i>
+                                              <span className="mx-1">
+                                                <small>{momentVi(item?.created_at).fromNow()}</small>
+                                              </span>
+                                            </div>
+                                          </div>
                                         </div>
+
+                                        <Row className="mt-2"></Row>
+                                        {/* Hashtag */}
+                                        <div style={truncateTextStyle}>{item?.content ? item?.content : '...'}</div>
+                                        {item?.hashtag && (
+                                          <div>
+                                            <Badge
+                                              as={Link}
+                                              bg=""
+                                              to="#"
+                                              className="badge border border-danger text-danger mt-2 h-1 ms-2 me-2"
+                                            >
+                                              {item?.hashtag}
+                                            </Badge>
+                                          </div>
+                                        )}
                                       </div>
                                     </div>
                                   </Card.Body>
@@ -311,16 +400,15 @@ export const SearchPage = () => {
                             {dataSearch && dataSearch.length > 0 && type == 'user' ? (
                               dataSearch.map((item, index) => (
                                 <Col sm={3} key={index}>
-                                  <Link to={`/profile/${item?.id}`} className="text-black">
+                                  <Link to={`${pathName.PROFILE}/${item.id}`} className="text-black">
                                     <Card className="mb-3">
                                       <Card.Img variant="top" src={item?.avatar} alt="ảnh đại diện" />
-
                                       <Card.Body>
                                         <Card.Title as="h5" className="card-title">
                                           {formatFullName(item)}
                                         </Card.Title>
 
-                                        <Card.Text className="card-text">@{item?.username}</Card.Text>
+                                        <Card.Text className="card-text text-secondary">@{item?.username}</Card.Text>
                                         <div className="d-flex flex-column gap-2 mt-2 mt-md-0"></div>
                                       </Card.Body>
                                     </Card>

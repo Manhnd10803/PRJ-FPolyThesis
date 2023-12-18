@@ -162,12 +162,13 @@ class SearchController extends Controller
                     })->where('id', '!=', $user)->get();
                     break;
                 case 'post':
-                    $model = Post::with('user:id,first_name,last_name,avatar')
+                    $model = Post::with('user:id,username,first_name,last_name,avatar')
                         ->withCount('likes')
                         ->withCount('comments')
                         ->where(function ($queryBuilder) use ($query) {
                             $queryBuilder->where('content', 'like', '%' . $query . '%')
                                 ->orWhere('hashtag', 'like', '%' . $query . '%');
+                                // ->orWhere('username', 'like', '%' . $query . '%');
                         })->get();                   
                     break;
                 case 'blog':
@@ -200,7 +201,7 @@ class SearchController extends Controller
                         $queryBuilder->where('username', 'like', '%' . $query . '%')
                             ->orWhere('first_name', 'like', '%' . $query . '%')
                             ->orWhere('last_name', 'like', '%' . $query . '%');
-                    })->where('id', '!=', $user)->get()->map(function ($item) {
+                    })->where('id', '!=', $user)->limit(5)->latest()->get()->map(function ($item) {
                         return $item;
                     });
                     $model['post'] = Post::with('user:id,first_name,last_name,avatar')
@@ -209,7 +210,7 @@ class SearchController extends Controller
                         ->where(function ($queryBuilder) use ($query) {
                             $queryBuilder->where('content', 'like', '%' . $query . '%')
                                 ->orWhere('hashtag', 'like', '%' . $query . '%');
-                        })->get();
+                        })->limit(5)->latest()->get();
                     $model['blog'] = Blog::with('user:id,first_name,last_name,avatar', 'major:id,majors_name')
                         ->withCount('likes')->withCount('comments')
                         ->where(function ($queryBuilder) use ($query) {
@@ -217,7 +218,7 @@ class SearchController extends Controller
                                 ->orWhere('content', 'like', '%' . $query . '%')
                                 ->orWhere('hashtag', 'like', '%' . $query . '%');
                         })->where('status', config('default.blog.status.approved'))
-                        ->get()->map(function ($item) {
+                        ->limit(5)->latest()->get()->map(function ($item) {
                             return $item;
                         });
                     $model['qa'] = Qa::with('user:id,first_name,last_name,avatar', 'major:id,majors_name')
@@ -226,7 +227,7 @@ class SearchController extends Controller
                             $queryBuilder->where('title', 'like', '%' . $query . '%')
                                 ->orWhere('content', 'like', '%' . $query . '%')
                                 ->orWhere('hashtag', 'like', '%' . $query . '%');
-                        })->get()->map(function ($item) {
+                        })->limit(5)->latest()->get()->map(function ($item) {
                             return $item;
                         });
                     break;
