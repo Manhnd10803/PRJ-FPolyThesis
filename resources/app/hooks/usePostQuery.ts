@@ -3,6 +3,7 @@ import { Paginate } from '@/models/pagination';
 import { GetNewPostResponseType, IPost } from '@/models/post';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { InfiniteData, useInfiniteQuery, useQuery, useQueryClient } from '@tanstack/react-query';
+import { produce } from 'immer';
 
 export const queryKeyPosts = ['posts'];
 const localUserId = StorageFunc.getUserId();
@@ -13,7 +14,9 @@ type PostProfileType = {
   status?: string;
 };
 
-export const getQueryKeyPostProfile = ({ userId, type, status }: PostProfileType) => ['profile', type, status, userId];
+export const getQueryKeyPostProfile = ({ userId, type, status = '' }: PostProfileType) => {
+  return ['profile', type, status, userId];
+};
 
 const fetchPosts = async ({ quantity = 5, pageParam = 1 }) => {
   const { data } = await PostService.getPostsNewFeed(quantity, pageParam);
@@ -48,13 +51,9 @@ export const useAddPost = (typeQueryKey: 'profile' | 'posts' = 'posts') => {
     queryClient.setQueryData(queryKey, (oldData: InfiniteData<Paginate<GetNewPostResponseType>> | undefined) => {
       if (!oldData) return oldData;
 
-      const [firstPage, ...rest] = oldData?.pages;
-      firstPage.data.unshift(newPost);
-
-      return {
-        ...oldData,
-        pages: [{ ...firstPage }, ...rest],
-      };
+      return produce(oldData, draft => {
+        draft.pages[0].data.unshift(newPost);
+      });
     });
   };
 

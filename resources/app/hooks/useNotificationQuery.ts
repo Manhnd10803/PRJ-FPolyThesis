@@ -117,13 +117,9 @@ export const useAddNotification = () => {
     queryClient.setQueryData(queryKeyNotifications, (oldData: InfiniteData<Paginate<INotification>> | undefined) => {
       if (!oldData) return oldData;
 
-      const [firstPage, ...rest] = oldData?.pages;
-      firstPage.data.unshift(newNotify);
-
-      return {
-        ...oldData,
-        pages: [{ ...firstPage }, ...rest],
-      };
+      return produce(oldData, draft => {
+        draft.pages[0].data.unshift(newNotify);
+      });
     });
     setAmountNotificationsNotSeen('increase');
   };

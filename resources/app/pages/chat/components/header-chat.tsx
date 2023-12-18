@@ -12,7 +12,7 @@ export const HeaderChat = () => {
   const { data: selectedUserInfo, isFetching } = useUserChatInfo(Number(chatId));
 
   const { user: currentUser } = selectedUserInfo || {};
-  console.log(isFetching);
+
   // render
   return (
     <>
