@@ -131,7 +131,7 @@ $(function () {
     element: 'revenue-chart',
     resize: true,
     data: [],
-    xkey: 'y',
+    xkey: 'x',
     ykeys: ['item1'],
     labels: ['User'],
     lineColors: ['#a0d0e0', '#3c8dbc'],
@@ -140,30 +140,31 @@ $(function () {
   $.ajax({
     url: '/admin/user/getChartUserData',
     method: 'GET',
-    success: function(response) {
-        // Cập nhật dữ liệu cho biểu đồ
-        area.setData(response);
+    success: function (response) {
+      // Cập nhật dữ liệu cho biểu đồ
+      area.setData(response);
+      console.log(response);
     },
-    error: function(error) {
-        console.log(error);
-    }
+    error: function (error) {
+      console.log(error);
+    },
   });
   $('#time-range').on('change', function () {
     var selectedDays = $(this).val() || 90; // Nếu không có giá trị, sử dụng mặc định là 90 ngày
 
     // Gọi Ajax để lấy dữ liệu mới dựa trên khoảng thời gian được chọn
     $.ajax({
-        url: '/admin/user/getChartUserData?days=' + selectedDays,
-        method: 'GET',
-        success: function (response) {
-            // Cập nhật dữ liệu cho biểu đồ
-            area.setData(response);
-        },
-        error: function (error) {
-            console.log(error);
-        },
+      url: '/admin/user/getChartUserData?days=' + selectedDays,
+      method: 'GET',
+      success: function (response) {
+        // Cập nhật dữ liệu cho biểu đồ
+        area.setData(response);
+      },
+      error: function (error) {
+        console.log(error);
+      },
     });
-});
+  });
 
   var line = new Morris.Line({
     element: 'line-chart',
