@@ -457,7 +457,7 @@ class FriendController extends Controller
             $friendIds = Friend::where('user_id_1', $self->id)
                 ->whereIn('status', [
                     config('default.friend.status.accepted'),
-                    config('default.friend.status.pending')
+                    // config('default.friend.status.pending')
                 ])
                 ->pluck('user_id_2')
                 ->toArray();
