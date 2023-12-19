@@ -86,8 +86,8 @@
                                 <label for="gender">Giới tính</label>
                                 <select name="gender" class="form-control">
                                     <option value="">--Chọn giới tính--</option>
-                                    <option value="{{ config('default.user.gender.male') }}" {{ old('gender') == config('default.user.gender.male') ? 'selected' : '' }}>Nam</option>
-                                    <option value="{{ config('default.user.gender.female') }}" {{ old('gender') == config('default.user.gender.female') ? 'selected' : '' }}>Nữ</option>
+                                    <option value="Nam" {{ old('gender') == 'Nam' ? 'selected' : '' }}>Nam</option>
+                                    <option value="Nữ" {{ old('gender') == 'Nữ' ? 'selected' : '' }}>Nữ</option>
                                 </select>
                             </div>
                             <div class="col-xs-2">
@@ -144,11 +144,7 @@
                                 <td>{{ $user->first_name . ' '. $user->last_name }}</td>
                                 <td>{{ $user->username }}</td>
                                 <td>
-                                    @if ($user->gender == config('default.user.gender.male'))
-                                        Nam
-                                    @elseif($user->gender == config('default.user.gender.female'))
-                                        Nữ
-                                    @endif
+                                    {{ $user->gender }}
                                 </td>
                                 <td>{{ $user->email }}</td>
                                 <td>
