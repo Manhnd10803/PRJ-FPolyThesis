@@ -10,6 +10,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { Dropdown, ListGroup, Modal } from 'react-bootstrap';
 import toast from 'react-hot-toast';
+import { useLocation } from 'react-router-dom';
 
 export const MoreActionDropdown = ({ friendId, postId, username, postStatus }: any) => {
   const queryClient = useQueryClient();
@@ -26,7 +27,9 @@ export const MoreActionDropdown = ({ friendId, postId, username, postStatus }: a
   const [showCustomModal, setShowCustomModal] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
 
-  const { manuallyChangeStatusPost } = usePost();
+  const { pathname } = useLocation();
+  const typeQueryKey = pathname.includes('profile') ? 'profile' : 'posts';
+  const { manuallyChangeStatusPost } = usePost(typeQueryKey);
 
   const handleShowTitle = (title: any) => {
     setModalTitle(title);
