@@ -3,6 +3,7 @@ import { PostService } from '@/apis/services/post.service';
 import { ReportService } from '@/apis/services/report.service';
 import { DropZoneField } from '@/components/custom/drop-zone-field';
 import { usePost } from '@/hooks/usePostQuery';
+import { useShowAboutProfile } from '@/hooks/useShowAboutProfile';
 import { CustomListItem } from '@/utilities/funcReport/listItem';
 import { CustomModal } from '@/utilities/funcReport/modalCustomReport';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
@@ -81,34 +82,6 @@ export const MoreActionDropdown = ({ friendId, postId, username, postStatus }: a
     }
   };
 
-  useEffect(() => {
-    if (showModalReport || showCustomModal || showModalDeletePost) {
-      const headerElements = document.getElementsByClassName('about-profile');
-      // Kiểm tra xem phần tử có tồn tại không và chỉ định rõ phần tử cụ thể từ HTMLCollection
-      if (headerElements.length > 0) {
-        const headerElement = headerElements[0] as HTMLElement;
-        headerElement.style.setProperty('z-index', '0');
-        headerElement.style.setProperty('transition', 'none');
-      }
-    } else {
-      const headerElements = document.getElementsByClassName('about-profile');
-      if (headerElements.length > 0) {
-        const headerElement = headerElements[0] as HTMLElement;
-        headerElement.style.setProperty('z-index', '9999');
-        headerElement.style.setProperty('transition', 'all 0.5s ease-in-out');
-      }
-    }
-
-    return () => {
-      const headerElements = document.getElementsByClassName('about-profile');
-      if (headerElements.length > 0) {
-        const headerElement = headerElements[0] as HTMLElement;
-        headerElement.style.setProperty('z-index', '9999');
-        headerElement.style.setProperty('transition', 'all 0.5s ease-in-out');
-      }
-    };
-  }, [showModalReport, showCustomModal, showModalDeletePost]);
-
   const handleChangeStatusPost = async (postId: number, status: number) => {
     try {
       toast.success('Thay đổi trạng thái bài viết thành công');
@@ -117,25 +90,6 @@ export const MoreActionDropdown = ({ friendId, postId, username, postStatus }: a
     } catch (error: any) {
       toast.error(error.message);
     }
-  };
-
-  const DeletePostModal = (props: any) => {
-    return (
-      <Modal {...props} size="md" aria-labelledby="contained-modal-title-vcenter" centered>
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">Xoá bài viết</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <p>Sau khi xoá sẽ không thể khôi phục bài viết</p>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={props.onHide}>
-            Huỷ
-          </Button>
-          <Button onClick={() => handleDeletePost(postId)}>Xác nhận</Button>
-        </Modal.Footer>
-      </Modal>
-    );
   };
 
   const handleDeletePost = async (postId: number) => {
@@ -147,6 +101,8 @@ export const MoreActionDropdown = ({ friendId, postId, username, postStatus }: a
       toast.error(error.message);
     }
   };
+
+  useShowAboutProfile(showModalReport || showCustomModal, [showModalReport, showCustomModal, currentPostId, postId]);
 
   return (
     <div className="card-post-toolbar">
@@ -167,24 +123,14 @@ export const MoreActionDropdown = ({ friendId, postId, username, postStatus }: a
                 </div>
               </Dropdown.Item>
               {/* Modal  */}
-              <Modal centered show={showModalReport && currentPostId === postId} onHide={handleCloseModalReport}>
-                <Modal.Header closeButton>
-                  <Modal.Title>Báo cáo bài đăng của {username} </Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <p className="py-2">
-                    Nếu bạn nhận thấy ai đó đang gặp nguy hiểm, đừng chần chừ mà hãy tìm ngay sự giúp đỡ trước khi báo
-                    cáo.
-                  </p>
-
-                  <ListGroup>
-                    {listItems.map((item, index) => (
-                      <CustomListItem key={index} title={item.title} onClick={item.onClick} />
-                    ))}
-                  </ListGroup>
-                </Modal.Body>
-                <Modal.Footer></Modal.Footer>
-              </Modal>
+              <ModalReport
+                showModalReport={showModalReport}
+                currentPostId={currentPostId}
+                postId={postId}
+                handleCloseModalReport={handleCloseModalReport}
+                listItems={listItems}
+                username={username}
+              />
 
               {/* Modal item  */}
               <CustomModal show={showCustomModal} onHide={() => setShowCustomModal(false)} title={modalTitle}>
@@ -265,11 +211,62 @@ export const MoreActionDropdown = ({ friendId, postId, username, postStatus }: a
                   </div>
                 </Dropdown.Item>
               </>
-              <DeletePostModal show={showModalDeletePost} onHide={() => setShowModalDeletePost(false)} />
+              <DeletePostModal
+                handleDeletePost={handleDeletePost}
+                postId={postId}
+                show={showModalDeletePost}
+                onHide={() => setShowModalDeletePost(false)}
+              />
             </>
           )}
         </Dropdown.Menu>
       </Dropdown>
     </div>
+  );
+};
+
+const DeletePostModal = (props: any) => {
+  useShowAboutProfile(props.show, [props.show]);
+  return (
+    <Modal {...props} size="md" aria-labelledby="contained-modal-title-vcenter" centered>
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter">Xoá bài viết</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p>Sau khi xoá sẽ không thể khôi phục bài viết</p>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={props.onHide}>
+          Huỷ
+        </Button>
+        <Button onClick={() => props.handleDeletePost(props.postId)}>Xác nhận</Button>
+      </Modal.Footer>
+    </Modal>
+  );
+};
+
+const ModalReport = (props: any) => {
+  return (
+    <Modal
+      centered
+      show={props.showModalReport && props.currentPostId === props.postId}
+      onHide={props.handleCloseModalReport}
+    >
+      <Modal.Header closeButton>
+        <Modal.Title>Báo cáo bài đăng của {props.username} </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <p className="py-2">
+          Nếu bạn nhận thấy ai đó đang gặp nguy hiểm, đừng chần chừ mà hãy tìm ngay sự giúp đỡ trước khi báo cáo.
+        </p>
+
+        <ListGroup>
+          {props.listItems.map((item, index) => (
+            <CustomListItem key={index} title={item.title} onClick={item.onClick} />
+          ))}
+        </ListGroup>
+      </Modal.Body>
+      <Modal.Footer></Modal.Footer>
+    </Modal>
   );
 };

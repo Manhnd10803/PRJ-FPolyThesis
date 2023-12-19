@@ -49,50 +49,6 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
     setShowModalFormReport(false);
   };
 
-  useEffect(() => {
-    if (
-      modalTitle ||
-      showModalFormReport ||
-      showModalOptionReport ||
-      modalShowUploadAvatar ||
-      modalShowUploadArticlePhoto ||
-      modalShowResizeAvatar ||
-      modalShowResizeArticlePhoto
-    ) {
-      const headerElements = document.getElementsByClassName('about-profile');
-      // Kiểm tra xem phần tử có tồn tại không và chỉ định rõ phần tử cụ thể từ HTMLCollection
-      if (headerElements.length > 0) {
-        const headerElement = headerElements[0] as HTMLElement;
-        headerElement.style.setProperty('z-index', '0');
-        headerElement.style.setProperty('transition', 'none');
-      }
-    } else {
-      const headerElements = document.getElementsByClassName('about-profile');
-      if (headerElements.length > 0) {
-        const headerElement = headerElements[0] as HTMLElement;
-        headerElement.style.setProperty('z-index', '9999');
-        headerElement.style.setProperty('transition', 'all 0.5s ease-in-out');
-      }
-    }
-
-    return () => {
-      const headerElements = document.getElementsByClassName('about-profile');
-      if (headerElements.length > 0) {
-        const headerElement = headerElements[0] as HTMLElement;
-        headerElement.style.setProperty('z-index', '9999');
-        headerElement.style.setProperty('transition', 'all 0.5s ease-in-out');
-      }
-    };
-  }, [
-    modalTitle,
-    showModalFormReport,
-    showModalOptionReport,
-    modalShowUploadAvatar,
-    modalShowUploadArticlePhoto,
-    modalShowResizeAvatar,
-    modalShowResizeArticlePhoto,
-  ]);
-
   const handleShow = (title: any) => {
     setModalTitle(title);
     setShowModalFormReport(true);
@@ -260,7 +216,6 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
       const { data } = await FriendService.statusFriend(user?.id);
       return data;
     } catch (error) {
-      console.error(error);
       return false;
     }
   };
