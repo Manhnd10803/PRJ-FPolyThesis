@@ -91,6 +91,14 @@ export const BlogDetailPage = () => {
       throw error;
     }
   };
+
+  if (!isLoading && !data)
+    return (
+      <div className="content-page">
+        <Loading size={100} textStyle={{ fontSize: '30px' }} textLoading="Tìm linh tinh gì đấy..." />
+      </div>
+    );
+
   return (
     <>
       <div id="content-page" className="content-page">
