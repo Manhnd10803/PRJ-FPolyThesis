@@ -91,7 +91,6 @@ export const DetailQandAPage = () => {
     },
   });
   const putComment = async (content: string, commentId: any) => {
-    console.log(content);
     try {
       const formData = {
         id: commentId,
@@ -111,7 +110,6 @@ export const DetailQandAPage = () => {
     },
   });
   const createLike = async (emotion: string) => {
-    console.log(emotion);
     try {
       const formData = {
         qa_id: qAndAData?.qa?.id,

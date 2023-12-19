@@ -46,14 +46,12 @@ export const PostItem = ({ item }: PostItemProps) => {
 
   // function
   const handleChangeEmotionProfile = (emotion: EmotionUnionType) => {
-    console.log(emotionSelected, emotion, post.id);
     const condition = `${emotionSelected === emotion ? 'A' : 'B'}-${isIncrease.current ? '1' : '2'}`;
 
     switch (condition) {
       case 'A-1':
         setEmotionSelected(undefined);
         setNameEmotion(undefined);
-        console.log('giảm like');
         manuallyDecreaseTotalLikePost(post.id);
         isIncrease.current = false;
         break;
@@ -75,7 +73,6 @@ export const PostItem = ({ item }: PostItemProps) => {
 
     if (!emotionSelected && !isIncrease.current) {
       isIncrease.current = true;
-      console.log('tăng like');
 
       manuallyIncreaseTotalLikePost(post.id);
     }

@@ -85,7 +85,6 @@ export const CommentsQandA = ({ qAndAData, postComment, deleteComment, putCommen
   const handleSubmitEditComment = async (e: any, commentId: any) => {
     e.preventDefault();
     try {
-      console.log(editedContent);
       await putComment(editedContent, commentId);
       setEditCommentId(null);
     } catch (error) {
@@ -163,7 +162,6 @@ export const CommentsQandA = ({ qAndAData, postComment, deleteComment, putCommen
           <Card.Body>
             {qAndAData &&
               qAndAData.map((comment: any, index: any) => {
-                console.log(comment);
                 return (
                   <Row key={index}>
                     <Col lg="12">

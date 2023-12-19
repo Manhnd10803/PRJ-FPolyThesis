@@ -80,7 +80,7 @@ export const CreateBlogPage = () => {
     if (!isLoading) {
       mutate(newData, {
         onError: error => {
-          console.log(error);
+          console.error(error);
         },
         onSuccess: ({ data }) => {
           toast.success('Tạo blog thành công, hãy chờ duyệt');

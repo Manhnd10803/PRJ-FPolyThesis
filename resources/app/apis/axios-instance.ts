@@ -78,7 +78,7 @@ httpRequest.interceptors.response.use(
             return httpRequest(originalRequest);
           })
           .catch(error => {
-            console.log(error);
+            console.error(error);
             refreshTokenPromise = null;
           });
       }

@@ -134,7 +134,6 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
     setData([]);
   };
 
-  console.log(data);
   return (
     <>
       {isDropdownOpen && <Overlay onClick={handleOverlayClick} />}

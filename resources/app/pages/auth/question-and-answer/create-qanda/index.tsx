@@ -57,7 +57,7 @@ export const CreateQandA = () => {
     if (!isLoading) {
       mutate(data, {
         onError: error => {
-          console.log(error);
+          console.error(error);
         },
         onSuccess: () => {
           toast.success('Câu hỏi đã được tạo thành công');

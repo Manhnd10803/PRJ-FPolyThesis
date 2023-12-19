@@ -29,7 +29,7 @@ export const UserDropdown = () => {
     },
     onError: error => {
       toast.success('Đăng xuất thất bại');
-      console.log(error);
+      console.error(error);
     },
   });
   // func

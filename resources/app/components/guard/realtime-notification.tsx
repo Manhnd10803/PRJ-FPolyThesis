@@ -92,7 +92,6 @@ export const RealtimeNotification = () => {
 
       // Lắng nghe notification
       const handleReceiveNotification = (event: any) => {
-        // console.log('🔔 Received notify', event);
         const { content } = event.notification;
         const { notification_type } = event.notification;
         if (notification_type === 'friend') {

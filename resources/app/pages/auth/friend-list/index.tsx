@@ -42,7 +42,6 @@ export const FriendListPage = () => {
       throw error;
     }
   };
-  console.log(listFriend);
   return (
     <>
       <div id="content-page" className="content-page">

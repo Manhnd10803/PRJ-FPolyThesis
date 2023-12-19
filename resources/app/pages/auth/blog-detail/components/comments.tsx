@@ -82,7 +82,6 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
   const handleSubmitEditComment = async (e: any, commentId: any) => {
     e.preventDefault();
     try {
-      console.log(editedContent);
       await putComment(editedContent, commentId);
       setEditCommentId(null);
     } catch (error) {

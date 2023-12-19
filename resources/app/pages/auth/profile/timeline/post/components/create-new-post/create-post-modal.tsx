@@ -51,7 +51,6 @@ export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => 
 
   const onSubmit = async (dataForm: TCreateNewPostSchema) => {
     let bodyData = dataForm;
-    console.log(typeof +privacy);
     try {
       if (imagesRef.current.length) {
         const urlImages = await CloudiaryService.uploadImages(imagesRef.current, 'post');
@@ -67,7 +66,7 @@ export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => 
       reset();
       handleClose();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

@@ -39,8 +39,6 @@ export const RealtimeMessage = () => {
       const isNewSender =
         listPrivateChannel && listPrivateChannel?.data?.findIndex(item => +item.id === +sender_id) === -1;
 
-      console.log('isNewSender', isNewSender);
-
       if (isNewSender || !listPrivateChannel) {
         manuallyAddPrivateChannel(event.message.sender as IUser);
         return;
@@ -52,7 +50,7 @@ export const RealtimeMessage = () => {
         manuallyAddMessageToConversation(event.message as IMessages, event.message.sender_id as number);
       }
     } catch (error) {
-      console.log('handlePrivateMessage', error);
+      console.error('handlePrivateMessage', error);
     }
   };
 

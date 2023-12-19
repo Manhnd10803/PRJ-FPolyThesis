@@ -66,7 +66,6 @@ export const useAddCommentPostDetail = (typeQueryKey: 'profile' | 'posts' = 'pos
         : ['post', postId.toString()];
     queryClient.setQueryData(queryKey, (oldData: GetNewPostResponseType | undefined) => {
       if (!oldData) {
-        console.log('Chua cache post detail', postId);
         return oldData;
       }
 
