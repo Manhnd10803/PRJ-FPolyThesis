@@ -144,7 +144,6 @@ class PostsController extends Controller
     {
         $detailPost = Post::with(['user', 'likes'])->where('id', $post->id)->first();
         $likeCountsByEmotion = [];
-        $likeCountsByEmotion['total_likes'] = $post->likes->count();
         // Lấy danh sách người đã like bài viết và thông tin của họ
         $likers = $post->likes->map(function ($like) {
             return [
@@ -153,20 +152,30 @@ class PostsController extends Controller
                 'emotion' => $like->emotion,
             ];
         });
-        // Tính số lượt thích cho mỗi giá trị biểu cảm (emotion)
-        $emotions = $likers->pluck('emotion')->unique();
-        foreach ($emotions as $emotion) {
-            $likeCountsByEmotion[$emotion] = $likers->where('emotion', $emotion)->count();
+        foreach ($likers as $liker) {
+            $emotion = $liker['emotion'];
+            if (!isset($likeCountsByEmotion[$emotion])) {
+                $likeCountsByEmotion[$emotion] = 1;
+            } else {
+                $likeCountsByEmotion[$emotion]++;
+            }
         }
+        $likeCountsByEmotions = $post->likes->count();
+        // Sắp xếp mảng theo số lượng giảm dần
+        arsort($likeCountsByEmotion);
+        // Lấy top 3 emotion nhiều nhất
+        $topEmotions = array_keys(array_slice($likeCountsByEmotion, 0, 3));
+        //tính số comment và lấy 3 comment demo
         $totalComment = Comment::where('post_id', $post->id)->count();
         // $comment = Comment::where('post_id', $post->id)->get();
         $comment = Comment::with('user:id,username,first_name,last_name,avatar')->where('post_id', $post->id)->latest()->get();
         $postdata  = [
             'post' => $detailPost,
-            'like_counts_by_emotion' => $likeCountsByEmotion['total_likes'],
+            'like_counts_by_emotion' => $likeCountsByEmotions,
             'likers' => $likers,
             'total_comments' => $totalComment,
-            'comments' => $comment
+            'comments' => $comment,
+            'top_emotions' => $topEmotions,
         ];
         return response()->json($postdata, 200);
     }
@@ -201,7 +210,6 @@ class PostsController extends Controller
             $result = [];
             foreach ($posts as $post) {
                 $likeCountsByEmotion = [];
-                $likeCountsByEmotion['total_likes'] = $post->likes->count();
                 $likers = $post->likes->map(function ($like) {
                     return [
                         'user' => $like->user,
@@ -209,23 +217,34 @@ class PostsController extends Controller
                         'emotion' => $like->emotion,
                     ];
                 });
-                $emotions = $likers->pluck('emotion')->unique();
-                foreach ($emotions as $emotion) {
-                    $likeCountsByEmotion[$emotion] = $likers->where('emotion', $emotion)->count();
+                // Đếm số lượng emotion cho mỗi loại
+                foreach ($likers as $liker) {
+                    $emotion = $liker['emotion'];
+                    if (!isset($likeCountsByEmotion[$emotion])) {
+                        $likeCountsByEmotion[$emotion] = 1;
+                    } else {
+                        $likeCountsByEmotion[$emotion]++;
+                    }
                 }
+                $likeCountsByEmotions = $post->likes->count();
+                // Sắp xếp mảng theo số lượng giảm dần
+                arsort($likeCountsByEmotion);
+                // Lấy top 3 emotion nhiều nhất
+                $topEmotions = array_keys(array_slice($likeCountsByEmotion, 0, 3));
+                //tính số comment và lấy 3 comment demo
                 $totalComment = $post->comments->count();
                 $commentDemos = $post->comments->where('parent_id', 0)->take(3);
                 foreach ($commentDemos as $commentDemo) {
                     $commentDemo->reply = $post->comments->where('parent_id', $commentDemo->id)->count();
                 }
-
-                // Tạo một mảng chứa thông tin về bài viết và các lượt thích, bình luận của nó
+                // Thêm thông tin vào mảng kết quả
                 $postData = [
                     'post' => $post,
-                    'like_counts_by_emotion' => $likeCountsByEmotion,
+                    'like_counts_by_emotion' => $likeCountsByEmotions,
                     'likers' => $likers,
                     'total_comments' => $totalComment,
                     'comments' => $commentDemos,
+                    'top_emotions' => $topEmotions,
                 ];
                 array_push($result, $postData);
             }
@@ -287,15 +306,15 @@ class PostsController extends Controller
             ]);
             $post->save();
             $newPost = Post::with(['user', 'likes'])->where('id', $post->id)->first();
-            $likeCountsByEmotion = [];
-            $likeCountsByEmotion['total_likes'] = 0;
+            $likeCountsByEmotions = 0;
             //fake data
             $postdata  = [
                 'post' => $newPost,
-                'like_counts_by_emotion' => $likeCountsByEmotion,
+                'like_counts_by_emotion' => $likeCountsByEmotions,
                 'likers' => [],
                 'total_comments' => 0,
-                'comments' => []
+                'comments' => [],
+                'top_emotions' => [],
             ];
             DB::commit();
             return response()->json($postdata, 200);

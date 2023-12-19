@@ -9,9 +9,11 @@ import { StorageFunc } from '@/utilities/local-storage/storage-func';
 
 const localUserId = StorageFunc.getUserId();
 
+type PostLikeMutationType = { postId: number; emotion: EmotionUnionType };
+
 export const useChooseEmotionPost = () => {
   const { mutate, ...rest } = useMutation({
-    mutationFn: async ({ postId, emotion }: { postId: number; emotion: EmotionUnionType }) => {
+    mutationFn: async ({ postId, emotion }: PostLikeMutationType) => {
       await LikeService.postLikePost(postId, emotion);
     },
   });
@@ -22,10 +24,13 @@ export const useChooseEmotionPost = () => {
   };
 };
 
-export const useIncreaseTotalLikePost = (typeQueryKey: 'profile' | 'posts' = 'posts') => {
+export type typeQueryKey = 'profile' | 'posts';
+
+export const useChangeTotalLikePost = (typeQueryKey: typeQueryKey = 'posts') => {
   const queryClient = useQueryClient();
   const queryKey =
     typeQueryKey === 'profile' ? getQueryKeyPostProfile({ userId: localUserId!, type: 'post' }) : queryKeyPosts;
+
   const manuallyIncreaseTotalLikePost = (postId: number) => {
     queryClient.setQueryData(queryKey, (oldData: InfiniteData<Paginate<GetNewPostResponseType>> | undefined) => {
       if (!oldData) return oldData;
@@ -34,7 +39,7 @@ export const useIncreaseTotalLikePost = (typeQueryKey: 'profile' | 'posts' = 'po
         draft.pages.forEach(page => {
           page.data.forEach(postItem => {
             if (postItem.post.id === postId) {
-              postItem.like_counts_by_emotion.total_likes += 1;
+              postItem.like_counts_by_emotion += 1;
             }
           });
         });
@@ -50,7 +55,7 @@ export const useIncreaseTotalLikePost = (typeQueryKey: 'profile' | 'posts' = 'po
         draft.pages.forEach(page => {
           page.data.forEach(postItem => {
             if (postItem.post.id === postId) {
-              postItem.like_counts_by_emotion.total_likes -= 1;
+              postItem.like_counts_by_emotion -= 1;
             }
           });
         });

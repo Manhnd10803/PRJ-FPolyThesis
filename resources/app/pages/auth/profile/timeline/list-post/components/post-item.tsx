@@ -105,7 +105,7 @@ export const PostItem = ({ data, index, aboutUser }) => {
                     <div className="total-like-block ms-2 me-3">
                       <Dropdown>
                         <Dropdown.Toggle as={CustomToggle} id="post-option">
-                          {data?.like_counts_by_emotion?.total_likes} Likes
+                          {data?.like_counts_by_emotion} Likes
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
                           <Dropdown.Item to="#">Max Emum</Dropdown.Item>

@@ -8,6 +8,7 @@ type PostDetailContextType = {
   likers: GetNewPostResponseType['likers'];
   total_comments: GetNewPostResponseType['total_comments'];
   comments: GetNewPostResponseType['comments'];
+  top_emotions: GetNewPostResponseType['top_emotions'];
 };
 
 const PostDetailContext = createContext<PostDetailContextType>({} as PostDetailContextType);

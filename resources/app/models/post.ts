@@ -1,23 +1,14 @@
 import { IComment } from './comment';
-import { ILiker } from './like';
+import { EmotionUnionType, ILiker } from './like';
 import { IUser } from './user';
 
 export interface GetNewPostResponseType {
   post: IPost;
-  like_counts_by_emotion: LikeCountsByEmotion;
+  like_counts_by_emotion: number;
   likers?: ILiker[];
   total_comments?: number;
   comments?: Array<IComment>;
-}
-
-export interface LikeCountsByEmotion {
-  total_likes: number;
-  like?: number;
-  love?: number;
-  haha?: number;
-  wow?: number;
-  sad?: number;
-  angry?: number;
+  top_emotions: EmotionUnionType[];
 }
 
 export interface IPost {
