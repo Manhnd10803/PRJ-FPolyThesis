@@ -1,21 +1,21 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Row, Col, Container, Card } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { FriendService } from '@/apis/services/friend.service';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { formatFullName } from '@/utilities/functions';
 import { pathName } from '@/routes/path-name';
 import { useSetListFriend } from '@/hooks/useFriendQuery';
 import { CardLoad, CardLoadFriendRequest } from '@/utilities/funcLoadFriend/CardLoad';
-import { ConfirmFriend, FriendStates, RequestFriend } from '@/models/friend';
+import { ConfirmFriend, RequestFriend } from '@/models/friend';
+import { useInView } from 'react-intersection-observer';
 
 export const FriendRequestPage = () => {
   const queryClient = useQueryClient();
   const { manuallySetListFriend, manuallySetListFriendPaginate } = useSetListFriend();
-  const [addFriendStates, setAddFriendStates] = useState<FriendStates>({});
   const [confirmFriend, setConfirmFriend] = useState<ConfirmFriend>({});
   const [deleteRequestFriend, setdeleteRequestFriend] = useState<RequestFriend>({});
-
+  const { ref: endRef, inView: endInView } = useInView();
   const fetchAllFriendRequest = async () => {
     const { data } = await FriendService.showAllFriendRequest();
     const FriendRequestData = data;
@@ -59,17 +59,40 @@ export const FriendRequestPage = () => {
       throw error;
     }
   };
-
   // LIST_SUGGEST_FRIEND
-  const fetchSuggestFriend = async () => {
-    const { data } = await FriendService.getSuggestFriends();
+  const fetchSuggestFriend = async ({ pageParam = 1 }) => {
+    const { data } = await FriendService.getSuggestFriends(7, pageParam);
     return data;
   };
   const FriendsSuggestQueryKey = ['suggestFriend'];
-  const { data: friendSuggest, isLoading: isLoadingSuggestFriend } = useQuery({
-    queryKey: FriendsSuggestQueryKey,
+
+  // const { data: friendSuggest, isLoading: isLoadingSuggestFriend } = useQuery({
+  //   queryKey: FriendsSuggestQueryKey,
+  //   queryFn: fetchSuggestFriend,
+  // });
+  const {
+    data: friendSuggest,
+    isLoading: isLoadingSuggestFriend,
+    fetchNextPage,
+    isFetching,
+    hasNextPage,
+  } = useInfiniteQuery(FriendsSuggestQueryKey, {
     queryFn: fetchSuggestFriend,
+    getNextPageParam: (lastPage, _) => {
+      if (lastPage.current_page === lastPage.last_page) {
+        return undefined;
+      }
+      return lastPage.current_page + 1;
+    },
   });
+
+  useEffect(() => {
+    if (endInView && hasNextPage && !isFetching) {
+      fetchNextPage();
+    }
+  }, [endInView, isFetching, hasNextPage, fetchNextPage]);
+
+  const listFriendSuggest = friendSuggest?.pages.flatMap(page => page.data);
 
   const HandleAddFriend = async (id: any) => {
     try {
@@ -206,9 +229,9 @@ export const FriendRequestPage = () => {
                     </Row>
                   ) : (
                     <>
-                      {friendSuggest && friendSuggest.length > 0 ? (
+                      {listFriendSuggest && listFriendSuggest.length > 0 ? (
                         <Row>
-                          {friendSuggest.map((itemFriend: any) => {
+                          {listFriendSuggest.map((itemFriend: any) => {
                             return (
                               <Col key={itemFriend.id} sm={3}>
                                 <Card className="mb-3">
@@ -250,6 +273,7 @@ export const FriendRequestPage = () => {
                               </Col>
                             );
                           })}
+                          {isFetching && listFriendSuggest && listFriendSuggest.length > 0 ? <CardLoad /> : null}
                         </Row>
                       ) : (
                         <p>Không có yêu cầu mới</p>
@@ -259,6 +283,8 @@ export const FriendRequestPage = () => {
                 </Card.Body>
               </Card>
             </Col>
+
+            <div ref={endRef}></div>
           </Row>
         </Container>
       </div>

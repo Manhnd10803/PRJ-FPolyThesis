@@ -64,78 +64,81 @@ export const FriendListPage = () => {
                       <CardLoad />
                     </Row>
                   ) : (
-                    <Row>
+                    <>
                       {listFriend && listFriend.length > 0 ? (
-                        listFriend.map((itemFriend: any) => {
-                          const isCanceled = canceledFriendIds.includes(itemFriend?.friend?.id);
-                          return (
-                            <Col key={itemFriend.id} sm={3}>
-                              <Card className="mb-3">
-                                <Link to={`${pathName.PROFILE}/${itemFriend?.friend?.id}`}>
-                                  <Card.Img
-                                    style={{
-                                      width: '100%',
-                                      aspectRatio: '4/3',
-                                      objectFit: 'cover',
-                                      objectPosition: 'center',
-                                    }}
-                                    className="img-fluid"
-                                    variant="top"
-                                    src={itemFriend.friend.avatar}
-                                    alt="ảnh đại diện"
-                                  />
-                                </Link>
-                                <Card.Body>
+                        <Row>
+                          {listFriend.map((itemFriend: any) => {
+                            const isCanceled = canceledFriendIds.includes(itemFriend?.friend?.id);
+                            return (
+                              <Col key={itemFriend.id} sm={3}>
+                                <Card className="mb-3">
                                   <Link to={`${pathName.PROFILE}/${itemFriend?.friend?.id}`}>
-                                    {/* ... other card content ... */}
-                                    <Card.Title as="h5" className="card-title">
-                                      {formatFullName(itemFriend.friend)}
-                                    </Card.Title>
+                                    <Card.Img
+                                      style={{
+                                        width: '100%',
+                                        aspectRatio: '4/3',
+                                        objectFit: 'cover',
+                                        objectPosition: 'center',
+                                      }}
+                                      className="img-fluid"
+                                      variant="top"
+                                      src={itemFriend.friend.avatar}
+                                      alt="ảnh đại diện"
+                                    />
                                   </Link>
-                                  <Card.Text className="card-text">@{itemFriend.friend.username}</Card.Text>
-                                  <div className="d-flex flex-column gap-2 mt-2 mt-md-0">
-                                    {isCanceled ? (
-                                      <span className="btn btn-secondary rounded confirm-btn">Đã hủy</span>
-                                    ) : (
-                                      <>
-                                        <Link
-                                          to="#"
-                                          onClick={() =>
-                                            setShowDeleteFriendMap(prevState => ({
-                                              ...prevState,
-                                              [itemFriend?.friend?.id]: true,
-                                            }))
-                                          }
-                                          className="btn btn-primary rounded confirm-btn"
-                                        >
-                                          Hủy bạn bè
-                                        </Link>
+                                  <Card.Body>
+                                    <Link to={`${pathName.PROFILE}/${itemFriend?.friend?.id}`}>
+                                      {/* ... other card content ... */}
+                                      <Card.Title as="h5" className="card-title">
+                                        {formatFullName(itemFriend.friend)}
+                                      </Card.Title>
+                                    </Link>
+                                    <Card.Text className="card-text">@{itemFriend.friend.username}</Card.Text>
+                                    <div className="d-flex flex-column gap-2 mt-2 mt-md-0">
+                                      {isCanceled ? (
+                                        <span className="btn btn-secondary rounded confirm-btn">Đã hủy</span>
+                                      ) : (
+                                        <>
+                                          <Link
+                                            to="#"
+                                            onClick={() =>
+                                              setShowDeleteFriendMap(prevState => ({
+                                                ...prevState,
+                                                [itemFriend?.friend?.id]: true,
+                                              }))
+                                            }
+                                            className="btn btn-primary rounded confirm-btn"
+                                          >
+                                            Hủy bạn bè
+                                          </Link>
 
-                                        <ModalRequest
-                                          show={showDeleteFriendMap[itemFriend?.friend?.id]}
-                                          onHide={() =>
-                                            setShowDeleteFriendMap(prevState => ({
-                                              ...prevState,
-                                              [itemFriend?.friend?.id]: false,
-                                            }))
-                                          }
-                                          onConfirm={() => HandleUnFriend(itemFriend?.friend?.id)}
-                                          title={`Bạn có chắc chắn muốn hủy kết bạn với ${itemFriend?.friend?.username}?`}
-                                        />
-                                      </>
-                                    )}
-                                  </div>
-                                </Card.Body>
-                              </Card>
-                            </Col>
-                          );
-                        })
+                                          <ModalRequest
+                                            show={showDeleteFriendMap[itemFriend?.friend?.id]}
+                                            onHide={() =>
+                                              setShowDeleteFriendMap(prevState => ({
+                                                ...prevState,
+                                                [itemFriend?.friend?.id]: false,
+                                              }))
+                                            }
+                                            onConfirm={() => HandleUnFriend(itemFriend?.friend?.id)}
+                                            title={`Bạn có chắc chắn muốn hủy kết bạn với ${itemFriend?.friend?.username}?`}
+                                          />
+                                        </>
+                                      )}
+                                    </div>
+                                  </Card.Body>
+                                </Card>
+                              </Col>
+                            );
+                          })}
+                          {isFetching ? <CardLoad /> : null}
+                        </Row>
                       ) : (
                         <Card.Body>Chưa có bạn bè</Card.Body>
                       )}
-                      {isFetching ? <CardLoad /> : null}
+
                       <div ref={endRef}></div>
-                    </Row>
+                    </>
                   )}
                 </Card.Body>
               </Card>

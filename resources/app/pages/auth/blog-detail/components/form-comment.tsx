@@ -39,7 +39,7 @@ export const FormComment = ({ postComment }: any) => {
           <Card.Body>
             <Form>
               <Form.Group className="form-group">
-                <Form.Label htmlFor="exampleFormControlTextarea1">Câu trả lời của bạn</Form.Label>
+                <Form.Label htmlFor="exampleFormControlTextarea1">Bình luận của bạn</Form.Label>
                 <Form.Control
                   as="textarea"
                   id="exampleFormControlTextarea1"

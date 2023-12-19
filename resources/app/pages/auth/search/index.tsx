@@ -7,7 +7,7 @@ import parse from 'html-react-parser';
 import { momentVi } from '@/utilities/functions/moment-locale';
 import { hideImages } from '@/utilities/funcJsonImage';
 import { CardLoadBlogSearch, CardLoadFriendOther, CardLoadQaSearch } from '@/utilities/funcLoadFriend/CardLoad';
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { pathName } from '@/routes/path-name';
 import { useInView } from 'react-intersection-observer';
 export const SearchPage = () => {
@@ -46,7 +46,6 @@ export const SearchPage = () => {
     hasNextPage,
   } = useInfiniteQuery(queryKeySearchBar, {
     queryFn: fetchSearch,
-
     getNextPageParam: (lastPage, _) => {
       if (lastPage.current_page === lastPage.last_page) {
         return undefined;

@@ -16,8 +16,8 @@ const showAllFriendMyUser = <T>(id: T, quantity?: T, page = 1) => {
     return httpRequest.get(`${ApiConstants.SHOW_FRIEND_MY_USER}/${id}`);
   }
 };
-const getSuggestFriends = () => {
-  return httpRequest.get(ApiConstants.LIST_SUGGEST_FRIEND);
+const getSuggestFriends = <T>(quantity?: T, page = 1) => {
+  return httpRequest.get(`${ApiConstants.LIST_SUGGEST_FRIEND}/${quantity}?page=${page}`);
 };
 const confirmFriendRequest = <T>(id: T) => {
   return httpRequest.post(`${ApiConstants.CONFIRM_FRIEND_REQUEST}/${id}`);
