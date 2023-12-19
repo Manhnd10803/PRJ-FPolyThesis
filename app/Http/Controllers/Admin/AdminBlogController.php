@@ -73,6 +73,9 @@ class AdminBlogController extends Controller
             $user = User::find($user_id);
             if ($user) {
                 $user->score += $score;
+                if ($user->score += $score < 0) {
+                    $user->score = 0;
+                }
                 $user->save();
             }
             broadcast(new ReceiveNotification($notification, $avatar_sender))->toOthers();
