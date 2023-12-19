@@ -1,8 +1,9 @@
 import { CustomToggle } from '@/components/custom';
-import { useChooseEmotionPost, useIncreaseTotalLikePost } from '@/hooks/useLikeQuery';
+import { useChooseEmotionPost, useChangeTotalLikePost, typeQueryKey } from '@/hooks/useLikeQuery';
 import { EmotionUnionType, ILiker, emotionData, emotionName, emotionSource } from '@/models/like';
 import { IUser } from '@/models/user';
-import { usePostItemContext } from '@/pages/auth/home/contexts';
+import { usePostItemContext as usePostItemContextHome } from '@/pages/auth/home/contexts';
+import { usePostItemContext as usePostItemContextProfile } from '@/pages/auth/profile/timeline/post/contexts';
 import { checkIfReacted } from '@/utilities/functions/post';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import React, { useRef, useState } from 'react';
@@ -11,18 +12,27 @@ import { Link } from 'react-router-dom';
 
 type ChooseEmotionProps = {
   setTop3Emotion: React.Dispatch<React.SetStateAction<EmotionUnionType[]>>;
+  dropDownMenuClassName?: 'dropdown-menu-top-like' | 'dropdown-menu-top-like-profile';
+  type: typeQueryKey;
 };
-export const ChooseEmotion = ({ setTop3Emotion }: ChooseEmotionProps) => {
+export const ChooseEmotion = ({
+  setTop3Emotion,
+  dropDownMenuClassName = 'dropdown-menu-top-like',
+  type,
+}: ChooseEmotionProps) => {
   const userInfo = StorageFunc.getUser();
 
-  const { likers, post } = usePostItemContext();
+  const { likers, post } = type === 'profile' ? usePostItemContextProfile() : usePostItemContextHome();
 
   const isReacted = useRef(checkIfReacted(likers as ILiker[], userInfo as IUser));
 
   const [emotionSelected, setEmotionSelected] = useState<EmotionUnionType | undefined>(isReacted.current);
 
   const { mutate } = useChooseEmotionPost();
-  const { manuallyIncreaseTotalLikePost, manuallyDecreaseTotalLikePost } = useIncreaseTotalLikePost();
+
+  const { manuallyIncreaseTotalLikePost, manuallyDecreaseTotalLikePost } = useChangeTotalLikePost(
+    type === 'profile' ? 'profile' : 'posts',
+  );
 
   // function
   const handleChangeEmotion = (emotion: EmotionUnionType) => {
@@ -96,7 +106,7 @@ export const ChooseEmotion = ({ setTop3Emotion }: ChooseEmotionProps) => {
           </Link>
         </div>
       </Dropdown.Toggle>
-      <Dropdown.Menu className="dropdown-menu-top-like">
+      <Dropdown.Menu className={dropDownMenuClassName}>
         {emotionData.map(e => {
           return (
             <OverlayTrigger key={e.id} placement="top" overlay={<Tooltip>{e.name}</Tooltip>}>

@@ -64,7 +64,7 @@ export const PostItem = ({ item }: PostItemProps) => {
             <div className="comment-area">
               <Row className="d-flex justify-content-between align-items-center mb-5 border-top border-bottom py-2">
                 <Col sm={4} className="d-flex justify-content-center align-items-center">
-                  <ChooseEmotion setTop3Emotion={setTop3Emotion} />
+                  <ChooseEmotion setTop3Emotion={setTop3Emotion} type="posts" />
                 </Col>
 
                 <Col sm={4} className="d-flex justify-content-center align-items-center">

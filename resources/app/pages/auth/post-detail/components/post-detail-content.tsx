@@ -9,7 +9,7 @@ import { Card } from 'react-bootstrap';
 import { usePostDetailContext } from '../contexts';
 import { Content } from './content';
 import { Header } from './header';
-import { useChooseEmotionPost, useIncreaseTotalLikePost } from '@/hooks/useLikeQuery';
+import { useChooseEmotionPost, useChangeTotalLikePost } from '@/hooks/useLikeQuery';
 import { checkIfReacted } from '@/utilities/functions/post';
 import { useRef } from 'react';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
@@ -22,7 +22,7 @@ export const PostDetailContent = () => {
   const { like_counts_by_emotion, likers, total_comments, comments, post, top_emotions } = usePostDetailContext();
 
   const { mutate } = useChooseEmotionPost();
-  const { manuallyIncreaseTotalLikePost } = useIncreaseTotalLikePost();
+  const { manuallyIncreaseTotalLikePost } = useChangeTotalLikePost();
 
   // func
   // kiểm tra xem đã like chưa, nếu đã like thì trả về emotion, chưa like thì trả về null

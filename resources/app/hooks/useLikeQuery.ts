@@ -24,10 +24,13 @@ export const useChooseEmotionPost = () => {
   };
 };
 
-export const useIncreaseTotalLikePost = (typeQueryKey: 'profile' | 'posts' = 'posts') => {
+export type typeQueryKey = 'profile' | 'posts';
+
+export const useChangeTotalLikePost = (typeQueryKey: typeQueryKey = 'posts') => {
   const queryClient = useQueryClient();
   const queryKey =
     typeQueryKey === 'profile' ? getQueryKeyPostProfile({ userId: localUserId!, type: 'post' }) : queryKeyPosts;
+
   const manuallyIncreaseTotalLikePost = (postId: number) => {
     queryClient.setQueryData(queryKey, (oldData: InfiniteData<Paginate<GetNewPostResponseType>> | undefined) => {
       if (!oldData) return oldData;
