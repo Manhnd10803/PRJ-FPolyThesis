@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom';
 
 export const CardLoad = () => {
   return (
-    <Col sm={3}>
+    <Col xl={3} lg={4} md={6} sm={12}>
       <Card className="mb-3">
         <Link to={`#`}>
           <Skeleton
-            height={160}
+            height="100%"
             variant="rounded"
             style={{
               width: '100%',
@@ -24,7 +24,7 @@ export const CardLoad = () => {
               <Skeleton height={15} width="100%" variant="rounded" />
             </Card.Title>
           </Link>
-          <Card.Text className="card-text mt-3">
+          <Card.Text className="card-text mt-4">
             <Skeleton height={15} width="100%" variant="rounded" />
           </Card.Text>
           <div className="d-flex flex-column gap-2 mt-2 mt-md-0">
@@ -39,7 +39,7 @@ export const CardLoad = () => {
 };
 export const CardLoadFriendRequest = () => {
   return (
-    <Col sm={3}>
+    <Col xl={3} lg={4} md={6} sm={12}>
       <Card className="mb-3">
         <Link to={`#`}>
           <Skeleton
@@ -77,7 +77,7 @@ export const CardLoadFriendRequest = () => {
 };
 export const CardLoadFriendOther = () => {
   return (
-    <Col sm={3}>
+    <Col xl={3} lg={4} md={6} sm={12}>
       <Link to={`#`} className="text-black">
         <Card className="mb-3">
           <Skeleton height={193} variant="rounded" />

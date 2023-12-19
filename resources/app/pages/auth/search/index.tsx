@@ -53,7 +53,7 @@ export const SearchPage = () => {
       return lastPage.current_page + 1;
     },
     enabled: searchValueFromURL !== '',
-    keepPreviousData: true,
+    // keepPreviousData: true,
     staleTime: 600000,
   });
 
@@ -142,7 +142,6 @@ export const SearchPage = () => {
                   <Tab.Pane eventKey="blog">
                     <Card>
                       {isLoading ? (
-                        // Display a loading indicator if loading is true
                         <>
                           <CardLoadBlogSearch />
                           <CardLoadBlogSearch />
@@ -424,7 +423,7 @@ export const SearchPage = () => {
                           <>
                             {listFriend && listFriend.length > 0 && type == 'user' ? (
                               listFriend.map((item, index) => (
-                                <Col sm={3} key={index}>
+                                <Col key={index} xl={3} lg={4} md={6} sm={12}>
                                   <Link to={`${pathName.PROFILE}/${item.id}`} className="text-black">
                                     <Card className="mb-3">
                                       <Card.Img variant="top" src={item?.avatar} alt="ảnh đại diện" />

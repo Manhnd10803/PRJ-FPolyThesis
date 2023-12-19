@@ -69,7 +69,7 @@ export const FriendListPage = () => {
                           {listFriend.map((itemFriend: any) => {
                             const isCanceled = canceledFriendIds.includes(itemFriend?.friend?.id);
                             return (
-                              <Col key={itemFriend.id} sm={3}>
+                              <Col key={itemFriend.id} xl={3} lg={4} md={6} sm={12}>
                                 <Card className="mb-3">
                                   <Link to={`${pathName.PROFILE}/${itemFriend?.friend?.id}`}>
                                     <Card.Img
@@ -135,7 +135,6 @@ export const FriendListPage = () => {
                       ) : (
                         <Card.Body>Chưa có bạn bè</Card.Body>
                       )}
-
                       <div ref={endRef}></div>
                     </>
                   )}

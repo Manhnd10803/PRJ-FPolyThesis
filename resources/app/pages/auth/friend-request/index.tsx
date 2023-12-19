@@ -12,7 +12,8 @@ import { useInView } from 'react-intersection-observer';
 
 export const FriendRequestPage = () => {
   const queryClient = useQueryClient();
-  const { manuallySetListFriend, manuallySetListFriendPaginate } = useSetListFriend();
+  const [isLoadingAddFriend, setIsLoadingAddFriend] = useState({});
+  const { manuallySetListFriend } = useSetListFriend();
   const [confirmFriend, setConfirmFriend] = useState<ConfirmFriend>({});
   const [deleteRequestFriend, setdeleteRequestFriend] = useState<RequestFriend>({});
   const { ref: endRef, inView: endInView } = useInView();
@@ -22,13 +23,15 @@ export const FriendRequestPage = () => {
     return FriendRequestData;
   };
   const FriendsRequestQueryKey = ['friendrequest'];
+  const queryKeyPaginate = ['ListFriendPaginate', true];
   const { data: friendRequest, isLoading: isLoadingRequestFriend } = useQuery(FriendsRequestQueryKey, {
     queryFn: fetchAllFriendRequest,
   });
   // Confirm friend
   const confirmFriendRequestMutation = useMutation(FriendService.confirmFriendRequest, {
     onSettled: () => {
-      queryClient.invalidateQueries(FriendsRequestQueryKey); // Chỉnh sửa tên query nếu cần
+      queryClient.invalidateQueries(FriendsRequestQueryKey);
+      queryClient.invalidateQueries(queryKeyPaginate);
     },
   });
   const HandleConfirmFriendRequest = async (id: any) => {
@@ -40,7 +43,7 @@ export const FriendRequestPage = () => {
       });
       const { data } = await confirmFriendRequestMutation.mutateAsync(id);
       manuallySetListFriend('add', data);
-      manuallySetListFriendPaginate('add', id);
+
       return data;
     } catch (error) {
       throw error;
@@ -54,6 +57,7 @@ export const FriendRequestPage = () => {
         return newState;
       });
       const { data } = await FriendService.deleteFriendRequest(id);
+      queryClient.invalidateQueries(FriendsRequestQueryKey);
       return data;
     } catch (error) {
       throw error;
@@ -61,15 +65,10 @@ export const FriendRequestPage = () => {
   };
   // LIST_SUGGEST_FRIEND
   const fetchSuggestFriend = async ({ pageParam = 1 }) => {
-    const { data } = await FriendService.getSuggestFriends(7, pageParam);
+    const { data } = await FriendService.getSuggestFriends(8, pageParam);
     return data;
   };
   const FriendsSuggestQueryKey = ['suggestFriend'];
-
-  // const { data: friendSuggest, isLoading: isLoadingSuggestFriend } = useQuery({
-  //   queryKey: FriendsSuggestQueryKey,
-  //   queryFn: fetchSuggestFriend,
-  // });
   const {
     data: friendSuggest,
     isLoading: isLoadingSuggestFriend,
@@ -84,6 +83,7 @@ export const FriendRequestPage = () => {
       }
       return lastPage.current_page + 1;
     },
+    staleTime: 600000,
   });
 
   useEffect(() => {
@@ -96,8 +96,16 @@ export const FriendRequestPage = () => {
 
   const HandleAddFriend = async (id: any) => {
     try {
+      setIsLoadingAddFriend(prevLoadingState => ({
+        ...prevLoadingState,
+        [id]: true,
+      }));
       const response = await FriendService.addFriend(id);
       queryClient.invalidateQueries(FriendsSuggestQueryKey);
+      setIsLoadingAddFriend(prevLoadingState => ({
+        ...prevLoadingState,
+        [id]: false,
+      }));
     } catch (error) {
       throw error;
     }
@@ -128,7 +136,7 @@ export const FriendRequestPage = () => {
                         <>
                           {friendRequest.map((itemFriend: any) => {
                             return (
-                              <Col key={itemFriend.id} sm={3}>
+                              <Col key={itemFriend.id} xl={3} lg={4} md={6} sm={12}>
                                 <Card className="mb-3">
                                   <Link to={`${pathName.PROFILE}/${itemFriend.friend.id}`}>
                                     <Card.Img
@@ -232,7 +240,7 @@ export const FriendRequestPage = () => {
                         <Row>
                           {listFriendSuggest.map((itemFriend: any) => {
                             return (
-                              <Col key={itemFriend.id} sm={3}>
+                              <Col key={itemFriend.id} xl={3} lg={4} md={6} sm={12}>
                                 <Card className="mb-3">
                                   <Link to={`${pathName.PROFILE}/${itemFriend.id}`}>
                                     <Card.Img
@@ -259,7 +267,9 @@ export const FriendRequestPage = () => {
                                     <div className="d-flex flex-column  mt-2">
                                       <Link
                                         to="#"
-                                        onClick={() => HandleAddFriend(itemFriend.id)}
+                                        onClick={() =>
+                                          !isLoadingAddFriend[itemFriend.id] && HandleAddFriend(itemFriend.id)
+                                        }
                                         className={`btn ${
                                           itemFriend.friendship ? 'btn-soft-secondary' : 'btn-soft-primary'
                                         } rounded confirm-btn`}
@@ -272,7 +282,9 @@ export const FriendRequestPage = () => {
                               </Col>
                             );
                           })}
-                          {isFetching && listFriendSuggest && listFriendSuggest.length > 0 ? <CardLoad /> : null}
+                          {isFetching && hasNextPage && listFriendSuggest && listFriendSuggest.length > 0 ? (
+                            <CardLoad />
+                          ) : null}
                         </Row>
                       ) : (
                         <p>Không có yêu cầu mới</p>
