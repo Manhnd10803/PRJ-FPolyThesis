@@ -22,10 +22,5 @@ export const getColorClassIconNotification = (item: INotification) => {
 };
 
 export const formatNotificationLink = (item: INotification) => {
-  // Nếu noti type là friend thì link sẽ là link đến friend request , k có id
-  if (item.notification_type === NotificationType.friend) {
-    return NotificationLink[item.notification_type];
-  }
-  // Còn lại thì sẽ có id
   return NotificationLink[item.notification_type] + `/${item.objet_id}`;
 };

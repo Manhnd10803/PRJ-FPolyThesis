@@ -153,7 +153,11 @@ const ListQa = ({ data, fetchNextPage, hasNextPage, isFetching }: any) => {
           {data?.map((item: any, index: number) => (
             <Row className="mb-2" key={index}>
               <div className="col-12">
-                <Link className="text-dark font-bold" style={{ fontSize: '20px' }} to={`${pathName.BLOG}/${item.id}`}>
+                <Link
+                  className="text-dark font-bold"
+                  style={{ fontSize: '20px' }}
+                  to={`${pathName.QUESTS_DETAIL}/${item.id}`}
+                >
                   {item.title}
                 </Link>
               </div>

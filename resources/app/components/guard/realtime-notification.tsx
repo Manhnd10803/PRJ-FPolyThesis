@@ -9,7 +9,7 @@ import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useMemo } from 'react';
 import toast from 'react-hot-toast';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const audioReceiverNotification = () => {
   new Audio(mp3NotificationCommon).play();
@@ -84,6 +84,8 @@ export const RealtimeNotification = () => {
 
   const queryClient = useQueryClient();
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     if (accessToken) {
       window.Echo.connector.options.auth.headers['Authorization'] = `Bearer ${accessToken}`;
@@ -103,13 +105,16 @@ export const RealtimeNotification = () => {
         if (!isChatPage) {
           // play sound
           audioReceiverNotification();
-
+          console.log(event.notification.notification_type);
           showNotification({
             content,
             onClick: (id: string) => {
               toast.dismiss(id);
-
-              window.open(formatNotificationLink(event.notification), '_blank');
+              if (event.notification.notification_type === 'message') {
+                window.open(formatNotificationLink(event.notification), '_blank');
+              } else {
+                navigate(formatNotificationLink(event.notification));
+              }
             },
             avatarSender: avatar_sender || notifyImageDefault,
           });
