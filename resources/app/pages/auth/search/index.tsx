@@ -53,7 +53,7 @@ export const SearchPage = () => {
       return lastPage.current_page + 1;
     },
     enabled: searchValueFromURL !== '',
-    keepPreviousData: true,
+    // keepPreviousData: true,
     staleTime: 600000,
   });
 
