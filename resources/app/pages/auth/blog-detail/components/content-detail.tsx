@@ -29,6 +29,7 @@ import toast from 'react-hot-toast';
 import StarsIcon from '@mui/icons-material/Stars';
 import { momentVi } from '@/utilities/functions/moment-locale';
 import { BlogService } from '@/apis/services/blog.service';
+import { debounce } from 'lodash';
 
 export const ContentBlogDetail = ({ data, commentRef, createLike, BlogsQueryKey }: any) => {
   const [likeStatus, setLikeStatus] = useState(data?.user_like?.emotion || null);
@@ -134,6 +135,8 @@ export const ContentBlogDetail = ({ data, commentRef, createLike, BlogsQueryKey 
       commentRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
+  const debouncedHandleLikeClick = debounce(handleLikeClick, 1000); // Adjust the delay as needed
+  const debouncedHandleDislikeClick = debounce(handleDislikeClick, 1000); // Adjust the delay as needed
   return (
     <>
       <Col lg="12">
@@ -170,7 +173,11 @@ export const ContentBlogDetail = ({ data, commentRef, createLike, BlogsQueryKey 
                   Đă đăng vào {momentVi(data?.blog?.created_at).fromNow()}
                 </div>
                 <ButtonGroup aria-label="Basic example">
-                  <Button className="d-flex align-items-center gap-2 " variant="light" onClick={handleLikeClick}>
+                  <Button
+                    className="d-flex align-items-center gap-2 "
+                    variant="light"
+                    onClick={debouncedHandleLikeClick}
+                  >
                     {likeStatus === 'like' ? (
                       <ThumbUpIcon className="text-primary" sx={{ fontSize: 20 }} />
                     ) : (
@@ -184,7 +191,7 @@ export const ContentBlogDetail = ({ data, commentRef, createLike, BlogsQueryKey 
                   <Button
                     className="d-flex align-items-center"
                     variant="light"
-                    onClick={handleDislikeClick}
+                    onClick={debouncedHandleDislikeClick}
                     data-bs-placement="bottom"
                   >
                     {likeStatus === 'dislike' ? (
@@ -197,7 +204,7 @@ export const ContentBlogDetail = ({ data, commentRef, createLike, BlogsQueryKey 
                 <OverlayTrigger placement="bottom" overlay={<Tooltip>Di chuyển tới bình luận</Tooltip>}>
                   <Link to={'#'} className="d-flex align-items-center cursor-pointer" onClick={scrollToComment}>
                     <i className="material-symbols-outlined pe-2 md-18 text-primary">mode_comment</i>
-                    {data?.total_comments} comments
+                    {data?.total_comments} bình luận
                   </Link>
                 </OverlayTrigger>
 

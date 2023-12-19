@@ -284,12 +284,12 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
                                     onClick={() => toggleReplyForm(comment.id)}
                                   >
                                     <span className="material-symbols-outlined">reply</span>
-                                    reply
+                                    trả lời
                                   </Link>
                                   <Link to="#" className="comments d-flex align-items-center">
                                     <i className="material-symbols-outlined pe-2 md-18 text-primary">mode_comment</i>
                                     <div>
-                                      <span>{comment?.replies?.length}</span> comment
+                                      <span>{comment?.replies?.length}</span> bình luận
                                     </div>
                                   </Link>
                                   <span>{momentVi(comment?.created_at).fromNow()}</span>
@@ -448,7 +448,7 @@ export const Comments = ({ data, postComment, deleteComment, putComment }: any) 
                                           onClick={() => toggleReplyForm(reply?.id)}
                                         >
                                           <span className="material-symbols-outlined">reply</span>
-                                          reply
+                                          trả lời
                                         </Link>
                                         <span>{momentVi(reply?.created_at).fromNow()}</span>
                                       </div>
