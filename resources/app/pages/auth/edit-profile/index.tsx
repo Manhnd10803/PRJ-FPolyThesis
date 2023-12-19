@@ -1,7 +1,7 @@
 import { Card } from '@/components/custom';
 import { useEffect, useRef, useState } from 'react';
 import { Button, Col, Container, Form, Modal, Nav, Row, Spinner } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { TUserUpdateSchema, ValidateUserUpdateSchema } from '@/validation/zod/user';
 import { MajorService } from '@/apis/services/major.service';
 import { useMutation } from '@tanstack/react-query';
@@ -13,7 +13,10 @@ import AvatarEditor from 'react-avatar-editor';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loading } from '@/components/shared/loading';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
+import { pathName } from '@/routes/path-name';
 export const EditProfilePage = () => {
+  const navigate = useNavigate();
+
   const [DataMajor, setDataMajor] = useState([]);
   const [loading, setLoading] = useState(true);
   const [DataUser, setUserData] = useState<TUserUpdateSchema>({});
@@ -182,7 +185,9 @@ export const EditProfilePage = () => {
 
   const onSubmit = async (data: TUserUpdateSchema) => {
     const imageURL = await CloudiaryService.uploadImages(file, 'avatar');
-    StorageFunc.setAvatarUser(imageURL[0]);
+    if (imageURL) {
+      StorageFunc.setAvatarUser(imageURL[0]);
+    }
     const newData = {
       ...data,
       avatar: imageURL[0],
@@ -196,6 +201,7 @@ export const EditProfilePage = () => {
         },
         onSuccess: () => {
           toast.success('Cập nhật thành công');
+          navigate(pathName.PROFILE);
         },
       },
     );
