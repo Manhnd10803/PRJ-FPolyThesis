@@ -3,6 +3,8 @@ import MuiButton from '@mui/material/Button';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import AvatarEditor from 'react-avatar-editor';
 import { styled } from '@mui/material/styles';
+import { useEffect } from 'react';
+import { useShowAboutProfile } from '@/hooks/useShowAboutProfile';
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
   clipPath: 'inset(50%)',
@@ -15,6 +17,8 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 export const UploadImage = (props: any) => {
+  useShowAboutProfile(props.show, [props.show]);
+
   const handleImageUpload = (e: any) => {
     const file = e.target.files[0];
     if (file) {
@@ -78,6 +82,7 @@ export const UploadImage = (props: any) => {
 };
 
 export const ResizeImage = (props: any) => {
+  useShowAboutProfile(props.show, [props.show]);
   return (
     <Modal
       show={props.show}

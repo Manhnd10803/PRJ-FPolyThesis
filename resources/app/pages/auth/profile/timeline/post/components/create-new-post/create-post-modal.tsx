@@ -13,10 +13,7 @@ import { CreateNewPostChoice } from './create-post-choice';
 import { CloudiaryService } from '@/apis/services/cloudinary.service';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { usePost } from '@/hooks/usePostQuery';
-import { IUser } from '@/models/user';
-import { is } from 'date-fns/locale';
-import { useQueryClient } from '@tanstack/react-query';
-import { GetNewPostResponseType } from '@/models/post';
+import { useShowAboutProfile } from '@/hooks/useShowAboutProfile';
 
 type CreatePostModalProps = {
   handleClose: () => void;
@@ -28,6 +25,7 @@ export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => 
   const { manuallyAddPost } = usePost('profile');
   const fullName = StorageFunc.getFullName();
   const userInfo = StorageFunc.getUser();
+  useShowAboutProfile(show, [show]);
 
   const [isShowDrop, setShowDrop] = useState(false);
   const [privacy, setPrivacy] = useState(0);

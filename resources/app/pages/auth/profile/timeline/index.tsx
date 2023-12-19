@@ -36,29 +36,29 @@ export const Timeline = ({
 }: TimelineProps) => {
   const [isSticky, setSticky] = useState(false);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const offset = window.scrollY;
-      const topThreshold = 10;
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     const offset = window.scrollY;
+  //     const topThreshold = 10;
 
-      if (offset >= topThreshold) {
-        setSticky(true);
-      } else {
-        setSticky(false);
-      }
-    };
+  //     if (offset >= topThreshold) {
+  //       setSticky(true);
+  //     } else {
+  //       setSticky(false);
+  //     }
+  //   };
 
-    window.addEventListener('scroll', handleScroll);
+  //   window.addEventListener('scroll', handleScroll);
 
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener('scroll', handleScroll);
+  //   };
+  // }, []);
 
   return (
     <Card.Body>
       <Row>
-        <Col lg={4} className={`${isSticky ? 'about-profile' : ''} p-0`}>
+        <Col lg={4} id="about-profile" className="p-0">
           <About aboutUser={about} isLoading={isLoading} />
           <MyPhoto listPhoto={listImage} />
           <FriendList listFriend={listFriend} idUser={idUser} />
