@@ -167,39 +167,50 @@
                                 </td>
                                 <td>
                                     @if ($user->status == config('default.user.status.suspend'))
-                                    @if ($isSPAdmin || in_array('admin.users.unlock', $userPermission))
-                                        <form action="{{ route('admin.users.unlock', $user->id) }}" method="post">
-                                            @csrf
-                                            @method('PUT')
-                                            <button type="submit" class="btn btn-info btn-sm" data-toggle="modal"><i class="fa fa-fw fa-unlock"></i></button>
-                                        </form>
-                                    @endif
+                                        @if ($isSPAdmin || in_array('admin.users.unlock', $userPermission))
+                                            <form action="{{ route('admin.users.unlock', $user->id) }}" method="post">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit" class="btn btn-info btn-sm" data-toggle="modal"><i class="fa fa-fw fa-unlock"></i></button>
+                                            </form>
+                                        @endif
                                     @else
-                                    @if ($isSPAdmin || in_array('admin.users.lock', $userPermission))
-                                        <button type="submit" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modal-danger{{ $user->id }}"><i class="fa fa-fw fa-lock"></i></button>
-                                        <div class="modal modal-danger fade" id="modal-danger{{ $user->id }}">
-                                            <div class="modal-dialog">
-                                                <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span></button>
-                                                    <h4 class="modal-title">FpolyZone</h4>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <p>Bạn có chắc muốn khóa tài khoản {{ $user->username }}? </p>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Hủy</button>
-                                                    <form action="{{ route('admin.users.lock', $user->id) }}" method="POST" style="display:inline">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <button type="submit" class="btn btn-outline">Đồng ý</button>
-                                                </form>
-                                                </div>
+                                        @if ($isSPAdmin || in_array('admin.users.lock', $userPermission))
+                                            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modal-default{{ $user->id }}"><i class="fa fa-fw fa-lock"></i></button>
+                                            <div class="modal fade in" id="modal-default{{ $user->id }}">
+                                                <div class="modal-dialog">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                            <h4 class="modal-title">FpolyZone</h4>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p>Bạn có chắc muốn khóa tài khoản {{ $user->username }}, hãy nhập lý do? </p>
+                                                            <form action="{{ route('admin.users.lock', $user->id) }}" method="POST" id="lockForm{{ $user->id }}" style="display:inline">
+                                                                <input type="text" name="reason" id="reasonInput{{ $user->id }}" class="form-control" style="width:100%" required>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Hủy</button>
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <button type="submit" class="btn btn-primary" id="confirmButton{{ $user->id }}" disabled>Đồng ý</button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    @endif
+                    
+                                            <!-- Thêm đoạn script kiểm tra giá trị trường input -->
+                                            <script>
+                                                document.getElementById('reasonInput{{ $user->id }}').addEventListener('input', function() {
+                                                    var reasonValue = this.value.trim();
+                                                    var confirmButton = document.getElementById('confirmButton{{ $user->id }}');
+                                                    confirmButton.disabled = reasonValue === '';
+                                                });
+                                            </script>
+                                        @endif
                                     @endif
                                 </td>
                             </tr>

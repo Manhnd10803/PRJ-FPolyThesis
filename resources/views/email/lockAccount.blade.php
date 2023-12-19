@@ -32,6 +32,11 @@
             line-height: 1.6;
         }
 
+        .highlight {
+            color: #e74c3c; /* Màu đỏ: #e74c3c */
+            font-weight: bold;
+        }
+
         p.signature {
             margin-top: 20px;
         }
@@ -43,7 +48,7 @@
         <h2>Thông Báo Tạm Thời Khóa Tài Khoản</h2>
         <p>Chào {{ $fullname }},</p>
         <p>Chúng tôi xin gửi lời chào trân trọng đến bạn từ {{ env('APP_NAME') }}. Đầu tiên, chúng tôi xin chân thành cảm ơn sự quan tâm và sử dụng dịch vụ của chúng tôi.</p>
-        <p>Chúng tôi muốn thông báo rằng tài khoản của bạn hiện đang tạm thời bị khóa do vi phạm một hoặc nhiều tiêu chuẩn cộng đồng của chúng tôi.</p>
+        <p>Chúng tôi muốn thông báo rằng tài khoản của bạn hiện đang tạm thời bị khóa do vi phạm: <span class="highlight">{{ $reason }}</span></p>
         <p>Xin chân thành cảm ơn sự thông hiểu và hợp tác của bạn trong việc giữ cho cộng đồng của chúng tôi an toàn và tích cực.</p>
         <p class="signature">Trân trọng!</p>
     </div>

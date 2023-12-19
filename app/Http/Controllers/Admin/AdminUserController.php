@@ -85,11 +85,12 @@ class AdminUserController extends Controller
         $users = User::whereIn('group_id', [config('default.user.groupID.student'), config('default.user.groupID.guest')])->orderByDesc('id')->get();
         return view('admin.users.index', compact('users', 'majors'));
     }
-    public function lockUser(User $user)
+    public function lockUser(User $user, Request $request)
     {
         $user->update(['status' => config('default.user.status.suspend')]);
         $fullname = $user->last_name . ' ' . $user->first_name;
-        Mail::to($user->email)->send(new LockAccount($fullname));
+        $reason = $request->reason;
+        Mail::to($user->email)->send(new LockAccount($fullname, $reason));
         return redirect()->back()->with('success', 'Khóa người dùng thành công');
     }
     public function unlockUser(User $user)
@@ -186,7 +187,7 @@ class AdminUserController extends Controller
     }
     public function createMember()
     {
-        $users = User::select('email')->where('group_id', 3)->orWhere('group_id', 4)->get();
+        $users = User::select('email')->where('group_id', 3)->orWhere('group_id', 4)->orderByDesc('id')->get();
         $roles = Role::all();
         return view('admin.users.createMember', compact('roles', 'users'));
     }
@@ -224,8 +225,9 @@ class AdminUserController extends Controller
     }
     public function editMember(UserRole $member)
     {
+        $user = User::where('email', $member->user->email)->first();
         $roles = Role::all();
-        return view('admin.users.editMember', compact('member', 'roles'));
+        return view('admin.users.editMember', compact('member', 'roles', 'user'));
     }
     public function updateMember(Request $request)
     {

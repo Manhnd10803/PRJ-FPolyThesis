@@ -17,9 +17,11 @@ class LockAccount extends Mailable
      * Create a new message instance.
      */
     public $fullname;
-    public function __construct($fullname)
+    public $reason;
+    public function __construct($fullname, $reason)
     {
         $this->fullname = $fullname;
+        $this->reason = $reason;
     }
 
     /**

@@ -198,7 +198,7 @@
                 <div class="info-box bg-aqua">
                     <span class="info-box-icon"><i class="fa fa-fw fa-newspaper-o"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text">Tổng số Bài viết</span>
+                        <span class="info-box-text">Tổng số blog</span>
                         @php
                             $countBlog = count(App\Models\Blog::where('status', 1)->get());
                             $startDate = now()->subWeeks(1);
@@ -221,7 +221,7 @@
                 <div class="info-box bg-yellow">
                     <span class="info-box-icon"><i class="fa fa-fw fa-book"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text">Tổng số Bài đăng</span>
+                        <span class="info-box-text">Tổng số post</span>
                         @php
                             $countPost = count(App\Models\Post::get());
                             $startDate = now()->subWeeks(1);
@@ -240,7 +240,7 @@
                 <div class="info-box bg-green">
                     <span class="info-box-icon"><i class="fa fa-fw fa-question"></i></span>
                     <div class="info-box-content">
-                        <span class="info-box-text">Tổng số Câu hỏi</span>
+                        <span class="info-box-text">Tổng số Q&A</span>
                         @php
                             $countQa = count(App\Models\Qa::get());
                             $startDate = now()->subWeeks(1);

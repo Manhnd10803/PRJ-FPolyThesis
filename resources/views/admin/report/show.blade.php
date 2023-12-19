@@ -85,7 +85,7 @@
                         @if ($isSPAdmin || in_array('admin.report.statusResolved', $userPermission))
                             <span class="time">
                                 <input type="button" class="btn btn-success" value="Chấp nhận báo cáo" data-toggle="modal" data-target="#modal-success">
-                                <div class="modal modal-success fade" id="modal-success">
+                                <div class="modal fade in" id="modal-success">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
                                             <div class="modal-header">
@@ -99,11 +99,11 @@
                                                 </p>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Hủy</button>
+                                                <button type="button" class="btn btn-default   pull-left" data-dismiss="modal">Hủy</button>
                                                 <form action="{{ route('admin.report.statusResolved', ['report' => $report->id]) }}" method="post" style="display: inline;">
                                                     @csrf
                                                     @method('PUT')
-                                                    <button type="submit" class="btn btn-outline">Đồng ý</button>
+                                                    <button type="submit" class="btn btn-primary">Đồng ý</button>
                                                 </form>
                                             </div>
                                         </div>
@@ -114,7 +114,7 @@
                         @if ($isSPAdmin || in_array('admin.report.statusDismissed', $userPermission))
                         <span class="time">
                             <input type="button" class="btn btn-danger" value="Hủy báo cáo" data-toggle="modal" data-target="#modal-danger">
-                            <div class="modal modal-danger fade" id="modal-danger">
+                            <div class="modal fade in" id="modal-danger">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -128,11 +128,11 @@
                                             </p>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Hủy</button>
+                                            <button type="button" class="btn btn-default  pull-left" data-dismiss="modal">Hủy</button>
                                             <form action="{{ route('admin.report.statusDismissed', ['report' => $report->id]) }}" method="post" style="display: inline;">
                                                 @csrf
                                                 @method('PUT')
-                                                <button type="submit" class="btn btn-outline">Đồng ý</button>
+                                                <button type="submit" class="btn btn-primary">Đồng ý</button>
                                             </form>
                                         </div>
                                     </div>
@@ -171,7 +171,7 @@
                       @if ($isSPAdmin || in_array('admin.report.delete', $userPermission))
                       <span class="time">
                           <input type="button" class="btn btn-danger" value="Xóa báo cáo này" data-toggle="modal" data-target="#modal-delete">
-                          <div class="modal modal-danger fade" id="modal-delete">
+                          <div class="modal fade in" id="modal-delete">
                               <div class="modal-dialog">
                                   <div class="modal-content">
                                       <div class="modal-header">
@@ -185,11 +185,11 @@
                                           </p>
                                       </div>
                                       <div class="modal-footer">
-                                          <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Hủy</button>
+                                          <button type="button" class="btn btn-default  pull-left" data-dismiss="modal">Hủy</button>
                                           <form action="{{ route('admin.report.delete', ['report' => $report->id]) }}" method="post" style="display: inline;">
                                               @csrf
                                               @method('DELETE')
-                                              <button type="submit" class="btn btn-outline">Đồng ý</button>
+                                              <button type="submit" class="btn btn-primary">Đồng ý</button>
                                           </form>
                                       </div>
                                   </div>

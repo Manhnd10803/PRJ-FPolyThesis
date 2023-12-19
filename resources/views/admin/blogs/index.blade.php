@@ -148,12 +148,12 @@
                                         @if ($blog->status == config('default.blog.status.approved'))
                                             @if ($isSPAdmin || in_array('admin.blogs.statusApprove', $userPermission))
                                                 <button type="submit" class="btn btn-danger btn-sm" data-toggle="modal"
-                                                    data-target="#modal-danger-{{ $blog->id }}"><i
+                                                    data-target="#modal-default-{{ $blog->id }}"><i
                                                         class="fa fa-trash-o"></i></button>
                                             @endif
                                         @endif
 
-                                        <div class="modal modal-danger fade" id="modal-danger-{{ $blog->id }}">
+                                        <div class="modal fade in" id="modal-default-{{ $blog->id }}">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
@@ -166,13 +166,13 @@
                                                         <p>Bạn có chắc muốn xóa {{ $blog->title }}? </p>
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <button type="button" class="btn btn-outline pull-left"
+                                                        <button type="button" class="btn btn-default pull-left"
                                                             data-dismiss="modal">Hủy</button>
                                                         <form action="{{ route('admin.blogs.destroy', $blog->id) }}"
                                                             method="POST" style="display:inline">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" class="btn btn-outline">Đồng ý</button>
+                                                            <button type="submit" class="btn btn-primary">Đồng ý</button>
                                                         </form>
                                                     </div>
                                                 </div>

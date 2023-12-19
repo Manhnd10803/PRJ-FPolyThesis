@@ -79,7 +79,7 @@
                                     @endif
                                     @if ($isSPAdmin || in_array('admin.members.destroy', $userPermission))
                                         <button type="submit" class="btn btn-danger btn-sm" data-toggle="modal" data-target="#modal-danger{{ $userRole->id }}"><i class="fa fa-fw fa-remove"></i></button>
-                                        <div class="modal modal-danger fade" id="modal-danger{{ $userRole->id }}">
+                                        <div class="modal fade in" id="modal-danger{{ $userRole->id }}">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                 <div class="modal-header">
@@ -91,11 +91,11 @@
                                                     <p>Xác nhận xóa thành viên quản trị?</p>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">Hủy</button>
+                                                    <button type="button" class="btn btn-default  pull-left" data-dismiss="modal">Hủy</button>
                                                     <form action="{{ route('admin.members.destroy', $userRole->id) }}" method="POST" style="display:inline">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-outline">Đồng ý</button>
+                                                    <button type="submit" class="btn btn-primary">Đồng ý</button>
                                                 </form>
                                                 </div>
                                                 </div>

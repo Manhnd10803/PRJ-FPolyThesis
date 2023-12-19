@@ -103,7 +103,7 @@
                                         <button type="submit" class="btn btn-danger btn-sm" data-toggle="modal"
                                                 data-target="#modal-danger-{{ $post->id }}"><i
                                                     class="fa fa-trash-o"></i></button>
-                                        <div class="modal modal-danger fade" id="modal-danger-{{ $post->id }}">
+                                        <div class="modal fade in" id="modal-danger-{{ $post->id }}">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
@@ -116,13 +116,13 @@
                                                         <p>Bạn có chắc muốn xóa bài viết "ID: {{ $post->id }}"? </p>
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <button type="button" class="btn btn-outline pull-left"
+                                                        <button type="button" class="btn btn-default  pull-left"
                                                             data-dismiss="modal">Hủy</button>
                                                         <form action="{{ route('admin.posts.destroy', $post->id) }}"
                                                             method="POST" style="display:inline">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" class="btn btn-outline">Đồng ý</button>
+                                                            <button type="submit" class="btn btn-primary">Đồng ý</button>
                                                         </form>
                                                     </div>
                                                 </div>

@@ -139,7 +139,7 @@
                         <span class="time">
                             <button type="submit" class="btn btn-success" data-toggle="modal"
                                 data-target="#modal-danger"><i class="fa fa-check-circle"></i> Duyệt bài</button>
-                            <div class="modal modal-success fade" id="modal-danger">
+                            <div class="modal fade in" id="modal-danger">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -152,13 +152,13 @@
                                             </p>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-outline pull-left"
+                                            <button type="button" class="btn btn-default  pull-left"
                                                 data-dismiss="modal">Hủy</button>
                                             <form action="{{ route('admin.blogs.statusApprove', ['blog' => $blog->id]) }}"
                                                 method="post" style="display: inline;">
                                                 @csrf
                                                 @method('PUT')
-                                                <button type="submit" class="btn btn-outline">Đồng ý</button>
+                                                <button type="submit" class="btn btn-primary">Đồng ý</button>
                                             </form>
                                         </div>
                                     </div>
@@ -173,9 +173,9 @@
                     <li>
                         <span class="time">
                             <button type="submit" class="btn btn-danger" data-toggle="modal"
-                                data-target="#modal-danger-{{ $blog->id }}">Hủy bài viết</button>
+                                data-target="#modal-default-{{ $blog->id }}">Hủy bài viết</button>
 
-                            <div class="modal modal-danger fade" id="modal-danger-{{ $blog->id }}">
+                            <div class="modal fade in" id="modal-default-{{ $blog->id }}">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -188,13 +188,13 @@
                                             </p>
                                         </div>
                                         <div class="modal-footer">
-                                            <button type="button" class="btn btn-outline pull-left"
+                                            <button type="button" class="btn btn-default pull-left"
                                                 data-dismiss="modal">Hủy</button>
                                             <form action="{{ route('admin.blogs.statusReject', ['blog' => $blog->id]) }}"
                                                 method="post" style="display: inline;">
                                                 @csrf
                                                 @method('PUT')
-                                                <button type="submit" class="btn btn-outline">Đồng ý</button>
+                                                <button type="submit" class="btn btn-primary">Đồng ý</button>
                                             </form>
                                         </div>
                                     </div>

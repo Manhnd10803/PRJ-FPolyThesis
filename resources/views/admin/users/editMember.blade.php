@@ -11,26 +11,26 @@
         <div class="box-body">
             <div class="form-group">
                 <label for="exampleInputEmail1">Nhập email user</label>
-                <input type="text" name="email" class="form-control" id="exampleInputEmail1" placeholder="Email" value="{{ $member->user->email }}">
+                <input type="text" name="email" class="form-control" id="exampleInputEmail1" placeholder="Email" value="{{ $member->user->email }}" disabled>
                 @error('email')
                 <p style="color: red">{{ $message }}</p>
                 @enderror
             </div>
             <div class="form-group">
                 <label for="exampleInputEmail1">Username</label>
-                <input type="text" name="username" class="form-control" id="exampleInputEmail1" placeholder="Username" readonly>
+                <input type="text" name="username" class="form-control" id="exampleInputEmail1" placeholder="Username" readonly value="{{ $user->username }}">
         </div>
         <div class="form-group">
             <label for="exampleInputEmail1">Họ và tên</label>
-            <input type="text" name="name" class="form-control" id="exampleInputEmail1" placeholder="Name" readonly>
+            <input type="text" name="name" class="form-control" id="exampleInputEmail1" placeholder="Name" readonly value="{{ $user->last_name . ' ' . $user->first_name }}">
         </div>
         <div class="form-group">
             <label for="exampleInputEmail1">Ngày sinh</label>
-            <input type="date" name="birthday" class="form-control" id="exampleInputEmail1" placeholder="Birthday" readonly>
+            <input type="date" name="birthday" class="form-control" id="exampleInputEmail1" placeholder="Birthday" readonly value="{{ $user->birthday }}">
         </div>
         <div class="form-group">
             <label for="exampleInputEmail1">Chuyên ngành</label>
-            <input type="text" name="major" class="form-control" id="exampleInputEmail1" placeholder="Major" readonly>
+            <input type="text" name="major" class="form-control" id="exampleInputEmail1" placeholder="Major" readonly value="{{ $user->major->majors_name }}">
         </div>
         <div class="form-group">
             <label for="exampleInputEmail1">Nhóm quản trị</label>

@@ -86,7 +86,7 @@
                                         <button type="submit" class="btn btn-danger btn-sm" data-toggle="modal"
                                             data-target="#modal-danger-{{ $major->id }}"><i
                                                 class="fa fa-trash-o"></i></button>
-                                        <div class="modal modal-danger fade" id="modal-danger-{{ $major->id }}">
+                                        <div class="modal fade in" id="modal-danger-{{ $major->id }}">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
@@ -99,13 +99,13 @@
                                                         <p>Bạn có chắc muốn xóa {{ $major->majors_name }}? </p>
                                                     </div>
                                                     <div class="modal-footer">
-                                                        <button type="button" class="btn btn-outline pull-left"
+                                                        <button type="button" class="btn btn-default  pull-left"
                                                             data-dismiss="modal">Hủy</button>
                                                         <form action="{{ route('admin.majors.destroy', $major) }}"
                                                             method="POST" style="display: inline-block;">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" class="btn btn-outline">Đồng
+                                                            <button type="submit" class="btn btn-primary">Đồng
                                                                 ý</button>
                                                         </form>
                                                     </div>
