@@ -24,6 +24,15 @@ export const emotionSource = {
   angry: angry,
 } as const;
 
+export const emotionName = {
+  like: 'Thích',
+  love: 'Yêu thích',
+  haha: 'HaHa',
+  wow: 'Wow',
+  sad: 'Buồn',
+  angry: 'Phẫn nộ',
+} as const;
+
 export const emotionData = [
   {
     id: emotionType.LIKE,

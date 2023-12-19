@@ -1,7 +1,7 @@
 import httpRequest from '@/apis';
-import { ApiConstants } from '../endpoints';
-import { GetNewPostResponseType, IPost } from '@/models/post';
 import { Paginate } from '@/models/pagination';
+import { GetNewPostResponseType } from '@/models/post';
+import { ApiConstants } from '../endpoints';
 
 const getPostsNewFeed = (quantity: number, page: number) => {
   return httpRequest.get<Paginate<GetNewPostResponseType>>(

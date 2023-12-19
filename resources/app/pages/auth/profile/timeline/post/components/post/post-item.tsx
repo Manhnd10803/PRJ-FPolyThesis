@@ -1,23 +1,23 @@
 import { CustomToggle, ShareModal } from '@/components/custom';
 import { GetNewPostResponseType } from '@/models/post';
 
-import { ChosePostEmotion } from '@/components/post/choose-emotion';
+import { CommentList } from '@/components/post/comment-list';
+import { CreateComment } from '@/components/post/create-comment';
+import { Top3Emotions } from '@/components/post/top3emotion';
 import { TotalComment } from '@/components/post/total-comment';
 import { TotalLike } from '@/components/post/total-like';
 import { useChooseEmotionPost, useIncreaseTotalLikePost } from '@/hooks/useLikeQuery';
-import { EmotionUnionType, ILiker, emotionData, emotionSource, EmotionType } from '@/models/like';
+import { EmotionUnionType, ILiker, emotionData, emotionSource } from '@/models/like';
 import { IUser } from '@/models/user';
-import { checkIfReacted, getTopEmotions } from '@/utilities/functions/post';
+import { checkIfReacted } from '@/utilities/functions/post';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Card, Col, Dropdown, Image, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
-import { CommentList } from '@/components/post/comment-list';
-import { CreateComment } from '@/components/post/create-comment';
+import { Link } from 'react-router-dom';
 import { PostItemContextProvider } from '../../contexts';
 import { Content } from './content';
 import { Header } from './header';
 import { ImageGrid } from './image-grid';
-import { Link } from 'react-router-dom';
 
 type PostItemProps = {
   item: GetNewPostResponseType;
@@ -29,7 +29,7 @@ export const PostItem = ({ item }: PostItemProps) => {
   const { mutate } = useChooseEmotionPost();
   const { manuallyIncreaseTotalLikePost, manuallyDecreaseTotalLikePost } = useIncreaseTotalLikePost('profile');
 
-  const { like_counts_by_emotion, likers, total_comments, comments, post } = item;
+  const { like_counts_by_emotion, likers, total_comments, comments, post, top_emotions } = item;
 
   const emotion = checkIfReacted(likers as ILiker[], userInfo as IUser);
   const [emotionSelected, setEmotionSelected] = useState<EmotionUnionType | undefined>(emotion);
@@ -38,11 +38,13 @@ export const PostItem = ({ item }: PostItemProps) => {
 
   const [nameEmotion, setNameEmotion] = useState<string | undefined>(nameEmotionDefault);
   const isIncrease = useRef(Boolean(emotionSelected));
-  const [top3Emotion, setTop3Emotion] = useState<EmotionUnionType[]>([]);
+
+  // const [top3Emotion, setTop3Emotion] = useState<EmotionUnionType[]>([]);
+
   // lấy ra 3 loại emotion được like nhiều nhất
-  useEffect(() => {
-    setTop3Emotion(getTopEmotions(like_counts_by_emotion));
-  }, [emotionSelected]);
+  // useEffect(() => {
+  //   setTop3Emotion(getTopEmotions(like_counts_by_emotion));
+  // }, [emotionSelected]);
 
   // function
   const handleChangeEmotionProfile = (emotion: EmotionUnionType) => {
@@ -106,9 +108,9 @@ export const PostItem = ({ item }: PostItemProps) => {
             {/* Render top 3 emotion ,total emotion and total comment */}
             <div className="d-flex justify-content-between align-items-center flex-wrap mt-3 border-top pt-2">
               <div className="d-flex align-items-center">
-                <ChosePostEmotion top3Emotion={top3Emotion} />
+                <Top3Emotions top3Emotion={top_emotions} />
                 <TotalLike
-                  totalLike={(like_counts_by_emotion && like_counts_by_emotion?.total_likes) || 0}
+                  totalLike={(like_counts_by_emotion && like_counts_by_emotion) || 0}
                   likers={likers as ILiker[]}
                 />
               </div>

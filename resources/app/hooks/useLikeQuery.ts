@@ -9,9 +9,11 @@ import { StorageFunc } from '@/utilities/local-storage/storage-func';
 
 const localUserId = StorageFunc.getUserId();
 
+type PostLikeMutationType = { postId: number; emotion: EmotionUnionType };
+
 export const useChooseEmotionPost = () => {
   const { mutate, ...rest } = useMutation({
-    mutationFn: async ({ postId, emotion }: { postId: number; emotion: EmotionUnionType }) => {
+    mutationFn: async ({ postId, emotion }: PostLikeMutationType) => {
       await LikeService.postLikePost(postId, emotion);
     },
   });
@@ -34,7 +36,7 @@ export const useIncreaseTotalLikePost = (typeQueryKey: 'profile' | 'posts' = 'po
         draft.pages.forEach(page => {
           page.data.forEach(postItem => {
             if (postItem.post.id === postId) {
-              postItem.like_counts_by_emotion.total_likes += 1;
+              postItem.like_counts_by_emotion += 1;
             }
           });
         });
@@ -50,7 +52,7 @@ export const useIncreaseTotalLikePost = (typeQueryKey: 'profile' | 'posts' = 'po
         draft.pages.forEach(page => {
           page.data.forEach(postItem => {
             if (postItem.post.id === postId) {
-              postItem.like_counts_by_emotion.total_likes -= 1;
+              postItem.like_counts_by_emotion -= 1;
             }
           });
         });

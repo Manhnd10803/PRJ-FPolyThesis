@@ -26,7 +26,7 @@ export const UnAuthLayout = () => {
   useEffect(() => {
     // Nếu là trang login mà đã đăng nhập rồi thì cho về trang trước
     if (window.location.pathname === pathName.LOGIN && token) {
-      navigate(-1);
+      navigate(pathName.HOME);
     }
   }, [token, navigate]);
 

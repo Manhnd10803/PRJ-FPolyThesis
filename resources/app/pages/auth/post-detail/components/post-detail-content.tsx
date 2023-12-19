@@ -1,5 +1,5 @@
 import { ShareModal } from '@/components/custom';
-import { ChosePostEmotion } from '@/components/post/choose-emotion';
+import { Top3Emotions } from '@/components/post/top3emotion';
 import { CommentList } from '@/components/post/comment-list';
 import { CreateComment } from '@/components/post/create-comment';
 import { TotalComment } from '@/components/post/total-comment';
@@ -10,7 +10,7 @@ import { usePostDetailContext } from '../contexts';
 import { Content } from './content';
 import { Header } from './header';
 import { useChooseEmotionPost, useIncreaseTotalLikePost } from '@/hooks/useLikeQuery';
-import { checkIfReacted, getTopEmotions } from '@/utilities/functions/post';
+import { checkIfReacted } from '@/utilities/functions/post';
 import { useRef } from 'react';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { IUser } from '@/models/user';
@@ -19,7 +19,7 @@ export const PostDetailContent = () => {
   // state
   const userInfo = StorageFunc.getUser();
 
-  const { like_counts_by_emotion, likers, total_comments, comments, post } = usePostDetailContext();
+  const { like_counts_by_emotion, likers, total_comments, comments, post, top_emotions } = usePostDetailContext();
 
   const { mutate } = useChooseEmotionPost();
   const { manuallyIncreaseTotalLikePost } = useIncreaseTotalLikePost();
@@ -29,9 +29,6 @@ export const PostDetailContent = () => {
   const emotionSelected = checkIfReacted(likers as ILiker[], userInfo as IUser);
 
   const isIncrease = useRef(Boolean(emotionSelected));
-
-  // lấy ra 3 loại emotion được like nhiều nhất dựa vào like_counts_by_emotion, sắp xếp theo thứ tự giảm dần
-  const top3Emotion = getTopEmotions(like_counts_by_emotion);
 
   const handleChangeEmotion = (emotion: EmotionUnionType) => {
     // Kiểm tra xem đã like chưa, nếu đã like rồi thì bỏ like, chưa like thì like
@@ -56,14 +53,10 @@ export const PostDetailContent = () => {
           <div className="d-flex justify-content-between align-items-center flex-wrap">
             <div className="like-block position-relative d-flex align-items-center">
               <div className="d-flex align-items-center">
-                <ChosePostEmotion
-                  onChange={handleChangeEmotion}
-                  defaultValue={emotionSelected}
-                  top3Emotion={top3Emotion}
-                />
+                <Top3Emotions top3Emotion={top_emotions} />
 
                 <TotalLike
-                  totalLike={(like_counts_by_emotion && like_counts_by_emotion?.total_likes) || 0}
+                  totalLike={(like_counts_by_emotion && like_counts_by_emotion) || 0}
                   likers={likers as ILiker[]}
                 />
               </div>
