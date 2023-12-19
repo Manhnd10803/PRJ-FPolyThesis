@@ -198,7 +198,6 @@ class ProfileController extends Controller
                     foreach ($posts as $post) {
                         // Lấy tất cả like của bài viết
                         $likeCountsByEmotion = [];
-                        $likeCountsByEmotion['total_likes'] = $post->likes->count();
                         $likers = $post->likes->map(function ($like) {
                             return [
                                 'user' => $like->user,
@@ -206,10 +205,20 @@ class ProfileController extends Controller
                                 'emotion' => $like->emotion,
                             ];
                         });
-                        $emotions = $likers->pluck('emotion')->unique();
-                        foreach ($emotions as $emotion) {
-                            $likeCountsByEmotion[$emotion] = $likers->where('emotion', $emotion)->count();
+                        // Đếm số lượng emotion cho mỗi loại
+                        foreach ($likers as $liker) {
+                            $emotion = $liker['emotion'];
+                            if (!isset($likeCountsByEmotion[$emotion])) {
+                                $likeCountsByEmotion[$emotion] = 1;
+                            } else {
+                                $likeCountsByEmotion[$emotion]++;
+                            }
                         }
+                        $likeCountsByEmotions = $post->likes->count();
+                        // Sắp xếp mảng theo số lượng giảm dần
+                        arsort($likeCountsByEmotion);
+                        // Lấy top 3 emotion nhiều nhất
+                        $topEmotions = array_keys(array_slice($likeCountsByEmotion, 0, 3));
                         // Count the total number of comments associated with the post
                         $totalComment = $post->comments->count();
 
@@ -226,10 +235,11 @@ class ProfileController extends Controller
                         }
                         $postData = [
                             'post' => $post->load(['user', 'likes.user', 'comments.user']),
-                            'like_counts_by_emotion' => $likeCountsByEmotion,
+                            'like_counts_by_emotion' => $likeCountsByEmotions,
                             'likers' => $likers,
                             'total_comments' => $totalComment,
                             'comments' => $commentDemos,
+                            'top_emotions' => $topEmotions,
                         ];
                         array_push($listPost, $postData);
                     }
@@ -384,7 +394,7 @@ class ProfileController extends Controller
                 $inputData['avatar'] = $user->avatar;
             }
             $user->update($inputData);
-           
+
             DB::commit();
             return response()->json($user, 200);
         } catch (\Exception $e) {

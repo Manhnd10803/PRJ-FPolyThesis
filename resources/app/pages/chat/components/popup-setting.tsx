@@ -32,7 +32,7 @@ export const PopUpSetting = ({ show, setShow }: PopUpSettingProps) => {
     return formattedBirthday;
   };
   return (
-    <div id="user-detail-popup" className={`scroller ${show ? 'show' : ''}`} style={{ width: '413.5px' }}>
+    <div id="user-detail-popup" className={`scroller ${show ? 'show' : ''}`} style={{ width: '46vh' }}>
       <div className="user-profile">
         <Button type="submit" onClick={ChatSidebarClose} variant=" close-popup p-3">
           <i className="material-symbols-outlined md-18" onClick={() => setShow(false)}>
