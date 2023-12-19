@@ -11,6 +11,7 @@ import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { FriendsMyUserPage } from './friends';
 import { getQueryKeyPostProfile } from '@/hooks/usePostQuery';
 import { Loading } from '@/components/shared/loading';
+import { de } from 'date-fns/locale';
 
 export const ProfilePage = () => {
   let { hash } = useLocation();
@@ -90,12 +91,13 @@ export const ProfilePage = () => {
   const queryKeyUser = ['user', id];
   const { data: detailUserProfile, isLoading: isUserLoading } = useQuery(queryKeyUser, getDetailUesrProfile);
 
-  if (!isUserLoading && !detailUserProfile)
+  if (!isUserLoading && !detailUserProfile && !detailProfile && !isFetchingNextPage && !isLoading) {
     return (
       <div className="content-page">
         <Loading size={100} textStyle={{ fontSize: '30px' }} textLoading="Tìm linh tinh gì đấy..." />
       </div>
     );
+  }
 
   return (
     <>

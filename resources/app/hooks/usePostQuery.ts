@@ -56,6 +56,17 @@ export const usePost = (typeQueryKey: 'profile' | 'posts' = 'posts') => {
     });
   };
 
+  const manuallyDeletePost = async (postId: number) => {
+    queryClient.setQueryData(queryKey, (oldData: InfiniteData<Paginate<GetNewPostResponseType>> | undefined) => {
+      if (!oldData) return oldData;
+      return produce(oldData, draft => {
+        draft.pages.forEach(page => {
+          page.data = page.data.filter(postItem => postItem.post.id !== postId);
+        });
+      });
+    });
+  };
+
   const manuallyChangeStatusPost = async (postId: number, newStatus: number) => {
     queryClient.setQueryData(queryKey, (oldData: InfiniteData<Paginate<GetNewPostResponseType>> | undefined) => {
       if (!oldData) return oldData;
@@ -81,5 +92,6 @@ export const usePost = (typeQueryKey: 'profile' | 'posts' = 'posts') => {
   return {
     manuallyAddPost,
     manuallyChangeStatusPost,
+    manuallyDeletePost,
   };
 };

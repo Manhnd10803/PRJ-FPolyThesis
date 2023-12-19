@@ -25,7 +25,12 @@ const NotificationItem = ({ item }: NotificationItemProps) => {
     if (item.status === NotificationStatus.UNREAD) {
       manuallySeeNotification(item.id);
     }
-    navigate(formatNotificationLink(item));
+
+    if (item.notification_type === 'message') {
+      window.open(formatNotificationLink(item), '_blank');
+    } else {
+      navigate(formatNotificationLink(item));
+    }
   };
 
   return (
