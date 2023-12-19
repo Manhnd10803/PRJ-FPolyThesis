@@ -6,7 +6,6 @@ import { Card, Col, Nav, Row, Tab } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { formatTime } from '../components/format-time';
 import { useInView } from 'react-intersection-observer';
-import { da } from 'date-fns/locale';
 
 type MyQaProps = {
   listQa: any;

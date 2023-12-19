@@ -69,7 +69,7 @@
 }
 .dropdown-menu-top-like {
   inset: auto auto 16px auto !important;
-  min-width: 32vh;
+  min-width: 290px;
   padding: 0.6rem 0 0.6rem 0.4rem;
   border-radius: 30px;
   border: none;
@@ -88,6 +88,36 @@
   .hover-image {
     margin-left: 8px;
     transition: transform 0.5s ease; // Thêm transition để hiệu ứng smooth
+  }
+}
+
+.dropdown-menu-top-like-profile {
+  inset: auto auto 16px auto !important;
+  min-width: 290px;
+  padding: 0.6rem 0 0.6rem 0.4rem;
+  border-radius: 30px;
+  border: none;
+  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.1);
+  .hover-span {
+    cursor: pointer;
+
+    &:hover {
+      + .hover-image,
+      .hover-image:hover {
+        transform: scale(1.5); // Thay đổi giá trị scale tùy ý
+      }
+    }
+  }
+
+  .hover-image {
+    margin-left: 8px;
+    transition: transform 0.5s ease; // Thêm transition để hiệu ứng smooth
+  }
+}
+
+@media (min-width: 1024px) {
+  .dropdown-menu-top-like-profile {
+    inset: auto auto 16px 40px !important;
   }
 }
 

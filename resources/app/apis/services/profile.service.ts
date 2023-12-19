@@ -1,3 +1,4 @@
+import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import httpRequest from '../axios-instance';
 import { ApiConstants } from '../endpoints';
 
@@ -12,8 +13,9 @@ const getDetailUserProfile = <T>(id: T) => {
 const updateCoverPhoto = (data: string) => {
   return httpRequest.put(`${ApiConstants.UPDATE_COVER_PHOTO}`, data);
 };
-const updateCoverAvatar = (data: string) => {
-  return httpRequest.put(`${ApiConstants.UPDATE_COVER_AVATAR}`, data);
+const updateAvatarProfile = (data: string) => {
+  StorageFunc.setAvatarUser(data.avatar);
+  return httpRequest.put(`${ApiConstants.UPDATE_AVATAR_PROFILE}`, data);
 };
 
-export const ProfileService = { getDetailProfile, getDetailUserProfile, updateCoverPhoto, updateCoverAvatar };
+export const ProfileService = { getDetailProfile, getDetailUserProfile, updateCoverPhoto, updateAvatarProfile };

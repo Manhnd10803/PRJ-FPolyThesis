@@ -60,6 +60,35 @@ export const SearchBar: React.FC<SearchBarProps> = () => {
   const [data, setData] = useState([]);
   const debouncedValue = useDebounce(searchValue, 500);
   const inputRef = useRef<HTMLInputElement | null>(null);
+
+  useEffect(() => {
+    if (isDropdownOpen) {
+      const headerElements = document.getElementsByClassName('about-profile');
+      // Kiểm tra xem phần tử có tồn tại không và chỉ định rõ phần tử cụ thể từ HTMLCollection
+      if (headerElements.length > 0) {
+        const headerElement = headerElements[0] as HTMLElement;
+        headerElement.style.setProperty('z-index', '0');
+        headerElement.style.setProperty('transition', 'none');
+      }
+    } else {
+      const headerElements = document.getElementsByClassName('about-profile');
+      if (headerElements.length > 0) {
+        const headerElement = headerElements[0] as HTMLElement;
+        headerElement.style.setProperty('z-index', '9999');
+        headerElement.style.setProperty('transition', 'all 0.5s ease-in-out');
+      }
+    }
+
+    return () => {
+      const headerElements = document.getElementsByClassName('about-profile');
+      if (headerElements.length > 0) {
+        const headerElement = headerElements[0] as HTMLElement;
+        headerElement.style.setProperty('z-index', '9999');
+        headerElement.style.setProperty('transition', 'all 0.5s ease-in-out');
+      }
+    };
+  }, [isDropdownOpen]);
+
   const handleToggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
 

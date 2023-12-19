@@ -2,7 +2,7 @@ import { useAddCommentPost, useAddCommentPostDetail, useCreateCommentPost } from
 import { TCommentSchema, createCommentSchema } from '@/validation/zod/comment';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 type CreateCommentProps = {
   postId: number;
@@ -13,12 +13,15 @@ export const CreateComment = ({ postId, isDetail = false }: CreateCommentProps) 
   const { reset, register, handleSubmit } = useForm<TCommentSchema>({
     resolver: zodResolver(createCommentSchema),
   });
+  const { pathname } = useLocation();
 
   const { createComment, isLoading } = useCreateCommentPost();
 
-  const { manuallyAddCommentPostItem } = useAddCommentPost();
+  const typeQueryKey = pathname.includes('profile') ? 'profile' : 'posts';
 
-  const { manuallyAddCommentPostDetail } = useAddCommentPostDetail();
+  const { manuallyAddCommentPostItem } = useAddCommentPost(typeQueryKey);
+
+  const { manuallyAddCommentPostDetail } = useAddCommentPostDetail(typeQueryKey);
 
   const onSubmit: SubmitHandler<TCommentSchema> = async dataForm => {
     createComment(
