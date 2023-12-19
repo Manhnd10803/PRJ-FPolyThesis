@@ -34,6 +34,7 @@ import { momentVi } from '@/utilities/functions/moment-locale';
 import StarsIcon from '@mui/icons-material/Stars';
 import { formatFullName } from '@/utilities/functions';
 import { pathName } from '@/routes/path-name';
+import { Loading } from '@/components/shared/loading';
 
 export const DetailQandAPage = () => {
   const commentRef = useRef(null);
@@ -233,6 +234,14 @@ export const DetailQandAPage = () => {
       commentRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  if (!isQaLoading && !qAndAData)
+    return (
+      <div className="content-page">
+        <Loading size={100} textStyle={{ fontSize: '30px' }} textLoading="Tìm linh tinh gì đấy..." />
+      </div>
+    );
+
   return (
     <>
       <div id="content-page" className="content-page">
@@ -255,9 +264,7 @@ export const DetailQandAPage = () => {
             <Card.Body>
               {isQaLoading || !qAndAData ? (
                 <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '50vh' }}>
-                  <Spinner animation="border" className="" variant="primary" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </Spinner>
+                  <Loading size={100} textStyle={{ fontSize: '30px' }} textLoading="Đợi chút nè..." />
                 </div>
               ) : (
                 <ul className="post-comments p-0 m-0">

@@ -10,6 +10,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
 import { Dropdown, ListGroup, Modal } from 'react-bootstrap';
 import toast from 'react-hot-toast';
+import { useLocation } from 'react-router-dom';
 
 export const MoreActionDropdown = ({ friendId, postId, username, postStatus }: any) => {
   const queryClient = useQueryClient();
@@ -26,7 +27,9 @@ export const MoreActionDropdown = ({ friendId, postId, username, postStatus }: a
   const [showCustomModal, setShowCustomModal] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
 
-  const { manuallyChangeStatusPost } = usePost();
+  const { pathname } = useLocation();
+  const typeQueryKey = pathname.includes('profile') ? 'profile' : 'posts';
+  const { manuallyChangeStatusPost } = usePost(typeQueryKey);
 
   const handleShowTitle = (title: any) => {
     setModalTitle(title);
@@ -183,27 +186,21 @@ export const MoreActionDropdown = ({ friendId, postId, username, postStatus }: a
             </>
           ) : (
             <>
-              {postStatus !== 2 ? (
-                <Dropdown.Item className="p-1" href="#" onClick={() => handleChangeStatusPost(postId, 2)}>
-                  <div className="d-flex align-items-top">
-                    <i className="ri-notification-line h4"></i>
-                    <div className="data ms-2">
-                      <h5 className="fw-bold">Ẩn bài viết</h5>
-                      <p className="mb-0">Ẩn bài viết khỏi bảng tin</p>
-                    </div>
-                  </div>
-                </Dropdown.Item>
-              ) : (
-                <>
-                  <Dropdown.Item className="p-1" href="#" onClick={() => handleChangeStatusPost(postId, 0)}>
+              <>
+                {postStatus !== 2 && (
+                  <Dropdown.Item className="p-1" href="#" onClick={() => handleChangeStatusPost(postId, 2)}>
                     <div className="d-flex align-items-top">
                       <i className="ri-notification-line h4"></i>
                       <div className="data ms-2">
-                        <h5 className="fw-bold">Hiển thị bài viết công khai</h5>
-                        <p className="mb-0">Hiển thị bài viết lên bảng tin</p>
+                        <h5 className="fw-bold">Ẩn bài viết</h5>
+                        <p className="mb-0">Ẩn bài viết khỏi bảng tin</p>
                       </div>
                     </div>
                   </Dropdown.Item>
+                )}
+              </>
+              <>
+                {postStatus !== 1 && (
                   <Dropdown.Item className="p-1" href="#" onClick={() => handleChangeStatusPost(postId, 1)}>
                     <div className="d-flex align-items-top">
                       <i className="ri-notification-line h4"></i>
@@ -213,8 +210,21 @@ export const MoreActionDropdown = ({ friendId, postId, username, postStatus }: a
                       </div>
                     </div>
                   </Dropdown.Item>
-                </>
-              )}
+                )}
+              </>
+              <>
+                {postStatus !== 0 && (
+                  <Dropdown.Item className="p-1" href="#" onClick={() => handleChangeStatusPost(postId, 0)}>
+                    <div className="d-flex align-items-top">
+                      <i className="ri-notification-line h4"></i>
+                      <div className="data ms-2">
+                        <h5 className="fw-bold">Hiển thị bài viết công khai</h5>
+                        <p className="mb-0">Hiển thị bài viết lên bảng tin</p>
+                      </div>
+                    </div>
+                  </Dropdown.Item>
+                )}
+              </>
             </>
           )}
         </Dropdown.Menu>

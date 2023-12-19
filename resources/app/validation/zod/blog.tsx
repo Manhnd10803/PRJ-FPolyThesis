@@ -1,5 +1,16 @@
 import { z } from 'zod';
 
+// Tạo một custom Zod schema cho chuỗi chứa nhiều hashtag, phân tách bằng dấu phẩy hoặc khoảng trắng
+const HashtagsStringSchema = z.string().refine(
+  value => {
+    const hashtags = value.split(/[,\s]+/).map(tag => tag.trim());
+    return hashtags.every(tag => tag.startsWith('#'));
+  },
+  {
+    message: 'Mỗi hashtag phải bắt đầu bằng "#" và được phân tách bằng dấu phẩy hoặc khoảng trắng',
+  },
+);
+
 export const blogCreateSchema = z.object({
   majors_id: z.string().refine(value => {
     return typeof value === 'string' && value !== '0';
@@ -18,15 +29,7 @@ export const blogCreateSchema = z.object({
   //     message: 'Phải là ảnh',
   //   }),
 
-  hashtag: z
-    .string()
-    .min(1, 'Hashtag không được để trống')
-    .refine(value => {
-      if (typeof value === 'string') {
-        return value.startsWith('#');
-      }
-      return false;
-    }, 'Hashtag phải bắt đầu bằng "#"'),
+  hashtag: HashtagsStringSchema,
   // content: z.string().min(1, 'Content is required'),
 });
 

@@ -1,7 +1,7 @@
 import { IUser } from '@/models/user';
 import { pathName } from '@/routes/path-name';
 import { formatFullName } from '@/utilities/functions';
-import { Card } from 'react-bootstrap';
+import { Card, Col, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
 type FriendListProps = {
@@ -24,21 +24,21 @@ export const FriendList = ({ listFriend, idUser }: FriendListProps) => {
           </div>
         </div>
         <Card.Body>
-          <ul className="profile-img-gallary p-0 m-0 list-unstyled">
+          <Row className="p-0 m-0 d-flex flex-wrap gap-2">
             {listFriend &&
               listFriend.map((item: IUser, index: number) => {
                 if (index < 3) {
                   return (
-                    <li key={index} className={`${listFriend?.length === 1 ? 'col-4' : ''}`}>
+                    <Col sm={4} className="p-0" style={{ cursor: 'pointer' }} key={index}>
                       <Link to={`/profile/${item.id}`}>
                         <img loading="lazy" src={item.avatar} alt="gallary" className="img-fluid" />
                       </Link>
                       <h6 className="mt-2 text-center">{formatFullName(item)}</h6>
-                    </li>
+                    </Col>
                   );
                 }
               })}
-          </ul>
+          </Row>
         </Card.Body>
       </Card>
     </>

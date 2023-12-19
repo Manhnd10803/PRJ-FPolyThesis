@@ -25,6 +25,11 @@ const setActivityUser = (activityUser: string) => {
   save(storageKeys.USER, { ...oldData, activity_user: activityUser });
 };
 
+const setAvatarUser = (avatar: string) => {
+  const oldData = load<IUser>(storageKeys.USER);
+  save(storageKeys.USER, { ...oldData, avatar: avatar });
+};
+
 const getUser = () => {
   return load<IUser>(storageKeys.USER);
 };
@@ -62,4 +67,5 @@ export const StorageFunc = {
   saveUserDetailData,
   getFullName,
   setActivityUser,
+  setAvatarUser,
 };

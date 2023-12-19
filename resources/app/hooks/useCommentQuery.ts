@@ -2,12 +2,15 @@ import { CommentService } from '@/apis/services/comment.service';
 import { GetNewPostResponseType } from '@/models/post';
 import { TCommentSchema } from '@/validation/zod/comment';
 import { InfiniteData, useMutation, useQueryClient } from '@tanstack/react-query';
-import { queryKeyPosts } from './usePostQuery';
+import { getQueryKeyPostProfile, queryKeyPosts } from './usePostQuery';
 import { Paginate } from '@/models/pagination';
 import { produce } from 'immer';
 import { IComment } from '@/models/comment';
+import { StorageFunc } from '@/utilities/local-storage/storage-func';
 
 type TCreateComment = { bodyData: TCommentSchema; id: number };
+
+const localUserId = StorageFunc.getUserId();
 
 export const useCreateCommentPost = () => {
   const { mutate, ...rest } = useMutation({
@@ -27,11 +30,13 @@ type TAddCommentPost = {
   postId: number;
 };
 
-export const useAddCommentPost = () => {
+export const useAddCommentPost = (typeQueryKey: 'profile' | 'posts' = 'posts') => {
   const queryClient = useQueryClient();
+  const queryKey =
+    typeQueryKey === 'profile' ? getQueryKeyPostProfile({ userId: localUserId!, type: 'post' }) : queryKeyPosts;
 
   const manuallyAddCommentPostItem = async ({ newComment, postId }: TAddCommentPost) => {
-    queryClient.setQueryData(queryKeyPosts, (oldData: InfiniteData<Paginate<GetNewPostResponseType>> | undefined) => {
+    queryClient.setQueryData(queryKey, (oldData: InfiniteData<Paginate<GetNewPostResponseType>> | undefined) => {
       if (!oldData) return oldData;
 
       return produce(oldData, draft => {
@@ -51,11 +56,15 @@ export const useAddCommentPost = () => {
   };
 };
 
-export const useAddCommentPostDetail = () => {
+export const useAddCommentPostDetail = (typeQueryKey: 'profile' | 'posts' = 'posts') => {
   const queryClient = useQueryClient();
 
   const manuallyAddCommentPostDetail = async ({ newComment, postId }: TAddCommentPost) => {
-    queryClient.setQueryData(['post', postId.toString()], (oldData: GetNewPostResponseType | undefined) => {
+    const queryKey =
+      typeQueryKey === 'profile'
+        ? getQueryKeyPostProfile({ userId: localUserId!, type: 'post' })
+        : ['post', postId.toString()];
+    queryClient.setQueryData(queryKey, (oldData: GetNewPostResponseType | undefined) => {
       if (!oldData) {
         console.log('Chua cache post detail', postId);
         return oldData;

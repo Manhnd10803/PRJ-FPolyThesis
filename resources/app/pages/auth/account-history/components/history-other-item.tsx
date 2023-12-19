@@ -46,8 +46,8 @@ export const HistoryOtherItem = ({ item, onDelete, param }: History) => {
 
   const getLogName = (item: any) => {
     let data = null;
-    let action = item.event === 'created' ? item.properties.attributes : item.properties.old;
-    switch (item.log_name) {
+    let action = item.event === 'created' ? item?.properties?.attributes : item?.properties?.old;
+    switch (item?.log_name) {
       case 'blogs':
         data = {
           title: `blog <strong>${action.title}</strong>`,
@@ -74,16 +74,16 @@ export const HistoryOtherItem = ({ item, onDelete, param }: History) => {
         break;
       case 'likes':
         const pathTypeLike =
-          action.post_id !== null ? pathName.POST : action.blog_id ? pathName.BLOG : pathName.QUESTS_DETAIL;
-        const type = action.post_id !== null ? 'bài viết' : action.blog_id ? 'blog' : 'câu hỏi';
+          action?.post_id !== null ? pathName.POST : action?.blog_id ? pathName.BLOG : pathName.QUESTS_DETAIL;
+        const type = action?.post_id !== null ? 'bài viết' : action?.blog_id ? 'blog' : 'câu hỏi';
         data = {
           title: `<strong>${type}</strong>`,
           path: pathTypeLike,
         };
         break;
       case 'reports':
-        const pathTypeReport = getPathTypeReport(action.report_type);
-        const typeObject = getTypeObject(action.report_type);
+        const pathTypeReport = getPathTypeReport(action?.report_type);
+        const typeObject = getTypeObject(action?.report_type);
         data = {
           title: `<strong>${typeObject}</strong>`,
           path: pathTypeReport,
@@ -99,20 +99,37 @@ export const HistoryOtherItem = ({ item, onDelete, param }: History) => {
   const getAction = (item: any) => {
     let data = null;
     const logName = getLogName(item)?.title;
-    let action = item.event === 'created' ? item.properties.attributes : item.properties.old;
-    switch (item.event) {
+    let action =
+      item?.event === 'created' || item?.event === 'updated' ? item?.properties.attributes : item?.properties.old;
+    switch (item?.event) {
+      case 'updated':
+        switch (item?.log_name) {
+          case 'posts':
+            data = {
+              title: `đã cập nhật trạng thái một ${logName} thành ${
+                action?.status === 1
+                  ? `<strong>Bạn bè</strong>`
+                  : action?.status === 0
+                    ? `<strong>Công khai</strong>`
+                    : `<strong>Chỉ mình tôi</strong>`
+              }`,
+              id: action?.id,
+            };
+            break;
+        }
+        break;
       case 'created':
-        switch (item.log_name) {
+        switch (item?.log_name) {
           case 'searches':
             data = {
               title: `đã tìm kiếm ${logName}`,
-              id: action.id,
+              id: action?.id,
             };
             break;
           case 'likes':
-            const emotion = action.emotion === 'like' ? 'thích' : 'bày tỏ cảm xúc về';
+            const emotion = action?.emotion === 'like' ? 'thích' : 'bày tỏ cảm xúc về';
             const newId =
-              action.post_id !== null ? action.post_id : action.blog_id !== null ? action.blog_id : action.qa_id;
+              action?.post_id !== null ? action?.post_id : action?.blog_id !== null ? action?.blog_id : action?.qa_id;
             data = {
               title: `đã ${emotion} một ${logName}`,
               id: newId,
@@ -121,22 +138,22 @@ export const HistoryOtherItem = ({ item, onDelete, param }: History) => {
           case 'reports':
             data = {
               title: `đã báo cáo một ${logName}`,
-              id: action.report_type_id,
+              id: action?.report_type_id,
             };
             break;
           default:
             data = {
               title: `đã tạo một ${logName}`,
-              id: item.properties.attributes.id,
+              id: item?.properties?.attributes?.id,
             };
             break;
         }
         break;
       default:
-        switch (item.log_name) {
+        switch (item?.log_name) {
           case 'likes':
             const newId =
-              action.post_id !== null ? action.post_id : action.blog_id !== null ? action.blog_id : action.qa_id;
+              action?.post_id !== null ? action?.post_id : action?.blog_id !== null ? action?.blog_id : action?.qa_id;
             data = {
               title: `đã bỏ thích một ${logName}`,
               id: newId,
@@ -145,7 +162,7 @@ export const HistoryOtherItem = ({ item, onDelete, param }: History) => {
           default:
             data = {
               title: `đã xoá một ${logName}`,
-              id: action.id,
+              id: action?.id,
             };
             break;
         }
@@ -166,16 +183,16 @@ export const HistoryOtherItem = ({ item, onDelete, param }: History) => {
             <div className="d-flex justify-content-between">
               <div className="ms-3">
                 <h6>
-                  <strong>Bạn</strong> {parser(getAction(item).title)}
+                  <strong>Bạn</strong> {parser(getAction(item)?.title ?? '')}
                 </h6>
                 <h6>
-                  <strong>Thời gian:</strong> {momentVi(item.created_at).format('DD/MM/YYYY HH:mm:ss')}
+                  <strong>Thời gian:</strong> {momentVi(item?.created_at).format('DD/MM/YYYY HH:mm:ss')}
                 </h6>
               </div>
               <div className="d-flex align-items-center">
                 <Link
                   to={`${pathName.ACCOUNT_HISTORY}#${param}`}
-                  onClick={() => onDelete(item.id)}
+                  onClick={() => onDelete(item?.id)}
                   className="me-3 iq-notify"
                 >
                   <i style={{ fontSize: 26 }} className={`material-symbols-outlined md-18 filled`}>
@@ -192,10 +209,10 @@ export const HistoryOtherItem = ({ item, onDelete, param }: History) => {
 
   return (
     <>
-      <Card className="bg-light" key={item.id}>
+      <Card className="bg-light" key={item?.id}>
         <Card.Body>
           {getLogName(item)?.path !== '' ? (
-            <Link to={`${getLogName(item)?.path}/${getAction(item).id}`}>
+            <Link to={`${getLogName(item)?.path}/${getAction(item)?.id}`}>
               <Content />
             </Link>
           ) : (

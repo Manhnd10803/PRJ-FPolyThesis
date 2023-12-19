@@ -1,4 +1,4 @@
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Navbar from './components/navbar';
 import { Header } from './components/header';
 import { Timeline } from './timeline';
@@ -10,6 +10,7 @@ import { MyListQa } from './question-and-answer';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { FriendsMyUserPage } from './friends';
 import { getQueryKeyPostProfile } from '@/hooks/usePostQuery';
+import { Loading } from '@/components/shared/loading';
 
 export const ProfilePage = () => {
   let { hash } = useLocation();
@@ -88,6 +89,13 @@ export const ProfilePage = () => {
 
   const queryKeyUser = ['user', id];
   const { data: detailUserProfile, isLoading: isUserLoading } = useQuery(queryKeyUser, getDetailUesrProfile);
+
+  if (!isUserLoading && !detailUserProfile)
+    return (
+      <div className="content-page">
+        <Loading size={100} textStyle={{ fontSize: '30px' }} textLoading="Tìm linh tinh gì đấy..." />
+      </div>
+    );
 
   return (
     <>

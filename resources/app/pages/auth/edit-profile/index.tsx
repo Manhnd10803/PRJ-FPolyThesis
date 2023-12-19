@@ -12,6 +12,7 @@ import { CloudiaryService } from '@/apis/services/cloudinary.service';
 import AvatarEditor from 'react-avatar-editor';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loading } from '@/components/shared/loading';
+import { StorageFunc } from '@/utilities/local-storage/storage-func';
 export const EditProfilePage = () => {
   const [DataMajor, setDataMajor] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -81,7 +82,7 @@ export const EditProfilePage = () => {
               className="active done btn"
               id="bank-tab"
               data-toggle="tab"
-              onClick={() => document.getElementById('avatar').click()}
+              onClick={() => document.getElementById('avatar')?.click()}
             >
               <i className="material-symbols-outlined bg-soft-success text-success">photo_camera</i>
               <span>Tải ảnh lên</span>
@@ -145,7 +146,6 @@ export const EditProfilePage = () => {
     const file = dataURLtoFile(imageBase64, 'my_cover_photo.jpg');
     const fileList = [file];
     const selectedImage = file; // Chọn File cụ thể từ fileList
-    console.log(selectedImage);
 
     const imageUrl = selectedImage ? URL.createObjectURL(selectedImage) : noImage;
     setImage(imageUrl);
@@ -182,7 +182,7 @@ export const EditProfilePage = () => {
 
   const onSubmit = async (data: TUserUpdateSchema) => {
     const imageURL = await CloudiaryService.uploadImages(file, 'avatar');
-
+    StorageFunc.setAvatarUser(imageURL[0]);
     const newData = {
       ...data,
       avatar: imageURL[0],

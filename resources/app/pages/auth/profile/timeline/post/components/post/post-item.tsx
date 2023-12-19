@@ -121,7 +121,7 @@ export const PostItem = ({ item }: PostItemProps) => {
             </div>
             <div className="comment-area">
               <Row className="d-flex justify-content-between align-items-center mb-5 border-top border-bottom py-2">
-                <Col sm={4} className="d-flex justify-content-center align-items-center">
+                <Col sm={4} md={4} className="d-flex justify-content-center align-items-center">
                   <Dropdown drop="up-centered">
                     <Dropdown.Toggle as={CustomToggle}>
                       <div className="d-flex align-items-center feather-icon mt-2 mt-md-0">
@@ -142,7 +142,7 @@ export const PostItem = ({ item }: PostItemProps) => {
                         </Link>
                       </div>
                     </Dropdown.Toggle>
-                    <Dropdown.Menu className="dropdown-menu-top-like">
+                    <Dropdown.Menu className="dropdown-menu-top-like-profile">
                       {emotionData.map(e => {
                         return (
                           <OverlayTrigger key={e.id} placement="top" overlay={<Tooltip>{e.name}</Tooltip>}>
@@ -160,7 +160,7 @@ export const PostItem = ({ item }: PostItemProps) => {
                   </Dropdown>
                 </Col>
 
-                <Col sm={4} className="d-flex justify-content-center align-items-center">
+                <Col sm={4} md={4} className="d-flex justify-content-center align-items-center">
                   <div className="d-flex align-items-center feather-icon mt-2 mt-md-0">
                     <Link to="#" className="d-flex align-items-center">
                       <span className="material-symbols-outlined md-18">mode_comment</span>
@@ -170,7 +170,7 @@ export const PostItem = ({ item }: PostItemProps) => {
                     </Link>
                   </div>
                 </Col>
-                <Col sm={4} className="d-flex justify-content-center align-items-center">
+                <Col sm={4} md={4} className="d-flex justify-content-center align-items-center">
                   <ShareModal />
                 </Col>
               </Row>

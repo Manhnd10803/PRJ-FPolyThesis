@@ -49,6 +49,50 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
     setShowModalFormReport(false);
   };
 
+  useEffect(() => {
+    if (
+      modalTitle ||
+      showModalFormReport ||
+      showModalOptionReport ||
+      modalShowUploadAvatar ||
+      modalShowUploadArticlePhoto ||
+      modalShowResizeAvatar ||
+      modalShowResizeArticlePhoto
+    ) {
+      const headerElements = document.getElementsByClassName('about-profile');
+      // Kiểm tra xem phần tử có tồn tại không và chỉ định rõ phần tử cụ thể từ HTMLCollection
+      if (headerElements.length > 0) {
+        const headerElement = headerElements[0] as HTMLElement;
+        headerElement.style.setProperty('z-index', '0');
+        headerElement.style.setProperty('transition', 'none');
+      }
+    } else {
+      const headerElements = document.getElementsByClassName('about-profile');
+      if (headerElements.length > 0) {
+        const headerElement = headerElements[0] as HTMLElement;
+        headerElement.style.setProperty('z-index', '9999');
+        headerElement.style.setProperty('transition', 'all 0.5s ease-in-out');
+      }
+    }
+
+    return () => {
+      const headerElements = document.getElementsByClassName('about-profile');
+      if (headerElements.length > 0) {
+        const headerElement = headerElements[0] as HTMLElement;
+        headerElement.style.setProperty('z-index', '9999');
+        headerElement.style.setProperty('transition', 'all 0.5s ease-in-out');
+      }
+    };
+  }, [
+    modalTitle,
+    showModalFormReport,
+    showModalOptionReport,
+    modalShowUploadAvatar,
+    modalShowUploadArticlePhoto,
+    modalShowResizeAvatar,
+    modalShowResizeArticlePhoto,
+  ]);
+
   const handleShow = (title: any) => {
     setModalTitle(title);
     setShowModalFormReport(true);
@@ -133,7 +177,7 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
   };
 
   const updateCoverArticleMutation = useMutation(ProfileService.updateCoverPhoto);
-  const updateCoverAvatarMutation = useMutation(ProfileService.updateCoverAvatar);
+  const updateAvatarProfileMutation = useMutation(ProfileService.updateAvatarProfile);
   const handleSaveArticle = async () => {
     setModalShowResizeArticlePhoto(false);
     const canvas = imageCoverRef?.current?.getImage();
@@ -150,7 +194,7 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
     try {
       await updateCoverArticleMutation.mutateAsync(dataForm);
       toast.success('Cập nhật ảnh bìa thành công');
-      queryClient.invalidateQueries(queryKey);
+      // queryClient.invalidateQueries(queryKey);
       return;
     } catch (error) {
       toast.error('Cập nhật ảnh bìa thất bại');
@@ -171,7 +215,7 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
       avatar: data[0],
     };
     try {
-      await updateCoverAvatarMutation.mutateAsync(dataForm);
+      await updateAvatarProfileMutation.mutateAsync(dataForm);
       toast.success('Cập nhật ảnh đại diện thành công');
       queryClient.invalidateQueries(queryKey);
       return;
@@ -386,7 +430,7 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
                     <>
                       <ul className="social-data-block d-flex align-items-center justify-content-between list-inline p-0 m-0">
                         <li className="text-center ps-3">
-                          <h6>Posts</h6>
+                          <h6>Bài viết</h6>
                           <p className="mb-0">0</p>
                         </li>
                         <li className="text-center ps-3">
@@ -394,7 +438,7 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
                           <p className="mb-0">0</p>
                         </li>
                         <li className="text-center ps-3">
-                          <h6>Friends</h6>
+                          <h6>Bạn bè</h6>
                           <p className="mb-0">0</p>
                         </li>
                       </ul>
@@ -403,7 +447,7 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
                     <>
                       <ul className="social-data-block d-flex align-items-center justify-content-between list-inline p-0 m-0">
                         <li className="text-center ps-3">
-                          <h6>Posts</h6>
+                          <h6>Bài viết</h6>
                           <p className="mb-0">{total_post}</p>
                         </li>
                         <li className="text-center ps-3">
@@ -411,7 +455,7 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
                           <p className="mb-0">{total_blog}</p>
                         </li>
                         <li className="text-center ps-3">
-                          <h6>Friends</h6>
+                          <h6>Bạn bè</h6>
                           <p className="mb-0">{total_friend}</p>
                         </li>
                         <li className="text-center ps-3 pt-1">
