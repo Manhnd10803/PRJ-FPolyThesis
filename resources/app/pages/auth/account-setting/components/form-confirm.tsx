@@ -1,16 +1,11 @@
 import { AuthService } from '@/apis/services/auth.service';
 import { TconfirmPasswordSchema, confirmPasswordSchema } from '@/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, Row, Col, Button, Spinner } from 'react-bootstrap';
+import { Button, Col, Form, Row } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
-
-const imageUrl = 'https://picsum.photos/50';
 
 export const ConfirmForm = ({ onContinue }) => {
-  // const navigate = useNavigate();
-
   const {
     register: confirm,
     handleSubmit,
@@ -23,9 +18,7 @@ export const ConfirmForm = ({ onContinue }) => {
 
   const onSubmit = async (dataForm: TconfirmPasswordSchema) => {
     try {
-      const { data } = await AuthService.ConfirmPassword(dataForm);
-
-      console.log(data);
+      await AuthService.ConfirmPassword(dataForm);
       toast.success('Thông tin bạn nhập chính xác');
       onContinue();
     } catch (error: any) {

@@ -192,8 +192,7 @@ export const EditProfilePage = () => {
       { body: newData },
       {
         onError: error => {
-          console.log(data);
-          console.log(error);
+          console.error(error);
         },
         onSuccess: () => {
           toast.success('Cập nhật thành công');

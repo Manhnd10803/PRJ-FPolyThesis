@@ -64,7 +64,7 @@ export const CreatePostModal = ({ handleClose, show }: CreatePostModalProps) => 
       reset();
       handleClose();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

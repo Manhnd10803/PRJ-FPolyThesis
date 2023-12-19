@@ -143,7 +143,6 @@ const ListQa = ({ data, fetchNextPage, hasNextPage, isFetching }: any) => {
     if (endInViewQa && hasNextPage && !isFetching) {
       fetchNextPage && fetchNextPage();
     }
-    console.log('endInViewQa', endInViewQa);
   }, [endInViewQa, fetchNextPage, hasNextPage, isFetching]);
 
   return (

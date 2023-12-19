@@ -258,7 +258,6 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
   const getStatusFriend = async () => {
     try {
       const { data } = await FriendService.statusFriend(user?.id);
-      console.log(data);
       return data;
     } catch (error) {
       console.error(error);
@@ -299,7 +298,7 @@ export const Header = ({ detailUser, isLoading, isUser, queryKey, idUser }: Prop
               break;
           }
         } catch (error) {
-          console.log(error);
+          console.error(error);
         }
       }
     };

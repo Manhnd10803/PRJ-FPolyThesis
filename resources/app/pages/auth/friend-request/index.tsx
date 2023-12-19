@@ -98,7 +98,6 @@ export const FriendRequestPage = () => {
     try {
       const response = await FriendService.addFriend(id);
       queryClient.invalidateQueries(FriendsSuggestQueryKey);
-      console.log(response.data);
     } catch (error) {
       throw error;
     }

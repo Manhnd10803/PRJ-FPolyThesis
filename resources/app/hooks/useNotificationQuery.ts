@@ -158,7 +158,7 @@ export const useDeleteNotification = () => {
       },
       onError(error, variables, context) {
         toast.error('Có lỗi xảy ra khi xóa thông báo');
-        console.log('onError - DeleteNotification', error, variables, context);
+        console.error('onError - DeleteNotification', error, variables, context);
       },
     });
   };

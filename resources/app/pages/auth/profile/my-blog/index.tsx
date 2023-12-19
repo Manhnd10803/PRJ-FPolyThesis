@@ -94,8 +94,8 @@ export const MyBlog = ({ listBlog, isLoading, isFetching, hasNextPage, fetchNext
                           {tabKey === 'about1'
                             ? 'Bài viết công khai'
                             : tabKey === 'about2'
-                              ? 'Bài viết đang chờ xét duyệt'
-                              : 'Bài viết vi phạm'}
+                            ? 'Bài viết đang chờ xét duyệt'
+                            : 'Bài viết vi phạm'}
                         </h4>
                         <div className="d-flex align-items-center">
                           <div className="form-outline">
@@ -155,7 +155,6 @@ const ListBlog = ({ data, fetchNextPage, hasNextPage, isFetching }: any) => {
     if (endInViewBlog && hasNextPage && !isFetching) {
       fetchNextPage && fetchNextPage();
     }
-    console.log('endInViewBlog', endInViewBlog);
   }, [endInViewBlog, fetchNextPage, hasNextPage, isFetching]);
 
   return (
