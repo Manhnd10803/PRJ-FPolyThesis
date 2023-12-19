@@ -129,10 +129,10 @@ export const MoreActionDropdown = ({ friendId, postId, username, postStatus }: a
           <p>Sau khi xoá sẽ không thể khôi phục bài viết</p>
         </Modal.Body>
         <Modal.Footer>
-          <Button onClick={() => handleDeletePost(postId)}>Xoá</Button>
           <Button variant="secondary" onClick={props.onHide}>
             Huỷ
           </Button>
+          <Button onClick={() => handleDeletePost(postId)}>Xác nhận</Button>
         </Modal.Footer>
       </Modal>
     );
