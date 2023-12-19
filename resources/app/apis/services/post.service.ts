@@ -21,9 +21,14 @@ const updateStatusPost = (id: number, status: number) => {
   return httpRequest.put(`${ApiConstants.POST_UPDATE_STATUS}/${id}`, { status });
 };
 
+const deletePost = (id: number) => {
+  return httpRequest.delete(`${ApiConstants.DELETE_POST}/${id}`);
+};
+
 export const PostService = {
   getPostsNewFeed,
   createNewPost,
   getPostDetail,
   updateStatusPost,
+  deletePost,
 };

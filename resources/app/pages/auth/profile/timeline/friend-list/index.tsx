@@ -29,7 +29,12 @@ export const FriendList = ({ listFriend, idUser }: FriendListProps) => {
               listFriend.map((item: IUser, index: number) => {
                 if (index < 3) {
                   return (
-                    <Col sm={4} className="p-0" style={{ cursor: 'pointer' }} key={index}>
+                    <Col
+                      {...(listFriend.length === 2 || listFriend.length === 1 ? { sm: 4 } : {})}
+                      className="p-0"
+                      style={{ cursor: 'pointer' }}
+                      key={index}
+                    >
                       <Link to={`/profile/${item.id}`}>
                         <img loading="lazy" src={item.avatar} alt="gallary" className="img-fluid" />
                       </Link>

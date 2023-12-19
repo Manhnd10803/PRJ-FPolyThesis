@@ -78,7 +78,7 @@ export const NotificationIcon = {
 } as const;
 
 export const NotificationLink = {
-  [NotificationType['friend']]: pathName.FRIEND_REQUEST,
+  [NotificationType['friend']]: pathName.PROFILE,
   [NotificationType['like_post']]: pathName.POST,
   [NotificationType['comment_post']]: pathName.POST,
   [NotificationType['reply_post']]: pathName.POST,

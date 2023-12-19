@@ -8,7 +8,7 @@ import { CustomModal } from '@/utilities/funcReport/modalCustomReport';
 import { StorageFunc } from '@/utilities/local-storage/storage-func';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useState } from 'react';
-import { Dropdown, ListGroup, Modal } from 'react-bootstrap';
+import { Button, Dropdown, ListGroup, Modal } from 'react-bootstrap';
 import toast from 'react-hot-toast';
 import { useLocation } from 'react-router-dom';
 
@@ -26,10 +26,11 @@ export const MoreActionDropdown = ({ friendId, postId, username, postStatus }: a
   const handleCloseModalReport = () => setShowModalReport(false);
   const [showCustomModal, setShowCustomModal] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
+  const [showModalDeletePost, setShowModalDeletePost] = useState(false);
 
   const { pathname } = useLocation();
   const typeQueryKey = pathname.includes('profile') ? 'profile' : 'posts';
-  const { manuallyChangeStatusPost } = usePost(typeQueryKey);
+  const { manuallyChangeStatusPost, manuallyDeletePost } = usePost(typeQueryKey);
 
   const handleShowTitle = (title: any) => {
     setModalTitle(title);
@@ -81,7 +82,7 @@ export const MoreActionDropdown = ({ friendId, postId, username, postStatus }: a
   };
 
   useEffect(() => {
-    if (showModalReport || showCustomModal) {
+    if (showModalReport || showCustomModal || showModalDeletePost) {
       const headerElements = document.getElementsByClassName('about-profile');
       // Kiểm tra xem phần tử có tồn tại không và chỉ định rõ phần tử cụ thể từ HTMLCollection
       if (headerElements.length > 0) {
@@ -106,13 +107,42 @@ export const MoreActionDropdown = ({ friendId, postId, username, postStatus }: a
         headerElement.style.setProperty('transition', 'all 0.5s ease-in-out');
       }
     };
-  }, [showModalReport, showCustomModal]);
+  }, [showModalReport, showCustomModal, showModalDeletePost]);
 
   const handleChangeStatusPost = async (postId: number, status: number) => {
     try {
       toast.success('Thay đổi trạng thái bài viết thành công');
       manuallyChangeStatusPost(postId, status);
       await PostService.updateStatusPost(postId, status);
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  const DeletePostModal = (props: any) => {
+    return (
+      <Modal {...props} size="md" aria-labelledby="contained-modal-title-vcenter" centered>
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">Xoá bài viết</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p>Sau khi xoá sẽ không thể khôi phục bài viết</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={() => handleDeletePost(postId)}>Xoá</Button>
+          <Button variant="secondary" onClick={props.onHide}>
+            Huỷ
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  };
+
+  const handleDeletePost = async (postId: number) => {
+    try {
+      toast.success('Xoá bài viết thành công');
+      manuallyDeletePost(postId);
+      await PostService.deletePost(postId);
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -225,6 +255,17 @@ export const MoreActionDropdown = ({ friendId, postId, username, postStatus }: a
                   </Dropdown.Item>
                 )}
               </>
+              <>
+                <Dropdown.Item className="p-1" href="#" onClick={() => setShowModalDeletePost(true)}>
+                  <div className="d-flex align-items-top">
+                    <i className="ri-notification-line h4"></i>
+                    <div className="data ms-2">
+                      <h5 className="fw-bold">Xoá bài viết</h5>
+                    </div>
+                  </div>
+                </Dropdown.Item>
+              </>
+              <DeletePostModal show={showModalDeletePost} onHide={() => setShowModalDeletePost(false)} />
             </>
           )}
         </Dropdown.Menu>
