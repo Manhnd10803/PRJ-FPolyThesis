@@ -35,6 +35,7 @@ import StarsIcon from '@mui/icons-material/Stars';
 import { formatFullName } from '@/utilities/functions';
 import { pathName } from '@/routes/path-name';
 import { Loading } from '@/components/shared/loading';
+import { debounce } from 'lodash';
 
 export const DetailQandAPage = () => {
   const commentRef = useRef(null);
@@ -242,6 +243,8 @@ export const DetailQandAPage = () => {
       </div>
     );
 
+  const debounceLike = debounce(handleLikeClick, 1000);
+  const debounceDisLike = debounce(handleDislikeClick, 1000);
   return (
     <>
       <div id="content-page" className="content-page">
@@ -315,7 +318,7 @@ export const DetailQandAPage = () => {
                                   className="d-flex align-items-center gap-2 "
                                   style={{ backgroundColor: qAndAData?.user_like?.emotion === 'like' ? '#b2b5b8' : '' }}
                                   variant="light"
-                                  onClick={handleLikeClick}
+                                  onClick={debounceLike}
                                 >
                                   {likeStatus === 'like' ? (
                                     <ThumbUpIcon className="text-primary" sx={{ fontSize: 20 }} />
@@ -330,7 +333,7 @@ export const DetailQandAPage = () => {
                                 <Button
                                   className="d-flex align-items-center"
                                   variant="light"
-                                  onClick={handleDislikeClick}
+                                  onClick={debounceDisLike}
                                   data-bs-placement="bottom"
                                 >
                                   {likeStatus === 'dislike' ? (

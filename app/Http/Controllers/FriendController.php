@@ -456,13 +456,15 @@ class FriendController extends Controller
             // Lấy danh sách ID của những người đã gửi lời mời kết bạn cho người dùng hiện tại
             $friendIds = Friend::where('user_id_1', $self->id)
                 ->whereIn('status', [
-                    config('default.friend.status.accepted')
+                    config('default.friend.status.accepted'),
+                    config('default.friend.status.pending')
                 ])
                 ->pluck('user_id_2')
                 ->toArray();
             $friendRequestsIds = Friend::where('user_id_2', $self->id)
                 ->whereIn('status', [
-                    config('default.friend.status.accepted')
+                    config('default.friend.status.accepted'),
+                    config('default.friend.status.pending')
                 ])
                 ->pluck('user_id_1')
                 ->toArray();

@@ -10,6 +10,7 @@ import { CustomModalReport } from '@/utilities/funcReport/modalReportComment';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ReportService } from '@/apis/services/report.service';
 import toast from 'react-hot-toast';
+import { pathName } from '@/routes/path-name';
 
 const imageUrl = 'https://picsum.photos/20';
 
@@ -173,10 +174,10 @@ export const CommentsQandA = ({ qAndAData, postComment, deleteComment, putCommen
                               <div className="user-image mb-3">
                                 <Image className="avatar-50 rounded-circle" src={comment?.user?.avatar} alt="#" />
                               </div>
-                              <div className="ms-3">
+                              <Link to={`${pathName.PROFILE}/${comment?.user?.id}`} className="ms-3">
                                 <h5>{comment?.user ? formatFullName(comment?.user) : 'Chưa cập nhật'}</h5>
                                 <p>@{comment?.user?.username}</p>
-                              </div>
+                              </Link>
                             </div>
                             <div className="card-header-toolbar d-flex">
                               <Dropdown>

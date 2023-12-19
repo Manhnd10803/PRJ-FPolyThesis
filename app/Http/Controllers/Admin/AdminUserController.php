@@ -262,25 +262,67 @@ class AdminUserController extends Controller
     public function getChartUserData(Request $request)
     {
         $selectedDays = $request->input('days', 90);
-        $data = User::select(
-            DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month"),
-            DB::raw('count(*) as user_count')
-        )
-            ->where('group_id', '<>', 1)
-            ->where('created_at', '>=', Carbon::now()->subDays($selectedDays))
-            ->groupBy('month')
-            ->orderBy('month') // Sắp xếp theo thứ tự tăng dần theo tháng
-            ->get();
-        // return $data;
+
+        if ($selectedDays == 7) {
+     
+            $data = User::select(
+                DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') as date"),
+                DB::raw('count(*) as user_count')
+            )
+                ->where('group_id', '<>', 1)
+                ->where('created_at', '>=', Carbon::now()->subDays($selectedDays))
+                ->groupBy('date')
+                ->orderBy('date')
+                ->get();
+        } elseif ($selectedDays == 30) {
+           
+            $data = User::select(
+                DB::raw("DATE_FORMAT(created_at, '%Y-%u') as week"),
+                DB::raw('count(*) as user_count')
+            )
+                ->where('group_id', '<>', 1)
+                ->where('created_at', '>=', Carbon::now()->subDays($selectedDays))
+                ->groupBy('week')
+                ->orderBy('week')
+                ->get();
+        } else {
+          
+            $data = User::select(
+                DB::raw("DATE_FORMAT(created_at, '%Y-%m') as month"),
+                DB::raw('count(*) as user_count')
+            )
+                ->where('group_id', '<>', 1)
+                ->where('created_at', '>=', Carbon::now()->subDays($selectedDays))
+                ->groupBy('month')
+                ->orderBy('month')
+                ->get();
+        }
+
         $accumulatedData = [];
         $totalUsers = 0;
 
         foreach ($data as $item) {
             $totalUsers += $item->user_count;
-            $accumulatedData[] = [
-                'y' => $item->month,
-                'item1' => $totalUsers,
-            ];
+
+            if ($selectedDays == 7) {
+               
+                $accumulatedData[] = [
+                    'x' => $item->date,
+                    'item1' => $totalUsers,
+                ];
+            } elseif ($selectedDays == 30) {
+               
+                $accumulatedData[] = [
+                    'x' => $item->week,
+                    'item1' => $totalUsers,
+                ];
+            } else {
+             
+                $accumulatedData[] = [
+                    'x' => $item->month,
+                    'item1' => $totalUsers,
+                ];
+            }
         }
 
         return response()->json($accumulatedData);
