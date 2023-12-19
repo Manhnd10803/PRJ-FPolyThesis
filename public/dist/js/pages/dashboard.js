@@ -137,6 +137,8 @@ $(function () {
     lineColors: ['#a0d0e0', '#3c8dbc'],
     hideHover: 'auto',
   });
+
+  
   $.ajax({
     url: '/admin/user/getChartUserData',
     method: 'GET',

@@ -279,13 +279,13 @@ class AdminUserController extends Controller
         } elseif ($selectedDays == 30) {
            
             $data = User::select(
-                DB::raw("DATE_FORMAT(created_at, '%Y-%u') as week"),
+                DB::raw("DATE_FORMAT(created_at, '%Y-%m-%d') as date"),
                 DB::raw('count(*) as user_count')
             )
                 ->where('group_id', '<>', 1)
                 ->where('created_at', '>=', Carbon::now()->subDays($selectedDays))
-                ->groupBy('week')
-                ->orderBy('week')
+                ->groupBy('date')
+                ->orderBy('date')
                 ->get();
         } else {
           
@@ -315,7 +315,7 @@ class AdminUserController extends Controller
             } elseif ($selectedDays == 30) {
                
                 $accumulatedData[] = [
-                    'x' => $item->week,
+                    'x' => $item->date,
                     'item1' => $totalUsers,
                 ];
             } else {

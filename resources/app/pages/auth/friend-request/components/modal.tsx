@@ -3,7 +3,7 @@ export const ModalRequest = ({ show, onHide, onConfirm, title }: any) => {
   return (
     <Modal centered size="sm" show={show} onHide={onHide}>
       <Modal.Header closeButton>
-        <Modal.Title>Modal heading</Modal.Title>
+        <Modal.Title>FpolyZone</Modal.Title>
       </Modal.Header>
       <Modal.Body>{title}</Modal.Body>
       <Modal.Footer>
