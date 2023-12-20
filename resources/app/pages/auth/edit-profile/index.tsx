@@ -185,7 +185,7 @@ export const EditProfilePage = () => {
 
   const onSubmit = async (data: TUserUpdateSchema) => {
     const imageURL = await CloudiaryService.uploadImages(file, 'avatar');
-    if (imageURL) {
+    if (imageURL[0]) {
       StorageFunc.setAvatarUser(imageURL[0]);
     }
     const newData = {
